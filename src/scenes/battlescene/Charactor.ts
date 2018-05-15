@@ -4,8 +4,33 @@ class Charactor extends egret.DisplayObjectContainer{
 	 */
 	public armatureDisplay: dragonBones.EgretArmatureDisplay;
 
-	public desc: string = "21sdf";
-	
+	/**
+	 * 人物当前状态描述，在长按中展示
+	 */
+	public get desc():string{
+		return "11111";
+	}
+
+	/**
+	 * 属性
+	 */
+	public attr: Attribute;
+
+	/**
+	 * 是否存活
+	 */
+	public isAlive: boolean;
+
+	/**
+	 * 主动技能列表
+	 */
+	public manualSkills: Skill[];
+
+	/**
+	 * 被动技能
+	 */
+	public passiveSkill: Skill;
+
 	public bgLayer: egret.DisplayObjectContainer;
 	/**
 	 * 阵营
