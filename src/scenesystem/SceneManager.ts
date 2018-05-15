@@ -1,6 +1,18 @@
 class SceneManager{
 
-	private curScene: IScene;
+	public curScene: IScene;
+
+	private static instance: SceneManager;
+	public static get Ins():SceneManager{
+		if(SceneManager.instance){
+			return SceneManager.instance;
+		}
+		SceneManager.instance = new SceneManager();
+		SceneManager.instance.initial();
+		return SceneManager.instance;
+	}
+
+	private constructor(){}
 
 	/**
 	 * 设置初始场景

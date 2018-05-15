@@ -1,8 +1,8 @@
 class Card extends egret.DisplayObjectContainer {
 
-	public desc: string = "21sdf";
+	public desc: string = "对目标造成攻击的伤害";
 	public caster: Charactor;
-	public skill: Skill;
+	public skill: SkillTmp = new SkillTmp();
 
 	public constructor() {
 		super();
@@ -38,6 +38,8 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		LongTouchUtil.bindLongTouch(this, this);
+		// TODO Tmp
+		this.caster = (SceneManager.Ins.curScene as BattleScene).friends[0];
 	}
 
 	/**

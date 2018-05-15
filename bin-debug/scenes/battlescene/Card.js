@@ -12,7 +12,8 @@ var Card = (function (_super) {
     __extends(Card, _super);
     function Card() {
         var _this = _super.call(this) || this;
-        _this.desc = "21sdf";
+        _this.desc = "对目标造成攻击的伤害";
+        _this.skill = new SkillTmp();
         _this.width = 80;
         _this.height = 130;
         var cardBg = new egret.Bitmap(RES.getRes("cardbg_png"));
@@ -33,6 +34,8 @@ var Card = (function (_super) {
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.sendUseCardMessage, this);
         this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.sendBeginTouchMessage, this);
         LongTouchUtil.bindLongTouch(this, this);
+        // TODO Tmp
+        this.caster = SceneManager.Ins.curScene.friends[0];
     };
     /**
      * 使用后准备放入对象池前调用

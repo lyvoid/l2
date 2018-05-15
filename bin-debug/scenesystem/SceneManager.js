@@ -4,6 +4,18 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var SceneManager = (function () {
     function SceneManager() {
     }
+    Object.defineProperty(SceneManager, "Ins", {
+        get: function () {
+            if (SceneManager.instance) {
+                return SceneManager.instance;
+            }
+            SceneManager.instance = new SceneManager();
+            SceneManager.instance.initial();
+            return SceneManager.instance;
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * 设置初始场景
      * 侦听enter_frame事件，绑定update函数

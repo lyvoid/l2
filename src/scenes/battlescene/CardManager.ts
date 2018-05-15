@@ -21,6 +21,9 @@ class CardManager {
 
 	private useCard(e:Message): void{
 		let card: Card = e.messageContent as Card;
+		card.skill.setCaster(card.caster);
+		card.skill.chooseTarget();
+		card.skill.useSkill();
 		this.removeCard(card);
 	}
 	

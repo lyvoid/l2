@@ -8,12 +8,13 @@
 		"libs/modules/game/game.js",
 		"libs/modules/dragonBones/dragonBones.js",
 		"libs/modules/socket/socket.js",
-		"libs/modules/promise/promise.js"
+		"libs/modules/promise/promise.js",
+		"libs/modules/particle/particle.js"
 	],
 	"game": [
+		"bin-debug/scenes/battlescene/skill/ISkill.js",
 		"bin-debug/scenesystem/IScene.js",
-		"bin-debug/scenes/battlescene/BattleScene.js",
-		"bin-debug/Main.js",
+		"bin-debug/scenes/battlescene/CardBoard.js",
 		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/common/LongTouchUtil.js",
@@ -21,17 +22,23 @@
 		"bin-debug/global/MessageManager.js",
 		"bin-debug/global/MessageType.js",
 		"bin-debug/global/Util.js",
+		"bin-debug/scenes/battlescene/Attribute.js",
 		"bin-debug/scenes/battlescene/BattleCommonResouce.js",
-		"bin-debug/LoadingUI.js",
+		"bin-debug/scenes/battlescene/BattleScene.js",
 		"bin-debug/scenes/battlescene/Card.js",
-		"bin-debug/scenes/battlescene/CardBoard.js",
+		"bin-debug/LoadingUI.js",
 		"bin-debug/scenes/battlescene/CardManager.js",
 		"bin-debug/scenes/battlescene/Charactor.js",
 		"bin-debug/scenes/battlescene/DBManager.js",
+		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/scenes/battlescene/GlowFilterForTouch.js",
+		"bin-debug/scenes/battlescene/Hurt.js",
+		"bin-debug/scenes/battlescene/buff/IBuff.js",
+		"bin-debug/AssetAdapter.js",
+		"bin-debug/scenes/battlescene/skill/Skill.js",
 		"bin-debug/scenes/UI/LongTouchInfo.js",
 		"bin-debug/scenes/UI/UIBattleScene.js",
-		"bin-debug/AssetAdapter.js",
+		"bin-debug/Main.js",
 		"bin-debug/scenesystem/SceneManager.js"
 	]
 }

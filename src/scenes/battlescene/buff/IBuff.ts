@@ -1,4 +1,4 @@
-class Skill {
+class IBuff {
 	public constructor() {
 	}
 }

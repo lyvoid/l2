@@ -1,10 +1,10 @@
-class BattleScene extends IScene{
+class BattleScene extends IScene {
 
 	/**
 	 * 龙骨管理器，始终只有一个存在
 	 */
-	public dbManager:DBManager;
-	
+	public dbManager: DBManager;
+
 	/**
 	 * 用户的卡牌
 	 */
@@ -13,7 +13,15 @@ class BattleScene extends IScene{
 	public cardManager: CardManager;
 	public bcr: BattleCR;
 
-	public initial(){
+	public enemies: Charactor[] = [];
+	public friends: Charactor[] = [];
+
+	public selectEnemy: Charactor;
+	public selectFriend: Charactor;
+	
+	public playerFireBoard: FireBoard;
+
+	public initial() {
 		super.initial();
 
 		this.dbManager = new DBManager();
@@ -21,7 +29,7 @@ class BattleScene extends IScene{
 		this.cardManager = new CardManager(this.cards, this.cardBoard);
 
 
-		// 实例化GameLayer的三个层
+		// 实例化GameLayer的层
 		let gameLayer = LayerManager.Ins.gameLayer;
 		gameLayer.addChildAt(
 			new egret.DisplayObjectContainer(),
@@ -42,24 +50,24 @@ class BattleScene extends IScene{
 
 
 		this.runScene().catch(e => {
-            console.log(e);
-		}).then(()=>{
+			console.log(e);
+		}).then(() => {
 			console.log("battlescene场景初始化完成");
 		});
-		
+
 	}
 
-	private async runScene(){
+	private async runScene() {
 
 		// 载入通用资源
 		await RES.loadGroup("battlecommon");
 		console.log("战场通用资源载入完成");
 
 		this.bcr = new BattleCR();
-		
+
 
 		// 载入龙骨资源
-		for (let charactorName of ["Dragon", "Swordsman"]){
+		for (let charactorName of ["Dragon", "Swordsman"]) {
 			await RES.getResAsync(`${charactorName}_db_ske_json`);
 			await RES.getResAsync(`${charactorName}_db_tex_json`);
 			await RES.getResAsync(`${charactorName}_db_tex_png`);
@@ -74,7 +82,7 @@ class BattleScene extends IScene{
 		let img1: egret.Bitmap = new egret.Bitmap(bgTex_1);
 		img1.width = LayerManager.Ins.stageWidth;
 		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer, 
+			LayerManager.Ins.gameLayer,
 			BattleSLEnum.bgLayer
 		).addChild(img1);
 
@@ -82,7 +90,7 @@ class BattleScene extends IScene{
 		let img2: egret.Bitmap = new egret.Bitmap(bgTex_2);
 		img2.width = LayerManager.Ins.stageWidth;
 		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer, 
+			LayerManager.Ins.gameLayer,
 			BattleSLEnum.bgLayer
 		).addChild(img2);
 
@@ -91,7 +99,7 @@ class BattleScene extends IScene{
 		img3.width = LayerManager.Ins.stageWidth;
 		img3.height = LayerManager.Ins.stageHeight;
 		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer, 
+			LayerManager.Ins.gameLayer,
 			BattleSLEnum.bgLayer
 		).addChild(img3);
 
@@ -102,14 +110,29 @@ class BattleScene extends IScene{
 		img4.y = LayerManager.Ins.stageHeight - img4.height;
 		img4.alpha = 0.5;
 		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer, 
+			LayerManager.Ins.gameLayer,
 			BattleSLEnum.fgLayer
 		).addChild(img4);
-		
+
+		// 加火
+		this.playerFireBoard = new FireBoard();
+		LayerManager.getSubLayerAt(
+			LayerManager.Ins.gameLayer,
+			BattleSLEnum.cardLayer
+		).addChild(this.playerFireBoard);
+
+		this.playerFireBoard.addFire();
+		this.playerFireBoard.addFire();
+		this.playerFireBoard.addFire();
+		this.playerFireBoard.addFire();
+		this.playerFireBoard.addFire();
+		this.playerFireBoard.addFire();
+
+
 		// TODO 初始化游戏角色及UI
-		
+
 		let chars: Charactor[] = [];
-			for (let i in [0, 1,2,3,4,5]){
+		for (let i in [0, 1, 2, 3, 4, 5]) {
 			let char1 = new Charactor("Dragon", this.dbManager);
 			chars[i] = char1;
 			char1.armatureDisplay.animation.play("idle", 0);
@@ -118,8 +141,10 @@ class BattleScene extends IScene{
 		chars[0].row = CharRowType.backRow;
 		chars[0].position = CharPositionType.down;
 		chars[0].setPosition();
+		this.selectEnemy = chars[0];
+		chars[0].bgLayer.addChild(this.bcr.enemySlectImg);
 
-		
+
 		chars[1].row = CharRowType.backRow;
 		chars[1].position = CharPositionType.up;
 		chars[1].setPosition();
@@ -140,16 +165,17 @@ class BattleScene extends IScene{
 		chars[5].position = CharPositionType.up;
 		chars[5].setPosition();
 
-		for(let char of chars){
+		for (let char of chars) {
 			let charLayer = LayerManager.getSubLayerAt(
-				LayerManager.Ins.gameLayer, 
+				LayerManager.Ins.gameLayer,
 				BattleSLEnum.CharLayer
 			);
 			charLayer.addChildAt(char, char.position * 1000);
+			this.enemies.push(char);
 		}
 
 		chars = [];
-		for (let i in [0, 1,2,3,4,5]){
+		for (let i in [0, 1, 2, 3, 4, 5]) {
 			let char1 = new Charactor("Swordsman", this.dbManager);
 			chars[i] = char1;
 			char1.armatureDisplay.animation.play("idle", 0);
@@ -157,8 +183,10 @@ class BattleScene extends IScene{
 		chars[0].row = CharRowType.backRow;
 		chars[0].position = CharPositionType.down;
 		chars[0].setPosition();
+		this.selectFriend = chars[0];
+		chars[0].bgLayer.addChild(this.bcr.selfSelectImg);
 
-		
+
 		chars[1].row = CharRowType.backRow;
 		chars[1].position = CharPositionType.up;
 		chars[1].setPosition();
@@ -175,16 +203,17 @@ class BattleScene extends IScene{
 		chars[4].position = CharPositionType.mid;
 		chars[4].setPosition();
 
-		for(let char of chars){
+		for (let char of chars) {
 			let charLayer = LayerManager.getSubLayerAt(
-				LayerManager.Ins.gameLayer, 
+				LayerManager.Ins.gameLayer,
 				BattleSLEnum.CharLayer
 			);
 			charLayer.addChildAt(char, char.position * 1000);
+			this.friends.push(char);
 		}
 
 		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer, 
+			LayerManager.Ins.gameLayer,
 			BattleSLEnum.CharLayer
 		).addChild(this.cardBoard);
 
@@ -192,8 +221,8 @@ class BattleScene extends IScene{
 		this.cardManager.distCardNormal();
 		this.cardManager.distCardNormal();
 		this.cardManager.distCardNormal();
-		
-		
+
+
 
 		// chars[5].row = CharRowType.frontRow;
 		// chars[5].position = CharPositionType.up;
@@ -212,11 +241,19 @@ class BattleScene extends IScene{
 		// 点击角色显示显示框
 		MessageManager.Ins.addEventListener(
 			MessageType.ClickChar,
-			(e:Message)=>{
+			(e: Message) => {
 				let char = e.messageContent as Charactor;
-				char.bgLayer.addChild(
-					this.bcr.enemySlectImg
-				);
+				if (char.camp == CharCamp.enemy) {
+					char.bgLayer.addChild(
+						this.bcr.enemySlectImg
+					);
+					this.selectEnemy = char;
+				}else{
+					char.bgLayer.addChild(
+						this.bcr.selfSelectImg
+					);
+					this.selectFriend = char;
+				}
 			},
 			this
 		);
@@ -224,7 +261,7 @@ class BattleScene extends IScene{
 		// 点击滤镜动画
 		MessageManager.Ins.addEventListener(
 			MessageType.TouchBegin,
-			(e:Message)=>{
+			(e: Message) => {
 				let obj = e.messageContent;
 				this.bcr.touchGlow.setHolderAnim(obj);
 			},
@@ -239,12 +276,12 @@ class BattleScene extends IScene{
 
 		MessageManager.Ins.addEventListener(
 			MessageType.LongTouchStart,
-			(e:Message)=>{
+			(e: Message) => {
 				let obj = e.messageContent;
 				popUpInfo.desc.text = obj.desc;
 				LayerManager.Ins.popUpLayer.addChild(popUpInfo);
-				if(obj instanceof Card){
-					
+				if (obj instanceof Card) {
+
 				}
 			},
 			this
@@ -252,30 +289,30 @@ class BattleScene extends IScene{
 
 		MessageManager.Ins.addEventListener(
 			MessageType.LongTouchEnd,
-			(e:Message)=>{
+			(e: Message) => {
 				let obj = e.messageContent;
 				LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
-				if(obj instanceof Card){
-					
+				if (obj instanceof Card) {
+
 				}
 			},
 			this
 		);
 	}
 
-	private readConfig(): void{
+	private readConfig(): void {
 
 	}
 
-	private async loadResource(){
+	private async loadResource() {
 
 	}
 
-	public update(){
+	public update() {
 		super.update();
 	}
 
-	public release(){
+	public release() {
 		super.release();
 		this.dbManager.release();
 		this.dbManager = null;
@@ -289,7 +326,7 @@ class BattleScene extends IScene{
 
 		this.bcr.release();
 		this.bcr = null;
-		
+
 		// TODO 释放载入的美术资源
 	}
 }
@@ -298,7 +335,7 @@ class BattleScene extends IScene{
  * BattleScene 中所有的层列表
  * BattleScene Layer Names
  */
-enum BattleSLEnum{
+enum BattleSLEnum {
 	bgLayer,
 	CharLayer,
 	fgLayer,
@@ -310,6 +347,6 @@ enum BattleSLEnum{
  * BattleScene scene status enum
  * 
  */
-enum BattleSSEnum{
+enum BattleSSEnum {
 	BeforeSelect,
 }

@@ -12,6 +12,9 @@ var CardManager = (function () {
     }
     CardManager.prototype.useCard = function (e) {
         var card = e.messageContent;
+        card.skill.setCaster(card.caster);
+        card.skill.chooseTarget();
+        card.skill.useSkill();
         this.removeCard(card);
     };
     CardManager.prototype.distCardNormal = function () {

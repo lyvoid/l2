@@ -51,6 +51,8 @@ var BattleScene = (function (_super) {
          * 用户的卡牌
          */
         _this.cards = [];
+        _this.enemies = [];
+        _this.friends = [];
         return _this;
     }
     BattleScene.prototype.initial = function () {
@@ -58,7 +60,7 @@ var BattleScene = (function (_super) {
         this.dbManager = new DBManager();
         this.cardBoard = new CardBoard(this.cards);
         this.cardManager = new CardManager(this.cards, this.cardBoard);
-        // 实例化GameLayer的三个层
+        // 实例化GameLayer的层
         var gameLayer = LayerManager.Ins.gameLayer;
         gameLayer.addChildAt(new egret.DisplayObjectContainer(), BattleSLEnum.bgLayer);
         gameLayer.addChildAt(new egret.DisplayObjectContainer(), BattleSLEnum.CharLayer);
@@ -129,6 +131,15 @@ var BattleScene = (function (_super) {
                         img4.y = LayerManager.Ins.stageHeight - img4.height;
                         img4.alpha = 0.5;
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.fgLayer).addChild(img4);
+                        // 加火
+                        this.playerFireBoard = new FireBoard();
+                        LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.cardLayer).addChild(this.playerFireBoard);
+                        this.playerFireBoard.addFire();
+                        this.playerFireBoard.addFire();
+                        this.playerFireBoard.addFire();
+                        this.playerFireBoard.addFire();
+                        this.playerFireBoard.addFire();
+                        this.playerFireBoard.addFire();
                         chars = [];
                         for (i in [0, 1, 2, 3, 4, 5]) {
                             char1 = new Charactor("Dragon", this.dbManager);
@@ -139,6 +150,8 @@ var BattleScene = (function (_super) {
                         chars[0].row = CharRowType.backRow;
                         chars[0].position = CharPositionType.down;
                         chars[0].setPosition();
+                        this.selectEnemy = chars[0];
+                        chars[0].bgLayer.addChild(this.bcr.enemySlectImg);
                         chars[1].row = CharRowType.backRow;
                         chars[1].position = CharPositionType.up;
                         chars[1].setPosition();
@@ -158,6 +171,7 @@ var BattleScene = (function (_super) {
                             char = chars_1[_b];
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
                             charLayer.addChildAt(char, char.position * 1000);
+                            this.enemies.push(char);
                         }
                         chars = [];
                         for (i in [0, 1, 2, 3, 4, 5]) {
@@ -168,6 +182,8 @@ var BattleScene = (function (_super) {
                         chars[0].row = CharRowType.backRow;
                         chars[0].position = CharPositionType.down;
                         chars[0].setPosition();
+                        this.selectFriend = chars[0];
+                        chars[0].bgLayer.addChild(this.bcr.selfSelectImg);
                         chars[1].row = CharRowType.backRow;
                         chars[1].position = CharPositionType.up;
                         chars[1].setPosition();
@@ -184,6 +200,7 @@ var BattleScene = (function (_super) {
                             char = chars_2[_c];
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
                             charLayer.addChildAt(char, char.position * 1000);
+                            this.friends.push(char);
                         }
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer).addChild(this.cardBoard);
                         this.cardManager.distCardNormal();
@@ -197,7 +214,14 @@ var BattleScene = (function (_super) {
                         // 点击角色显示显示框
                         MessageManager.Ins.addEventListener(MessageType.ClickChar, function (e) {
                             var char = e.messageContent;
-                            char.bgLayer.addChild(_this.bcr.enemySlectImg);
+                            if (char.camp == CharCamp.enemy) {
+                                char.bgLayer.addChild(_this.bcr.enemySlectImg);
+                                _this.selectEnemy = char;
+                            }
+                            else {
+                                char.bgLayer.addChild(_this.bcr.selfSelectImg);
+                                _this.selectFriend = char;
+                            }
                         }, this);
                         // 点击滤镜动画
                         MessageManager.Ins.addEventListener(MessageType.TouchBegin, function (e) {
@@ -212,14 +236,12 @@ var BattleScene = (function (_super) {
                             popUpInfo.desc.text = obj.desc;
                             LayerManager.Ins.popUpLayer.addChild(popUpInfo);
                             if (obj instanceof Card) {
-                                console.log("card");
                             }
                         }, this);
                         MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, function (e) {
                             var obj = e.messageContent;
                             LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
                             if (obj instanceof Card) {
-                                console.log("card");
                             }
                         }, this);
                         return [2 /*return*/];

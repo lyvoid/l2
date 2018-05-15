@@ -1,6 +1,13 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
+/**
+ * 用于需要长按的对象，直接使用LongTouchUtil.bindLongTouch()来使用
+ * 一个时间点最多只有一个单位会触发长按，一旦有单位被touch就会屏蔽掉其他的bind的对象
+ * 一旦触发了长按会将遮罩层的touchenable=true，即屏蔽掉除了取消长按外的所有其他事件
+ * 触发长按事件时给全局消息管理器发送一个longtouchbegin消息
+ * 结束时发送longtouchend消息
+ */
 var LongTouchUtil = (function () {
     function LongTouchUtil() {
     }
@@ -32,7 +39,6 @@ var LongTouchUtil = (function () {
             // 加遮罩，防止二次触发
             LayerManager.Ins.maskLayer.touchEnabled = true;
             MessageManager.Ins.sendMessage(MessageType.LongTouchStart, _this);
-            console.log("long tap");
         }, this, 500);
     };
     /**
@@ -43,7 +49,6 @@ var LongTouchUtil = (function () {
     LongTouchUtil.onTouchFinish = function () {
         egret.clearTimeout(LongTouchUtil.touchBeginTime);
         LongTouchUtil.holderObj = null;
-        console.log("on Touch Finish");
     };
     /**
      * 如果移动到按住的物体外，存在两个情况，
@@ -54,7 +59,6 @@ var LongTouchUtil = (function () {
         MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
         LayerManager.Ins.maskLayer.touchEnabled = false;
         LongTouchUtil.holderObj = null;
-        console.log("on touch out ");
     };
     return LongTouchUtil;
 }());

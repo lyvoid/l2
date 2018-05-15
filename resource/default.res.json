@@ -9,7 +9,7 @@
 			"name": "assets"
 		},
 		{
-			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png",
+			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg",
 			"name": "battlecommon"
 		}
 	],
@@ -200,6 +200,26 @@
 			"type": "image",
 			"name": "infobg_png",
 			"scale9grid": "11,10,40,7"
+		},
+		{
+			"url": "battle/common/fireParticle.json",
+			"type": "json",
+			"name": "fireParticle_json"
+		},
+		{
+			"url": "battle/common/fireParticle.png",
+			"type": "image",
+			"name": "fireParticle_png"
+		},
+		{
+			"url": "battle/common/lifebar.jpg",
+			"type": "image",
+			"name": "lifebar_jpg"
+		},
+		{
+			"url": "battle/common/lifebarbg.jpg",
+			"type": "image",
+			"name": "lifebarbg_jpg"
 		}
 	]
 }
