@@ -50,7 +50,6 @@ var Charactor = (function (_super) {
         _this.addChild(lifebarBg);
         _this.addChild(lifebar);
         _this.lifeBar = lifebar;
-        _this.lifeBarBg = lifebarBg;
         return _this;
     }
     Object.defineProperty(Charactor.prototype, "desc", {
@@ -108,13 +107,11 @@ var Charactor = (function (_super) {
     };
     Charactor.prototype.setPosition = function () {
         this.y = 300 + 65 * this.position + Math.random() * 30;
-        this.scaleX *= this.camp;
+        this.armatureDisplay.scaleX *= this.camp;
         this.x = 120 + this.row * 130 + this.position * 20 + Math.random() * 10;
         if (this.camp == CharCamp.enemy) {
             this.x = LayerManager.Ins.stageWidth - this.x;
         }
-        this.lifeBar.scaleX *= this.camp;
-        this.lifeBarBg.scaleX *= this.camp;
     };
     Charactor.prototype.getPositon = function () {
         var y = 300 + 65 * this.position + Math.random() * 30;

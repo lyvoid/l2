@@ -92,7 +92,6 @@ class Main extends eui.UILayer {
         })
     }
 
-    private textfield: egret.TextField;
     /**
      * 创建场景界面
      * Create scene interface

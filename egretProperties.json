@@ -41,7 +41,7 @@
     },
     {
       "name":"particle", 
-      "path":"../lib/particle/libsrc/"
+      "path":"../lib/particle/"
     }
   ]
 }

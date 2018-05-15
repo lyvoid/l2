@@ -138,7 +138,7 @@ class Charactor extends egret.DisplayObjectContainer{
 
 	public setPosition(){
 		this.y = 300 + 65 * this.position + Math.random() * 30;
-		this.scaleX *= this.camp;
+		this.armatureDisplay.scaleX *= this.camp;
 		this.x = 120 + this.row * 130 + this.position * 20 + Math.random() * 10;
 		if (this.camp == CharCamp.enemy){
 			this.x = LayerManager.Ins.stageWidth - this.x;
