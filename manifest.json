@@ -1,0 +1,37 @@
+{
+	"initial": [
+		"libs/modules/egret/egret.js",
+		"libs/modules/egret/egret.web.js",
+		"libs/modules/eui/eui.js",
+		"libs/modules/assetsmanager/assetsmanager.js",
+		"libs/modules/tween/tween.js",
+		"libs/modules/game/game.js",
+		"libs/modules/dragonBones/dragonBones.js",
+		"libs/modules/socket/socket.js",
+		"libs/modules/promise/promise.js"
+	],
+	"game": [
+		"bin-debug/scenesystem/IScene.js",
+		"bin-debug/scenes/battlescene/BattleScene.js",
+		"bin-debug/Main.js",
+		"bin-debug/Platform.js",
+		"bin-debug/ThemeAdapter.js",
+		"bin-debug/common/LongTouchUtil.js",
+		"bin-debug/global/LayerManager.js",
+		"bin-debug/global/MessageManager.js",
+		"bin-debug/global/MessageType.js",
+		"bin-debug/global/Util.js",
+		"bin-debug/scenes/battlescene/BattleCommonResouce.js",
+		"bin-debug/LoadingUI.js",
+		"bin-debug/scenes/battlescene/Card.js",
+		"bin-debug/scenes/battlescene/CardBoard.js",
+		"bin-debug/scenes/battlescene/CardManager.js",
+		"bin-debug/scenes/battlescene/Charactor.js",
+		"bin-debug/scenes/battlescene/DBManager.js",
+		"bin-debug/scenes/battlescene/GlowFilterForTouch.js",
+		"bin-debug/scenes/UI/LongTouchInfo.js",
+		"bin-debug/scenes/UI/UIBattleScene.js",
+		"bin-debug/AssetAdapter.js",
+		"bin-debug/scenesystem/SceneManager.js"
+	]
+}

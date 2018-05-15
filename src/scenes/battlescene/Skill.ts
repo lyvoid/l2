@@ -1,0 +1,4 @@
+class Skill {
+	public constructor() {
+	}
+}
