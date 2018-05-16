@@ -22,12 +22,12 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 属性
 	 */
-	public attr: Attribute = new Attribute();
+	public attr: Attribute;
 
 	/**
 	 * 是否存活
 	 */
-	public isAlive: boolean = true;
+	public alive: boolean = true;
 
 	/**
 	 * 主动技能列表
@@ -70,6 +70,10 @@ class Character extends egret.DisplayObjectContainer {
 		// 载入龙骨动画
 		this.loadArmature(charactorName);
 
+		// 加属性
+		this.attr = new Attribute();
+		this.attr.char = this;
+
 		// 加血条
 		let lifebarBg = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
 		lifebarBg.alpha = 0.5;
@@ -87,30 +91,16 @@ class Character extends egret.DisplayObjectContainer {
 
 
 	public hurt(ht: Hurt): void {
-		if (!this.isAlive) {
-			return
-		}
-		let df = this.attr.df;
-		let harm = ht.hurtNumber - df;
-		if (harm < 0) {
-			harm = ht.hurtNumber / 10;
-		}
-
-		this.attr.chp -= harm;
-
-		if (this.attr.chp <= 0) {
-			this.isAlive = false;
-			this.attr.chp = 0;
-		}
+		ht.affect(this);
 	}
 
 	/**
 	 * 播放血条动画，血条在1s内从之前的状态到达当前血量的状态
 	 */
 	public lifeBarAnim() {
-		let lifeBarNewLen = 100 * this.attr.chp / this.attr.mhp;
+		let lifeBarNewLen = 100 * this.attr.curHp / this.attr.maxHp;
 		egret.Tween.get(this.lifeBar).to({
-			width: 100 * (this.attr.chp / this.attr.mhp),
+			width: 100 * (this.attr.curHp / this.attr.maxHp),
 		}, 1000);
 	}
 

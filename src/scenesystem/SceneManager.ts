@@ -8,7 +8,6 @@ class SceneManager{
 			return SceneManager.instance;
 		}
 		SceneManager.instance = new SceneManager();
-		SceneManager.instance.initial();
 		return SceneManager.instance;
 	}
 

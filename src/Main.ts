@@ -97,9 +97,14 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected createGameScene(): void {
-        this.stage.addChild(MessageManager.Ins);
+        // 在这里按照系统的启动顺序依次初始化
+
+        // 初始化MessageManager
+        MessageManager.Ins.initial(this.stage);
+        // 初始化LayerManager
         LayerManager.Ins.initial(this.stage);
-        SceneManager.Ins;
+        // 初始化SceneManager
+        SceneManager.Ins.initial();
 
     }
 }

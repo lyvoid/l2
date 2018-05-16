@@ -20,6 +20,11 @@ class MessageManager extends egret.DisplayObject{
 		return this.instance;
 	}
 
+	public initial(stage: egret.Stage): void{
+		// 将消息管理对象加入到stage中（需要加入stage才能发送与侦听touch事件）
+		stage.addChild(this);
+	}
+
 
 	public sendMessage(type: string, messageContent:any=null){
 		this.dispatchEvent(new Message(messageContent, type));

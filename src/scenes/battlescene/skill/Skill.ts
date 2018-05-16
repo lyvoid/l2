@@ -20,7 +20,7 @@ class SkillTmp extends IManualSkill {
 			y: newP.y
 		}, 200);
 		for (let char of this.targets) {
-			if (!char.isAlive) {
+			if (!char.alive) {
 				try {
 					char.parent.removeChild(char);
 				} catch (e) { }

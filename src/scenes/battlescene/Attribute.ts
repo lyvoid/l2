@@ -1,33 +1,49 @@
 class Attribute {
 	
+	/**
+	 * 攻击
+	 */
 	public ap: number = 100;
-	public df: number = 60;
-	public mhp: number = 200;
-	public chp: number = 200;
+	/**
+	 * 物理防御
+	 */
+	public arPys: number = 60;
+	/**
+	 * 魔法防御
+	 */
+	public arMagic: number = 60;
+	/**
+	 * 最大生命
+	 */
+	public maxHp: number = 200;
+	/**
+	 * 当前生命
+	 */
+	public curHp: number = 200;
+	/**
+	 * 穿甲
+	 */
+	public pierceAr: number = 2;
+	/**
+	 * 护盾
+	 */
 	public shield: number = 100;
+	/**
+	 * 最大护盾
+	 */
+	public maxShield: number = 100;
+	/**
+	 * 隶属单位
+	 */
 	public char: Character;
 
 	public toString(): string {
-		return `ap:${this.ap}\n` +
-			`df:${this.df}\nhp:${this.chp}/${this.mhp}`;
-	}
-
-	/**
-	 * 受到伤害
-	 */
-	public harm(hurt: Hurt): void{
-		let df = this.df;
-		let harm = hurt.hurtNumber - df;
-		if (harm < 0) {
-			harm = hurt.hurtNumber / 10;
-		}
-
-		this.chp -= harm;
-
-		if (this.chp <= 0) {
-			this.char.isAlive = false;
-			this.chp = 0;
-		}
+		return ''+
+`生命:${this.curHp}/${this.maxHp}
+护盾:${this.shield}/${this.maxShield}
+攻击:${this.ap}
+物理护甲:${this.arPys}
+魔法护甲:${this.arMagic}`;
 	}
 
 }
