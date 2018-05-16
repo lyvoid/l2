@@ -8,16 +8,20 @@
 class LongTouchUtil {
 	private static touchBeginTime;
 	private static holderObj; // 一个时间点只能有一个对象进入长按逻辑
-	public static bindLongTouch(obj: egret.EventDispatcher, thisObj:any): void{
+
+	/**
+	 * 绑定长按对象，obj长按后发出 Type为 LongTouchBegin，内容为thisObj的Message
+	 */
+	public static bindLongTouch(obj: egret.EventDispatcher, thisObj: any): void{
 		
 		obj.addEventListener(
 			egret.TouchEvent.TOUCH_BEGIN,
-			this.onTouchStart,
+			this.onTouchBegin,
 			thisObj
 		);
 		obj.addEventListener(
 			egret.TouchEvent.TOUCH_END,
-			this.onTouchFinish,
+			this.onTouchEnd,
 			thisObj
 		);
 		obj.addEventListener(
@@ -30,12 +34,12 @@ class LongTouchUtil {
 	public static unbindLongTouch(obj: egret.EventDispatcher, thisObj:any): void{
 		obj.removeEventListener(
 			egret.TouchEvent.TOUCH_BEGIN,
-			this.onTouchStart,
+			this.onTouchBegin,
 			thisObj
 		);
 		obj.removeEventListener(
 			egret.TouchEvent.TOUCH_END,
-			this.onTouchFinish,
+			this.onTouchEnd,
 			thisObj
 		);
 		obj.removeEventListener(
@@ -49,7 +53,7 @@ class LongTouchUtil {
 	 * 绑定了长按事件的对象的TouchBegin事件侦听中存在该事件
 	 * 会将holder置为侦听时设置的thisobj的指向（一般为被点击的对象自己）
 	 */
-	private static onTouchStart(): void{
+	private static onTouchBegin(): void{
 		// 如果存在占用对象则直接退出
 		if (LongTouchUtil.holderObj){
 			return
@@ -76,7 +80,7 @@ class LongTouchUtil {
 	 * 仅仅需要清空一下计数器即可
 	 * 如果触发了长按，肯定不存在会有TOUCH_END消息发出来
 	 */
-	public static onTouchFinish(): void{
+	private static onTouchEnd(): void{
 		egret.clearTimeout(LongTouchUtil.touchBeginTime); 
 		LongTouchUtil.holderObj = null;
 	}
@@ -85,7 +89,7 @@ class LongTouchUtil {
 	 * 如果移动到按住的物体外，存在两个情况，
 	 * 已经触发长按和未触发长按，可以按照相同逻辑处理
 	 */
-	public static onTouchOut(): void{
+	private static onTouchOut(): void{
 		egret.clearTimeout(LongTouchUtil.touchBeginTime); 
 		MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
 		LayerManager.Ins.maskLayer.touchEnabled = false;

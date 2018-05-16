@@ -10,16 +10,14 @@ r.prototype = e.prototype, t.prototype = new r();
 };
 var SkillTmp = (function (_super) {
     __extends(SkillTmp, _super);
-    function SkillTmp() {
+    function SkillTmp(caster) {
         var _this = _super.call(this) || this;
-        _this.target = [];
         _this.targetType = TargetType.SpecialEnemy;
         _this.fireNeed = 2;
+        _this.desc = "对指定单位造成攻击的伤害";
+        _this.caster = caster;
         return _this;
     }
-    SkillTmp.prototype.setCaster = function (char) {
-        this.caster = char;
-    };
     SkillTmp.prototype.casterAniEnd = function () {
         this.caster.armatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
         var newP = this.caster.getPositon();

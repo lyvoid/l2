@@ -242,14 +242,29 @@ var BattleScene = (function (_super) {
                                 }, 650).to({
                                     alpha: 1
                                 }, 650);
+                                card.skill.chooseTarget();
+                                for (var _i = 0, _a = card.skill.target; _i < _a.length; _i++) {
+                                    var target = _a[_i];
+                                    egret.Tween.get(target.lifeBar, { loop: true }).to({
+                                        alpha: 0.2
+                                    }, 650).to({
+                                        alpha: 1
+                                    }, 650);
+                                }
                             }
                         }, this);
                         MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, function (e) {
                             var obj = e.messageContent;
                             LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
                             if (obj instanceof Card) {
-                                egret.Tween.removeTweens(obj.caster.armatureDisplay);
+                                var card = obj;
+                                egret.Tween.removeTweens(card.caster.armatureDisplay);
                                 obj.caster.armatureDisplay.alpha = 1;
+                                for (var _i = 0, _a = card.skill.target; _i < _a.length; _i++) {
+                                    var target = _a[_i];
+                                    egret.Tween.removeTweens(target.lifeBar);
+                                    target.lifeBar.alpha = 1;
+                                }
                             }
                         }, this);
                         return [2 /*return*/];

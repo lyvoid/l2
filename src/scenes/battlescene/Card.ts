@@ -1,10 +1,12 @@
 class Card extends egret.DisplayObjectContainer {
 
-	public desc: string = "对目标造成攻击的伤害";
-	public caster: Charactor;
-	public skill: SkillTmp = new SkillTmp();
+	public caster: Character;
+	public skill: IManualSkill;
+	public get desc():string{
+		return this.skill.desc;
+	}
 
-	public constructor() {
+	public constructor(caster: Character) {
 		super();
 		this.width = 80;
 		this.height = 130;

@@ -5,7 +5,7 @@ var ISkill = (function () {
     function ISkill() {
     }
     /**
-     * 根据目标类型，填充目标容器
+     * 根据目标类型，填充目标容器（主要目标）
      */
     ISkill.prototype.chooseTarget = function () {
         var scene = SceneManager.Ins.curScene;
@@ -45,6 +45,9 @@ var ISkill = (function () {
                     this.target = [scene.selectFriend];
                 }
                 break;
+            case TargetType.NoTarget:
+                this.target = [];
+                break;
         }
     };
     return ISkill;
@@ -56,5 +59,6 @@ var TargetType;
     TargetType[TargetType["AllFriend"] = 1] = "AllFriend";
     TargetType[TargetType["AllEnemy"] = 2] = "AllEnemy";
     TargetType[TargetType["SpecialFriend"] = 3] = "SpecialFriend";
-    TargetType[TargetType["SpecialEnemy"] = 4] = "SpecialEnemy"; // 选定的敌方
+    TargetType[TargetType["SpecialEnemy"] = 4] = "SpecialEnemy";
+    TargetType[TargetType["NoTarget"] = 5] = "NoTarget"; // 无目标
 })(TargetType || (TargetType = {}));

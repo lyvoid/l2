@@ -12,7 +12,6 @@ var Card = (function (_super) {
     __extends(Card, _super);
     function Card() {
         var _this = _super.call(this) || this;
-        _this.desc = "对目标造成攻击的伤害";
         _this.skill = new SkillTmp();
         _this.width = 80;
         _this.height = 130;
@@ -23,6 +22,13 @@ var Card = (function (_super) {
         _this.initial();
         return _this;
     }
+    Object.defineProperty(Card.prototype, "desc", {
+        get: function () {
+            return this.skill.desc;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Card.prototype.sendUseCardMessage = function () {
         MessageManager.Ins.sendMessage(MessageType.UseCard, this);
     };

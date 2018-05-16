@@ -13,11 +13,11 @@ class BattleScene extends IScene {
 	public cardManager: CardManager;
 	public bcr: BattleCR;
 
-	public enemies: Charactor[] = [];
-	public friends: Charactor[] = [];
+	public enemies: Character[] = [];
+	public friends: Character[] = [];
 
-	public selectEnemy: Charactor;
-	public selectFriend: Charactor;
+	public selectedEnemy: Character;
+	public selectedFriend: Character;
 	
 	public playerFireBoard: FireBoard;
 
@@ -131,38 +131,38 @@ class BattleScene extends IScene {
 
 		// TODO 初始化游戏角色及UI
 
-		let chars: Charactor[] = [];
+		let chars: Character[] = [];
 		for (let i in [0, 1, 2, 3, 4, 5]) {
-			let char1 = new Charactor("Dragon", this.dbManager);
+			let char1 = new Character("Dragon");
 			chars[i] = char1;
 			char1.armatureDisplay.animation.play("idle", 0);
 			char1.camp = CharCamp.enemy;
 		}
-		chars[0].row = CharRowType.backRow;
-		chars[0].position = CharPositionType.down;
+		chars[0].col = CharColType.backRow;
+		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
-		this.selectEnemy = chars[0];
+		this.selectedEnemy = chars[0];
 		chars[0].bgLayer.addChild(this.bcr.enemySlectImg);
 
 
-		chars[1].row = CharRowType.backRow;
-		chars[1].position = CharPositionType.up;
+		chars[1].col = CharColType.backRow;
+		chars[1].row = CharRowType.up;
 		chars[1].setPosition();
 
-		chars[2].row = CharRowType.midRow;
-		chars[2].position = CharPositionType.up;
+		chars[2].col = CharColType.midRow;
+		chars[2].row = CharRowType.up;
 		chars[2].setPosition();
 
-		chars[3].row = CharRowType.midRow;
-		chars[3].position = CharPositionType.down;
+		chars[3].col = CharColType.midRow;
+		chars[3].row = CharRowType.down;
 		chars[3].setPosition();
 
-		chars[4].row = CharRowType.frontRow;
-		chars[4].position = CharPositionType.down;
+		chars[4].col = CharColType.frontRow;
+		chars[4].row = CharRowType.down;
 		chars[4].setPosition();
 
-		chars[5].row = CharRowType.frontRow;
-		chars[5].position = CharPositionType.up;
+		chars[5].col = CharColType.frontRow;
+		chars[5].row = CharRowType.up;
 		chars[5].setPosition();
 
 		for (let char of chars) {
@@ -170,37 +170,37 @@ class BattleScene extends IScene {
 				LayerManager.Ins.gameLayer,
 				BattleSLEnum.CharLayer
 			);
-			charLayer.addChildAt(char, char.position * 1000);
+			charLayer.addChildAt(char, char.row * 1000);
 			this.enemies.push(char);
 		}
 
 		chars = [];
 		for (let i in [0, 1, 2, 3, 4, 5]) {
-			let char1 = new Charactor("Swordsman", this.dbManager);
+			let char1 = new Character("Swordsman");
 			chars[i] = char1;
 			char1.armatureDisplay.animation.play("idle", 0);
 		}
-		chars[0].row = CharRowType.backRow;
-		chars[0].position = CharPositionType.down;
+		chars[0].col = CharColType.backRow;
+		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
-		this.selectFriend = chars[0];
+		this.selectedFriend = chars[0];
 		chars[0].bgLayer.addChild(this.bcr.selfSelectImg);
 
 
-		chars[1].row = CharRowType.backRow;
-		chars[1].position = CharPositionType.up;
+		chars[1].col = CharColType.backRow;
+		chars[1].row = CharRowType.up;
 		chars[1].setPosition();
 
-		chars[2].row = CharRowType.midRow;
-		chars[2].position = CharPositionType.up;
+		chars[2].col = CharColType.midRow;
+		chars[2].row = CharRowType.up;
 		chars[2].setPosition();
 
-		chars[3].row = CharRowType.midRow;
-		chars[3].position = CharPositionType.down;
+		chars[3].col = CharColType.midRow;
+		chars[3].row = CharRowType.down;
 		chars[3].setPosition();
 
-		chars[4].row = CharRowType.frontRow;
-		chars[4].position = CharPositionType.mid;
+		chars[4].col = CharColType.frontRow;
+		chars[4].row = CharRowType.mid;
 		chars[4].setPosition();
 
 		for (let char of chars) {
@@ -208,7 +208,7 @@ class BattleScene extends IScene {
 				LayerManager.Ins.gameLayer,
 				BattleSLEnum.CharLayer
 			);
-			charLayer.addChildAt(char, char.position * 1000);
+			charLayer.addChildAt(char, char.row * 1000);
 			this.friends.push(char);
 		}
 
@@ -242,17 +242,17 @@ class BattleScene extends IScene {
 		MessageManager.Ins.addEventListener(
 			MessageType.ClickChar,
 			(e: Message) => {
-				let char = e.messageContent as Charactor;
+				let char = e.messageContent as Character;
 				if (char.camp == CharCamp.enemy) {
 					char.bgLayer.addChild(
 						this.bcr.enemySlectImg
 					);
-					this.selectEnemy = char;
+					this.selectedEnemy = char;
 				}else{
 					char.bgLayer.addChild(
 						this.bcr.selfSelectImg
 					);
-					this.selectFriend = char;
+					this.selectedFriend = char;
 				}
 			},
 			this
@@ -295,6 +295,24 @@ class BattleScene extends IScene {
 						},
 						650
 					);
+
+					card.skill.chooseTarget();
+					for(let target of card.skill.targets){
+						egret.Tween.get(
+							target.lifeBar, 
+							{loop:true}
+						).to(
+							{
+								alpha: 0.2
+							},
+							650
+						).to(
+							{
+								alpha: 1
+							},
+							650
+						);
+					}
 				}
 			},
 			this
@@ -306,8 +324,13 @@ class BattleScene extends IScene {
 				let obj = e.messageContent;
 				LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
 				if (obj instanceof Card) {
-					egret.Tween.removeTweens(obj.caster.armatureDisplay);
+					let card = obj as Card;
+					egret.Tween.removeTweens(card.caster.armatureDisplay);
 					obj.caster.armatureDisplay.alpha = 1;
+					for(let target of card.skill.targets){
+						egret.Tween.removeTweens(target.lifeBar);
+						target.lifeBar.alpha = 1;
+					}
 				}
 			},
 			this
