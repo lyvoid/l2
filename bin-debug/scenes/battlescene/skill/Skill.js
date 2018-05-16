@@ -59,7 +59,7 @@ var SkillTmp = (function (_super) {
             var t = _this.target[0];
             egret.Tween.get(t.lifeBar).to({
                 width: 100 * (t.attr.chp / t.attr.mhp),
-            }, 1000).call(function () { console.log(t.lifeBar.x); });
+            }, 1000);
             _this.caster.armatureDisplay.animation.play("attack1_+1", 1);
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });

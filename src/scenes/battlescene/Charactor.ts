@@ -69,12 +69,12 @@ class Charactor extends egret.DisplayObjectContainer{
 		if (harm < 0){
 			harm = ht.hurtNumber / 10;
 		}
+		
 		this.attr.chp -= harm;
 		
 		if (this.attr.chp <= 0){
 			this.isAlive = false;
 			this.attr.chp = 0;
-			this.parent.removeChild(this);
 		}
 	}
 

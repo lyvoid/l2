@@ -82,7 +82,6 @@ var Charactor = (function (_super) {
         if (this.attr.chp <= 0) {
             this.isAlive = false;
             this.attr.chp = 0;
-            this.parent.removeChild(this);
         }
     };
     Charactor.prototype.loadArmature = function (charactorName, dbManager) {

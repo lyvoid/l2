@@ -4,11 +4,14 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var ISkill = (function () {
     function ISkill() {
     }
+    /**
+     * 根据目标类型，填充目标容器
+     */
     ISkill.prototype.chooseTarget = function () {
         var scene = SceneManager.Ins.curScene;
         switch (this.targetType) {
             case TargetType.Self:
-                this.target.push(this.caster);
+                this.target = [this.caster];
                 break;
             case TargetType.AllFriend:
                 if (this.caster.camp == CharCamp.enemy) {
@@ -28,18 +31,18 @@ var ISkill = (function () {
                 break;
             case TargetType.SpecialEnemy:
                 if (this.caster.camp == CharCamp.enemy) {
-                    this.target.push(this.caster.randomTarget());
+                    this.target = [this.caster.randomTarget()];
                 }
                 else {
-                    this.target.push(scene.selectEnemy);
+                    this.target = [scene.selectEnemy];
                 }
                 break;
             case TargetType.SpecialFriend:
                 if (this.caster.camp == CharCamp.enemy) {
-                    this.target.push(this.caster.randomFriend());
+                    this.target = [this.caster.randomFriend()];
                 }
                 else {
-                    this.target.push(scene.selectFriend);
+                    this.target = [scene.selectFriend];
                 }
                 break;
         }
@@ -53,5 +56,5 @@ var TargetType;
     TargetType[TargetType["AllFriend"] = 1] = "AllFriend";
     TargetType[TargetType["AllEnemy"] = 2] = "AllEnemy";
     TargetType[TargetType["SpecialFriend"] = 3] = "SpecialFriend";
-    TargetType[TargetType["SpecialEnemy"] = 4] = "SpecialEnemy";
+    TargetType[TargetType["SpecialEnemy"] = 4] = "SpecialEnemy"; // 选定的敌方
 })(TargetType || (TargetType = {}));

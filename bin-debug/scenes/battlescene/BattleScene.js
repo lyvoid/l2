@@ -236,12 +236,20 @@ var BattleScene = (function (_super) {
                             popUpInfo.desc.text = obj.desc;
                             LayerManager.Ins.popUpLayer.addChild(popUpInfo);
                             if (obj instanceof Card) {
+                                var card = obj;
+                                egret.Tween.get(card.caster.armatureDisplay, { loop: true }).to({
+                                    alpha: 0.2
+                                }, 650).to({
+                                    alpha: 1
+                                }, 650);
                             }
                         }, this);
                         MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, function (e) {
                             var obj = e.messageContent;
                             LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
                             if (obj instanceof Card) {
+                                egret.Tween.removeTweens(obj.caster.armatureDisplay);
+                                obj.caster.armatureDisplay.alpha = 1;
                             }
                         }, this);
                         return [2 /*return*/];

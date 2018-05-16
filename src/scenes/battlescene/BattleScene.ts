@@ -281,7 +281,20 @@ class BattleScene extends IScene {
 				popUpInfo.desc.text = obj.desc;
 				LayerManager.Ins.popUpLayer.addChild(popUpInfo);
 				if (obj instanceof Card) {
-
+					let card = (obj as Card);
+					egret.Tween.get(
+						card.caster.armatureDisplay,
+						{loop: true}
+					).to({
+						alpha: 0.2
+						},
+						650
+					).to(
+						{
+							alpha: 1
+						},
+						650
+					);
 				}
 			},
 			this
@@ -293,7 +306,8 @@ class BattleScene extends IScene {
 				let obj = e.messageContent;
 				LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
 				if (obj instanceof Card) {
-
+					egret.Tween.removeTweens(obj.caster.armatureDisplay);
+					obj.caster.armatureDisplay.alpha = 1;
 				}
 			},
 			this
