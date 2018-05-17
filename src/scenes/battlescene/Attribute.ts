@@ -43,7 +43,8 @@ class Attribute {
 护盾:${this.shield}/${this.maxShield}
 攻击:${this.ap}
 物理护甲:${this.arPys}
-魔法护甲:${this.arMagic}`;
+魔法护甲:${this.arMagic}
+穿甲:${this.pierceAr}`;
 	}
 
 }

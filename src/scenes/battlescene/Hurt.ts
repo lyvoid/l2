@@ -34,7 +34,7 @@ class Hurt {
 	/**
 	 * 施加伤害
 	 */
-	public affect(target: Character): void {
+	public affect(target: Character): AttrChange {
 
 		let mm = MessageManager.Ins;
 
@@ -55,9 +55,12 @@ class Hurt {
 
 		// 处理倍率
 		harm *= this.rate;
+		harm = Math.floor(harm);
 
+		let isAliveChange = false;
 		// 处理治疗生命
 		if (this.hurtType == HurtType.HealHp && (target.alive || this.isResurgence)) {
+			isAliveChange = !target.alive;
 			let newHp = targetAttr.curHp + harm;
 			newHp = newHp > targetAttr.maxHp ? targetAttr.maxHp : newHp;
 			let healValue = newHp - targetAttr.curHp;
@@ -66,21 +69,25 @@ class Hurt {
 				MessageType.HealHp,
 				[this.fromChar, target, healValue]
 			);
-			// 如果角色处于死亡状态，执行复活
-			if (!target.alive) {
-				target.alive = true;
+
+			// 发送复活信息
+			if (isAliveChange) {
 				mm.sendMessage(
 					MessageType.Resurgence,
 					target
 				);
 			}
 
-			return;
+			return {
+				hp: newHp, 
+				alive: target.alive,
+				isAliveChange: isAliveChange
+			};
 		}
 
 		// 非治疗状态下，对已死亡单位无效
 		if (!target.alive){
-			return;
+			return {};
 		}
 
 		// 处理增加护盾
@@ -93,7 +100,7 @@ class Hurt {
 				MessageType.HealShield,
 				[this.fromChar, target, healValue]
 			);
-			return
+			return {shield: newShield};
 		}
 
 		// 处理破盾
@@ -111,7 +118,7 @@ class Hurt {
 					MessageType.HarmShield,
 					[this.fromChar, target, harm]
 				);
-				return;
+				return {shield: targetAttr.shield};
 			}
 			mm.sendMessage(
 				MessageType.HarmShield,
@@ -124,21 +131,21 @@ class Hurt {
 		// 伤害到hp
 		let newTargetHp = targetAttr.curHp - harmRemain;
 		// 生命归零，角色死亡
-		if (newTargetHp < 0) {
+		if (newTargetHp <= 0) {
 			newTargetHp = 0;
-			target.alive = false;
+			isAliveChange = true;
 			// 发送角色死亡消息
 			mm.sendMessage(
 				MessageType.CharDie,
 				target
 			);
-
 		}
 		mm.sendMessage(
 			MessageType.HarmHp,
 			[this.fromChar, target, targetAttr.curHp - newTargetHp]
 		);
 		targetAttr.curHp = newTargetHp;
+		return {shield: targetAttr.shield, hp:newTargetHp, alive: target.alive, isAliveChange: isAliveChange};
 
 	}
 }

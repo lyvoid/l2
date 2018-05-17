@@ -22,14 +22,16 @@ class Character extends egret.DisplayObjectContainer {
 	}
 
 	/**
+	 * 是否存活
+	 */
+	public get alive(): boolean{
+		return this.attr.curHp != 0;
+	}
+
+	/**
 	 * 属性
 	 */
 	public attr: Attribute;
-
-	/**
-	 * 是否存活
-	 */
-	public alive: boolean = true;
 
 	/**
 	 * 主动技能列表
@@ -102,10 +104,10 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 播放血条动画，血条在1s内从之前的状态到达当前血量的状态
 	 */
-	public lifeBarAnim() {
-		let lifeBarNewLen = 100 * this.attr.curHp / this.attr.maxHp;
-		egret.Tween.get(this.lifeBarFg).to({
-			width: 100 * (this.attr.curHp / this.attr.maxHp),
+	public lifeBarAnim(newHp: number): egret.Tween {
+		let lifeBarNewLen = 100 * newHp / this.attr.maxHp;
+		return egret.Tween.get(this.lifeBarFg).to({
+			width: lifeBarNewLen,
 		}, 1000, egret.Ease.quintOut);
 	}
 
@@ -176,14 +178,23 @@ class Character extends egret.DisplayObjectContainer {
 		}
 	}
 
+	/**
+	 * 隐藏生命条
+	 */
 	public lifeBarHide(): void {
 		this.lifeBar.visible = false;
 	}
 
+	/**
+	 * 显示生命条
+	 */
 	public lifeBarShow(): void {
 		this.lifeBar.visible = true;
 	}
 
+	/**
+	 * 生命条开始闪烁
+	 */
 	public lifeBarBlink(): void {
 		egret.Tween.get(
 			this.lifeBar,
@@ -193,6 +204,9 @@ class Character extends egret.DisplayObjectContainer {
 			).to({ alpha: 1 }, 300);
 	}
 
+	/**
+	 * 停止生命条闪烁
+	 */
 	public lifeBarUnBlink(): void {
 		egret.Tween.removeTweens(this.lifeBar);
 		this.lifeBar.alpha = 1;
@@ -224,6 +238,9 @@ class Character extends egret.DisplayObjectContainer {
 		return { x: x, y: y }
 	}
 
+	/**
+	 * db动画闪烁
+	 */
 	public armatureBlink(): void {
 		egret.Tween.get(
 			this.armatureDisplay,
@@ -233,6 +250,14 @@ class Character extends egret.DisplayObjectContainer {
 			).to({ alpha: 1 }, 300);
 	}
 
+	/**
+	 * 获取对比后的属性改动信息
+	 */
+
+
+	/**
+	 * db动画停止闪烁
+	 */
 	public armatureUnBlink() : void{
 		egret.Tween.removeTweens(this.armatureDisplay);
 	}

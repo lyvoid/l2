@@ -29,11 +29,13 @@ var SkillTmp = (function (_super) {
         if (!target.alive) {
             return;
         }
-        var scene = SceneManager.Ins.curScene;
-        // 确实需要释放时，将演出加到预演出列表
-        scene.performQue.push(this);
         // 运行实际效果
-        this.affect();
+        var affectResult = this.affect();
+        // 确实需要释放时，将演出加到预演出列表
+        var scene = SceneManager.Ins.curScene;
+        scene.performQue.push([this, affectResult]);
+        // 没次加入新的表现序列都调用一次应该是没错的
+        MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
         // 运行在在SkillToDo中的技能
         if (scene.skillTodoQue.length > 0) {
             scene.skillTodoQue.pop().useSkill();
@@ -41,20 +43,37 @@ var SkillTmp = (function (_super) {
     };
     SkillTmp.prototype.affect = function () {
         var hurt = new Hurt(HurtType.Pysic, this.caster);
+        var affectResult = [];
         for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
             var char = _a[_i];
-            hurt.affect(char);
+            var change = hurt.affect(char);
+            affectResult.push([char, change]);
         }
+        return affectResult;
     };
-    SkillTmp.prototype.performance = function () {
+    SkillTmp.prototype.performance = function (affectResult) {
         var _this = this;
-        console.log(this.desc);
         egret.Tween.get(this.caster).to({
             x: this.targets[0].x + 100 * this.targets[0].camp,
             y: this.targets[0].y + 20
         }, 200).call(function () {
-            var t = _this.targets[0];
-            t.lifeBarAnim();
+            var _loop_1 = function (result) {
+                var target = result[0];
+                var change = result[1];
+                if (change.hp != null) {
+                    target.lifeBarAnim(change.hp).call(
+                    // 血条变化完之后如果此次人物还死亡了的话
+                    function () {
+                        if (!change.alive && change.isAliveChange) {
+                            target.addChild(new eui.Label("死亡"));
+                        }
+                    });
+                }
+            };
+            for (var _i = 0, affectResult_1 = affectResult; _i < affectResult_1.length; _i++) {
+                var result = affectResult_1[_i];
+                _loop_1(result);
+            }
             _this.caster.armatureDisplay.animation.play("attack1_+1", 1);
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });
@@ -67,15 +86,6 @@ var SkillTmp = (function (_super) {
             x: newP.x,
             y: newP.y
         }, 200).call(function () { return MessageManager.Ins.sendMessage(MessageType.PerformanceEnd); });
-        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
-            var char = _a[_i];
-            if (!char.alive) {
-                try {
-                    char.parent.removeChild(char);
-                }
-                catch (e) { }
-            }
-        }
     };
     return SkillTmp;
 }(IManualSkill));

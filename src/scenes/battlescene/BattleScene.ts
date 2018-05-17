@@ -19,7 +19,7 @@ class BattleScene extends IScene {
 	public popUpInfoWin: LongTouchInfo;
 	public skillManualPool: IManualSkill[];
 
-	public performQue: Queue<IManualSkill>;
+	public performQue: Queue<[IManualSkill, any]>;
 	public skillTodoQue: Queue<IManualSkill>;
 
 	public initial() {
@@ -29,7 +29,7 @@ class BattleScene extends IScene {
 		this.skillManualPool = [];
 		this.dbManager = new DBManager();
 		this.cardBoard = new CardBoard();
-		this.performQue = new Queue<IManualSkill>();
+		this.performQue = new Queue<[IManualSkill, any]>();
 		this.skillTodoQue = new Queue<IManualSkill>();
 
 		let popUpInfo = new LongTouchInfo();
@@ -342,7 +342,10 @@ class BattleScene extends IScene {
 			return;
 		}
 		this.isPerformance = true;
-		this.performQue.pop().performance();
+		let skill: IManualSkill;
+		let affectResult:any;
+		[skill, affectResult] = this.performQue.pop();
+		skill.performance(affectResult);
 	}
 
 	private onPerformChainStart(): void{
@@ -351,7 +354,10 @@ class BattleScene extends IScene {
 			return;
 		}
 		this.isPerformance = true;
-		this.performQue.pop().performance();
+		let skill: IManualSkill;
+		let affectResult:any;
+		[skill, affectResult] = this.performQue.pop();
+		skill.performance(affectResult);
 	}
 
 	private readConfig(): void {

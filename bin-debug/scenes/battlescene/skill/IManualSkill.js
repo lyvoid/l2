@@ -22,6 +22,8 @@ var IManualSkill = (function () {
     };
     /**
      * 根据目标类型，填充目标容器（主要目标）
+     * 这里选出的目标会在玩家手动模式释放卡牌的时候使用
+     * 最好重写
      */
     IManualSkill.prototype.manualChooseTarget = function () {
         var scene = SceneManager.Ins.curScene;
@@ -48,6 +50,10 @@ var IManualSkill = (function () {
                 break;
         }
     };
+    /**
+     * 这里选出的目标主要用在自动模式下
+     * 敌方的所有选择均使用这个
+     */
     IManualSkill.prototype.autoChooseTarget = function () {
         this.setCampChar();
         switch (this.targetType) {
@@ -77,6 +83,8 @@ var IManualSkill = (function () {
     IManualSkill.prototype.release = function () {
         this.caster = null;
         this.targets = null;
+        this.friends = null;
+        this.enemies = null;
     };
     return IManualSkill;
 }());

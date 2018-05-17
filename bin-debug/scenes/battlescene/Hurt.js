@@ -43,23 +43,29 @@ var Hurt = (function () {
         }
         // 处理倍率
         harm *= this.rate;
+        harm = Math.floor(harm);
+        var isAliveChange = false;
         // 处理治疗生命
         if (this.hurtType == HurtType.HealHp && (target.alive || this.isResurgence)) {
+            isAliveChange = !target.alive;
             var newHp = targetAttr.curHp + harm;
             newHp = newHp > targetAttr.maxHp ? targetAttr.maxHp : newHp;
             var healValue = newHp - targetAttr.curHp;
             targetAttr.curHp = newHp;
             mm.sendMessage(MessageType.HealHp, [this.fromChar, target, healValue]);
-            // 如果角色处于死亡状态，执行复活
-            if (!target.alive) {
-                target.alive = true;
+            // 发送复活信息
+            if (isAliveChange) {
                 mm.sendMessage(MessageType.Resurgence, target);
             }
-            return;
+            return {
+                hp: newHp,
+                alive: target.alive,
+                isAliveChange: isAliveChange
+            };
         }
         // 非治疗状态下，对已死亡单位无效
         if (!target.alive) {
-            return;
+            return {};
         }
         // 处理增加护盾
         if (this.hurtType == HurtType.HealShield) {
@@ -68,7 +74,7 @@ var Hurt = (function () {
             var healValue = newShield - targetAttr.shield;
             targetAttr.shield = newShield;
             mm.sendMessage(MessageType.HealShield, [this.fromChar, target, healValue]);
-            return;
+            return { shield: newShield };
         }
         // 处理破盾
         if (targetAttr.shield > 0 && this.isDoubleShield) {
@@ -81,7 +87,7 @@ var Hurt = (function () {
             if (harmRemain_1 <= 0) {
                 targetAttr.shield = -harmRemain_1;
                 mm.sendMessage(MessageType.HarmShield, [this.fromChar, target, harm]);
-                return;
+                return { shield: targetAttr.shield };
             }
             mm.sendMessage(MessageType.HarmShield, [this.fromChar, target, targetAttr.shield]);
             targetAttr.shield = 0;
@@ -89,14 +95,15 @@ var Hurt = (function () {
         // 伤害到hp
         var newTargetHp = targetAttr.curHp - harmRemain;
         // 生命归零，角色死亡
-        if (newTargetHp < 0) {
+        if (newTargetHp <= 0) {
             newTargetHp = 0;
-            target.alive = false;
+            isAliveChange = true;
             // 发送角色死亡消息
             mm.sendMessage(MessageType.CharDie, target);
         }
         mm.sendMessage(MessageType.HarmHp, [this.fromChar, target, targetAttr.curHp - newTargetHp]);
         targetAttr.curHp = newTargetHp;
+        return { shield: targetAttr.shield, hp: newTargetHp, alive: target.alive, isAliveChange: isAliveChange };
     };
     return Hurt;
 }());

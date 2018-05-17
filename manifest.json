@@ -24,6 +24,7 @@
 		"bin-debug/global/Queue.js",
 		"bin-debug/global/ToastInfo.js",
 		"bin-debug/global/Util.js",
+		"bin-debug/scenes/battlescene/AttrChange.js",
 		"bin-debug/scenes/battlescene/Attribute.js",
 		"bin-debug/scenes/battlescene/BattleCommonResouce.js",
 		"bin-debug/LoadingUI.js",

@@ -16,10 +16,6 @@ var Character = (function (_super) {
     function Character(charactorName) {
         var _this = _super.call(this) || this;
         /**
-         * 是否存活
-         */
-        _this.alive = true;
-        /**
          * 阵营
          */
         _this.camp = CharCamp.Self;
@@ -71,13 +67,23 @@ var Character = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Character.prototype, "alive", {
+        /**
+         * 是否存活
+         */
+        get: function () {
+            return this.attr.curHp != 0;
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * 播放血条动画，血条在1s内从之前的状态到达当前血量的状态
      */
-    Character.prototype.lifeBarAnim = function () {
-        var lifeBarNewLen = 100 * this.attr.curHp / this.attr.maxHp;
-        egret.Tween.get(this.lifeBarFg).to({
-            width: 100 * (this.attr.curHp / this.attr.maxHp),
+    Character.prototype.lifeBarAnim = function (newHp) {
+        var lifeBarNewLen = 100 * newHp / this.attr.maxHp;
+        return egret.Tween.get(this.lifeBarFg).to({
+            width: lifeBarNewLen,
         }, 1000, egret.Ease.quintOut);
     };
     Character.prototype.loadArmature = function (charactorName) {
@@ -121,15 +127,27 @@ var Character = (function (_super) {
             battleScene.selectedFriend = this;
         }
     };
+    /**
+     * 隐藏生命条
+     */
     Character.prototype.lifeBarHide = function () {
         this.lifeBar.visible = false;
     };
+    /**
+     * 显示生命条
+     */
     Character.prototype.lifeBarShow = function () {
         this.lifeBar.visible = true;
     };
+    /**
+     * 生命条开始闪烁
+     */
     Character.prototype.lifeBarBlink = function () {
         egret.Tween.get(this.lifeBar, { loop: true }).to({ alpha: 0 }, 300).to({ alpha: 1 }, 300);
     };
+    /**
+     * 停止生命条闪烁
+     */
     Character.prototype.lifeBarUnBlink = function () {
         egret.Tween.removeTweens(this.lifeBar);
         this.lifeBar.alpha = 1;
@@ -156,9 +174,18 @@ var Character = (function (_super) {
         }
         return { x: x, y: y };
     };
+    /**
+     * db动画闪烁
+     */
     Character.prototype.armatureBlink = function () {
         egret.Tween.get(this.armatureDisplay, { loop: true }).to({ alpha: 0 }, 300).to({ alpha: 1 }, 300);
     };
+    /**
+     * 获取对比后的属性改动信息
+     */
+    /**
+     * db动画停止闪烁
+     */
     Character.prototype.armatureUnBlink = function () {
         egret.Tween.removeTweens(this.armatureDisplay);
     };

@@ -285,7 +285,11 @@ var BattleScene = (function (_super) {
             return;
         }
         this.isPerformance = true;
-        this.performQue.pop().performance();
+        var skill;
+        var affectResult;
+        _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];
+        skill.performance(affectResult);
+        var _a;
     };
     BattleScene.prototype.onPerformChainStart = function () {
         if (this.isPerformance) {
@@ -293,7 +297,11 @@ var BattleScene = (function (_super) {
             return;
         }
         this.isPerformance = true;
-        this.performQue.pop().performance();
+        var skill;
+        var affectResult;
+        _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];
+        skill.performance(affectResult);
+        var _a;
     };
     BattleScene.prototype.readConfig = function () {
     };

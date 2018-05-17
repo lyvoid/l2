@@ -42,6 +42,8 @@ abstract class IManualSkill {
 
 	/**
 	 * 根据目标类型，填充目标容器（主要目标）
+	 * 这里选出的目标会在玩家手动模式释放卡牌的时候使用
+	 * 最好重写
 	 */
 	public manualChooseTarget(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
@@ -69,6 +71,10 @@ abstract class IManualSkill {
 		}
 	}
 
+	/**
+	 * 这里选出的目标主要用在自动模式下
+	 * 敌方的所有选择均使用这个
+	 */
 	public autoChooseTarget(): void{
 		this.setCampChar();
 		switch (this.targetType) {
@@ -102,16 +108,22 @@ abstract class IManualSkill {
 
 	/**
 	 * 实际作用
+	 * 返回的any中存放需要表现的效果的一些参数（比如哪些人被打了多少伤害等等）
+	 * 这个值会扔给performance使用，只要同一个skill的affect的返回值和performance
+	 * 能够接上返回什么格式都可以
 	 */
-	protected abstract affect(): void;
+	protected abstract affect(): any;
+
 	/**
 	 * 演出表现
 	 */
-	abstract performance(): void;
+	abstract performance(affectResult: any): void;
 
 	public release(): void{
 		this.caster = null;
 		this.targets = null;
+		this.friends = null;
+		this.enemies = null;
 	}
 }
 

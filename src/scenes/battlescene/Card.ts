@@ -79,8 +79,6 @@ class Card extends egret.DisplayObjectContainer {
 
 		// 使用技能
 		this.skill.useSkill();
-		// 技能作用效果结束（含连锁技能）以后调用效果
-		MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
 
 		// 移除所需要的点数
 		for (let i = 0; i < this.skill.fireNeed; i++) {

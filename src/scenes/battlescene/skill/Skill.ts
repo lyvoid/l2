@@ -15,41 +15,60 @@ class SkillTmp extends IManualSkill {
 		// 判断技能是不是需要释放
 		this.manualChooseTarget();
 		let target = this.targets[0];
-		if (!target.alive){
+		if (!target.alive) {
 			return;
 		}
 
 		// 运行实际效果
-		this.affect();
+		let affectResult = this.affect();
 
 		// 确实需要释放时，将演出加到预演出列表
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.performQue.push(this);
+		scene.performQue.push([this, affectResult]);
+		// 没次加入新的表现序列都调用一次应该是没错的
+		MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
+
 
 		// 运行在在SkillToDo中的技能
-		if (scene.skillTodoQue.length > 0){
+		if (scene.skillTodoQue.length > 0) {
 			scene.skillTodoQue.pop().useSkill();
 		}
 	}
 
-	protected affect(): void{
+	protected affect(): any {
 		let hurt = new Hurt(HurtType.Pysic, this.caster);
+		let affectResult: any[] = [];
 		for (let char of this.targets) {
-			hurt.affect(char);
+			let change = hurt.affect(char);
+			affectResult.push([char, change]);
 		}
+		return affectResult;
 	}
 
-	public performance(): void{
-		console.log(this.desc);
-		
+
+	public performance(affectResult: any): void {
+
 		egret.Tween.get(this.caster).to({
 			x: this.targets[0].x + 100 * this.targets[0].camp,
 			y: this.targets[0].y + 20
 		}, 200).call(
 
 			() => {
-				let t = this.targets[0];
-				t.lifeBarAnim();
+				for (let result of affectResult) {
+					let target: Character = result[0];
+					let change: AttrChange = result[1];
+					if (change.hp != null) {
+						target.lifeBarAnim(change.hp).call(
+							// 血条变化完之后如果此次人物还死亡了的话
+							() => {
+								if (!change.alive && change.isAliveChange) {
+									target.addChild(new eui.Label("死亡"));
+								}
+							}
+						);
+					}
+
+				}
 				this.caster.armatureDisplay.animation.play("attack1_+1", 1);
 				this.caster.armatureDisplay.addEventListener(
 					dragonBones.EventObject.COMPLETE,
@@ -57,10 +76,10 @@ class SkillTmp extends IManualSkill {
 					this
 				);
 			}
-		)
+			)
 	}
 
-	
+
 	private casterAniEnd() {
 		this.caster.armatureDisplay.removeEventListener(
 			dragonBones.EventObject.COMPLETE,
@@ -73,15 +92,8 @@ class SkillTmp extends IManualSkill {
 			x: newP.x,
 			y: newP.y
 		}, 200).call(
-			()=>MessageManager.Ins.sendMessage(MessageType.PerformanceEnd)
-		);
-		for (let char of this.targets) {
-			if (!char.alive) {
-				try {
-					char.parent.removeChild(char);
-				} catch (e) { }
-			}
-		}
+			() => MessageManager.Ins.sendMessage(MessageType.PerformanceEnd)
+			);
 	}
 
 }
