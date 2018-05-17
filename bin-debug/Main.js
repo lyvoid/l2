@@ -162,9 +162,14 @@ var Main = (function (_super) {
      * Create scene interface
      */
     Main.prototype.createGameScene = function () {
-        this.stage.addChild(MessageManager.Ins);
+        // 在这里按照系统的启动顺序依次初始化
+        // 初始化MessageManager
+        MessageManager.Ins.initial(this.stage);
+        // 初始化LayerManager
         LayerManager.Ins.initial(this.stage);
-        SceneManager.Ins;
+        ToastInfoManager.Ins.initial();
+        // 初始化SceneManager
+        SceneManager.Ins.initial();
     };
     return Main;
 }(eui.UILayer));

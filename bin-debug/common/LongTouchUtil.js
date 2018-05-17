@@ -11,21 +11,24 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var LongTouchUtil = (function () {
     function LongTouchUtil() {
     }
+    /**
+     * 绑定长按对象，obj长按后发出 Type为 LongTouchBegin，内容为thisObj的Message
+     */
     LongTouchUtil.bindLongTouch = function (obj, thisObj) {
-        obj.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchStart, thisObj);
-        obj.addEventListener(egret.TouchEvent.TOUCH_END, this.onTouchFinish, thisObj);
+        obj.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, thisObj);
+        obj.addEventListener(egret.TouchEvent.TOUCH_END, this.onTouchEnd, thisObj);
         obj.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, this.onTouchOut, thisObj);
     };
     LongTouchUtil.unbindLongTouch = function (obj, thisObj) {
-        obj.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchStart, thisObj);
-        obj.removeEventListener(egret.TouchEvent.TOUCH_END, this.onTouchFinish, thisObj);
+        obj.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, thisObj);
+        obj.removeEventListener(egret.TouchEvent.TOUCH_END, this.onTouchEnd, thisObj);
         obj.removeEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, this.onTouchOut, thisObj);
     };
     /**
      * 绑定了长按事件的对象的TouchBegin事件侦听中存在该事件
      * 会将holder置为侦听时设置的thisobj的指向（一般为被点击的对象自己）
      */
-    LongTouchUtil.onTouchStart = function () {
+    LongTouchUtil.onTouchBegin = function () {
         var _this = this;
         // 如果存在占用对象则直接退出
         if (LongTouchUtil.holderObj) {
@@ -46,7 +49,7 @@ var LongTouchUtil = (function () {
      * 仅仅需要清空一下计数器即可
      * 如果触发了长按，肯定不存在会有TOUCH_END消息发出来
      */
-    LongTouchUtil.onTouchFinish = function () {
+    LongTouchUtil.onTouchEnd = function () {
         egret.clearTimeout(LongTouchUtil.touchBeginTime);
         LongTouchUtil.holderObj = null;
     };

@@ -6,7 +6,7 @@ class ToastInfoManager{
 
 	public static get Ins(): ToastInfoManager{
 		let ins = ToastInfoManager.instance
-		if (ins == null){
+		if (ins != null){
 			return ins;
 		}
 		ins = new ToastInfoManager();

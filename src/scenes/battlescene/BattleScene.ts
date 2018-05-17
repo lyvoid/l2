@@ -8,27 +8,29 @@ class BattleScene extends IScene {
 	/**
 	 * 用户的卡牌
 	 */
-	public cards: Card[] = [];
-	private cardBoard: CardBoard;
-	public cardManager: CardManager;
-	public bcr: BattleCR;
+	public cardBoard: CardBoard;
+	public bcr: BattleCR; // 通用资源
 
-	public enemies: Character[] = [];
-	public friends: Character[] = [];
-
+	public enemies: Character[];
+	public friends: Character[];
 	public selectedEnemy: Character;
 	public selectedFriend: Character;
-
 	public playerFireBoard: FireBoard;
-
 	public popUpInfoWin: LongTouchInfo;
+	public skillManualPool: IManualSkill[];
+
+	public performQue: Queue<IManualSkill>;
+	public skillTodoQue: Queue<IManualSkill>;
 
 	public initial() {
 		super.initial();
-
+		this.enemies = [];
+		this.friends = [];
+		this.skillManualPool = [];
 		this.dbManager = new DBManager();
-		this.cardBoard = new CardBoard(this.cards);
-		this.cardManager = new CardManager(this.cards, this.cardBoard);
+		this.cardBoard = new CardBoard();
+		this.performQue = new Queue<IManualSkill>();
+		this.skillTodoQue = new Queue<IManualSkill>();
 
 		let popUpInfo = new LongTouchInfo();
 		popUpInfo.width = LayerManager.Ins.stageWidth;
@@ -136,11 +138,11 @@ class BattleScene extends IScene {
 		// TODO 初始化游戏角色及UI
 
 		let chars: Character[] = [];
-		for (let i in [0, 1, 2, 3, 4, 5]) {
+		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Dragon");
 			chars[i] = char1;
 			char1.armatureDisplay.animation.play("idle", 0);
-			char1.camp = CharCamp.enemy;
+			char1.camp = CharCamp.Enemy;
 		}
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
@@ -165,10 +167,6 @@ class BattleScene extends IScene {
 		chars[4].row = CharRowType.down;
 		chars[4].setPosition();
 
-		chars[5].col = CharColType.frontRow;
-		chars[5].row = CharRowType.up;
-		chars[5].setPosition();
-
 		for (let char of chars) {
 			let charLayer = LayerManager.getSubLayerAt(
 				LayerManager.Ins.gameLayer,
@@ -179,7 +177,7 @@ class BattleScene extends IScene {
 		}
 
 		chars = [];
-		for (let i in [0, 1, 2, 3, 4, 5]) {
+		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Swordsman");
 			chars[i] = char1;
 			char1.armatureDisplay.animation.play("idle", 0);
@@ -214,6 +212,9 @@ class BattleScene extends IScene {
 			);
 			charLayer.addChildAt(char, char.row * 1000);
 			this.friends.push(char);
+
+			// 填充技能池子
+			this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
 		}
 
 		LayerManager.getSubLayerAt(
@@ -221,10 +222,10 @@ class BattleScene extends IScene {
 			BattleSLEnum.CharLayer
 		).addChild(this.cardBoard);
 
-		this.cardManager.distCardNormal();
-		this.cardManager.distCardNormal();
-		this.cardManager.distCardNormal();
-		this.cardManager.distCardNormal();
+		this.cardBoard.distCardNormal();
+		this.cardBoard.distCardNormal();
+		this.cardBoard.distCardNormal();
+		this.cardBoard.distCardNormal();
 
 
 
@@ -262,6 +263,20 @@ class BattleScene extends IScene {
 			this
 		)
 
+		// 一个perform演出完成时开始下一个演出
+		MessageManager.Ins.addEventListener(
+			MessageType.PerformanceEnd,
+			this.onPerformEnd,
+			this
+		)
+
+		// 开始演出
+		MessageManager.Ins.addEventListener(
+			MessageType.PerformanceChainStart,
+			this.onPerformChainStart,
+			this
+		)
+
 	}
 
 	private onObjTouchGlowAnim(e: Message): void {
@@ -275,21 +290,24 @@ class BattleScene extends IScene {
 		LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
 		if (obj instanceof Card) {
 			let card = (obj as Card);
-			egret.Tween.get(
-				card.caster.armatureDisplay,
-				{ loop: true }
-			).to(
-				{ alpha: 0.2 }, 650
-				).to({ alpha: 1 }, 650);
+			// 释放者闪烁
+			let caster = card.skill.caster;
+			if (caster) {
+				caster.armatureBlink();
+			}
 
-			card.skill.chooseTarget();
+			card.skill.manualChooseTarget();
+			// 隐藏目标以外的血条
+			for(let char of this.enemies.concat(this.friends)){
+				if(card.skill.targets.indexOf(char) < 0){
+					char.lifeBarHide();
+				}
+			}
+
+			// 目标血条闪烁
+			card.skill.manualChooseTarget();
 			for (let target of card.skill.targets) {
-				egret.Tween.get(
-					target.lifeBar,
-					{ loop: true }
-				).to(
-					{ alpha: 0.2 }, 650
-					).to({ alpha: 1 }, 650);
+				target.lifeBarBlink();
 			}
 		}
 	}
@@ -299,13 +317,41 @@ class BattleScene extends IScene {
 		LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
 		if (obj instanceof Card) {
 			let card = obj as Card;
-			egret.Tween.removeTweens(card.caster.armatureDisplay);
-			obj.caster.armatureDisplay.alpha = 1;
+			let caster = card.skill.caster
+			if (caster) {
+				caster.armatureUnBlink();
+			}
+
+			for(let char of this.enemies.concat(this.friends)){
+				char.lifeBarShow();
+			}
+
+			card.skill.caster.armatureDisplay.alpha = 1;
 			for (let target of card.skill.targets) {
-				egret.Tween.removeTweens(target.lifeBar);
-				target.lifeBar.alpha = 1;
+				target.lifeBarUnBlink();
 			}
 		}
+	}
+
+	private isPerformance: boolean = false;// 是否正在演出
+	// 一个perform演出完毕时开始下一个演出
+	private onPerformEnd(): void{
+		if (this.performQue.length == 0){
+			// 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
+			this.isPerformance = false;
+			return;
+		}
+		this.isPerformance = true;
+		this.performQue.pop().performance();
+	}
+
+	private onPerformChainStart(): void{
+		if(this.isPerformance){
+			// 如果正在演出，那就不管这个消息
+			return;
+		}
+		this.isPerformance = true;
+		this.performQue.pop().performance();
 	}
 
 	private readConfig(): void {
@@ -328,6 +374,11 @@ class BattleScene extends IScene {
 			this
 		);
 		MessageManager.Ins.removeEventListener(
+			MessageType.PerformanceChainStart,
+			this.onPerformChainStart,
+			this
+		)
+		MessageManager.Ins.removeEventListener(
 			MessageType.LongTouchEnd,
 			this.onObjLongTouchEnd,
 			this
@@ -337,14 +388,16 @@ class BattleScene extends IScene {
 			this.onObjTouchGlowAnim,
 			this
 		);
+		MessageManager.Ins.removeEventListener(
+			MessageType.PerformanceEnd,
+			this.onPerformEnd,
+			this
+		)
 
 		this.dbManager.release();
 		this.dbManager = null;
 
 		this.cardBoard.release();
-		this.cardManager.release();
-		this.cards = null;
-		this.cardManager = null;
 		this.cardBoard = null;
 
 
@@ -370,7 +423,7 @@ enum BattleSLEnum {
 /**
  * BattleScene 下的所有状态
  * BattleScene scene status enum
- * 
+ *
  */
 enum BattleSSEnum {
 	BeforeSelect,

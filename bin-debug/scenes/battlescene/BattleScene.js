@@ -47,19 +47,22 @@ var BattleScene = (function (_super) {
     __extends(BattleScene, _super);
     function BattleScene() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * 用户的卡牌
-         */
-        _this.cards = [];
-        _this.enemies = [];
-        _this.friends = [];
+        _this.isPerformance = false; // 是否正在演出
         return _this;
     }
     BattleScene.prototype.initial = function () {
         _super.prototype.initial.call(this);
+        this.enemies = [];
+        this.friends = [];
+        this.skillManualPool = [];
         this.dbManager = new DBManager();
-        this.cardBoard = new CardBoard(this.cards);
-        this.cardManager = new CardManager(this.cards, this.cardBoard);
+        this.cardBoard = new CardBoard();
+        this.performQue = new Queue();
+        this.skillTodoQue = new Queue();
+        var popUpInfo = new LongTouchInfo();
+        popUpInfo.width = LayerManager.Ins.stageWidth;
+        popUpInfo.height = LayerManager.Ins.stageHeight;
+        this.popUpInfoWin = popUpInfo;
         // 实例化GameLayer的层
         var gameLayer = LayerManager.Ins.gameLayer;
         gameLayer.addChildAt(new egret.DisplayObjectContainer(), BattleSLEnum.bgLayer);
@@ -74,8 +77,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, ui, popUpInfo;
+            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, ui;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -131,7 +133,7 @@ var BattleScene = (function (_super) {
                         img4.y = LayerManager.Ins.stageHeight - img4.height;
                         img4.alpha = 0.5;
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.fgLayer).addChild(img4);
-                        // 加火
+                        //  能量槽
                         this.playerFireBoard = new FireBoard();
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.cardLayer).addChild(this.playerFireBoard);
                         this.playerFireBoard.addFire();
@@ -141,136 +143,157 @@ var BattleScene = (function (_super) {
                         this.playerFireBoard.addFire();
                         this.playerFireBoard.addFire();
                         chars = [];
-                        for (i in [0, 1, 2, 3, 4, 5]) {
-                            char1 = new Charactor("Dragon", this.dbManager);
+                        for (i in [0, 1, 2, 3, 4]) {
+                            char1 = new Character("Dragon");
                             chars[i] = char1;
                             char1.armatureDisplay.animation.play("idle", 0);
-                            char1.camp = CharCamp.enemy;
+                            char1.camp = CharCamp.Enemy;
                         }
-                        chars[0].row = CharRowType.backRow;
-                        chars[0].position = CharPositionType.down;
+                        chars[0].col = CharColType.backRow;
+                        chars[0].row = CharRowType.down;
                         chars[0].setPosition();
-                        this.selectEnemy = chars[0];
+                        this.selectedEnemy = chars[0];
                         chars[0].bgLayer.addChild(this.bcr.enemySlectImg);
-                        chars[1].row = CharRowType.backRow;
-                        chars[1].position = CharPositionType.up;
+                        chars[1].col = CharColType.backRow;
+                        chars[1].row = CharRowType.up;
                         chars[1].setPosition();
-                        chars[2].row = CharRowType.midRow;
-                        chars[2].position = CharPositionType.up;
+                        chars[2].col = CharColType.midRow;
+                        chars[2].row = CharRowType.up;
                         chars[2].setPosition();
-                        chars[3].row = CharRowType.midRow;
-                        chars[3].position = CharPositionType.down;
+                        chars[3].col = CharColType.midRow;
+                        chars[3].row = CharRowType.down;
                         chars[3].setPosition();
-                        chars[4].row = CharRowType.frontRow;
-                        chars[4].position = CharPositionType.down;
+                        chars[4].col = CharColType.frontRow;
+                        chars[4].row = CharRowType.down;
                         chars[4].setPosition();
-                        chars[5].row = CharRowType.frontRow;
-                        chars[5].position = CharPositionType.up;
-                        chars[5].setPosition();
                         for (_b = 0, chars_1 = chars; _b < chars_1.length; _b++) {
                             char = chars_1[_b];
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
-                            charLayer.addChildAt(char, char.position * 1000);
+                            charLayer.addChildAt(char, char.row * 1000);
                             this.enemies.push(char);
                         }
                         chars = [];
-                        for (i in [0, 1, 2, 3, 4, 5]) {
-                            char1 = new Charactor("Swordsman", this.dbManager);
+                        for (i in [0, 1, 2, 3, 4]) {
+                            char1 = new Character("Swordsman");
                             chars[i] = char1;
                             char1.armatureDisplay.animation.play("idle", 0);
                         }
-                        chars[0].row = CharRowType.backRow;
-                        chars[0].position = CharPositionType.down;
+                        chars[0].col = CharColType.backRow;
+                        chars[0].row = CharRowType.down;
                         chars[0].setPosition();
-                        this.selectFriend = chars[0];
+                        this.selectedFriend = chars[0];
                         chars[0].bgLayer.addChild(this.bcr.selfSelectImg);
-                        chars[1].row = CharRowType.backRow;
-                        chars[1].position = CharPositionType.up;
+                        chars[1].col = CharColType.backRow;
+                        chars[1].row = CharRowType.up;
                         chars[1].setPosition();
-                        chars[2].row = CharRowType.midRow;
-                        chars[2].position = CharPositionType.up;
+                        chars[2].col = CharColType.midRow;
+                        chars[2].row = CharRowType.up;
                         chars[2].setPosition();
-                        chars[3].row = CharRowType.midRow;
-                        chars[3].position = CharPositionType.down;
+                        chars[3].col = CharColType.midRow;
+                        chars[3].row = CharRowType.down;
                         chars[3].setPosition();
-                        chars[4].row = CharRowType.frontRow;
-                        chars[4].position = CharPositionType.mid;
+                        chars[4].col = CharColType.frontRow;
+                        chars[4].row = CharRowType.mid;
                         chars[4].setPosition();
                         for (_c = 0, chars_2 = chars; _c < chars_2.length; _c++) {
                             char = chars_2[_c];
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
-                            charLayer.addChildAt(char, char.position * 1000);
+                            charLayer.addChildAt(char, char.row * 1000);
                             this.friends.push(char);
+                            // 填充技能池子
+                            this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
                         }
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer).addChild(this.cardBoard);
-                        this.cardManager.distCardNormal();
-                        this.cardManager.distCardNormal();
-                        this.cardManager.distCardNormal();
-                        this.cardManager.distCardNormal();
+                        this.cardBoard.distCardNormal();
+                        this.cardBoard.distCardNormal();
+                        this.cardBoard.distCardNormal();
+                        this.cardBoard.distCardNormal();
                         ui = new UIBattleScene();
                         ui.height = LayerManager.Ins.stageHeight;
                         ui.width = LayerManager.Ins.stageWidth;
                         LayerManager.Ins.uiLayer.addChild(ui);
-                        // 点击角色显示显示框
-                        MessageManager.Ins.addEventListener(MessageType.ClickChar, function (e) {
-                            var char = e.messageContent;
-                            if (char.camp == CharCamp.enemy) {
-                                char.bgLayer.addChild(_this.bcr.enemySlectImg);
-                                _this.selectEnemy = char;
-                            }
-                            else {
-                                char.bgLayer.addChild(_this.bcr.selfSelectImg);
-                                _this.selectFriend = char;
-                            }
-                        }, this);
                         // 点击滤镜动画
-                        MessageManager.Ins.addEventListener(MessageType.TouchBegin, function (e) {
-                            var obj = e.messageContent;
-                            _this.bcr.touchGlow.setHolderAnim(obj);
-                        }, this);
-                        popUpInfo = new LongTouchInfo();
-                        popUpInfo.width = LayerManager.Ins.stageWidth;
-                        popUpInfo.height = LayerManager.Ins.stageHeight;
-                        MessageManager.Ins.addEventListener(MessageType.LongTouchStart, function (e) {
-                            var obj = e.messageContent;
-                            popUpInfo.desc.text = obj.desc;
-                            LayerManager.Ins.popUpLayer.addChild(popUpInfo);
-                            if (obj instanceof Card) {
-                                var card = obj;
-                                egret.Tween.get(card.caster.armatureDisplay, { loop: true }).to({
-                                    alpha: 0.2
-                                }, 650).to({
-                                    alpha: 1
-                                }, 650);
-                                card.skill.chooseTarget();
-                                for (var _i = 0, _a = card.skill.target; _i < _a.length; _i++) {
-                                    var target = _a[_i];
-                                    egret.Tween.get(target.lifeBar, { loop: true }).to({
-                                        alpha: 0.2
-                                    }, 650).to({
-                                        alpha: 1
-                                    }, 650);
-                                }
-                            }
-                        }, this);
-                        MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, function (e) {
-                            var obj = e.messageContent;
-                            LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
-                            if (obj instanceof Card) {
-                                var card = obj;
-                                egret.Tween.removeTweens(card.caster.armatureDisplay);
-                                obj.caster.armatureDisplay.alpha = 1;
-                                for (var _i = 0, _a = card.skill.target; _i < _a.length; _i++) {
-                                    var target = _a[_i];
-                                    egret.Tween.removeTweens(target.lifeBar);
-                                    target.lifeBar.alpha = 1;
-                                }
-                            }
-                        }, this);
+                        MessageManager.Ins.addEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
+                        // 长按显示info;
+                        MessageManager.Ins.addEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
+                        MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
+                        // 一个perform演出完成时开始下一个演出
+                        MessageManager.Ins.addEventListener(MessageType.PerformanceEnd, this.onPerformEnd, this);
+                        // 开始演出
+                        MessageManager.Ins.addEventListener(MessageType.PerformanceChainStart, this.onPerformChainStart, this);
                         return [2 /*return*/];
                 }
             });
         });
+    };
+    BattleScene.prototype.onObjTouchGlowAnim = function (e) {
+        var obj = e.messageContent;
+        this.bcr.touchGlow.setHolderAnim(obj);
+    };
+    BattleScene.prototype.onObjLongTouchBegin = function (e) {
+        var obj = e.messageContent;
+        this.popUpInfoWin.desc.text = obj.desc;
+        LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
+        if (obj instanceof Card) {
+            var card = obj;
+            // 释放者闪烁
+            var caster = card.skill.caster;
+            if (caster) {
+                caster.armatureBlink();
+            }
+            card.skill.manualChooseTarget();
+            // 隐藏目标以外的血条
+            for (var _i = 0, _a = this.enemies.concat(this.friends); _i < _a.length; _i++) {
+                var char = _a[_i];
+                if (card.skill.targets.indexOf(char) < 0) {
+                    char.lifeBarHide();
+                }
+            }
+            // 目标血条闪烁
+            card.skill.manualChooseTarget();
+            for (var _b = 0, _c = card.skill.targets; _b < _c.length; _b++) {
+                var target = _c[_b];
+                target.lifeBarBlink();
+            }
+        }
+    };
+    BattleScene.prototype.onObjLongTouchEnd = function (e) {
+        var obj = e.messageContent;
+        LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
+        if (obj instanceof Card) {
+            var card = obj;
+            var caster = card.skill.caster;
+            if (caster) {
+                caster.armatureUnBlink();
+            }
+            for (var _i = 0, _a = this.enemies.concat(this.friends); _i < _a.length; _i++) {
+                var char = _a[_i];
+                char.lifeBarShow();
+            }
+            card.skill.caster.armatureDisplay.alpha = 1;
+            for (var _b = 0, _c = card.skill.targets; _b < _c.length; _b++) {
+                var target = _c[_b];
+                target.lifeBarUnBlink();
+            }
+        }
+    };
+    // 一个perform演出完毕时开始下一个演出
+    BattleScene.prototype.onPerformEnd = function () {
+        if (this.performQue.length == 0) {
+            // 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
+            this.isPerformance = false;
+            return;
+        }
+        this.isPerformance = true;
+        this.performQue.pop().performance();
+    };
+    BattleScene.prototype.onPerformChainStart = function () {
+        if (this.isPerformance) {
+            // 如果正在演出，那就不管这个消息
+            return;
+        }
+        this.isPerformance = true;
+        this.performQue.pop().performance();
     };
     BattleScene.prototype.readConfig = function () {
     };
@@ -286,12 +309,14 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.release = function () {
         _super.prototype.release.call(this);
+        MessageManager.Ins.removeEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
+        MessageManager.Ins.removeEventListener(MessageType.PerformanceChainStart, this.onPerformChainStart, this);
+        MessageManager.Ins.removeEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
+        MessageManager.Ins.removeEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
+        MessageManager.Ins.removeEventListener(MessageType.PerformanceEnd, this.onPerformEnd, this);
         this.dbManager.release();
         this.dbManager = null;
         this.cardBoard.release();
-        this.cardManager.release();
-        this.cards = null;
-        this.cardManager = null;
         this.cardBoard = null;
         this.bcr.release();
         this.bcr = null;

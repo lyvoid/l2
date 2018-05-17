@@ -50,7 +50,7 @@ class LayerManager {
 		let stageHeight = stage.stageHeight;
 		this.stageWidth = stageWidth;
 		this.stageHeight = stageHeight;
-
+		
 		// 将几个主layer加入到stage中
 		stage.addChild(this.gameLayer);
 		stage.addChild(this.uiLayer);

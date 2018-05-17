@@ -40,6 +40,7 @@ class Card extends egret.DisplayObjectContainer {
 	 */
 	public unInitial(): void {
 		this.touchEnabled = false;
+		LongTouchUtil.unbindLongTouch(this, this);
 		this.removeEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
@@ -76,8 +77,10 @@ class Card extends egret.DisplayObjectContainer {
 			return;
 		}
 
-		// TODO 技能放到待释放列表中
-		
+		// 使用技能
+		this.skill.useSkill();
+		// 技能作用效果结束（含连锁技能）以后调用效果
+		MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
 
 		// 移除所需要的点数
 		for (let i = 0; i < this.skill.fireNeed; i++) {
@@ -85,8 +88,7 @@ class Card extends egret.DisplayObjectContainer {
 		}
 
 		// 移除卡牌
-		let cardManager = scene.cardManager;
-		cardManager.removeCard(this);
+		scene.cardBoard.removeCard(this);
 
 	}
 

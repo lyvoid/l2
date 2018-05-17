@@ -17,9 +17,11 @@ class UIBattleScene extends eui.Component {
 		
 		this.changeButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
-			() => MessageManager.Ins.sendMessage(
-				MessageType.ClickChangeButton
-			),
+			() =>{
+				let scene = SceneManager.Ins.curScene as BattleScene;
+				scene.playerFireBoard.addFire();
+				scene.playerFireBoard.addFire();
+			},
 			this
 		);
 	}

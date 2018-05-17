@@ -10,7 +10,6 @@ var SceneManager = (function () {
                 return SceneManager.instance;
             }
             SceneManager.instance = new SceneManager();
-            SceneManager.instance.initial();
             return SceneManager.instance;
         },
         enumerable: true,

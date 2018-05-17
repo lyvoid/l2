@@ -3,12 +3,43 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 };
 var Attribute = (function () {
     function Attribute() {
+        /**
+         * 攻击
+         */
         this.ap = 100;
-        this.df = 60;
-        this.mhp = 200;
-        this.chp = 200;
+        /**
+         * 物理防御
+         */
+        this.arPys = 60;
+        /**
+         * 魔法防御
+         */
+        this.arMagic = 60;
+        /**
+         * 最大生命
+         */
+        this.maxHp = 200;
+        /**
+         * 当前生命
+         */
+        this.curHp = 200;
+        /**
+         * 穿甲
+         */
+        this.pierceAr = 2;
+        /**
+         * 护盾
+         */
         this.shield = 100;
+        /**
+         * 最大护盾
+         */
+        this.maxShield = 100;
     }
+    Attribute.prototype.toString = function () {
+        return '' +
+            ("\u751F\u547D:" + this.curHp + "/" + this.maxHp + "\n\u62A4\u76FE:" + this.shield + "/" + this.maxShield + "\n\u653B\u51FB:" + this.ap + "\n\u7269\u7406\u62A4\u7532:" + this.arPys + "\n\u9B54\u6CD5\u62A4\u7532:" + this.arMagic);
+    };
     return Attribute;
 }());
 __reflect(Attribute.prototype, "Attribute");

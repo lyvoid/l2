@@ -31,6 +31,10 @@ var MessageManager = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    MessageManager.prototype.initial = function (stage) {
+        // 将消息管理对象加入到stage中（需要加入stage才能发送与侦听touch事件）
+        stage.addChild(this);
+    };
     MessageManager.prototype.sendMessage = function (type, messageContent) {
         if (messageContent === void 0) { messageContent = null; }
         this.dispatchEvent(new Message(messageContent, type));

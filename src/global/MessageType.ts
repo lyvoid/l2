@@ -23,4 +23,7 @@ class MessageType{
 	public static HarmShield = "HarmShield";
 	public static CharDie = "CharDie";
 	public static Resurgence = "Resurgence";
+
+	public static PerformanceEnd = "NextPerformance";
+	public static PerformanceChainStart = "PerformanceChainStart";
 }

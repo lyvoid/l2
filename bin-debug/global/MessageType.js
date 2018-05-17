@@ -15,6 +15,15 @@ var MessageType = (function () {
     MessageType.TouchBegin = "TouchBegin";
     MessageType.LongTouchStart = "LongTouchStart";
     MessageType.LongTouchEnd = "LongTouchEnd";
+    // 伤害或治疗消息
+    MessageType.HealHp = "HealHp";
+    MessageType.HealShield = "HealShield";
+    MessageType.HarmHp = "HarmHp";
+    MessageType.HarmShield = "HarmShield";
+    MessageType.CharDie = "CharDie";
+    MessageType.Resurgence = "Resurgence";
+    MessageType.PerformanceEnd = "NextPerformance";
+    MessageType.PerformanceChainStart = "PerformanceChainStart";
     return MessageType;
 }());
 __reflect(MessageType.prototype, "MessageType");

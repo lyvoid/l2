@@ -9,19 +9,26 @@ for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
 /**
- * battle scene中的卡牌版，用于展示卡牌的动画及特效
- * 这里不要修改cards的值，cards的值统一再cardmanager中修改
- * 该类只要管理好自己的表现效果就行了
+ * 卡牌区域，负责玩家的卡牌管理
  */
 var CardBoard = (function (_super) {
     __extends(CardBoard, _super);
-    function CardBoard(cards) {
+    function CardBoard() {
         var _this = _super.call(this) || this;
-        _this.cards = cards;
+        _this.cards = [];
+        _this.cardPool = [];
         _this.y = LayerManager.Ins.stageHeight - 140;
         _this.width = LayerManager.Ins.stageWidth;
+        MessageManager.Ins.addEventListener(MessageType.ClickNextButton, _this.distCardNormal, _this);
         return _this;
     }
+    CardBoard.prototype.distCardNormal = function () {
+        var skills = SceneManager.Ins.curScene.skillManualPool;
+        var index = Math.floor(Math.random() * skills.length);
+        var card = new Card(skills[index]);
+        this.cards.push(card);
+        this.addCardToBoard(card);
+    };
     /**
      * 根据当前的cards的数量调整所有卡牌的对应位置
      */
@@ -52,16 +59,17 @@ var CardBoard = (function (_super) {
      * 添加一张卡牌到cardboard中
      * 在调用该方法前，需要先将card加入到cards中
      */
-    CardBoard.prototype.addCard = function (newCard) {
+    CardBoard.prototype.addCardToBoard = function (newCard) {
         newCard.x = this.width + 100;
         this.addChild(newCard);
         var index = this.cards.indexOf(newCard);
         this.adjustCardPosition(newCard, index);
     };
     /**
-     * 从cardboard中移除一张卡牌，此前需要先再cards中移除(在cardmanager中)
+     * 从cardboard中移除一张卡牌，主要是表现效果
+     * 表现前需要先从cards中移除对应卡牌
      */
-    CardBoard.prototype.removeCard = function (card) {
+    CardBoard.prototype.removeCardFromBoard = function (card) {
         var _this = this;
         var tw = egret.Tween.get(card);
         var cardx = card.x;
@@ -80,11 +88,30 @@ var CardBoard = (function (_super) {
         }, 400).call(function () { return _this.removeChild(card); });
     };
     /**
+     * 从玩家手中移除一张卡牌
+     */
+    CardBoard.prototype.removeCard = function (card) {
+        var cards = this.cards;
+        card.unInitial();
+        var index = cards.indexOf(card);
+        cards.splice(index, 1);
+        this.removeCardFromBoard(card);
+    };
+    /**
      * 销毁前要调用该方法释放资源
      */
     CardBoard.prototype.release = function () {
+        for (var _i = 0, _a = this.cards; _i < _a.length; _i++) {
+            var card = _a[_i];
+            card.unInitial();
+            card.release();
+        }
+        for (var _b = 0, _c = this.cardPool; _b < _c.length; _b++) {
+            var card = _c[_b];
+            card.release();
+        }
         this.cards = null;
-        this.removeChildren();
+        this.cardPool = null;
     };
     return CardBoard;
 }(egret.DisplayObjectContainer));

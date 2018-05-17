@@ -1,20 +1,36 @@
 /**
- * battle scene中的卡牌版，用于展示卡牌的动画及特效
- * 这里不要修改cards的值，cards的值统一再cardmanager中修改
- * 该类只要管理好自己的表现效果就行了
+ * 卡牌区域，负责玩家的卡牌管理
  */
 class CardBoard extends egret.DisplayObjectContainer {
-	public constructor(cards: Card[]) {
-		super();
-		this.cards = cards;
-		this.y = LayerManager.Ins.stageHeight - 140;
-		this.width = LayerManager.Ins.stageWidth;
-	}
 
 	/**
 	 * 玩家持有的卡牌列表
 	 */
 	private cards: Card[];
+	private cardPool: Card[]; // 对象池
+
+	public constructor() {
+		super();
+		this.cards = [];
+		this.cardPool = [];
+
+		this.y = LayerManager.Ins.stageHeight - 140;
+		this.width = LayerManager.Ins.stageWidth;
+
+		MessageManager.Ins.addEventListener(
+			MessageType.ClickNextButton,
+			this.distCardNormal,
+			this
+		);
+	}
+
+	public distCardNormal(){
+		let skills = (SceneManager.Ins.curScene as BattleScene).skillManualPool;
+		let index = Math.floor(Math.random() * skills.length);
+		let card = new Card(skills[index]);
+		this.cards.push(card);
+		this.addCardToBoard(card);
+	}
 
 	/**
 	 * 根据当前的cards的数量调整所有卡牌的对应位置
@@ -47,7 +63,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	 * 添加一张卡牌到cardboard中
 	 * 在调用该方法前，需要先将card加入到cards中
 	 */
-	public addCard(newCard: Card): void {
+	public addCardToBoard(newCard: Card): void {
 		newCard.x = this.width + 100;
 		this.addChild(newCard);
 		let index = this.cards.indexOf(newCard);
@@ -55,9 +71,10 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	/**
-	 * 从cardboard中移除一张卡牌，此前需要先再cards中移除(在cardmanager中)
+	 * 从cardboard中移除一张卡牌，主要是表现效果
+	 * 表现前需要先从cards中移除对应卡牌
 	 */
-	public removeCard(card: Card): void {
+	private removeCardFromBoard(card: Card): void {
 		let tw = egret.Tween.get(card);
 		let cardx = card.x;
 		let cardy = card.y;
@@ -79,11 +96,30 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	/**
+	 * 从玩家手中移除一张卡牌
+	 */
+	public removeCard(card:Card){
+		let cards: Card[] = this.cards;
+		card.unInitial();
+		let index = cards.indexOf(card);
+		cards.splice(index, 1);
+		this.removeCardFromBoard(card);
+	}
+
+	/**
 	 * 销毁前要调用该方法释放资源
 	 */
 	public release(): void {
+		for (let card of this.cards){
+			card.unInitial();
+			card.release();
+		}
+		for(let card of this.cardPool){
+			card.release();
+		}
 		this.cards = null;
-		this.removeChildren();
+		this.cardPool = null;
+
 	}
 
 }

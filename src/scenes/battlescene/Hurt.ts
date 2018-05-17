@@ -6,15 +6,17 @@ class Hurt {
 	private fromChar: Character; // 伤害来源
 	private rate: number; // 伤害倍率
 	private isAbs: boolean; // 是否绝对伤害（不考虑护甲）
+	private absValue: number;// 绝对伤害对应的值是多少
 	private isPericeShield: boolean;// 是否穿透护盾（无视护盾，直接伤血）  治疗效果时无效
 	private isDoubleShield: boolean;// 是否破盾（对有护盾的单位造成双倍伤害） 治疗效果时无效
 	private isResurgence: boolean;// 是否复活 （仅治愈生命类型有效）
 
 	public constructor(
-		fromChar: Character,
 		hurtType: HurtType,
+		fromChar: Character=null,
 		rate: number = 1,
 		isAbs: boolean = false,
+		absValue: number = 10,
 		isPericeShield: boolean = false,
 		isDoubleShield: boolean = false,
 		isResurgence: boolean = false
@@ -23,6 +25,7 @@ class Hurt {
 		this.hurtType = hurtType;
 		this.rate = rate;
 		this.isAbs = isAbs;
+		this.absValue = absValue;
 		this.isPericeShield = isPericeShield;
 		this.isDoubleShield = isDoubleShield;
 		this.isResurgence = isResurgence;
@@ -36,13 +39,13 @@ class Hurt {
 		let mm = MessageManager.Ins;
 
 		let targetAttr = target.attr;
-		let fromAttr = this.fromChar.attr;
 		let harm = 0;
 
 		// 处理护甲
 		if (this.isAbs) {
-			harm = fromAttr.ap;
+			harm = this.absValue;
 		} else {
+			let fromAttr = this.fromChar.attr;
 			let ar = this.hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
 			ar -= fromAttr.pierceAr;
 			ar = ar > 0 ? ar : 0;

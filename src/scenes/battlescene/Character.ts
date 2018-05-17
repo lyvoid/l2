@@ -8,9 +8,11 @@ class Character extends egret.DisplayObjectContainer {
 	public armatureDisplay: dragonBones.EgretArmatureDisplay;
 
 	/**
-	 * 人物血条
+	 * 人物血条前景，实际血量标识
 	 */
-	public lifeBar: egret.Bitmap;
+	private lifeBarFg: egret.Bitmap;
+	// 血条整体
+	private lifeBar: egret.DisplayObjectContainer;
 
 	/**
 	 * 人物当前状态描述，在长按中展示
@@ -46,7 +48,7 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 阵营
 	 */
-	public camp: CharCamp = CharCamp.self;
+	public camp: CharCamp = CharCamp.Self;
 
 	/**
 	 * 前中后 站位
@@ -75,23 +77,26 @@ class Character extends egret.DisplayObjectContainer {
 		this.attr.char = this;
 
 		// 加血条
+		let lifeBar = new egret.DisplayObjectContainer();
+		lifeBar.x = -50;
+		lifeBar.y = -210;
 		let lifebarBg = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
 		lifebarBg.alpha = 0.5;
 		lifebarBg.width = 100;
-		lifebarBg.y = -210;
-		lifebarBg.x = -50;
-		let lifebar = new egret.Bitmap(RES.getRes("lifebar_jpg"));
-		lifebar.width = 100;
-		lifebar.y = -209;
-		lifebar.x = -50;
-		this.addChild(lifebarBg);
-		this.addChild(lifebar);
-		this.lifeBar = lifebar;
-	}
+		lifeBar.addChild(lifebarBg);
+		let lifeBarFg = new egret.Bitmap(RES.getRes("lifebar_jpg"));
+		lifeBarFg.width = 100;
+		lifeBarFg.y = 1;
+		lifeBar.addChild(lifeBarFg);
+		this.addChild(lifeBar);
+		this.lifeBar = lifeBar;
+		this.lifeBarFg = lifeBarFg;
 
 
-	public hurt(ht: Hurt): void {
-		ht.affect(this);
+		// 加技能
+		this.manualSkills = [];
+		let skill1 = new SkillTmp(this);
+		this.manualSkills.push(skill1);
 	}
 
 	/**
@@ -99,9 +104,9 @@ class Character extends egret.DisplayObjectContainer {
 	 */
 	public lifeBarAnim() {
 		let lifeBarNewLen = 100 * this.attr.curHp / this.attr.maxHp;
-		egret.Tween.get(this.lifeBar).to({
+		egret.Tween.get(this.lifeBarFg).to({
 			width: 100 * (this.attr.curHp / this.attr.maxHp),
-		}, 1000);
+		}, 1000, egret.Ease.quintOut);
 	}
 
 	private loadArmature(charactorName: string): void {
@@ -158,7 +163,7 @@ class Character extends egret.DisplayObjectContainer {
 	 */
 	private onTouchTap(): void {
 		let battleScene = (SceneManager.Ins.curScene as BattleScene);
-		if (this.camp == CharCamp.enemy) {
+		if (this.camp == CharCamp.Enemy) {
 			this.bgLayer.addChild(
 				battleScene.bcr.enemySlectImg
 			);
@@ -171,13 +176,36 @@ class Character extends egret.DisplayObjectContainer {
 		}
 	}
 
+	public lifeBarHide(): void {
+		this.lifeBar.visible = false;
+	}
+
+	public lifeBarShow(): void {
+		this.lifeBar.visible = true;
+	}
+
+	public lifeBarBlink(): void {
+		egret.Tween.get(
+			this.lifeBar,
+			{ loop: true }
+		).to(
+			{ alpha: 0 }, 300
+			).to({ alpha: 1 }, 300);
+	}
+
+	public lifeBarUnBlink(): void {
+		egret.Tween.removeTweens(this.lifeBar);
+		this.lifeBar.alpha = 1;
+	}
+
 
 	/**
 	 * 将角色设置为应该在的位置
 	 */
 	public setPosition() {
 		// 修改动画朝向为正确朝向
-		this.armatureDisplay.scaleX = this.camp;
+		this.armatureDisplay.scaleX = Math.abs(
+			this.armatureDisplay.scaleX) * this.camp;
 		// 修改动画位置
 		let newP = this.getPositon();
 		this.x = newP.x;
@@ -190,10 +218,23 @@ class Character extends egret.DisplayObjectContainer {
 	public getPositon(): { x: number, y: number } {
 		let y = 300 + 65 * this.row + Math.random() * 30;
 		let x = 120 + this.col * 130 + this.row * 20 + Math.random() * 10;
-		if (this.camp == CharCamp.enemy) {
+		if (this.camp == CharCamp.Enemy) {
 			x = LayerManager.Ins.stageWidth - x;
 		}
 		return { x: x, y: y }
+	}
+
+	public armatureBlink(): void {
+		egret.Tween.get(
+			this.armatureDisplay,
+			{ loop: true }
+		).to(
+			{ alpha: 0 }, 300
+			).to({ alpha: 1 }, 300);
+	}
+
+	public armatureUnBlink() : void{
+		egret.Tween.removeTweens(this.armatureDisplay);
 	}
 
 	public release(): void {
@@ -216,15 +257,17 @@ class Character extends egret.DisplayObjectContainer {
 		this.manualSkills = null;
 
 		this.attr = null;
-		this.lifeBar = null;
+		this.lifeBarFg = null;
 		this.bgLayer = null;
+		this.lifeBar = null;
 	}
 
 }
 
 enum CharCamp {
-	self = 1,
-	enemy = -1,
+	Self = 1,
+	Neut = 0,
+	Enemy = -1,
 }
 
 enum CharColType {

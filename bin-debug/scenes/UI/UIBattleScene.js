@@ -12,20 +12,16 @@ var UIBattleScene = (function (_super) {
     __extends(UIBattleScene, _super);
     function UIBattleScene() {
         var _this = _super.call(this) || this;
-        _this.addEventListener(eui.UIEvent.COMPLETE, _this.onComplete, _this);
+        // this.addEventListener(eui.UIEvent.COMPLETE, this.onComplete, this);
         _this.skinName = "resource/eui_skins/ui/UIBattleScene.exml";
+        _this.nextButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () { return MessageManager.Ins.sendMessage(MessageType.ClickNextButton); }, _this);
+        _this.changeButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
+            var scene = SceneManager.Ins.curScene;
+            scene.playerFireBoard.addFire();
+            scene.playerFireBoard.addFire();
+        }, _this);
         return _this;
     }
-    UIBattleScene.prototype.partAdded = function (partName, instance) {
-        _super.prototype.partAdded.call(this, partName, instance);
-    };
-    UIBattleScene.prototype.childrenCreated = function () {
-        _super.prototype.childrenCreated.call(this);
-    };
-    UIBattleScene.prototype.onComplete = function () {
-        this.nextButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () { return MessageManager.Ins.sendMessage(MessageType.ClickNextButton); }, this);
-        this.changeButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () { return MessageManager.Ins.sendMessage(MessageType.ClickChangeButton); }, this);
-    };
     return UIBattleScene;
 }(eui.Component));
-__reflect(UIBattleScene.prototype, "UIBattleScene", ["eui.UIComponent", "egret.DisplayObject"]);
+__reflect(UIBattleScene.prototype, "UIBattleScene");

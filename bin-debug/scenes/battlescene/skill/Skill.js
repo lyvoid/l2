@@ -8,9 +8,13 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
+/**
+ * 临时技能，单纯用来测试
+ */
 var SkillTmp = (function (_super) {
     __extends(SkillTmp, _super);
     function SkillTmp(caster) {
+        if (caster === void 0) { caster = null; }
         var _this = _super.call(this) || this;
         _this.targetType = TargetType.SpecialEnemy;
         _this.fireNeed = 2;
@@ -18,6 +22,43 @@ var SkillTmp = (function (_super) {
         _this.caster = caster;
         return _this;
     }
+    SkillTmp.prototype.useSkill = function () {
+        // 判断技能是不是需要释放
+        this.manualChooseTarget();
+        var target = this.targets[0];
+        if (!target.alive) {
+            return;
+        }
+        var scene = SceneManager.Ins.curScene;
+        // 确实需要释放时，将演出加到预演出列表
+        scene.performQue.push(this);
+        // 运行实际效果
+        this.affect();
+        // 运行在在SkillToDo中的技能
+        if (scene.skillTodoQue.length > 0) {
+            scene.skillTodoQue.pop().useSkill();
+        }
+    };
+    SkillTmp.prototype.affect = function () {
+        var hurt = new Hurt(HurtType.Pysic, this.caster);
+        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
+            var char = _a[_i];
+            hurt.affect(char);
+        }
+    };
+    SkillTmp.prototype.performance = function () {
+        var _this = this;
+        console.log(this.desc);
+        egret.Tween.get(this.caster).to({
+            x: this.targets[0].x + 100 * this.targets[0].camp,
+            y: this.targets[0].y + 20
+        }, 200).call(function () {
+            var t = _this.targets[0];
+            t.lifeBarAnim();
+            _this.caster.armatureDisplay.animation.play("attack1_+1", 1);
+            _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
+        });
+    };
     SkillTmp.prototype.casterAniEnd = function () {
         this.caster.armatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
         var newP = this.caster.getPositon();
@@ -25,10 +66,10 @@ var SkillTmp = (function (_super) {
         egret.Tween.get(this.caster).to({
             x: newP.x,
             y: newP.y
-        }, 200);
-        for (var _i = 0, _a = this.target; _i < _a.length; _i++) {
+        }, 200).call(function () { return MessageManager.Ins.sendMessage(MessageType.PerformanceEnd); });
+        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
             var char = _a[_i];
-            if (!char.isAlive) {
+            if (!char.alive) {
                 try {
                     char.parent.removeChild(char);
                 }
@@ -36,32 +77,6 @@ var SkillTmp = (function (_super) {
             }
         }
     };
-    SkillTmp.prototype.useSkill = function () {
-        var _this = this;
-        var fireboard = SceneManager.Ins.curScene.playerFireBoard;
-        for (var i = 0; i < this.fireNeed; i++) {
-            fireboard.removeFire();
-        }
-        this.chooseTarget();
-        for (var _i = 0, _a = this.target; _i < _a.length; _i++) {
-            var char = _a[_i];
-            var ht = new Hurt();
-            ht.hurtNumber = this.caster.attr.ap;
-            ht.hurtType = HurtType.ABS;
-            char.hurt(ht);
-        }
-        egret.Tween.get(this.caster).to({
-            x: this.target[0].x + 100 * this.target[0].camp,
-            y: this.target[0].y + 20
-        }, 200).call(function () {
-            var t = _this.target[0];
-            egret.Tween.get(t.lifeBar).to({
-                width: 100 * (t.attr.chp / t.attr.mhp),
-            }, 1000);
-            _this.caster.armatureDisplay.animation.play("attack1_+1", 1);
-            _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
-        });
-    };
     return SkillTmp;
-}(ISkill));
+}(IManualSkill));
 __reflect(SkillTmp.prototype, "SkillTmp");
