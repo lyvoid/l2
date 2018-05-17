@@ -103,6 +103,7 @@ class Main extends eui.UILayer {
         MessageManager.Ins.initial(this.stage);
         // 初始化LayerManager
         LayerManager.Ins.initial(this.stage);
+        ToastInfoManager.Ins.initial();
         // 初始化SceneManager
         SceneManager.Ins.initial();
 

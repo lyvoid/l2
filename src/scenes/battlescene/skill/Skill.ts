@@ -30,9 +30,6 @@ class SkillTmp extends IManualSkill {
 
 	public useSkill(): void {
 		let fireboard = (SceneManager.Ins.curScene as BattleScene).playerFireBoard;
-		for (let i = 0; i < this.fireNeed; i++) {
-			fireboard.removeFire();
-		}
 		this.chooseTarget();
 		for (let char of this.targets) {
 			let ht = new Hurt();

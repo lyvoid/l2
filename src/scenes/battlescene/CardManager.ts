@@ -8,22 +8,10 @@ class CardManager {
 		this.cards = cards;
 		this.cardBoard = cardBoard;
 		MessageManager.Ins.addEventListener(
-			MessageType.UseCard,
-			this.useCard,
-			this
-		);
-		MessageManager.Ins.addEventListener(
 			MessageType.ClickNextButton,
 			this.distCardNormal,
 			this
 		);
-	}
-
-	private useCard(e:Message): void{
-		let card: Card = e.messageContent as Card;
-		card.skill.chooseTarget();
-		card.skill.useSkill();
-		this.removeCard(card);
 	}
 	
 	public distCardNormal(){

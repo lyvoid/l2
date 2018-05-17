@@ -1,7 +1,7 @@
 class BattleScene extends IScene {
 
 	/**
-	 * 龙骨管理器，始终只有一个存在
+	 * 龙骨管理器
 	 */
 	public dbManager: DBManager;
 
@@ -9,7 +9,7 @@ class BattleScene extends IScene {
 	 * 用户的卡牌
 	 */
 	public cards: Card[] = [];
-	public cardBoard: CardBoard;
+	private cardBoard: CardBoard;
 	public cardManager: CardManager;
 	public bcr: BattleCR;
 
@@ -18,8 +18,10 @@ class BattleScene extends IScene {
 
 	public selectedEnemy: Character;
 	public selectedFriend: Character;
-	
+
 	public playerFireBoard: FireBoard;
+
+	public popUpInfoWin: LongTouchInfo;
 
 	public initial() {
 		super.initial();
@@ -28,6 +30,10 @@ class BattleScene extends IScene {
 		this.cardBoard = new CardBoard(this.cards);
 		this.cardManager = new CardManager(this.cards, this.cardBoard);
 
+		let popUpInfo = new LongTouchInfo();
+		popUpInfo.width = LayerManager.Ins.stageWidth;
+		popUpInfo.height = LayerManager.Ins.stageHeight;
+		this.popUpInfoWin = popUpInfo;
 
 		// 实例化GameLayer的层
 		let gameLayer = LayerManager.Ins.gameLayer;
@@ -65,7 +71,6 @@ class BattleScene extends IScene {
 
 		this.bcr = new BattleCR();
 
-
 		// 载入龙骨资源
 		for (let charactorName of ["Dragon", "Swordsman"]) {
 			await RES.getResAsync(`${charactorName}_db_ske_json`);
@@ -73,7 +78,6 @@ class BattleScene extends IScene {
 			await RES.getResAsync(`${charactorName}_db_tex_png`);
 		}
 		console.log("角色龙骨资源载入完成");
-
 
 		// 载入背景图片资源
 		await RES.getResAsync("bg_json");
@@ -114,7 +118,7 @@ class BattleScene extends IScene {
 			BattleSLEnum.fgLayer
 		).addChild(img4);
 
-		// 加火
+		//  能量槽
 		this.playerFireBoard = new FireBoard();
 		LayerManager.getSubLayerAt(
 			LayerManager.Ins.gameLayer,
@@ -238,103 +242,70 @@ class BattleScene extends IScene {
 		ui.width = LayerManager.Ins.stageWidth;
 		LayerManager.Ins.uiLayer.addChild(ui);
 
-		// 点击角色显示显示框
-		MessageManager.Ins.addEventListener(
-			MessageType.ClickChar,
-			(e: Message) => {
-				let char = e.messageContent as Character;
-				if (char.camp == CharCamp.enemy) {
-					char.bgLayer.addChild(
-						this.bcr.enemySlectImg
-					);
-					this.selectedEnemy = char;
-				}else{
-					char.bgLayer.addChild(
-						this.bcr.selfSelectImg
-					);
-					this.selectedFriend = char;
-				}
-			},
-			this
-		);
-
 		// 点击滤镜动画
 		MessageManager.Ins.addEventListener(
 			MessageType.TouchBegin,
-			(e: Message) => {
-				let obj = e.messageContent;
-				this.bcr.touchGlow.setHolderAnim(obj);
-			},
+			this.onObjTouchGlowAnim,
 			this
 		);
 
 
-		// 长按显示info
-		let popUpInfo = new LongTouchInfo();
-		popUpInfo.width = LayerManager.Ins.stageWidth;
-		popUpInfo.height = LayerManager.Ins.stageHeight;
-
+		// 长按显示info;
 		MessageManager.Ins.addEventListener(
 			MessageType.LongTouchStart,
-			(e: Message) => {
-				let obj = e.messageContent;
-				popUpInfo.desc.text = obj.desc;
-				LayerManager.Ins.popUpLayer.addChild(popUpInfo);
-				if (obj instanceof Card) {
-					let card = (obj as Card);
-					egret.Tween.get(
-						card.caster.armatureDisplay,
-						{loop: true}
-					).to({
-						alpha: 0.2
-						},
-						650
-					).to(
-						{
-							alpha: 1
-						},
-						650
-					);
-
-					card.skill.chooseTarget();
-					for(let target of card.skill.targets){
-						egret.Tween.get(
-							target.lifeBar, 
-							{loop:true}
-						).to(
-							{
-								alpha: 0.2
-							},
-							650
-						).to(
-							{
-								alpha: 1
-							},
-							650
-						);
-					}
-				}
-			},
+			this.onObjLongTouchBegin,
 			this
 		);
-
 		MessageManager.Ins.addEventListener(
 			MessageType.LongTouchEnd,
-			(e: Message) => {
-				let obj = e.messageContent;
-				LayerManager.Ins.popUpLayer.removeChild(popUpInfo);
-				if (obj instanceof Card) {
-					let card = obj as Card;
-					egret.Tween.removeTweens(card.caster.armatureDisplay);
-					obj.caster.armatureDisplay.alpha = 1;
-					for(let target of card.skill.targets){
-						egret.Tween.removeTweens(target.lifeBar);
-						target.lifeBar.alpha = 1;
-					}
-				}
-			},
+			this.onObjLongTouchEnd,
 			this
-		);
+		)
+
+	}
+
+	private onObjTouchGlowAnim(e: Message): void {
+		let obj = e.messageContent;
+		this.bcr.touchGlow.setHolderAnim(obj);
+	}
+
+	private onObjLongTouchBegin(e: Message): void {
+		let obj = e.messageContent;
+		this.popUpInfoWin.desc.text = obj.desc;
+		LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
+		if (obj instanceof Card) {
+			let card = (obj as Card);
+			egret.Tween.get(
+				card.caster.armatureDisplay,
+				{ loop: true }
+			).to(
+				{ alpha: 0.2 }, 650
+				).to({ alpha: 1 }, 650);
+
+			card.skill.chooseTarget();
+			for (let target of card.skill.targets) {
+				egret.Tween.get(
+					target.lifeBar,
+					{ loop: true }
+				).to(
+					{ alpha: 0.2 }, 650
+					).to({ alpha: 1 }, 650);
+			}
+		}
+	}
+
+	private onObjLongTouchEnd(e: Message): void {
+		let obj = e.messageContent;
+		LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
+		if (obj instanceof Card) {
+			let card = obj as Card;
+			egret.Tween.removeTweens(card.caster.armatureDisplay);
+			obj.caster.armatureDisplay.alpha = 1;
+			for (let target of card.skill.targets) {
+				egret.Tween.removeTweens(target.lifeBar);
+				target.lifeBar.alpha = 1;
+			}
+		}
 	}
 
 	private readConfig(): void {
@@ -351,6 +322,22 @@ class BattleScene extends IScene {
 
 	public release() {
 		super.release();
+		MessageManager.Ins.removeEventListener(
+			MessageType.LongTouchStart,
+			this.onObjLongTouchBegin,
+			this
+		);
+		MessageManager.Ins.removeEventListener(
+			MessageType.LongTouchEnd,
+			this.onObjLongTouchEnd,
+			this
+		)
+		MessageManager.Ins.removeEventListener(
+			MessageType.TouchBegin,
+			this.onObjTouchGlowAnim,
+			this
+		);
+
 		this.dbManager.release();
 		this.dbManager = null;
 
@@ -359,6 +346,7 @@ class BattleScene extends IScene {
 		this.cards = null;
 		this.cardManager = null;
 		this.cardBoard = null;
+
 
 
 		this.bcr.release();

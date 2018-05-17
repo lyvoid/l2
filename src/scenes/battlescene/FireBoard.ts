@@ -8,7 +8,7 @@ class FireBoard extends egret.DisplayObjectContainer{
 
 	public constructor() {
 		super();
-		this.y = LayerManager.Ins.stageHeight - 160;
+		this.y = LayerManager.Ins.stageHeight - 165;
 		this.width = LayerManager.Ins.stageWidth;
 		this.texture = RES.getRes("fireParticle_png");
         this.config = RES.getRes("fireParticle_json");
