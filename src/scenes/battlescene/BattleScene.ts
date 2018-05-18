@@ -19,8 +19,12 @@ class BattleScene extends IScene {
 	public popUpInfoWin: LongTouchInfo;
 	public skillManualPool: IManualSkill[];
 
+	// 演出列表，待释放技能列表
 	public performQue: Queue<[IManualSkill, any]>;
 	public skillTodoQue: Queue<IManualSkill>;
+
+	// 飘字管理器
+	public damageFloatManager: DamageFloatManager;
 
 	public initial() {
 		super.initial();
@@ -31,6 +35,7 @@ class BattleScene extends IScene {
 		this.cardBoard = new CardBoard();
 		this.performQue = new Queue<[IManualSkill, any]>();
 		this.skillTodoQue = new Queue<IManualSkill>();
+		this.damageFloatManager = new DamageFloatManager();
 
 		let popUpInfo = new LongTouchInfo();
 		popUpInfo.width = LayerManager.Ins.stageWidth;
@@ -314,7 +319,10 @@ class BattleScene extends IScene {
 
 	private onObjLongTouchEnd(e: Message): void {
 		let obj = e.messageContent;
-		LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
+		try{
+			// 这里有可能还没触发长按时移开手指触发，此时并不存在弹出的窗口
+			LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
+		}catch(ignore){}
 		if (obj instanceof Card) {
 			let card = obj as Card;
 			let caster = card.skill.caster

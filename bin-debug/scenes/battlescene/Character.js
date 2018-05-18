@@ -79,7 +79,7 @@ var Character = (function (_super) {
          * 是否存活
          */
         get: function () {
-            return this.attr.curHp != 0;
+            return this.attr.hp != 0;
         },
         enumerable: true,
         configurable: true
@@ -89,7 +89,7 @@ var Character = (function (_super) {
      */
     Character.prototype.lifeBarAnim = function (newHp) {
         if (!newHp) {
-            newHp = this.attr.curHp;
+            newHp = this.attr.hp;
         }
         var lifeBarNewLen = 100 * newHp / this.attr.maxHp;
         return egret.Tween.get(this.lifeBarFg).to({

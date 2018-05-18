@@ -47,30 +47,34 @@ var SkillTmp = (function (_super) {
         for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
             var char = _a[_i];
             var change = hurt.affect(char);
-            affectResult.push([char, change]);
+            affectResult.push(change);
         }
         return affectResult;
     };
     SkillTmp.prototype.performance = function (affectResult) {
         var _this = this;
+        var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
         egret.Tween.get(this.caster).to({
             x: this.targets[0].x + 100 * this.targets[0].camp,
             y: this.targets[0].y + 20
         }, 200).call(function () {
             var _loop_1 = function (result) {
-                var target = result[0];
-                var change = result[1];
-                if (change.hp != null) {
-                    target.lifeBarAnim(change.hp).call(
+                var change = result;
+                var target = change.char;
+                if (change.hpOld != change.hpNew) {
+                    target.lifeBarAnim(change.hpNew).call(
                     // 血条变化完之后如果此次人物还死亡了的话
                     function () {
-                        if (!change.alive && change.isAliveChange) {
+                        if (change.aliveNew != change.aliveOld && !change.aliveNew) {
                             target.addChild(new eui.Label("死亡"));
                         }
                     });
+                    // 飘字
+                    damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
                 }
-                if (change.shield != null) {
-                    target.lifeBarShieldAnim(change.shield);
+                if (change.shieldNew != change.shieldOld) {
+                    target.lifeBarShieldAnim(change.shieldNew);
+                    damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
                 }
             };
             for (var _i = 0, affectResult_1 = affectResult; _i < affectResult_1.length; _i++) {

@@ -59,6 +59,7 @@ var BattleScene = (function (_super) {
         this.cardBoard = new CardBoard();
         this.performQue = new Queue();
         this.skillTodoQue = new Queue();
+        this.damageFloatManager = new DamageFloatManager();
         var popUpInfo = new LongTouchInfo();
         popUpInfo.width = LayerManager.Ins.stageWidth;
         popUpInfo.height = LayerManager.Ins.stageHeight;
@@ -259,7 +260,11 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.onObjLongTouchEnd = function (e) {
         var obj = e.messageContent;
-        LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
+        try {
+            // 这里有可能还没触发长按时移开手指触发，此时并不存在弹出的窗口
+            LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
+        }
+        catch (ignore) { }
         if (obj instanceof Card) {
             var card = obj;
             var caster = card.skill.caster;

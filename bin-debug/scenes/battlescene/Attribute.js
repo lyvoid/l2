@@ -22,7 +22,7 @@ var Attribute = (function () {
         /**
          * 当前生命
          */
-        this.curHp = 200;
+        this.hp = 200;
         /**
          * 穿甲
          */
@@ -38,7 +38,7 @@ var Attribute = (function () {
     }
     Attribute.prototype.toString = function () {
         return '' +
-            ("\u751F\u547D:" + this.curHp + "/" + this.maxHp + "\n\u62A4\u76FE:" + this.shield + "/" + this.maxShield + "\n\u653B\u51FB:" + this.ap + "\n\u7269\u7406\u62A4\u7532:" + this.arPys + "\n\u9B54\u6CD5\u62A4\u7532:" + this.arMagic + "\n\u7A7F\u7532:" + this.pierceAr);
+            ("\u751F\u547D:" + this.hp + "/" + this.maxHp + "\n\u62A4\u76FE:" + this.shield + "/" + this.maxShield + "\n\u653B\u51FB:" + this.ap + "\n\u7269\u7406\u62A4\u7532:" + this.arPys + "\n\u9B54\u6CD5\u62A4\u7532:" + this.arMagic + "\n\u7A7F\u7532:" + this.pierceAr);
     };
     return Attribute;
 }());
