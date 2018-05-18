@@ -1,0 +1,4 @@
+class DamageFloat {
+	public constructor() {
+	}
+}

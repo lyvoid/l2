@@ -67,6 +67,9 @@ class SkillTmp extends IManualSkill {
 							}
 						);
 					}
+					if (change.shield != null){
+						target.lifeBarShieldAnim(change.shield);
+					}
 
 				}
 				this.caster.armatureDisplay.animation.play("attack1_+1", 1);

@@ -20,7 +20,7 @@ var Character = (function (_super) {
          */
         _this.camp = CharCamp.Self;
         /**
-         * 前中后 站位
+         * 前中后三排 站位
          */
         _this.col = CharColType.frontRow;
         /**
@@ -51,6 +51,13 @@ var Character = (function (_super) {
         _this.addChild(lifeBar);
         _this.lifeBar = lifeBar;
         _this.lifeBarFg = lifeBarFg;
+        // 加护盾条
+        var shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
+        shieldBar.height = 8;
+        shieldBar.y = 13;
+        shieldBar.width = 80 * _this.attr.shield / _this.attr.maxShield;
+        lifeBar.addChild(shieldBar);
+        _this.shieldBar = shieldBar;
         // 加技能
         _this.manualSkills = [];
         var skill1 = new SkillTmp(_this);
@@ -81,8 +88,23 @@ var Character = (function (_super) {
      * 播放血条动画，血条在1s内从之前的状态到达当前血量的状态
      */
     Character.prototype.lifeBarAnim = function (newHp) {
+        if (!newHp) {
+            newHp = this.attr.curHp;
+        }
         var lifeBarNewLen = 100 * newHp / this.attr.maxHp;
         return egret.Tween.get(this.lifeBarFg).to({
+            width: lifeBarNewLen,
+        }, 1000, egret.Ease.quintOut);
+    };
+    /**
+     * 播放shield条动画
+     */
+    Character.prototype.lifeBarShieldAnim = function (newShield) {
+        if (!newShield) {
+            newShield = this.attr.shield;
+        }
+        var lifeBarNewLen = 80 * newShield / this.attr.maxHp;
+        return egret.Tween.get(this.shieldBar).to({
             width: lifeBarNewLen,
         }, 1000, egret.Ease.quintOut);
     };
@@ -203,6 +225,7 @@ var Character = (function (_super) {
         this.lifeBarFg = null;
         this.bgLayer = null;
         this.lifeBar = null;
+        this.shieldBar = null;
     };
     return Character;
 }(egret.DisplayObjectContainer));

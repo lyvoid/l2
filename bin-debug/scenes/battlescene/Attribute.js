@@ -30,7 +30,7 @@ var Attribute = (function () {
         /**
          * 护盾
          */
-        this.shield = 100;
+        this.shield = 20;
         /**
          * 最大护盾
          */

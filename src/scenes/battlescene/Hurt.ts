@@ -134,6 +134,8 @@ class Hurt {
 		if (newTargetHp <= 0) {
 			newTargetHp = 0;
 			isAliveChange = true;
+			// 如果死亡那么shield也要归0
+			targetAttr.shield = 0;
 			// 发送角色死亡消息
 			mm.sendMessage(
 				MessageType.CharDie,

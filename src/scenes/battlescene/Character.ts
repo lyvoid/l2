@@ -13,6 +13,7 @@ class Character extends egret.DisplayObjectContainer {
 	private lifeBarFg: egret.Bitmap;
 	// 血条整体
 	private lifeBar: egret.DisplayObjectContainer;
+	private shieldBar: egret.Bitmap;
 
 	/**
 	 * 人物当前状态描述，在长按中展示
@@ -53,7 +54,7 @@ class Character extends egret.DisplayObjectContainer {
 	public camp: CharCamp = CharCamp.Self;
 
 	/**
-	 * 前中后 站位
+	 * 前中后三排 站位
 	 */
 	public col: CharColType = CharColType.frontRow;
 
@@ -93,6 +94,14 @@ class Character extends egret.DisplayObjectContainer {
 		this.addChild(lifeBar);
 		this.lifeBar = lifeBar;
 		this.lifeBarFg = lifeBarFg;
+		
+		// 加护盾条
+		let shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
+		shieldBar.height = 8;
+		shieldBar.y = 13;
+		shieldBar.width = 80 * this.attr.shield / this.attr.maxShield;
+		lifeBar.addChild(shieldBar);
+		this.shieldBar = shieldBar;
 
 
 		// 加技能
@@ -104,12 +113,29 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 播放血条动画，血条在1s内从之前的状态到达当前血量的状态
 	 */
-	public lifeBarAnim(newHp: number): egret.Tween {
+	public lifeBarAnim(newHp?: number): egret.Tween {
+		if (!newHp){
+			newHp = this.attr.curHp;
+		}
 		let lifeBarNewLen = 100 * newHp / this.attr.maxHp;
 		return egret.Tween.get(this.lifeBarFg).to({
 			width: lifeBarNewLen,
 		}, 1000, egret.Ease.quintOut);
 	}
+
+	/**
+	 * 播放shield条动画
+	 */
+	public lifeBarShieldAnim(newShield?: number): egret.Tween {
+		if (!newShield){
+			newShield = this.attr.shield;
+		}
+		let lifeBarNewLen = 80 * newShield / this.attr.maxHp;
+		return egret.Tween.get(this.shieldBar).to({
+			width: lifeBarNewLen,
+		}, 1000, egret.Ease.quintOut);
+	}
+
 
 	private loadArmature(charactorName: string): void {
 		// 从当前场景中获取dbManager，因此在实例化charactor前
@@ -285,6 +311,7 @@ class Character extends egret.DisplayObjectContainer {
 		this.lifeBarFg = null;
 		this.bgLayer = null;
 		this.lifeBar = null;
+		this.shieldBar = null;
 	}
 
 }

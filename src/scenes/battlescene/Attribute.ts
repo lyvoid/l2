@@ -27,7 +27,7 @@ class Attribute {
 	/**
 	 * 护盾
 	 */
-	public shield: number = 100;
+	public shield: number = 20;
 	/**
 	 * 最大护盾
 	 */

@@ -69,6 +69,9 @@ var SkillTmp = (function (_super) {
                         }
                     });
                 }
+                if (change.shield != null) {
+                    target.lifeBarShieldAnim(change.shield);
+                }
             };
             for (var _i = 0, affectResult_1 = affectResult; _i < affectResult_1.length; _i++) {
                 var result = affectResult_1[_i];
