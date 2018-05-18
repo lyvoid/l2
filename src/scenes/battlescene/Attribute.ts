@@ -19,7 +19,7 @@ class Attribute {
 	/**
 	 * 当前生命
 	 */
-	public curHp: number = 200;
+	public hp: number = 200;
 	/**
 	 * 穿甲
 	 */
@@ -39,7 +39,7 @@ class Attribute {
 
 	public toString(): string {
 		return ''+
-`生命:${this.curHp}/${this.maxHp}
+`生命:${this.hp}/${this.maxHp}
 护盾:${this.shield}/${this.maxShield}
 攻击:${this.ap}
 物理护甲:${this.arPys}

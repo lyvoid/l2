@@ -26,7 +26,7 @@ class Character extends egret.DisplayObjectContainer {
 	 * 是否存活
 	 */
 	public get alive(): boolean{
-		return this.attr.curHp != 0;
+		return this.attr.hp != 0;
 	}
 
 	/**
@@ -115,7 +115,7 @@ class Character extends egret.DisplayObjectContainer {
 	 */
 	public lifeBarAnim(newHp?: number): egret.Tween {
 		if (!newHp){
-			newHp = this.attr.curHp;
+			newHp = this.attr.hp;
 		}
 		let lifeBarNewLen = 100 * newHp / this.attr.maxHp;
 		return egret.Tween.get(this.lifeBarFg).to({

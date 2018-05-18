@@ -23,7 +23,7 @@ var Hurt = (function () {
         this.isResurgence = isResurgence;
     }
     /**
-     * 施加伤害
+     * 施加伤害，返回收到影响的属性列表
      */
     Hurt.prototype.affect = function (target) {
         var mm = MessageManager.Ins;
@@ -83,9 +83,9 @@ var Hurt = (function () {
         // 处理非穿盾
         var harmRemain = harm;
         if (!this.isPericeShield) {
-            var harmRemain_1 = harm - targetAttr.shield;
-            if (harmRemain_1 <= 0) {
-                targetAttr.shield = -harmRemain_1;
+            harmRemain = harm - targetAttr.shield;
+            if (harmRemain <= 0) {
+                targetAttr.shield = -harmRemain;
                 mm.sendMessage(MessageType.HarmShield, [this.fromChar, target, harm]);
                 return { shield: targetAttr.shield };
             }
@@ -98,6 +98,8 @@ var Hurt = (function () {
         if (newTargetHp <= 0) {
             newTargetHp = 0;
             isAliveChange = true;
+            // 如果死亡那么shield也要归0
+            targetAttr.shield = 0;
             // 发送角色死亡消息
             mm.sendMessage(MessageType.CharDie, target);
         }

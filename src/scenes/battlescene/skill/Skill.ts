@@ -56,7 +56,7 @@ class SkillTmp extends IManualSkill {
 			() => {
 				for (let result of affectResult) {
 					let target: Character = result[0];
-					let change: AttrChange = result[1];
+					let change: IAttrChange = result[1];
 					if (change.hp != null) {
 						target.lifeBarAnim(change.hp).call(
 							// 血条变化完之后如果此次人物还死亡了的话
@@ -67,8 +67,8 @@ class SkillTmp extends IManualSkill {
 							}
 						);
 					}
-					if (change.shield != null){
-						target.lifeBarShieldAnim(change.shield);
+					if (change.shieldNew != null){
+						target.lifeBarShieldAnim(change.shieldNew);
 					}
 
 				}

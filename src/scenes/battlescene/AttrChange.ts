@@ -1,6 +1,9 @@
-interface AttrChange {
-	shield?: number;
-	hp?: number;
-	alive?:boolean;
-	isAliveChange?:boolean
+interface IAttrChange {
+	char: Character;
+	shieldOld: number;
+	shieldNew: number;
+	hpOld: number;
+	hpNew: number;
+	aliveNew: boolean;
+	aliveOld: boolean
 }

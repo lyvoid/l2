@@ -32,14 +32,24 @@ class Hurt {
 	}
 
 	/**
-	 * 施加伤害
+	 * 施加伤害，返回收到影响的属性列表
 	 */
-	public affect(target: Character): AttrChange {
+	public affect(target: Character): IAttrChange {
 
 		let mm = MessageManager.Ins;
 
 		let targetAttr = target.attr;
 		let harm = 0;
+
+		let changeInfo: IAttrChange = {
+			char: target,
+			shieldOld: targetAttr.shield,
+			shieldNew: 0,
+			hpOld: targetAttr.hp,
+			hpNew: 0,
+			aliveOld: target.alive,
+			aliveNew: false
+		};
 
 		// 处理护甲
 		if (this.isAbs) {
@@ -61,10 +71,10 @@ class Hurt {
 		// 处理治疗生命
 		if (this.hurtType == HurtType.HealHp && (target.alive || this.isResurgence)) {
 			isAliveChange = !target.alive;
-			let newHp = targetAttr.curHp + harm;
+			let newHp = targetAttr.hp + harm;
 			newHp = newHp > targetAttr.maxHp ? targetAttr.maxHp : newHp;
-			let healValue = newHp - targetAttr.curHp;
-			targetAttr.curHp = newHp;
+			let healValue = newHp - targetAttr.hp;
+			targetAttr.hp = newHp;
 			mm.sendMessage(
 				MessageType.HealHp,
 				[this.fromChar, target, healValue]
@@ -78,16 +88,12 @@ class Hurt {
 				);
 			}
 
-			return {
-				hp: newHp, 
-				alive: target.alive,
-				isAliveChange: isAliveChange
-			};
+			return Hurt.fullNewAttrToChange(changeInfo, target);
 		}
 
 		// 非治疗状态下，对已死亡单位无效
 		if (!target.alive){
-			return {};
+			return Hurt.fullNewAttrToChange(changeInfo, target);
 		}
 
 		// 处理增加护盾
@@ -100,7 +106,7 @@ class Hurt {
 				MessageType.HealShield,
 				[this.fromChar, target, healValue]
 			);
-			return {shield: newShield};
+			return Hurt.fullNewAttrToChange(changeInfo, target);
 		}
 
 		// 处理破盾
@@ -111,14 +117,14 @@ class Hurt {
 		// 处理非穿盾
 		let harmRemain = harm;
 		if (!this.isPericeShield) {
-			let harmRemain = harm - targetAttr.shield;
+			harmRemain = harm - targetAttr.shield;
 			if (harmRemain <= 0) {
 				targetAttr.shield = -harmRemain;
 				mm.sendMessage(
 					MessageType.HarmShield,
 					[this.fromChar, target, harm]
 				);
-				return {shield: targetAttr.shield};
+				return Hurt.fullNewAttrToChange(changeInfo, target);
 			}
 			mm.sendMessage(
 				MessageType.HarmShield,
@@ -129,7 +135,7 @@ class Hurt {
 		}
 
 		// 伤害到hp
-		let newTargetHp = targetAttr.curHp - harmRemain;
+		let newTargetHp = targetAttr.hp - harmRemain;
 		// 生命归零，角色死亡
 		if (newTargetHp <= 0) {
 			newTargetHp = 0;
@@ -144,11 +150,25 @@ class Hurt {
 		}
 		mm.sendMessage(
 			MessageType.HarmHp,
-			[this.fromChar, target, targetAttr.curHp - newTargetHp]
+			[this.fromChar, target, targetAttr.hp - newTargetHp]
 		);
-		targetAttr.curHp = newTargetHp;
-		return {shield: targetAttr.shield, hp:newTargetHp, alive: target.alive, isAliveChange: isAliveChange};
+		targetAttr.hp = newTargetHp;
+		return Hurt.fullNewAttrToChange(changeInfo, target);
 
+	}
+
+	/**
+	 * 辅助函数，把char中的属性填充到attrChange中
+	 */
+	private static fullNewAttrToChange(
+		attrChange:IAttrChange, 
+		char: Character
+	): IAttrChange{
+		let newAttr = char.attr;
+		attrChange.hpNew = newAttr.hp;
+		attrChange.aliveNew = char.alive;
+		attrChange.shieldNew = newAttr.shield;
+		return attrChange;
 	}
 }
 
