@@ -37,6 +37,11 @@ class Attribute {
 	 */
 	public char: Character;
 
+	/**
+	 * 是否存在游戏中
+	 */
+	public isInBattle: boolean=true;
+
 	public toString(): string {
 		return ''+
 `生命:${this.hp}/${this.maxHp}

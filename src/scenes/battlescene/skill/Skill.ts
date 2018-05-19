@@ -2,37 +2,11 @@
  * 临时技能，单纯用来测试
  */
 class SkillTmp extends IManualSkill {
-	public constructor(caster: Character = null) {
-		super();
+	public constructor(caster: Character = null, camp:CharCamp = CharCamp.Neut) {
+		super(caster, camp);
 		this.targetType = TargetType.SpecialEnemy;
-		this.fireNeed = 2;
-		this.desc = "对指定单位造成攻击的伤害";
-		this.caster = caster;
-	}
-
-	public useSkill(): void {
-
-		// 判断技能是不是需要释放
-		this.manualChooseTarget();
-		let target = this.targets[0];
-		if (!target.alive) {
-			return;
-		}
-
-		// 运行实际效果
-		let affectResult = this.affect();
-
-		// 确实需要释放时，将演出加到预演出列表
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.performQue.push([this, affectResult]);
-		// 没次加入新的表现序列都调用一次应该是没错的
-		MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
-
-
-		// 运行在在SkillToDo中的技能
-		if (scene.skillTodoQue.length > 0) {
-			scene.skillTodoQue.pop().useSkill();
-		}
+		this.fireNeed = 1;
+		this.desc = "对指定敌方单位造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
 	}
 
 	protected affect(): any {
@@ -41,6 +15,9 @@ class SkillTmp extends IManualSkill {
 		for (let char of this.targets) {
 			let change = hurt.affect(char);
 			affectResult.push(change);
+			if (!char.alive){
+				this.scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
+			}
 		}
 		return affectResult;
 	}
@@ -52,30 +29,8 @@ class SkillTmp extends IManualSkill {
 			x: this.targets[0].x + 100 * this.targets[0].camp,
 			y: this.targets[0].y + 20
 		}, 200).call(
-
 			() => {
-				for (let result of affectResult) {
-					let change: IAttrChange = result;
-					let target = change.char;
-					if (change.hpOld != change.hpNew) {
-						target.lifeBarAnim(change.hpNew).call(
-							// 血条变化完之后如果此次人物还死亡了的话
-							() => {
-								if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-									target.addChild(new eui.Label("死亡"));
-								}
-							}
-						);
-
-						// 飘字
-						damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-					}
-					if (change.shieldNew != change.shieldOld){
-						target.lifeBarShieldAnim(change.shieldNew);
-						damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
-					}
-
-				}
+				IManualSkill.statePerformance(affectResult);
 				this.caster.armatureDisplay.animation.play("attack1_+1", 1);
 				this.caster.armatureDisplay.addEventListener(
 					dragonBones.EventObject.COMPLETE,
@@ -104,3 +59,4 @@ class SkillTmp extends IManualSkill {
 	}
 
 }
+

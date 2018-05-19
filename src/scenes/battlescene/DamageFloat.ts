@@ -26,7 +26,7 @@ class DamageFloatManager {
 		return egret.Tween.get(floatLabel).to({
 			y: floatLabel.y - 100,
 			alpha: 0
-		}, 3000, egret.Ease.quadIn).call(
+		}, 3000, egret.Ease.quadInOut).call(
 			()=>{
 				char.removeChild(floatLabel);
 				numberFloatPool.push(floatLabel);

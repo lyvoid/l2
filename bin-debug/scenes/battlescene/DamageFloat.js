@@ -26,11 +26,10 @@ var DamageFloatManager = (function () {
         floatLabel.y = -200;
         floatLabel.x = -30;
         floatLabel.alpha = 1;
-        floatLabel.bold = true;
         return egret.Tween.get(floatLabel).to({
-            y: floatLabel.y + 100,
+            y: floatLabel.y - 100,
             alpha: 0
-        }, 2000).call(function () {
+        }, 3000, egret.Ease.quadInOut).call(function () {
             char.removeChild(floatLabel);
             numberFloatPool.push(floatLabel);
         });

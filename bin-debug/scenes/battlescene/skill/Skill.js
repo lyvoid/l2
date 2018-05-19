@@ -13,34 +13,15 @@ r.prototype = e.prototype, t.prototype = new r();
  */
 var SkillTmp = (function (_super) {
     __extends(SkillTmp, _super);
-    function SkillTmp(caster) {
+    function SkillTmp(caster, camp) {
         if (caster === void 0) { caster = null; }
-        var _this = _super.call(this) || this;
+        if (camp === void 0) { camp = CharCamp.Neut; }
+        var _this = _super.call(this, caster, camp) || this;
         _this.targetType = TargetType.SpecialEnemy;
-        _this.fireNeed = 2;
-        _this.desc = "对指定单位造成攻击的伤害";
-        _this.caster = caster;
+        _this.fireNeed = 1;
+        _this.desc = "对指定敌方单位造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
         return _this;
     }
-    SkillTmp.prototype.useSkill = function () {
-        // 判断技能是不是需要释放
-        this.manualChooseTarget();
-        var target = this.targets[0];
-        if (!target.alive) {
-            return;
-        }
-        // 运行实际效果
-        var affectResult = this.affect();
-        // 确实需要释放时，将演出加到预演出列表
-        var scene = SceneManager.Ins.curScene;
-        scene.performQue.push([this, affectResult]);
-        // 没次加入新的表现序列都调用一次应该是没错的
-        MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
-        // 运行在在SkillToDo中的技能
-        if (scene.skillTodoQue.length > 0) {
-            scene.skillTodoQue.pop().useSkill();
-        }
-    };
     SkillTmp.prototype.affect = function () {
         var hurt = new Hurt(HurtType.Pysic, this.caster);
         var affectResult = [];
@@ -48,6 +29,9 @@ var SkillTmp = (function (_super) {
             var char = _a[_i];
             var change = hurt.affect(char);
             affectResult.push(change);
+            if (!char.alive) {
+                this.scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
+            }
         }
         return affectResult;
     };
@@ -58,29 +42,7 @@ var SkillTmp = (function (_super) {
             x: this.targets[0].x + 100 * this.targets[0].camp,
             y: this.targets[0].y + 20
         }, 200).call(function () {
-            var _loop_1 = function (result) {
-                var change = result;
-                var target = change.char;
-                if (change.hpOld != change.hpNew) {
-                    target.lifeBarAnim(change.hpNew).call(
-                    // 血条变化完之后如果此次人物还死亡了的话
-                    function () {
-                        if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-                            target.addChild(new eui.Label("死亡"));
-                        }
-                    });
-                    // 飘字
-                    damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-                }
-                if (change.shieldNew != change.shieldOld) {
-                    target.lifeBarShieldAnim(change.shieldNew);
-                    damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
-                }
-            };
-            for (var _i = 0, affectResult_1 = affectResult; _i < affectResult_1.length; _i++) {
-                var result = affectResult_1[_i];
-                _loop_1(result);
-            }
+            IManualSkill.statePerformance(affectResult);
             _this.caster.armatureDisplay.animation.play("attack1_+1", 1);
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });

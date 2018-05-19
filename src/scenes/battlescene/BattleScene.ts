@@ -349,7 +349,6 @@ class BattleScene extends IScene {
 			this.isPerformance = false;
 			return;
 		}
-		this.isPerformance = true;
 		let skill: IManualSkill;
 		let affectResult:any;
 		[skill, affectResult] = this.performQue.pop();

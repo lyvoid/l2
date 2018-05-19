@@ -69,7 +69,13 @@ class Card extends egret.DisplayObjectContainer {
 			ToastInfoManager.Ins.newToast("能量不足");
 			return;
 		}
-		
+
+		if (this.skill.targetType == TargetType.SpecialEnemy && 
+			(!scene.selectedEnemy.attr.isInBattle)){
+			ToastInfoManager.Ins.newToast("选中目标已从游戏中排除");
+			return;
+		}
+
 		// 如果目标类型为特定单位，但该单位已经死亡（发生在之前的技能已经把敌方打死但是演出还没结束的时候）
 		if (this.skill.targetType == TargetType.SpecialEnemy && 
 			(!scene.selectedEnemy.alive)){

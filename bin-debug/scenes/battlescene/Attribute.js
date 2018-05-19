@@ -35,6 +35,10 @@ var Attribute = (function () {
          * 最大护盾
          */
         this.maxShield = 100;
+        /**
+         * 是否存在游戏中
+         */
+        this.isInBattle = true;
     }
     Attribute.prototype.toString = function () {
         return '' +

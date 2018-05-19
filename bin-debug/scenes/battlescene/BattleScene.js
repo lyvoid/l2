@@ -289,7 +289,6 @@ var BattleScene = (function (_super) {
             this.isPerformance = false;
             return;
         }
-        this.isPerformance = true;
         var skill;
         var affectResult;
         _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];

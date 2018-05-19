@@ -1,21 +1,36 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
+/**
+ * 表示一个非被动技能
+ * manualChooseTarget 手动选择目标规则
+ * autoChooseTarget  自动选择目标规则
+ * useSkill 调用技能（一般不用重写）
+ * affect 实际施加效果（强制实现）
+ * performance 表现效果（强制实现）结束时需要注意要发送MessageType.PerformanceEnd消息，不然会阻塞其他演出
+ * needCast 是否需要释放
+ */
 var IManualSkill = (function () {
-    function IManualSkill() {
+    function IManualSkill(caster, camp) {
+        if (caster === void 0) { caster = null; }
+        if (camp === void 0) { camp = CharCamp.Neut; }
+        this.caster = caster;
+        this.camp = caster ? caster.camp : camp;
+        this.setCampChar();
+        this.scene = SceneManager.Ins.curScene;
     }
     /**
      * 获取该阵营对应的敌我双方信息
      */
     IManualSkill.prototype.setCampChar = function () {
         var scene = SceneManager.Ins.curScene;
-        if (this.caster != null && this.caster.camp == CharCamp.Enemy) {
+        if (this.camp == CharCamp.Enemy) {
             // 如果是敌方单位，对应的敌我双方刚好相反
             this.enemies = scene.friends;
             this.friends = scene.enemies;
         }
         else {
-            // 如果没有施法者统一看成我方施法
+            // 如果中立统一看成我方施法
             this.enemies = scene.enemies;
             this.friends = scene.friends;
         }
@@ -28,14 +43,16 @@ var IManualSkill = (function () {
     IManualSkill.prototype.manualChooseTarget = function () {
         var scene = SceneManager.Ins.curScene;
         switch (this.targetType) {
+            case TargetType.PreSet:
+                break;
             case TargetType.Self:
                 this.targets = [this.caster];
                 break;
             case TargetType.AllFriend:
-                this.targets = scene.friends;
+                this.targets = this.friends;
                 break;
             case TargetType.AllEnemy:
-                this.targets = scene.enemies;
+                this.targets = this.enemies;
                 break;
             case TargetType.SpecialEnemy:
                 this.targets = [scene.selectedEnemy];
@@ -44,9 +61,10 @@ var IManualSkill = (function () {
                 this.targets = [scene.selectedFriend];
                 break;
             case TargetType.NoTarget:
+                this.targets = [];
                 break;
             case TargetType.All:
-                this.targets = scene.enemies.concat(scene.friends);
+                this.targets = this.enemies.concat(this.friends);
                 break;
         }
     };
@@ -55,8 +73,9 @@ var IManualSkill = (function () {
      * 敌方的所有选择均使用这个
      */
     IManualSkill.prototype.autoChooseTarget = function () {
-        this.setCampChar();
         switch (this.targetType) {
+            case TargetType.PreSet:
+                break;
             case TargetType.Self:
                 this.targets = [this.caster];
                 break;
@@ -73,6 +92,7 @@ var IManualSkill = (function () {
                 this.targets = [this.friends[0]];
                 break;
             case TargetType.NoTarget:
+                this.targets = [];
                 break;
             case TargetType.All:
                 this.targets = this.enemies.concat(this.friends);
@@ -80,6 +100,71 @@ var IManualSkill = (function () {
         }
     };
     ;
+    /**
+     * 释放技能
+     */
+    IManualSkill.prototype.useSkill = function () {
+        // 选择首要目标
+        if (this.camp == CharCamp.Player) {
+            this.manualChooseTarget();
+        }
+        else {
+            this.autoChooseTarget();
+        }
+        // 判断技能是不是需要释放
+        if (!this.needCast()) {
+            return;
+        }
+        // 运行实际效果
+        var affectResult = this.affect();
+        // 确实需要释放时，将演出加到预演出列表
+        this.scene.performQue.push([this, affectResult]);
+        // 没次加入新的表现序列都调用一次应该是没错的
+        MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
+        // 运行在在SkillToDo中的技能
+        if (this.scene.skillTodoQue.length > 0) {
+            this.scene.skillTodoQue.pop().useSkill();
+        }
+    };
+    /**
+     * 技能是否该释放
+     * IManualSkill中的该方法仅适用于判定对单个目标造成伤害的类型的技能
+     * 走到这个函数说明技能已经释放出去了，已经消耗了能量，只是可能已经不需要产生作用了
+     */
+    IManualSkill.prototype.needCast = function () {
+        var target = this.targets[0];
+        return target.alive;
+    };
+    /**
+     * 状态表现
+     * 对血量护盾复活死亡进行表现
+     */
+    IManualSkill.statePerformance = function (stateChange) {
+        var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
+        var _loop_1 = function (result) {
+            var change = result;
+            var target = change.char;
+            if (change.shieldNew != change.shieldOld) {
+                target.lifeBarShieldAnim(change.shieldNew);
+                damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
+            }
+            if (change.hpOld != change.hpNew) {
+                target.lifeBarAnim(change.hpNew).call(
+                // 血条变化完之后如果此次人物还死亡了的话
+                function () {
+                    if (change.aliveNew != change.aliveOld && !change.aliveNew) {
+                        target.addChild(new eui.Label("死亡"));
+                    }
+                });
+                // 飘字
+                damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
+            }
+        };
+        for (var _i = 0, stateChange_1 = stateChange; _i < stateChange_1.length; _i++) {
+            var result = stateChange_1[_i];
+            _loop_1(result);
+        }
+    };
     IManualSkill.prototype.release = function () {
         this.caster = null;
         this.targets = null;
@@ -97,5 +182,6 @@ var TargetType;
     TargetType[TargetType["SpecialFriend"] = 3] = "SpecialFriend";
     TargetType[TargetType["SpecialEnemy"] = 4] = "SpecialEnemy";
     TargetType[TargetType["NoTarget"] = 5] = "NoTarget";
-    TargetType[TargetType["All"] = 6] = "All"; // 所有
+    TargetType[TargetType["All"] = 6] = "All";
+    TargetType[TargetType["PreSet"] = 7] = "PreSet"; //提前设置好的
 })(TargetType || (TargetType = {}));

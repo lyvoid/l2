@@ -18,7 +18,7 @@ var Character = (function (_super) {
         /**
          * 阵营
          */
-        _this.camp = CharCamp.Self;
+        _this.camp = CharCamp.Player;
         /**
          * 前中后三排 站位
          */
@@ -232,7 +232,7 @@ var Character = (function (_super) {
 __reflect(Character.prototype, "Character");
 var CharCamp;
 (function (CharCamp) {
-    CharCamp[CharCamp["Self"] = 1] = "Self";
+    CharCamp[CharCamp["Player"] = 1] = "Player";
     CharCamp[CharCamp["Neut"] = 0] = "Neut";
     CharCamp[CharCamp["Enemy"] = -1] = "Enemy";
 })(CharCamp || (CharCamp = {}));

@@ -51,7 +51,7 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 阵营
 	 */
-	public camp: CharCamp = CharCamp.Self;
+	public camp: CharCamp = CharCamp.Player;
 
 	/**
 	 * 前中后三排 站位
@@ -317,7 +317,7 @@ class Character extends egret.DisplayObjectContainer {
 }
 
 enum CharCamp {
-	Self = 1,
+	Player = 1,
 	Neut = 0,
 	Enemy = -1,
 }
