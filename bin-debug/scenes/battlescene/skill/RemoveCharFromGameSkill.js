@@ -17,12 +17,16 @@ var RemoveCharFromGameSkill = (function (_super) {
         return _this;
     }
     RemoveCharFromGameSkill.prototype.affect = function () {
-        var target = this.targets[0];
-        target.attr.isInBattle = false;
+        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
+            var target = _a[_i];
+            target.attr.isInBattle = false;
+        }
     };
     RemoveCharFromGameSkill.prototype.performance = function (affectResult) {
-        var target = this.targets[0];
-        target.parent.removeChild(target);
+        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
+            var target = _a[_i];
+            target.parent.removeChild(target);
+        }
         MessageManager.Ins.sendMessage(MessageType.PerformanceEnd);
     };
     RemoveCharFromGameSkill.prototype.needCast = function () {

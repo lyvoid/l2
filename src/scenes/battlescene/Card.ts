@@ -62,7 +62,11 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	private onTouchTap(): void {
-		let scene = SceneManager.Ins.curScene as BattleScene
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		if (scene.winnerCamp){
+			ToastInfoManager.Ins.newToast("胜负已分");
+			return;
+		}
 		let fireboard = scene.playerFireBoard;
 		let fireNeed = this.skill.fireNeed;
 		if (fireNeed > fireboard.fireNum){

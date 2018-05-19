@@ -2,7 +2,7 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
 /**
- * 表示一个非被动技能
+ * 表示一个非被动技能（被动技能触发的一些效果也是通过主动技能来实现）
  * manualChooseTarget 手动选择目标规则
  * autoChooseTarget  自动选择目标规则
  * useSkill 调用技能（一般不用重写）
@@ -104,6 +104,10 @@ var IManualSkill = (function () {
      * 释放技能
      */
     IManualSkill.prototype.useSkill = function () {
+        // 如果游戏已经结束就不再释放
+        if (this.scene.winnerCamp) {
+            return;
+        }
         // 选择首要目标
         if (this.camp == CharCamp.Player) {
             this.manualChooseTarget();
@@ -125,6 +129,8 @@ var IManualSkill = (function () {
         if (this.scene.skillTodoQue.length > 0) {
             this.scene.skillTodoQue.pop().useSkill();
         }
+        // 判断游戏是否结束
+        this.scene.judge();
     };
     /**
      * 技能是否该释放

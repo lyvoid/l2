@@ -3,7 +3,7 @@ class Attribute {
 	/**
 	 * 攻击
 	 */
-	public ap: number = 100;
+	public ap: number = 1000;
 	/**
 	 * 物理防御
 	 */

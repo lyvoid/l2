@@ -53,6 +53,10 @@ var Card = (function (_super) {
     };
     Card.prototype.onTouchTap = function () {
         var scene = SceneManager.Ins.curScene;
+        if (scene.winnerCamp) {
+            ToastInfoManager.Ins.newToast("胜负已分");
+            return;
+        }
         var fireboard = scene.playerFireBoard;
         var fireNeed = this.skill.fireNeed;
         if (fireNeed > fireboard.fireNum) {

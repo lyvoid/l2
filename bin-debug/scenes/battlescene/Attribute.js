@@ -6,7 +6,7 @@ var Attribute = (function () {
         /**
          * 攻击
          */
-        this.ap = 100;
+        this.ap = 1000;
         /**
          * 物理防御
          */

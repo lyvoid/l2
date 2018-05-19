@@ -4,9 +4,9 @@
 class SkillTmp extends IManualSkill {
 	public constructor(caster: Character = null, camp:CharCamp = CharCamp.Neut) {
 		super(caster, camp);
-		this.targetType = TargetType.SpecialEnemy;
+		this.targetType = TargetType.AllEnemy;
 		this.fireNeed = 1;
-		this.desc = "对指定敌方单位造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
+		this.desc = "对敌方全体造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
 	}
 
 	protected affect(): any {

@@ -227,6 +227,33 @@ var BattleScene = (function (_super) {
             });
         });
     };
+    /**
+     * 判断胜负
+     */
+    BattleScene.prototype.judge = function () {
+        var isEnemyAlive = false;
+        var isPlayerAlive = false;
+        for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
+            var char = _a[_i];
+            if (char.alive && char.attr.isInBattle) {
+                isEnemyAlive = true;
+                break;
+            }
+        }
+        for (var _b = 0, _c = this.friends; _b < _c.length; _b++) {
+            var char = _c[_b];
+            if (char.alive && char.attr.isInBattle) {
+                isPlayerAlive = true;
+                break;
+            }
+        }
+        if (!isEnemyAlive) {
+            this.winnerCamp = CharCamp.Player;
+        }
+        else if (!isPlayerAlive) {
+            this.winnerCamp = CharCamp.Enemy;
+        }
+    };
     BattleScene.prototype.onObjTouchGlowAnim = function (e) {
         var obj = e.messageContent;
         this.bcr.touchGlow.setHolderAnim(obj);
@@ -287,6 +314,15 @@ var BattleScene = (function (_super) {
         if (this.performQue.length == 0) {
             // 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
             this.isPerformance = false;
+            // 如果演出结束同时游戏结束时，播放游戏结束演出
+            if (this.winnerCamp) {
+                if (this.winnerCamp == CharCamp.Player) {
+                    ToastInfoManager.Ins.newToast("战斗胜利");
+                }
+                else {
+                    ToastInfoManager.Ins.newToast("战斗失败");
+                }
+            }
             return;
         }
         var skill;

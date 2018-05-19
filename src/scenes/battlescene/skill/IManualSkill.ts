@@ -1,5 +1,5 @@
 /**
- * 表示一个非被动技能
+ * 表示一个非被动技能（被动技能触发的一些效果也是通过主动技能来实现）
  * manualChooseTarget 手动选择目标规则
  * autoChooseTarget  自动选择目标规则
  * useSkill 调用技能（一般不用重写）
@@ -133,6 +133,11 @@ abstract class IManualSkill {
 	 */
 	public useSkill(): void {
 
+		// 如果游戏已经结束就不再释放
+		if (this.scene.winnerCamp){
+			return;
+		}
+
 		// 选择首要目标
 		if (this.camp == CharCamp.Player){
 			this.manualChooseTarget();
@@ -140,7 +145,6 @@ abstract class IManualSkill {
 		else{
 			this.autoChooseTarget();
 		}
-
 
 		// 判断技能是不是需要释放
 		if (!this.needCast()){
@@ -160,6 +164,9 @@ abstract class IManualSkill {
 		if (this.scene.skillTodoQue.length > 0) {
 			this.scene.skillTodoQue.pop().useSkill();
 		}
+
+		// 判断游戏是否结束
+		this.scene.judge();
 	}
 
 	/**

@@ -26,6 +26,9 @@ class BattleScene extends IScene {
 	// 飘字管理器
 	public damageFloatManager: DamageFloatManager;
 
+	// 获胜阵营
+	public winnerCamp: CharCamp;
+
 	public initial() {
 		super.initial();
 		this.enemies = [];
@@ -284,6 +287,32 @@ class BattleScene extends IScene {
 
 	}
 
+	/**
+	 * 判断胜负
+	 */
+	public judge(){
+		let isEnemyAlive: boolean=false;
+		let isPlayerAlive: boolean=false;
+		for (let char of this.enemies){
+			if (char.alive && char.attr.isInBattle){
+				isEnemyAlive = true;
+				break;
+			}
+		}
+		for (let char of this.friends){
+			if (char.alive && char.attr.isInBattle){
+				isPlayerAlive = true;
+				break;
+			}
+		}
+
+		if (!isEnemyAlive){
+			this.winnerCamp = CharCamp.Player;
+		}else if (!isPlayerAlive){
+			this.winnerCamp = CharCamp.Enemy;
+		}
+	}
+
 	private onObjTouchGlowAnim(e: Message): void {
 		let obj = e.messageContent;
 		this.bcr.touchGlow.setHolderAnim(obj);
@@ -347,6 +376,14 @@ class BattleScene extends IScene {
 		if (this.performQue.length == 0){
 			// 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
 			this.isPerformance = false;
+			// 如果演出结束同时游戏结束时，播放游戏结束演出
+			if (this.winnerCamp){
+				if (this.winnerCamp == CharCamp.Player){
+					ToastInfoManager.Ins.newToast("战斗胜利");
+				}else{
+					ToastInfoManager.Ins.newToast("战斗失败");
+				}
+			}
 			return;
 		}
 		let skill: IManualSkill;
