@@ -22,6 +22,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let skills = (SceneManager.Ins.curScene as BattleScene).skillManualPool;
 		let index = Math.floor(Math.random() * skills.length);
 		let card = new Card(skills[index]);
+		card.initial();
 		this.cards.push(card);
 		this.addCardToBoard(card);
 	}

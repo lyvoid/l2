@@ -29,6 +29,8 @@ var MessageType = (function () {
     MessageType.CardTouchTap = "CardTouchTap";
     // 载入完成事件
     MessageType.LoadingFinish = "LoadingFinish";
+    MessageType.LoadingProcess = "LoadingProcess";
+    MessageType.SceneReleaseCompelete = "SceneReleaseCompelete";
     return MessageType;
 }());
 __reflect(MessageType.prototype, "MessageType");

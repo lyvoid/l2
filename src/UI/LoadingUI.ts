@@ -14,7 +14,7 @@ class LoadingUI extends eui.UILayer implements RES.PromiseTaskReporter{
 		imageBg.y = (stageHeight - imageBg.height * scale) / 2;
 		this.addChild(imageBg);
 		this.textField = new eui.Label();
-		this.textField.bottom = 30;
+		this.textField.bottom = 15;
 		this.textField.horizontalCenter = 0;
 		this.addChild(this.textField);
 	}

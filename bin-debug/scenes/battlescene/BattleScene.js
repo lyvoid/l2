@@ -89,7 +89,7 @@ var BattleScene = (function (_super) {
                 switch (_d.label) {
                     case 0: 
                     // 载入通用资源
-                    return [4 /*yield*/, RES.loadGroup("battlecommon")];
+                    return [4 /*yield*/, RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingLayer)];
                     case 1:
                         // 载入通用资源
                         _d.sent();
@@ -367,7 +367,7 @@ var BattleScene = (function (_super) {
         var _a;
     };
     /**
-     * 战斗胜利
+     * 战斗结束
      */
     BattleScene.prototype.onBattleEnd = function () {
         LayerManager.Ins.maskLayer.visible = true;
@@ -422,7 +422,48 @@ var BattleScene = (function (_super) {
         this.bcr = null;
         this.battleUI = null;
         this.battleEndPopUp = null;
-        // TODO 释放载入的美术资源
+        this.damageFloatManager.release();
+        this.damageFloatManager = null;
+        this.playerFireBoard.release();
+        this.playerFireBoard = null;
+        // 释放载入的美术资源
+        this.releaseResource().then(function () {
+            MessageManager.Ins.sendMessage(MessageType.SceneReleaseCompelete);
+        });
+    };
+    BattleScene.prototype.releaseResource = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _i, _a, charactorName;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, RES.destroyRes("battlecommon")];
+                    case 1:
+                        _b.sent();
+                        _i = 0, _a = ["Dragon", "Swordsman"];
+                        _b.label = 2;
+                    case 2:
+                        if (!(_i < _a.length)) return [3 /*break*/, 7];
+                        charactorName = _a[_i];
+                        return [4 /*yield*/, RES.destroyRes(charactorName + "_db_ske_json")];
+                    case 3:
+                        _b.sent();
+                        return [4 /*yield*/, RES.destroyRes(charactorName + "_db_tex_json")];
+                    case 4:
+                        _b.sent();
+                        return [4 /*yield*/, RES.destroyRes(charactorName + "_db_tex_png")];
+                    case 5:
+                        _b.sent();
+                        _b.label = 6;
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 7: return [4 /*yield*/, RES.destroyRes("bg_json")];
+                    case 8:
+                        _b.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return BattleScene;
 }(IScene));

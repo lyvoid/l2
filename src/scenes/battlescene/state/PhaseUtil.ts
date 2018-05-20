@@ -2,11 +2,11 @@ class PhaseUtil{
 
     private static nextPhase: BattleSSEnum;
 
-	public static changePhase(phase:BattleSSEnum){
-		egret.setTimeout(PhaseUtil.changePhase1, PhaseUtil, 2000, phase);
+	public static changePhaseWithDelay(phase:BattleSSEnum, delay: number=1000){
+		egret.setTimeout(PhaseUtil.changePhase, PhaseUtil, delay, phase);
 	}
 
-    public static changePhase1(phase:BattleSSEnum){
+    public static changePhase(phase:BattleSSEnum){
         PhaseUtil.nextPhase = phase;
         let scene = SceneManager.Ins.curScene as BattleScene;
 		if (!scene.isSkillPerforming) {

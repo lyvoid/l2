@@ -13,13 +13,13 @@ class Card extends egret.DisplayObjectContainer {
 		cardBg.width = this.width;
 		cardBg.height = this.height;
 		this.addChild(cardBg);
-		this.initial(skill);
+		this.setSkill(skill);
 	}
 
 	/**
-	 * 从对象池调出的时候调用
+	 * 从对象池调出的时候调用，主要是绑定好事件
 	 */
-	public initial(skill: IManualSkill): void {
+	public initial(): void {
 		this.touchEnabled = true;
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
@@ -31,12 +31,19 @@ class Card extends egret.DisplayObjectContainer {
 			this.onTouchBegin,
 			this
 		);
-		LongTouchUtil.bindLongTouch(this, this);
+		LongTouchUtil.bindLongTouch(this, this);;
+	}
+
+	/**
+	 * TODO: 这里还需要根据skill的图标资源名，给对应卡片设置对应贴图资源
+	 */
+	public setSkill(skill: IManualSkill): void{
 		this.skill = skill;
 	}
 
 	/**
 	 * 使用后准备放入对象池前调用
+	 * 解除事件侦听
 	 */
 	public unInitial(): void {
 		this.touchEnabled = false;
@@ -54,6 +61,10 @@ class Card extends egret.DisplayObjectContainer {
 		this.skill = null;
 	}
 
+	/**
+	 * 点击开始时发送touchbegin消息，附带信息为卡牌自己
+	 * touchbegin统一在scene里做处理
+	 */
 	private onTouchBegin(): void {
 		MessageManager.Ins.sendMessage(
 			MessageType.TouchBegin,
@@ -61,6 +72,10 @@ class Card extends egret.DisplayObjectContainer {
 		);
 	}
 
+	/**
+	 * 被点击时发送cardtouchtap事件，附带信息为卡牌自己
+	 * 事件在scene中处理
+	 */
 	private onTouchTap(): void {
 		MessageManager.Ins.sendMessage(
 			MessageType.CardTouchTap,
@@ -72,6 +87,6 @@ class Card extends egret.DisplayObjectContainer {
 	 * release 不会调用unInitial，释放前需要自行调用
 	 */
 	public release(): void {
-
+		this.skill = null;
 	}
 }

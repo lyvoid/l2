@@ -7,7 +7,7 @@
  */
 class LayerManager {
 
-	public loadingLayer: eui.UILayer;
+	public loadingLayer: LoadingUI;
 	public uiLayer: eui.UILayer; // ui
 	public gameLayer: egret.DisplayObjectContainer; // 游戏层
 	public maskLayer: eui.UILayer; // 遮罩层
@@ -68,11 +68,35 @@ class LayerManager {
 		stage.addChild(this.maskLayer);
 		stage.addChild(this.popUpLayer);
 		stage.addChild(this.loadingLayer);
+
+		MessageManager.Ins.addEventListener(
+			MessageType.LoadingFinish,
+			this.onLoadingFinish,
+			this
+		);
+
+		MessageManager.Ins.addEventListener(
+			MessageType.LoadingProcess,
+			this.onLoadingProcess,
+			this
+		);
+
+
 		return this;
 	}
 
 	public static getSubLayerAt(layer:egret.DisplayObjectContainer, index:number){
 		return layer.getChildAt(index) as egret.DisplayObjectContainer;
+	}
+
+	private onLoadingProcess(e:Message): void{
+		let content = e.messageContent as {current: number, total: number};
+		this.loadingLayer.onProgress(content.current, content.total);
+	}
+
+	private onLoadingFinish(): void{
+		// 如果载入完成，载入层设置为不可见
+		this.loadingLayer.visible = false;
 	}
 
 }

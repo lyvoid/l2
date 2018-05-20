@@ -22,15 +22,12 @@ class SceneManager{
             this
         );
 		MessageManager.Ins.addEventListener(
-			MessageType.LoadingFinish,
-			this.onLoadingFinish,
+			MessageType.SceneReleaseCompelete,
+			()=>{
+				this.curScene.initial();
+			},
 			this
 		);
-	}
-
-	private onLoadingFinish(): void{
-		// 如果载入完成，载入层设置为不可见
-		LayerManager.Ins.loadingLayer.visible = false;
 	}
 
 	/**
@@ -47,11 +44,13 @@ class SceneManager{
 	 */
 	public setScene(scene: IScene){
 		LayerManager.Ins.loadingLayer.visible = true;
-		if (this.curScene != null){
-			this.curScene.release();
-		}
+		let oldScene = this.curScene;
 		this.curScene = scene;
-		scene.initial();
+		if (oldScene != null){
+			oldScene.release();
+		} else {
+			scene.initial();
+		}
 	}
 
 	/**

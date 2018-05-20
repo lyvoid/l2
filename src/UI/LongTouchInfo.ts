@@ -2,10 +2,9 @@ class LongTouchInfo extends eui.Component {
 
 	public desc:eui.Label;
 
-
 	public constructor() {
 		super();
-		this.skinName = "mySkin.LongTouchInfo";
+		this.skinName = "mySkin.LongTouchInfoSkin";
 	}
 	
 }

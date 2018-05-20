@@ -15,19 +15,34 @@ class BattleScene extends IScene {
 	public friends: Character[];
 	public selectedEnemy: Character;
 	public selectedFriend: Character;
+
+	/**
+	 * 玩家能量板
+	 */
 	public playerFireBoard: FireBoard;
-	public popUpInfoWin: LongTouchInfo;
+
+	/**
+	 * 手动技能池（玩家的卡牌池子）
+	 */
 	public skillManualPool: IManualSkill[];
 
-	// UIBattleScene
+	// UI
 	public battleUI: UIBattleScene;
 	public battleEndPopUp: BattleEndPopUp;
+	public popUpInfoWin: LongTouchInfo;
 
-	// 演出列表，待释放技能列表
+	/**
+	 * 演出列表
+	 */ 
 	public performQue: Queue<[IManualSkill, any]>;
+	/**
+	 * 待释放技能
+	 */
 	public skillTodoQue: Queue<IManualSkill>;
 
-	// 飘字管理器
+	/**
+	 * 飘字管理器
+	 */
 	public damageFloatManager: DamageFloatManager;
 
 	/**
@@ -84,7 +99,7 @@ class BattleScene extends IScene {
 	private async runScene() {
 
 		// 载入通用资源
-		await RES.loadGroup("battlecommon");
+		await RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingLayer);
 		console.log("战场通用资源载入完成");
 
 		this.bcr = new BattleCR();
@@ -282,21 +297,21 @@ class BattleScene extends IScene {
 			MessageType.LongTouchEnd,
 			this.onObjLongTouchEnd,
 			this
-		)
+		);
 
 		// 一个perform演出完成时开始下一个演出
 		MessageManager.Ins.addEventListener(
 			MessageType.PerformanceEnd,
 			this.onPerformEnd,
 			this
-		)
+		);
 
 		// 开始演出
 		MessageManager.Ins.addEventListener(
 			MessageType.PerformanceChainStart,
 			this.onPerformChainStart,
 			this
-		)
+		);
 
 		// 初始化场景中的状态
 		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
@@ -435,7 +450,7 @@ class BattleScene extends IScene {
 	}
 
 	/**
-	 * 战斗胜利
+	 * 战斗结束
 	 */
 	private onBattleEnd(): void{
 		LayerManager.Ins.maskLayer.visible = true;
@@ -501,7 +516,7 @@ class BattleScene extends IScene {
 			MessageType.PerformanceEnd,
 			this.onPerformEnd,
 			this
-		)
+		);
 
 		this.dbManager.release();
 		this.dbManager = null;
@@ -509,15 +524,32 @@ class BattleScene extends IScene {
 		this.cardBoard.release();
 		this.cardBoard = null;
 
-
-
 		this.bcr.release();
 		this.bcr = null;
 
 		this.battleUI = null;
 		this.battleEndPopUp = null;
 
-		// TODO 释放载入的美术资源
+		this.damageFloatManager.release();
+		this.damageFloatManager = null;
+		
+		this.playerFireBoard.release();
+		this.playerFireBoard = null;
+
+		// 释放载入的美术资源
+		this.releaseResource().then(()=>{
+			MessageManager.Ins.sendMessage(MessageType.SceneReleaseCompelete);
+		});
+	}
+
+	private async releaseResource(){
+		await RES.destroyRes("battlecommon");
+		for (let charactorName of ["Dragon", "Swordsman"]) {
+			await RES.destroyRes(`${charactorName}_db_ske_json`);
+			await RES.destroyRes(`${charactorName}_db_tex_json`);
+			await RES.destroyRes(`${charactorName}_db_tex_png`);
+		}
+		await RES.destroyRes("bg_json");
 	}
 }
 

@@ -35,4 +35,8 @@ class MessageType{
 
 	// 载入完成事件
 	public static LoadingFinish = "LoadingFinish";
+	public static LoadingProcess = "LoadingProcess";
+
+
+	public static SceneReleaseCompelete = "SceneReleaseCompelete";
 }

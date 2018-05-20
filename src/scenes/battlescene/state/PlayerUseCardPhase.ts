@@ -32,7 +32,13 @@ class PlayerUseCardPhase extends ISceneState{
 			this.onUseCardPhaseEnd,
 			this
 		);
-		PhaseUtil.changePhase(BattleSSEnum.PlayerRoundEndPhase);
+		// 一收到结束消息就要去掉使用卡牌的侦听
+		MessageManager.Ins.removeEventListener(
+			MessageType.CardTouchTap,
+			this.onCardTouchTap,
+			this
+		);
+		PhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
 	}
 
 	private onCardTouchTap(e: Message): void {
@@ -78,12 +84,13 @@ class PlayerUseCardPhase extends ISceneState{
 
 	public unInitial(){
 		super.unInitial();
+		// 隐藏回合结束按键，已经在按键的tap事件中隐藏了，这里不额外隐藏
+		// this.scene.battleUI.roundEndButton.visible = false;
+		// 结束的时候也要去掉侦听
 		MessageManager.Ins.removeEventListener(
 			MessageType.CardTouchTap,
 			this.onCardTouchTap,
 			this
 		);
-		// 隐藏回合结束按键，已经在按键的tap事件中隐藏了，这里不额外隐藏
-		// this.scene.battleUI.roundEndButton.visible = false;
 	}
 }

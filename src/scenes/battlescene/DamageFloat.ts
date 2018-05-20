@@ -33,4 +33,8 @@ class DamageFloatManager {
 			}
 		);
 	}
+
+	public release(): void{
+		this.numberFloatPool = null;
+	}
 }

@@ -7,8 +7,11 @@ var SceneManager = (function () {
      * 侦听loadingfinish事件
      */
     function SceneManager() {
+        var _this = this;
         MessageManager.Ins.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
-        MessageManager.Ins.addEventListener(MessageType.LoadingFinish, this.onLoadingFinish, this);
+        MessageManager.Ins.addEventListener(MessageType.SceneReleaseCompelete, function () {
+            _this.curScene.initial();
+        }, this);
     }
     Object.defineProperty(SceneManager, "Ins", {
         get: function () {
@@ -21,10 +24,6 @@ var SceneManager = (function () {
         enumerable: true,
         configurable: true
     });
-    SceneManager.prototype.onLoadingFinish = function () {
-        // 如果载入完成，载入层设置为不可见
-        LayerManager.Ins.loadingLayer.visible = false;
-    };
     /**
      * 设置初始场景
      */
@@ -38,11 +37,14 @@ var SceneManager = (function () {
      */
     SceneManager.prototype.setScene = function (scene) {
         LayerManager.Ins.loadingLayer.visible = true;
-        if (this.curScene != null) {
-            this.curScene.release();
-        }
+        var oldScene = this.curScene;
         this.curScene = scene;
-        scene.initial();
+        if (oldScene != null) {
+            oldScene.release();
+        }
+        else {
+            scene.initial();
+        }
     };
     /**
      * 游戏中所有的update都从这里入

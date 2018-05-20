@@ -47,5 +47,13 @@ class FireBoard extends egret.DisplayObjectContainer{
 		}
 	}
 
+	public release(): void{
+		this.texture = null;
+		this.config = null;
+		for (let p of this.particles){
+			p.stop();
+		}
+		this.particles = null;
+	}
 	
 }

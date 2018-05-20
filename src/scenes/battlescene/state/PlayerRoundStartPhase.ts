@@ -19,14 +19,14 @@ class PlayerRoundStartPhase extends ISceneState {
 		scene.cardBoard.distCardNormal();
 
 		// 加能量
-		scene.playerFireBoard.addFires(2);
+		scene.playerFireBoard.addFires(1);
 
 		// buff结算(待增加
 
 		// 回合开始的技能及效果（待增加
 
 		// 切下一个阶段
-		PhaseUtil.changePhase(BattleSSEnum.PlayerUseCardPhase);
+		PhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
 	}
 
 	public unInitial() {

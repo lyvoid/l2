@@ -9,7 +9,7 @@ class EnemyRoundEndPhase extends ISceneState{
 		// TODO 回合结束阶段buff结算
 		// 回合结束阶段技能效果
 
-		PhaseUtil.changePhase(BattleSSEnum.PlayerRoundStartPhase);
+		PhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);
 	}
 
 	public unInitial(){

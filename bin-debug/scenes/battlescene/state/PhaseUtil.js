@@ -4,10 +4,11 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var PhaseUtil = (function () {
     function PhaseUtil() {
     }
-    PhaseUtil.changePhase = function (phase) {
-        egret.setTimeout(PhaseUtil.changePhase1, PhaseUtil, 2000, phase);
+    PhaseUtil.changePhaseWithDelay = function (phase, delay) {
+        if (delay === void 0) { delay = 1000; }
+        egret.setTimeout(PhaseUtil.changePhase, PhaseUtil, delay, phase);
     };
-    PhaseUtil.changePhase1 = function (phase) {
+    PhaseUtil.changePhase = function (phase) {
         PhaseUtil.nextPhase = phase;
         var scene = SceneManager.Ins.curScene;
         if (!scene.isSkillPerforming) {

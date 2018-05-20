@@ -25,6 +25,7 @@ var CardBoard = (function (_super) {
         var skills = SceneManager.Ins.curScene.skillManualPool;
         var index = Math.floor(Math.random() * skills.length);
         var card = new Card(skills[index]);
+        card.initial();
         this.cards.push(card);
         this.addCardToBoard(card);
     };

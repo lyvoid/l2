@@ -34,6 +34,9 @@ var DamageFloatManager = (function () {
             numberFloatPool.push(floatLabel);
         });
     };
+    DamageFloatManager.prototype.release = function () {
+        this.numberFloatPool = null;
+    };
     return DamageFloatManager;
 }());
 __reflect(DamageFloatManager.prototype, "DamageFloatManager");

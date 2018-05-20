@@ -18,7 +18,7 @@ var Card = (function (_super) {
         cardBg.width = _this.width;
         cardBg.height = _this.height;
         _this.addChild(cardBg);
-        _this.initial(skill);
+        _this.setSkill(skill);
         return _this;
     }
     Object.defineProperty(Card.prototype, "desc", {
@@ -29,17 +29,24 @@ var Card = (function (_super) {
         configurable: true
     });
     /**
-     * 从对象池调出的时候调用
+     * 从对象池调出的时候调用，主要是绑定好事件
      */
-    Card.prototype.initial = function (skill) {
+    Card.prototype.initial = function () {
         this.touchEnabled = true;
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTap, this);
         this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, this);
         LongTouchUtil.bindLongTouch(this, this);
+        ;
+    };
+    /**
+     * TODO: 这里还需要根据skill的图标资源名，给对应卡片设置对应贴图资源
+     */
+    Card.prototype.setSkill = function (skill) {
         this.skill = skill;
     };
     /**
      * 使用后准备放入对象池前调用
+     * 解除事件侦听
      */
     Card.prototype.unInitial = function () {
         this.touchEnabled = false;
@@ -48,9 +55,17 @@ var Card = (function (_super) {
         this.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, this);
         this.skill = null;
     };
+    /**
+     * 点击开始时发送touchbegin消息，附带信息为卡牌自己
+     * touchbegin统一在scene里做处理
+     */
     Card.prototype.onTouchBegin = function () {
         MessageManager.Ins.sendMessage(MessageType.TouchBegin, this);
     };
+    /**
+     * 被点击时发送cardtouchtap事件，附带信息为卡牌自己
+     * 事件在scene中处理
+     */
     Card.prototype.onTouchTap = function () {
         MessageManager.Ins.sendMessage(MessageType.CardTouchTap, this);
     };
@@ -58,6 +73,7 @@ var Card = (function (_super) {
      * release 不会调用unInitial，释放前需要自行调用
      */
     Card.prototype.release = function () {
+        this.skill = null;
     };
     return Card;
 }(egret.DisplayObjectContainer));

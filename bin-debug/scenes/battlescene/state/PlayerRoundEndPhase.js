@@ -19,7 +19,7 @@ var PlayerRoundEndPhase = (function (_super) {
         // TODO 回合结束阶段buff结算
         // 回合结束阶段技能效果
         // 如果不在演出说明没有需要演出的技能，直接切下一个阶段
-        PhaseUtil.changePhase(BattleSSEnum.EnemyRoundStartPhase);
+        PhaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundStartPhase);
     };
     PlayerRoundEndPhase.prototype.unInitial = function () {
         _super.prototype.unInitial.call(this);

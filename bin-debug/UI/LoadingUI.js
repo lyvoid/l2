@@ -24,7 +24,7 @@ var LoadingUI = (function (_super) {
         imageBg.y = (stageHeight - imageBg.height * scale) / 2;
         _this.addChild(imageBg);
         _this.textField = new eui.Label();
-        _this.textField.bottom = 30;
+        _this.textField.bottom = 15;
         _this.textField.horizontalCenter = 0;
         _this.addChild(_this.textField);
         return _this;

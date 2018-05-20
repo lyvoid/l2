@@ -48,6 +48,15 @@ var FireBoard = (function (_super) {
             this.removeFire();
         }
     };
+    FireBoard.prototype.release = function () {
+        this.texture = null;
+        this.config = null;
+        for (var _i = 0, _a = this.particles; _i < _a.length; _i++) {
+            var p = _a[_i];
+            p.stop();
+        }
+        this.particles = null;
+    };
     FireBoard.maxFireNum = 10;
     return FireBoard;
 }(egret.DisplayObjectContainer));
