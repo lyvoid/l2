@@ -40,7 +40,7 @@ var LongTouchUtil = (function () {
         }
         LongTouchUtil.touchBeginTime = egret.setTimeout(function () {
             // 加遮罩，防止二次触发
-            LayerManager.Ins.maskLayer.touchEnabled = true;
+            LayerManager.Ins.maskLayer.visible = true;
             MessageManager.Ins.sendMessage(MessageType.LongTouchStart, _this);
         }, this, 500);
     };
@@ -60,7 +60,7 @@ var LongTouchUtil = (function () {
     LongTouchUtil.onTouchOut = function () {
         egret.clearTimeout(LongTouchUtil.touchBeginTime);
         MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
-        LayerManager.Ins.maskLayer.touchEnabled = false;
+        LayerManager.Ins.maskLayer.visible = false;
         LongTouchUtil.holderObj = null;
     };
     return LongTouchUtil;

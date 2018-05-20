@@ -84,7 +84,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, ui;
+            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, ui, battleEndPopUp;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -220,6 +220,10 @@ var BattleScene = (function (_super) {
                         ui.width = LayerManager.Ins.stageWidth;
                         LayerManager.Ins.uiLayer.addChild(ui);
                         this.battleUI = ui;
+                        battleEndPopUp = new BattleEndPopUp();
+                        battleEndPopUp.height = LayerManager.Ins.stageHeight;
+                        battleEndPopUp.width = LayerManager.Ins.stageWidth;
+                        this.battleEndPopUp = battleEndPopUp;
                         // 点击滤镜动画
                         MessageManager.Ins.addEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
                         // 长按显示info;
@@ -349,12 +353,7 @@ var BattleScene = (function (_super) {
             this.isSkillPerforming = false;
             // 如果演出结束同时游戏结束时，播放游戏结束演出
             if (this.winnerCamp) {
-                if (this.winnerCamp == CharCamp.Player) {
-                    ToastInfoManager.Ins.newToast("战斗胜利");
-                }
-                else {
-                    ToastInfoManager.Ins.newToast("战斗失败");
-                }
+                this.onBattleEnd();
             }
             else {
                 MessageManager.Ins.sendMessage(MessageType.SkillPerformAllEnd);
@@ -366,6 +365,19 @@ var BattleScene = (function (_super) {
         _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];
         skill.performance(affectResult);
         var _a;
+    };
+    /**
+     * 战斗胜利
+     */
+    BattleScene.prototype.onBattleEnd = function () {
+        LayerManager.Ins.maskLayer.visible = true;
+        if (this.winnerCamp == CharCamp.Player) {
+            this.battleEndPopUp.winUIAdjust();
+        }
+        else {
+            this.battleEndPopUp.lostUIAdjust();
+        }
+        LayerManager.Ins.popUpLayer.addChild(this.battleEndPopUp);
     };
     /**
      * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
@@ -409,6 +421,7 @@ var BattleScene = (function (_super) {
         this.bcr.release();
         this.bcr = null;
         this.battleUI = null;
+        this.battleEndPopUp = null;
         // TODO 释放载入的美术资源
     };
     return BattleScene;

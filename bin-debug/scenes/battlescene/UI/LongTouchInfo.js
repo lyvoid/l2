@@ -15,12 +15,6 @@ var LongTouchInfo = (function (_super) {
         _this.skinName = "resource/eui_skins/ui/LongTouchInfo.exml";
         return _this;
     }
-    LongTouchInfo.prototype.partAdded = function (partName, instance) {
-        _super.prototype.partAdded.call(this, partName, instance);
-    };
-    LongTouchInfo.prototype.childrenCreated = function () {
-        _super.prototype.childrenCreated.call(this);
-    };
     return LongTouchInfo;
 }(eui.Component));
-__reflect(LongTouchInfo.prototype, "LongTouchInfo", ["eui.UIComponent", "egret.DisplayObject"]);
+__reflect(LongTouchInfo.prototype, "LongTouchInfo");

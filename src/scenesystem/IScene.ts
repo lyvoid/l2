@@ -40,7 +40,8 @@ abstract class IScene{
         let layer = LayerManager.Ins
         layer.gameLayer.removeChildren();
         layer.uiLayer.removeChildren();
-		
+        layer.popUpLayer.removeChildren();
+		layer.maskLayer.visible = false;
     }
 
     /**

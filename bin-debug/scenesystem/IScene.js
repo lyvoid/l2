@@ -35,6 +35,8 @@ var IScene = (function () {
         var layer = LayerManager.Ins;
         layer.gameLayer.removeChildren();
         layer.uiLayer.removeChildren();
+        layer.popUpLayer.removeChildren();
+        layer.maskLayer.visible = false;
     };
     /**
      * 每一帧调用

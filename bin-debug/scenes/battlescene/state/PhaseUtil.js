@@ -5,10 +5,10 @@ var PhaseUtil = (function () {
     function PhaseUtil() {
     }
     PhaseUtil.changePhase = function (phase) {
-        egret.setTimeout(this.changePhase1, this, 2000, phase);
+        egret.setTimeout(PhaseUtil.changePhase1, PhaseUtil, 2000, phase);
     };
     PhaseUtil.changePhase1 = function (phase) {
-        this.nextPhase = phase;
+        PhaseUtil.nextPhase = phase;
         var scene = SceneManager.Ins.curScene;
         if (!scene.isSkillPerforming) {
             // 如果不再演出中，直接跳到下一个状态
@@ -17,12 +17,12 @@ var PhaseUtil = (function () {
         else {
             // 如果正在演出
             // 侦听演出全部结束事件，全部结束也说明要切阶段了
-            MessageManager.Ins.addEventListener(MessageType.SkillPerformAllEnd, this.onSkillPerformAllEnd, this);
+            MessageManager.Ins.addEventListener(MessageType.SkillPerformAllEnd, PhaseUtil.onSkillPerformAllEnd, PhaseUtil);
         }
     };
     PhaseUtil.onSkillPerformAllEnd = function () {
-        MessageManager.Ins.addEventListener(MessageType.SkillPerformAllEnd, this.onSkillPerformAllEnd, this);
-        SceneManager.Ins.curScene.setState(this.nextPhase);
+        MessageManager.Ins.removeEventListener(MessageType.SkillPerformAllEnd, PhaseUtil.onSkillPerformAllEnd, PhaseUtil);
+        SceneManager.Ins.curScene.setState(PhaseUtil.nextPhase);
     };
     return PhaseUtil;
 }());

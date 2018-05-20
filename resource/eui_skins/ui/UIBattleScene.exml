@@ -3,5 +3,5 @@
 	<w:Config id="163493a6b56" ></w:Config>
 	<e:Button id="addFireButton" label="whosyourdad-addFire" right="10" bottom="180"/>
 	<e:Button id="addCardButton" label="whosyourdad-addCard" right="10" bottom="125"/>
-	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="10" anchorOffsetY="0" height="100" visible="false"/>
+	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="20" anchorOffsetY="0" height="100" visible="false"/>
 </e:Skin>

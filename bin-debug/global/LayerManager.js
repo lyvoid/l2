@@ -11,14 +11,15 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var LayerManager = (function () {
     function LayerManager() {
         this.loadingLayer = new eui.UILayer();
-        this.loadingLayer.touchEnabled = false;
+        this.loadingLayer.touchEnabled = true;
+        this.loadingLayer.visible = false;
         this.uiLayer = new eui.UILayer();
         this.uiLayer.touchEnabled = false;
-        // gameLayer.
         var gameLayer = new egret.DisplayObjectContainer();
         this.gameLayer = gameLayer;
         this.maskLayer = new eui.UILayer();
-        this.maskLayer.touchEnabled = false;
+        this.maskLayer.touchEnabled = true;
+        this.maskLayer.visible = false;
         this.popUpLayer = new eui.UILayer();
         this.popUpLayer.touchEnabled = false;
     }
@@ -41,6 +42,11 @@ var LayerManager = (function () {
         var stageHeight = stage.stageHeight;
         this.stageWidth = stageWidth;
         this.stageHeight = stageHeight;
+        var maskbg = new egret.Bitmap(RES.getRes("maskbg_png"));
+        maskbg.height = stageHeight;
+        maskbg.width = stageWidth;
+        maskbg.alpha = 0.3;
+        this.maskLayer.addChild(maskbg);
         // 将几个主layer加入到stage中
         stage.addChild(this.gameLayer);
         stage.addChild(this.uiLayer);

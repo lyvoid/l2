@@ -66,7 +66,7 @@ class LongTouchUtil {
 		LongTouchUtil.touchBeginTime = egret.setTimeout(
 			()=>{
 				// 加遮罩，防止二次触发
-				LayerManager.Ins.maskLayer.touchEnabled = true;
+				LayerManager.Ins.maskLayer.visible = true;
 				MessageManager.Ins.sendMessage(MessageType.LongTouchStart, this);
 			}, 
 			this, 
@@ -92,7 +92,7 @@ class LongTouchUtil {
 	private static onTouchOut(): void{
 		egret.clearTimeout(LongTouchUtil.touchBeginTime); 
 		MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
-		LayerManager.Ins.maskLayer.touchEnabled = false;
+		LayerManager.Ins.maskLayer.visible = false;
 		LongTouchUtil.holderObj = null;
 	}
 }

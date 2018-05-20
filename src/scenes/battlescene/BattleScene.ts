@@ -19,7 +19,9 @@ class BattleScene extends IScene {
 	public popUpInfoWin: LongTouchInfo;
 	public skillManualPool: IManualSkill[];
 
+	// UIBattleScene
 	public battleUI: UIBattleScene;
+	public battleEndPopUp: BattleEndPopUp;
 
 	// 演出列表，待释放技能列表
 	public performQue: Queue<[IManualSkill, any]>;
@@ -257,6 +259,10 @@ class BattleScene extends IScene {
 		ui.width = LayerManager.Ins.stageWidth;
 		LayerManager.Ins.uiLayer.addChild(ui);
 		this.battleUI = ui;
+		let battleEndPopUp = new BattleEndPopUp();
+		battleEndPopUp.height = LayerManager.Ins.stageHeight;
+		battleEndPopUp.width = LayerManager.Ins.stageWidth;
+		this.battleEndPopUp = battleEndPopUp;
 
 		// 点击滤镜动画
 		MessageManager.Ins.addEventListener(
@@ -416,11 +422,7 @@ class BattleScene extends IScene {
 			this.isSkillPerforming = false;
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
 			if (this.winnerCamp){
-				if (this.winnerCamp == CharCamp.Player){
-					ToastInfoManager.Ins.newToast("战斗胜利");
-				}else{
-					ToastInfoManager.Ins.newToast("战斗失败");
-				}
+				this.onBattleEnd();
 			}else{
 				MessageManager.Ins.sendMessage(MessageType.SkillPerformAllEnd);
 			}
@@ -430,6 +432,19 @@ class BattleScene extends IScene {
 		let affectResult:any;
 		[skill, affectResult] = this.performQue.pop();
 		skill.performance(affectResult);
+	}
+
+	/**
+	 * 战斗胜利
+	 */
+	private onBattleEnd(): void{
+		LayerManager.Ins.maskLayer.visible = true;
+		if (this.winnerCamp == CharCamp.Player){
+			this.battleEndPopUp.winUIAdjust();
+		}else{
+			this.battleEndPopUp.lostUIAdjust();
+		}
+		LayerManager.Ins.popUpLayer.addChild(this.battleEndPopUp);
 	}
 
 	/**
@@ -500,6 +515,7 @@ class BattleScene extends IScene {
 		this.bcr = null;
 
 		this.battleUI = null;
+		this.battleEndPopUp = null;
 
 		// TODO 释放载入的美术资源
 	}
