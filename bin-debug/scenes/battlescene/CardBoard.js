@@ -19,7 +19,6 @@ var CardBoard = (function (_super) {
         _this.cardPool = [];
         _this.y = LayerManager.Ins.stageHeight - 140;
         _this.width = LayerManager.Ins.stageWidth;
-        MessageManager.Ins.addEventListener(MessageType.ClickNextButton, _this.distCardNormal, _this);
         return _this;
     }
     CardBoard.prototype.distCardNormal = function () {

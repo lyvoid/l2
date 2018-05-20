@@ -8,6 +8,10 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
+/**
+ * 将目标从游戏中排除，该技能采用预设目标
+ * 在构造的时候传入目标
+ */
 var RemoveCharFromGameSkill = (function (_super) {
     __extends(RemoveCharFromGameSkill, _super);
     function RemoveCharFromGameSkill(targets) {

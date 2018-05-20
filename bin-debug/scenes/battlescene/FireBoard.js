@@ -32,10 +32,20 @@ var FireBoard = (function (_super) {
             this.fireNum += 1;
         }
     };
+    FireBoard.prototype.addFires = function (n) {
+        for (var i = 0; i < n; i++) {
+            this.addFire();
+        }
+    };
     FireBoard.prototype.removeFire = function () {
         if (this.fireNum > 0) {
             this.particles[this.fireNum - 1].stop();
             this.fireNum -= 1;
+        }
+    };
+    FireBoard.prototype.removeFires = function (n) {
+        for (var i = 0; i < n; i++) {
+            this.removeFire();
         }
     };
     FireBoard.maxFireNum = 10;

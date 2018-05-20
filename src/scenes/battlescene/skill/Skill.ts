@@ -10,13 +10,14 @@ class SkillTmp extends IManualSkill {
 	}
 
 	protected affect(): any {
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		let hurt = new Hurt(HurtType.Pysic, this.caster);
 		let affectResult: any[] = [];
 		for (let char of this.targets) {
 			let change = hurt.affect(char);
 			affectResult.push(change);
 			if (!char.alive){
-				this.scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
+				scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
 			}
 		}
 		return affectResult;

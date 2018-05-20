@@ -23,6 +23,7 @@ var SkillTmp = (function (_super) {
         return _this;
     }
     SkillTmp.prototype.affect = function () {
+        var scene = SceneManager.Ins.curScene;
         var hurt = new Hurt(HurtType.Pysic, this.caster);
         var affectResult = [];
         for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
@@ -30,7 +31,7 @@ var SkillTmp = (function (_super) {
             var change = hurt.affect(char);
             affectResult.push(change);
             if (!char.alive) {
-                this.scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
+                scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
             }
         }
         return affectResult;

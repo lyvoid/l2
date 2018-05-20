@@ -16,12 +16,6 @@ class CardBoard extends egret.DisplayObjectContainer {
 
 		this.y = LayerManager.Ins.stageHeight - 140;
 		this.width = LayerManager.Ins.stageWidth;
-
-		MessageManager.Ins.addEventListener(
-			MessageType.ClickNextButton,
-			this.distCardNormal,
-			this
-		);
 	}
 
 	public distCardNormal(){

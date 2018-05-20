@@ -37,13 +37,11 @@ abstract class IManualSkill {
 
 	protected friends: Character[];
 	protected enemies: Character[];
-	protected scene: BattleScene;
 
 	public constructor(caster: Character = null, camp:CharCamp = CharCamp.Neut) {
 		this.caster = caster;
 		this.camp = caster ? caster.camp : camp;
 		this.setCampChar();
-		this.scene = SceneManager.Ins.curScene as BattleScene;
 	}
 
 	/**
@@ -133,8 +131,10 @@ abstract class IManualSkill {
 	 */
 	public useSkill(): void {
 
+		let scene = SceneManager.Ins.curScene as BattleScene;
+
 		// 如果游戏已经结束就不再释放
-		if (this.scene.winnerCamp){
+		if (scene.winnerCamp){
 			return;
 		}
 
@@ -155,18 +155,18 @@ abstract class IManualSkill {
 		let affectResult = this.affect();
 
 		// 确实需要释放时，将演出加到预演出列表
-		this.scene.performQue.push([this, affectResult]);
+		scene.performQue.push([this, affectResult]);
 		// 没次加入新的表现序列都调用一次应该是没错的
 		MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
 
 
 		// 运行在在SkillToDo中的技能
-		if (this.scene.skillTodoQue.length > 0) {
-			this.scene.skillTodoQue.pop().useSkill();
+		if (scene.skillTodoQue.length > 0) {
+			scene.skillTodoQue.pop().useSkill();
 		}
 
 		// 判断游戏是否结束
-		this.scene.judge();
+		scene.judge();
 	}
 
 	/**

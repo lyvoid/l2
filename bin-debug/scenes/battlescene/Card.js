@@ -52,36 +52,7 @@ var Card = (function (_super) {
         MessageManager.Ins.sendMessage(MessageType.TouchBegin, this);
     };
     Card.prototype.onTouchTap = function () {
-        var scene = SceneManager.Ins.curScene;
-        if (scene.winnerCamp) {
-            ToastInfoManager.Ins.newToast("胜负已分");
-            return;
-        }
-        var fireboard = scene.playerFireBoard;
-        var fireNeed = this.skill.fireNeed;
-        if (fireNeed > fireboard.fireNum) {
-            ToastInfoManager.Ins.newToast("能量不足");
-            return;
-        }
-        if (this.skill.targetType == TargetType.SpecialEnemy &&
-            (!scene.selectedEnemy.attr.isInBattle)) {
-            ToastInfoManager.Ins.newToast("选中目标已从游戏中排除");
-            return;
-        }
-        // 如果目标类型为特定单位，但该单位已经死亡（发生在之前的技能已经把敌方打死但是演出还没结束的时候）
-        if (this.skill.targetType == TargetType.SpecialEnemy &&
-            (!scene.selectedEnemy.alive)) {
-            ToastInfoManager.Ins.newToast("选中目标已死亡");
-            return;
-        }
-        // 使用技能
-        this.skill.useSkill();
-        // 移除所需要的点数
-        for (var i = 0; i < this.skill.fireNeed; i++) {
-            fireboard.removeFire();
-        }
-        // 移除卡牌
-        scene.cardBoard.removeCard(this);
+        MessageManager.Ins.sendMessage(MessageType.CardTouchTap, this);
     };
     /**
      * release 不会调用unInitial，释放前需要自行调用

@@ -1,3 +1,7 @@
+/**
+ * 将目标从游戏中排除，该技能采用预设目标
+ * 在构造的时候传入目标
+ */
 class RemoveCharFromGameSkill extends IManualSkill{
 	public constructor(targets:Character[]) {
 		super();

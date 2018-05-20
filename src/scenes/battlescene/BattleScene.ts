@@ -19,6 +19,8 @@ class BattleScene extends IScene {
 	public popUpInfoWin: LongTouchInfo;
 	public skillManualPool: IManualSkill[];
 
+	public battleUI: UIBattleScene;
+
 	// 演出列表，待释放技能列表
 	public performQue: Queue<[IManualSkill, any]>;
 	public skillTodoQue: Queue<IManualSkill>;
@@ -26,7 +28,9 @@ class BattleScene extends IScene {
 	// 飘字管理器
 	public damageFloatManager: DamageFloatManager;
 
-	// 获胜阵营
+	/**
+	 * 获胜阵营
+	 */
 	public winnerCamp: CharCamp;
 
 	public initial() {
@@ -69,6 +73,8 @@ class BattleScene extends IScene {
 			console.log(e);
 		}).then(() => {
 			console.log("battlescene场景初始化完成");
+			// TODO 移除loading界面
+			this.setState(BattleSSEnum.PlayerRoundStartPhase);
 		});
 
 	}
@@ -250,6 +256,7 @@ class BattleScene extends IScene {
 		ui.height = LayerManager.Ins.stageHeight;
 		ui.width = LayerManager.Ins.stageWidth;
 		LayerManager.Ins.uiLayer.addChild(ui);
+		this.battleUI = ui;
 
 		// 点击滤镜动画
 		MessageManager.Ins.addEventListener(
@@ -285,10 +292,18 @@ class BattleScene extends IScene {
 			this
 		)
 
+		// 初始化场景中的状态
+		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
+		this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
+		this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase(this);
+		this.statePool[BattleSSEnum.PlayerRoundEndPhase] = new PlayerRoundEndPhase(this);
+		this.statePool[BattleSSEnum.PlayerRoundStartPhase] = new PlayerRoundStartPhase(this);
+		this.statePool[BattleSSEnum.PlayerUseCardPhase] = new PlayerUseCardPhase(this);
+
 	}
 
 	/**
-	 * 判断胜负
+	 * 判断胜负，并吧胜负信息存储在this.winnerCamp中
 	 */
 	public judge(){
 		let isEnemyAlive: boolean=false;
@@ -313,11 +328,20 @@ class BattleScene extends IScene {
 		}
 	}
 
+	/**
+	 * 点击开始时候的滤镜动画效果
+	 */
 	private onObjTouchGlowAnim(e: Message): void {
 		let obj = e.messageContent;
 		this.bcr.touchGlow.setHolderAnim(obj);
 	}
 
+	/**
+	 * 长按开始时候弹出info界面加入到popuplayer中
+	 * 如果是长按的card还会对其释放者的龙骨动画加入闪烁提示
+	 * 同时调用skill的manulachoosetarget得到主要目标
+	 * 然后让主要目标的血条开始闪烁
+	 */
 	private onObjLongTouchBegin(e: Message): void {
 		let obj = e.messageContent;
 		this.popUpInfoWin.desc.text = obj.desc;
@@ -346,6 +370,11 @@ class BattleScene extends IScene {
 		}
 	}
 
+	/**
+	 * 长按停止时的效果
+	 * 关闭info界面
+	 * 同时关闭所有闪烁动画以及重新展示此前隐藏的内容
+	 */
 	private onObjLongTouchEnd(e: Message): void {
 		let obj = e.messageContent;
 		try{
@@ -370,12 +399,21 @@ class BattleScene extends IScene {
 		}
 	}
 
-	private isPerformance: boolean = false;// 是否正在演出
-	// 一个perform演出完毕时开始下一个演出
+	/**
+	 * 是否正在演出skill的演出内容
+	 */
+	public isSkillPerforming: boolean = false;
+	
+	/**
+	 * 当收到一个skill的演出结束消息时候调用
+	 * 从perfrom队列中获取下一个开始演出
+	 * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
+	 * 如果胜负未分发送演出全部结束消息
+	 */
 	private onPerformEnd(): void{
 		if (this.performQue.length == 0){
 			// 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
-			this.isPerformance = false;
+			this.isSkillPerforming = false;
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
 			if (this.winnerCamp){
 				if (this.winnerCamp == CharCamp.Player){
@@ -383,6 +421,8 @@ class BattleScene extends IScene {
 				}else{
 					ToastInfoManager.Ins.newToast("战斗失败");
 				}
+			}else{
+				MessageManager.Ins.sendMessage(MessageType.SkillPerformAllEnd);
 			}
 			return;
 		}
@@ -392,12 +432,16 @@ class BattleScene extends IScene {
 		skill.performance(affectResult);
 	}
 
+	/**
+	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
+	 * 如果当前正在演出会直接返回，防止两件事同时被演出
+	 */
 	private onPerformChainStart(): void{
-		if(this.isPerformance){
+		if(this.isSkillPerforming){
 			// 如果正在演出，那就不管这个消息
 			return;
 		}
-		this.isPerformance = true;
+		this.isSkillPerforming = true;
 		let skill: IManualSkill;
 		let affectResult:any;
 		[skill, affectResult] = this.performQue.pop();
@@ -455,6 +499,8 @@ class BattleScene extends IScene {
 		this.bcr.release();
 		this.bcr = null;
 
+		this.battleUI = null;
+
 		// TODO 释放载入的美术资源
 	}
 }
@@ -476,5 +522,10 @@ enum BattleSLEnum {
  *
  */
 enum BattleSSEnum {
-	BeforeSelect,
+	PlayerRoundStartPhase,
+	PlayerRoundEndPhase,
+	PlayerUseCardPhase,
+	EnemyRoundStartPhase,
+	EnemyRoundEndPhase,
+	EnemyUseCardPhase
 }

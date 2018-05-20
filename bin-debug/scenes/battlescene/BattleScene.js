@@ -47,10 +47,14 @@ var BattleScene = (function (_super) {
     __extends(BattleScene, _super);
     function BattleScene() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.isPerformance = false; // 是否正在演出
+        /**
+         * 是否正在演出skill的演出内容
+         */
+        _this.isSkillPerforming = false;
         return _this;
     }
     BattleScene.prototype.initial = function () {
+        var _this = this;
         _super.prototype.initial.call(this);
         this.enemies = [];
         this.friends = [];
@@ -74,6 +78,8 @@ var BattleScene = (function (_super) {
             console.log(e);
         }).then(function () {
             console.log("battlescene场景初始化完成");
+            // TODO 移除loading界面
+            _this.setState(BattleSSEnum.PlayerRoundStartPhase);
         });
     };
     BattleScene.prototype.runScene = function () {
@@ -213,6 +219,7 @@ var BattleScene = (function (_super) {
                         ui.height = LayerManager.Ins.stageHeight;
                         ui.width = LayerManager.Ins.stageWidth;
                         LayerManager.Ins.uiLayer.addChild(ui);
+                        this.battleUI = ui;
                         // 点击滤镜动画
                         MessageManager.Ins.addEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
                         // 长按显示info;
@@ -222,13 +229,20 @@ var BattleScene = (function (_super) {
                         MessageManager.Ins.addEventListener(MessageType.PerformanceEnd, this.onPerformEnd, this);
                         // 开始演出
                         MessageManager.Ins.addEventListener(MessageType.PerformanceChainStart, this.onPerformChainStart, this);
+                        // 初始化场景中的状态
+                        this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
+                        this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
+                        this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase(this);
+                        this.statePool[BattleSSEnum.PlayerRoundEndPhase] = new PlayerRoundEndPhase(this);
+                        this.statePool[BattleSSEnum.PlayerRoundStartPhase] = new PlayerRoundStartPhase(this);
+                        this.statePool[BattleSSEnum.PlayerUseCardPhase] = new PlayerUseCardPhase(this);
                         return [2 /*return*/];
                 }
             });
         });
     };
     /**
-     * 判断胜负
+     * 判断胜负，并吧胜负信息存储在this.winnerCamp中
      */
     BattleScene.prototype.judge = function () {
         var isEnemyAlive = false;
@@ -254,10 +268,19 @@ var BattleScene = (function (_super) {
             this.winnerCamp = CharCamp.Enemy;
         }
     };
+    /**
+     * 点击开始时候的滤镜动画效果
+     */
     BattleScene.prototype.onObjTouchGlowAnim = function (e) {
         var obj = e.messageContent;
         this.bcr.touchGlow.setHolderAnim(obj);
     };
+    /**
+     * 长按开始时候弹出info界面加入到popuplayer中
+     * 如果是长按的card还会对其释放者的龙骨动画加入闪烁提示
+     * 同时调用skill的manulachoosetarget得到主要目标
+     * 然后让主要目标的血条开始闪烁
+     */
     BattleScene.prototype.onObjLongTouchBegin = function (e) {
         var obj = e.messageContent;
         this.popUpInfoWin.desc.text = obj.desc;
@@ -285,6 +308,11 @@ var BattleScene = (function (_super) {
             }
         }
     };
+    /**
+     * 长按停止时的效果
+     * 关闭info界面
+     * 同时关闭所有闪烁动画以及重新展示此前隐藏的内容
+     */
     BattleScene.prototype.onObjLongTouchEnd = function (e) {
         var obj = e.messageContent;
         try {
@@ -309,11 +337,16 @@ var BattleScene = (function (_super) {
             }
         }
     };
-    // 一个perform演出完毕时开始下一个演出
+    /**
+     * 当收到一个skill的演出结束消息时候调用
+     * 从perfrom队列中获取下一个开始演出
+     * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
+     * 如果胜负未分发送演出全部结束消息
+     */
     BattleScene.prototype.onPerformEnd = function () {
         if (this.performQue.length == 0) {
             // 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
-            this.isPerformance = false;
+            this.isSkillPerforming = false;
             // 如果演出结束同时游戏结束时，播放游戏结束演出
             if (this.winnerCamp) {
                 if (this.winnerCamp == CharCamp.Player) {
@@ -323,6 +356,9 @@ var BattleScene = (function (_super) {
                     ToastInfoManager.Ins.newToast("战斗失败");
                 }
             }
+            else {
+                MessageManager.Ins.sendMessage(MessageType.SkillPerformAllEnd);
+            }
             return;
         }
         var skill;
@@ -331,12 +367,16 @@ var BattleScene = (function (_super) {
         skill.performance(affectResult);
         var _a;
     };
+    /**
+     * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
+     * 如果当前正在演出会直接返回，防止两件事同时被演出
+     */
     BattleScene.prototype.onPerformChainStart = function () {
-        if (this.isPerformance) {
+        if (this.isSkillPerforming) {
             // 如果正在演出，那就不管这个消息
             return;
         }
-        this.isPerformance = true;
+        this.isSkillPerforming = true;
         var skill;
         var affectResult;
         _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];
@@ -368,6 +408,7 @@ var BattleScene = (function (_super) {
         this.cardBoard = null;
         this.bcr.release();
         this.bcr = null;
+        this.battleUI = null;
         // TODO 释放载入的美术资源
     };
     return BattleScene;
@@ -391,5 +432,10 @@ var BattleSLEnum;
  */
 var BattleSSEnum;
 (function (BattleSSEnum) {
-    BattleSSEnum[BattleSSEnum["BeforeSelect"] = 0] = "BeforeSelect";
+    BattleSSEnum[BattleSSEnum["PlayerRoundStartPhase"] = 0] = "PlayerRoundStartPhase";
+    BattleSSEnum[BattleSSEnum["PlayerRoundEndPhase"] = 1] = "PlayerRoundEndPhase";
+    BattleSSEnum[BattleSSEnum["PlayerUseCardPhase"] = 2] = "PlayerUseCardPhase";
+    BattleSSEnum[BattleSSEnum["EnemyRoundStartPhase"] = 3] = "EnemyRoundStartPhase";
+    BattleSSEnum[BattleSSEnum["EnemyRoundEndPhase"] = 4] = "EnemyRoundEndPhase";
+    BattleSSEnum[BattleSSEnum["EnemyUseCardPhase"] = 5] = "EnemyUseCardPhase";
 })(BattleSSEnum || (BattleSSEnum = {}));

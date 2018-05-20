@@ -8,7 +8,7 @@ abstract class IScene{
     // 当前场景状态
     protected state: ISceneState;
     // 当前场景拥有的所有状态
-    protected statePool: {[key:number]: ISceneState;} = {};
+    protected statePool: {[key:number]: ISceneState} = {};
 
     public constructor(sceneManager: SceneManager){
         this.sceneManager = sceneManager;
@@ -26,6 +26,9 @@ abstract class IScene{
      * super的方法中解除了statePool中的资源占用，同时清空了Layer中的所有内容（除了loadinglayer外）
      */
     public release(){
+        if (this.state){
+            this.state.unInitial();
+        }
         // 解除与所有state的关系
         this.state = null;
 		for (let k in this.statePool){
@@ -51,11 +54,11 @@ abstract class IScene{
 
     /**
      * 切换状态
-     * reset此前的状态，并initial新的状态
+     * uninitial此前的状态，并initial新的状态
      */
 	public setState(stateName:number){
 		if (this.state != null){
-			this.state.uninitial();
+			this.state.unInitial();
 		}
 		this.state = this.statePool[stateName];
 		this.state.initial();
@@ -66,7 +69,7 @@ abstract class IScene{
 
 /**
  * 每一个子类表征scene的一个状态
- * release中将this.scene置为null
+ * 
  */
 abstract class ISceneState{
 
@@ -90,7 +93,7 @@ abstract class ISceneState{
     /**
      * 更换状态前需要reset之前的状态（每一次更换为其他状态时调用一遍）
      */
-	public uninitial(): void{}
+	public unInitial(): void{}
 
     /**
      * 将this.scene置为null

@@ -27,10 +27,23 @@ class FireBoard extends egret.DisplayObjectContainer{
 			this.fireNum += 1;
 		}
 	}
+
+	public addFires(n:number): void{
+		for (let i=0;i<n; i++){
+			this.addFire();
+		}
+	}
+
 	public removeFire(){
 		if (this.fireNum > 0){
 			this.particles[this.fireNum - 1].stop();
 			this.fireNum -= 1;
+		}
+	}
+
+	public removeFires(n: number):void{
+		for (let i=0;i<n; i++){
+			this.removeFire();
 		}
 	}
 

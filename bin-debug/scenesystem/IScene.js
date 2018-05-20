@@ -22,6 +22,9 @@ var IScene = (function () {
      * super的方法中解除了statePool中的资源占用，同时清空了Layer中的所有内容（除了loadinglayer外）
      */
     IScene.prototype.release = function () {
+        if (this.state) {
+            this.state.unInitial();
+        }
         // 解除与所有state的关系
         this.state = null;
         for (var k in this.statePool) {
@@ -43,11 +46,11 @@ var IScene = (function () {
     };
     /**
      * 切换状态
-     * reset此前的状态，并initial新的状态
+     * uninitial此前的状态，并initial新的状态
      */
     IScene.prototype.setState = function (stateName) {
         if (this.state != null) {
-            this.state.uninitial();
+            this.state.unInitial();
         }
         this.state = this.statePool[stateName];
         this.state.initial();
@@ -57,7 +60,7 @@ var IScene = (function () {
 __reflect(IScene.prototype, "IScene");
 /**
  * 每一个子类表征scene的一个状态
- * release中将this.scene置为null
+ *
  */
 var ISceneState = (function () {
     function ISceneState(scene) {
@@ -74,7 +77,7 @@ var ISceneState = (function () {
     /**
      * 更换状态前需要reset之前的状态（每一次更换为其他状态时调用一遍）
      */
-    ISceneState.prototype.uninitial = function () { };
+    ISceneState.prototype.unInitial = function () { };
     /**
      * 将this.scene置为null
      * 场景销毁时调用一遍

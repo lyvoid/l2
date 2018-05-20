@@ -8,10 +8,9 @@ var MessageType = (function () {
     MessageType.RemoveCard = "RemoveCard";
     MessageType.UseCard = "UseCard";
     // battle scene ui
-    MessageType.ClickNextButton = "ClickNextButton";
-    MessageType.ClickChangeButton = "ClickChangeButton";
+    // 使用卡牌阶段结束，这个在自动模式下会自动发送该消息
+    MessageType.UseCardPhaseEnd = "UseCardPhaseEnd";
     // battle scene character
-    MessageType.ClickChar = "ClickChar";
     MessageType.TouchBegin = "TouchBegin";
     MessageType.LongTouchStart = "LongTouchStart";
     MessageType.LongTouchEnd = "LongTouchEnd";
@@ -24,6 +23,10 @@ var MessageType = (function () {
     MessageType.Resurgence = "Resurgence";
     MessageType.PerformanceEnd = "NextPerformance";
     MessageType.PerformanceChainStart = "PerformanceChainStart";
+    // 演出全部结束
+    MessageType.SkillPerformAllEnd = "SkillPerformAllEnd";
+    // 卡牌被点击事件
+    MessageType.CardTouchTap = "CardTouchTap";
     return MessageType;
 }());
 __reflect(MessageType.prototype, "MessageType");

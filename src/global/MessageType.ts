@@ -6,11 +6,10 @@ class MessageType{
 
 
 	// battle scene ui
-	public static ClickNextButton = "ClickNextButton";
-	public static ClickChangeButton = "ClickChangeButton";
+	// 使用卡牌阶段结束，这个在自动模式下会自动发送该消息
+	public static UseCardPhaseEnd = "UseCardPhaseEnd";
 
 	// battle scene character
-	public static ClickChar = "ClickChar";
 	public static TouchBegin = "TouchBegin";
 	public static LongTouchStart = "LongTouchStart";
 	public static LongTouchEnd = "LongTouchEnd";
@@ -26,4 +25,11 @@ class MessageType{
 
 	public static PerformanceEnd = "NextPerformance";
 	public static PerformanceChainStart = "PerformanceChainStart";
+
+
+	// 演出全部结束
+	public static SkillPerformAllEnd = "SkillPerformAllEnd";
+
+	// 卡牌被点击事件
+	public static CardTouchTap = "CardTouchTap"
 }
