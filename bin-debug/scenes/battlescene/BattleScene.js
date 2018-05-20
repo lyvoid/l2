@@ -228,11 +228,13 @@ var BattleScene = (function (_super) {
                         MessageManager.Ins.addEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
                         // 长按显示info;
                         MessageManager.Ins.addEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
+                        // 取消长按关闭info
                         MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
                         // 一个perform演出完成时开始下一个演出
                         MessageManager.Ins.addEventListener(MessageType.PerformanceEnd, this.onPerformEnd, this);
                         // 开始演出
                         MessageManager.Ins.addEventListener(MessageType.PerformanceChainStart, this.onPerformChainStart, this);
+                        this.phaseUtil = new PhaseUtil();
                         // 初始化场景中的状态
                         this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
                         this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
@@ -319,11 +321,7 @@ var BattleScene = (function (_super) {
      */
     BattleScene.prototype.onObjLongTouchEnd = function (e) {
         var obj = e.messageContent;
-        try {
-            // 这里有可能还没触发长按时移开手指触发，此时并不存在弹出的窗口
-            LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
-        }
-        catch (ignore) { }
+        LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
         if (obj instanceof Card) {
             var card = obj;
             var caster = card.skill.caster;
@@ -370,6 +368,7 @@ var BattleScene = (function (_super) {
      * 战斗结束
      */
     BattleScene.prototype.onBattleEnd = function () {
+        LongTouchUtil.clear();
         LayerManager.Ins.maskLayer.visible = true;
         if (this.winnerCamp == CharCamp.Player) {
             this.battleEndPopUp.winUIAdjust();
@@ -426,6 +425,9 @@ var BattleScene = (function (_super) {
         this.damageFloatManager = null;
         this.playerFireBoard.release();
         this.playerFireBoard = null;
+        this.phaseUtil.clear();
+        this.phaseUtil = null;
+        LongTouchUtil.clear();
         // 释放载入的美术资源
         this.releaseResource().then(function () {
             MessageManager.Ins.sendMessage(MessageType.SceneReleaseCompelete);

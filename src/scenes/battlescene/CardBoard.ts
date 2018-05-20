@@ -21,7 +21,13 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public distCardNormal(){
 		let skills = (SceneManager.Ins.curScene as BattleScene).skillManualPool;
 		let index = Math.floor(Math.random() * skills.length);
-		let card = new Card(skills[index]);
+		let card: Card;
+		if (this.cardPool.length > 0){
+			card = this.cardPool.pop();
+			card.setSkill(skills[index]);
+		} else{
+			card = new Card(skills[index]);
+		}
 		card.initial();
 		this.cards.push(card);
 		this.addCardToBoard(card);
@@ -99,6 +105,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card);
+		this.cardPool.push(card);
 	}
 
 	/**

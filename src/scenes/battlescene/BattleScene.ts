@@ -50,6 +50,11 @@ class BattleScene extends IScene {
 	 */
 	public winnerCamp: CharCamp;
 
+	/**
+	 * 切换阶段使用
+	 */
+	public phaseUtil: PhaseUtil;
+
 	public initial() {
 		super.initial();
 		this.enemies = [];
@@ -293,6 +298,8 @@ class BattleScene extends IScene {
 			this.onObjLongTouchBegin,
 			this
 		);
+
+		// 取消长按关闭info
 		MessageManager.Ins.addEventListener(
 			MessageType.LongTouchEnd,
 			this.onObjLongTouchEnd,
@@ -312,6 +319,8 @@ class BattleScene extends IScene {
 			this.onPerformChainStart,
 			this
 		);
+
+		this.phaseUtil = new PhaseUtil();
 
 		// 初始化场景中的状态
 		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
@@ -398,10 +407,7 @@ class BattleScene extends IScene {
 	 */
 	private onObjLongTouchEnd(e: Message): void {
 		let obj = e.messageContent;
-		try{
-			// 这里有可能还没触发长按时移开手指触发，此时并不存在弹出的窗口
-			LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
-		}catch(ignore){}
+		LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
 		if (obj instanceof Card) {
 			let card = obj as Card;
 			let caster = card.skill.caster
@@ -453,6 +459,7 @@ class BattleScene extends IScene {
 	 * 战斗结束
 	 */
 	private onBattleEnd(): void{
+		LongTouchUtil.clear();
 		LayerManager.Ins.maskLayer.visible = true;
 		if (this.winnerCamp == CharCamp.Player){
 			this.battleEndPopUp.winUIAdjust();
@@ -535,6 +542,10 @@ class BattleScene extends IScene {
 		
 		this.playerFireBoard.release();
 		this.playerFireBoard = null;
+
+		this.phaseUtil.clear();
+		this.phaseUtil = null;
+		LongTouchUtil.clear();
 
 		// 释放载入的美术资源
 		this.releaseResource().then(()=>{

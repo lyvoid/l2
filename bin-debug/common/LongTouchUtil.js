@@ -35,12 +35,11 @@ var LongTouchUtil = (function () {
             return;
         }
         LongTouchUtil.holderObj = this;
-        if (LongTouchUtil.touchBeginTime) {
-            egret.clearTimeout(LongTouchUtil.touchBeginTime);
-        }
+        egret.clearTimeout(LongTouchUtil.touchBeginTime);
         LongTouchUtil.touchBeginTime = egret.setTimeout(function () {
             // 加遮罩，防止二次触发
             LayerManager.Ins.maskLayer.visible = true;
+            LongTouchUtil.isInLongTouch = true;
             MessageManager.Ins.sendMessage(MessageType.LongTouchStart, _this);
         }, this, 500);
     };
@@ -54,15 +53,26 @@ var LongTouchUtil = (function () {
         LongTouchUtil.holderObj = null;
     };
     /**
-     * 如果移动到按住的物体外，存在两个情况，
-     * 已经触发长按和未触发长按，可以按照相同逻辑处理
+     * 如果移动到按住的物体外
+     * 已经触发长按和未触发长按
+     * 未触发长按不处理
      */
     LongTouchUtil.onTouchOut = function () {
         egret.clearTimeout(LongTouchUtil.touchBeginTime);
-        MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
-        LayerManager.Ins.maskLayer.visible = false;
         LongTouchUtil.holderObj = null;
+        if (LongTouchUtil.isInLongTouch) {
+            MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
+            LayerManager.Ins.maskLayer.visible = false;
+            LongTouchUtil.isInLongTouch = false;
+        }
     };
+    LongTouchUtil.clear = function () {
+        this.isInLongTouch = false;
+        this.holderObj = null;
+        LayerManager.Ins.maskLayer.visible = false;
+        egret.clearTimeout(LongTouchUtil.touchBeginTime);
+    };
+    LongTouchUtil.isInLongTouch = false;
     return LongTouchUtil;
 }());
 __reflect(LongTouchUtil.prototype, "LongTouchUtil");

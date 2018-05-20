@@ -1,13 +1,13 @@
-class PhaseUtil{
+class PhaseUtil {
 
-    private static nextPhase: BattleSSEnum;
+    private nextPhase: BattleSSEnum;
 
-	public static changePhaseWithDelay(phase:BattleSSEnum, delay: number=1000){
-		egret.setTimeout(PhaseUtil.changePhase, PhaseUtil, delay, phase);
+	public changePhaseWithDelay(phase:BattleSSEnum, delay: number=1000){
+		egret.setTimeout(this.changePhase, this, delay, phase);
 	}
 
-    public static changePhase(phase:BattleSSEnum){
-        PhaseUtil.nextPhase = phase;
+    public changePhase(phase:BattleSSEnum){
+        this.nextPhase = phase;
         let scene = SceneManager.Ins.curScene as BattleScene;
 		if (!scene.isSkillPerforming) {
             // 如果不再演出中，直接跳到下一个状态
@@ -17,19 +17,27 @@ class PhaseUtil{
 			// 侦听演出全部结束事件，全部结束也说明要切阶段了
 			MessageManager.Ins.addEventListener(
 				MessageType.SkillPerformAllEnd,
-				PhaseUtil.onSkillPerformAllEnd,
-				PhaseUtil
+				this.onSkillPerformAllEnd,
+				this
 			);
 		}
 	}
 
-	private static onSkillPerformAllEnd(): void {
+	private onSkillPerformAllEnd(): void {
 		MessageManager.Ins.removeEventListener(
 			MessageType.SkillPerformAllEnd,
-			PhaseUtil.onSkillPerformAllEnd,
-			PhaseUtil
+			this.onSkillPerformAllEnd,
+			this
 		);
         (SceneManager.Ins.curScene as BattleScene).setState(
-            PhaseUtil.nextPhase);
+            this.nextPhase);
+	}
+
+	public clear(): void{
+		MessageManager.Ins.removeEventListener(
+			MessageType.SkillPerformAllEnd,
+			this.onSkillPerformAllEnd,
+			this
+		);
 	}
 }

@@ -1,7 +1,7 @@
-class PlayerUseCardPhase extends ISceneState{
+class PlayerUseCardPhase extends ISceneState {
 	protected scene: BattleScene;
 
-	public initial(){
+	public initial() {
 		super.initial();
 		ToastInfoManager.Ins.newToast("我方出牌阶段");
 		// 显示下一个回合的按键
@@ -26,7 +26,7 @@ class PlayerUseCardPhase extends ISceneState{
 		// MessageManager.Ins.sendMessage(MessageType.UseCardPhaseEnd);
 	}
 
-	private onUseCardPhaseEnd(): void{
+	private onUseCardPhaseEnd(): void {
 		MessageManager.Ins.removeEventListener(
 			MessageType.UseCardPhaseEnd,
 			this.onUseCardPhaseEnd,
@@ -38,33 +38,33 @@ class PlayerUseCardPhase extends ISceneState{
 			this.onCardTouchTap,
 			this
 		);
-		PhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
+		this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
 	}
 
 	private onCardTouchTap(e: Message): void {
 		let card: Card = e.messageContent;
 		let scene = this.scene;
-		if (scene.winnerCamp){
+		if (scene.winnerCamp) {
 			ToastInfoManager.Ins.newToast("胜负已分");
 			return;
 		}
 		let fireboard = scene.playerFireBoard;
 		let fireNeed = card.skill.fireNeed;
-		if (fireNeed > fireboard.fireNum){
+		if (fireNeed > fireboard.fireNum) {
 			ToastInfoManager.Ins.newToast("能量不足");
 			return;
 		}
 
-		if (card.skill.targetType == TargetType.SpecialEnemy && 
-			(!scene.selectedEnemy.attr.isInBattle)){
+		if (card.skill.targetType == TargetType.SpecialEnemy &&
+			(!scene.selectedEnemy.attr.isInBattle)) {
 			ToastInfoManager.Ins.newToast("选中目标已从游戏中排除");
 			return;
 		}
 
 		// 如果目标类型为特定单位，但该单位已经死亡
 		// （发生在之前的技能已经把敌方打死但是演出还没结束的时候）
-		if (card.skill.targetType == TargetType.SpecialEnemy && 
-			(!scene.selectedEnemy.alive)){
+		if (card.skill.targetType == TargetType.SpecialEnemy &&
+			(!scene.selectedEnemy.alive)) {
 			ToastInfoManager.Ins.newToast("选中目标已死亡");
 			return;
 		}
@@ -82,14 +82,20 @@ class PlayerUseCardPhase extends ISceneState{
 
 	}
 
-	public unInitial(){
+	public unInitial() {
 		super.unInitial();
 		// 隐藏回合结束按键，已经在按键的tap事件中隐藏了，这里不额外隐藏
 		// this.scene.battleUI.roundEndButton.visible = false;
+
 		// 结束的时候也要去掉侦听
 		MessageManager.Ins.removeEventListener(
 			MessageType.CardTouchTap,
 			this.onCardTouchTap,
+			this
+		);
+		MessageManager.Ins.removeEventListener(
+			MessageType.UseCardPhaseEnd,
+			this.onUseCardPhaseEnd,
 			this
 		);
 	}

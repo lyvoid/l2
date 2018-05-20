@@ -39,6 +39,10 @@ class Card extends egret.DisplayObjectContainer {
 	 */
 	public setSkill(skill: IManualSkill): void{
 		this.skill = skill;
+		this.alpha = 1;
+		this.scaleX = 1;
+		this.scaleY = 1;
+		this.y = 0;
 	}
 
 	/**

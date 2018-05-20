@@ -8,6 +8,7 @@
 class LongTouchUtil {
 	private static touchBeginTime;
 	private static holderObj; // 一个时间点只能有一个对象进入长按逻辑
+	private static isInLongTouch: boolean = false;
 
 	/**
 	 * 绑定长按对象，obj长按后发出 Type为 LongTouchBegin，内容为thisObj的Message
@@ -60,13 +61,12 @@ class LongTouchUtil {
 		}
 		LongTouchUtil.holderObj = this;
 
-		if (LongTouchUtil.touchBeginTime){
-			egret.clearTimeout(LongTouchUtil.touchBeginTime); 
-		}
+		egret.clearTimeout(LongTouchUtil.touchBeginTime); 
 		LongTouchUtil.touchBeginTime = egret.setTimeout(
 			()=>{
 				// 加遮罩，防止二次触发
 				LayerManager.Ins.maskLayer.visible = true;
+				LongTouchUtil.isInLongTouch = true;
 				MessageManager.Ins.sendMessage(MessageType.LongTouchStart, this);
 			}, 
 			this, 
@@ -86,13 +86,24 @@ class LongTouchUtil {
 	}
 
 	/**
-	 * 如果移动到按住的物体外，存在两个情况，
-	 * 已经触发长按和未触发长按，可以按照相同逻辑处理
+	 * 如果移动到按住的物体外
+	 * 已经触发长按和未触发长按
+	 * 未触发长按不处理
 	 */
 	private static onTouchOut(): void{
 		egret.clearTimeout(LongTouchUtil.touchBeginTime); 
-		MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
-		LayerManager.Ins.maskLayer.visible = false;
 		LongTouchUtil.holderObj = null;
+		if (LongTouchUtil.isInLongTouch){
+			MessageManager.Ins.sendMessage(MessageType.LongTouchEnd, this);
+			LayerManager.Ins.maskLayer.visible = false;
+			LongTouchUtil.isInLongTouch = false;
+		} 
+	}
+
+	public static clear(): void{
+		this.isInLongTouch = false;
+		this.holderObj = null;
+		LayerManager.Ins.maskLayer.visible = false;
+		egret.clearTimeout(LongTouchUtil.touchBeginTime);
 	}
 }

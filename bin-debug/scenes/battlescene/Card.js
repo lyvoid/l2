@@ -43,6 +43,10 @@ var Card = (function (_super) {
      */
     Card.prototype.setSkill = function (skill) {
         this.skill = skill;
+        this.alpha = 1;
+        this.scaleX = 1;
+        this.scaleY = 1;
+        this.y = 0;
     };
     /**
      * 使用后准备放入对象池前调用

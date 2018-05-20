@@ -17,7 +17,7 @@ var SkillTmp = (function (_super) {
         if (caster === void 0) { caster = null; }
         if (camp === void 0) { camp = CharCamp.Neut; }
         var _this = _super.call(this, caster, camp) || this;
-        _this.targetType = TargetType.AllEnemy;
+        _this.targetType = TargetType.SpecialEnemy;
         _this.fireNeed = 1;
         _this.desc = "对敌方全体造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
         return _this;

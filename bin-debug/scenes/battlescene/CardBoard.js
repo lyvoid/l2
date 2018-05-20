@@ -24,7 +24,14 @@ var CardBoard = (function (_super) {
     CardBoard.prototype.distCardNormal = function () {
         var skills = SceneManager.Ins.curScene.skillManualPool;
         var index = Math.floor(Math.random() * skills.length);
-        var card = new Card(skills[index]);
+        var card;
+        if (this.cardPool.length > 0) {
+            card = this.cardPool.pop();
+            card.setSkill(skills[index]);
+        }
+        else {
+            card = new Card(skills[index]);
+        }
         card.initial();
         this.cards.push(card);
         this.addCardToBoard(card);
@@ -96,6 +103,7 @@ var CardBoard = (function (_super) {
         var index = cards.indexOf(card);
         cards.splice(index, 1);
         this.removeCardFromBoard(card);
+        this.cardPool.push(card);
     };
     /**
      * 销毁前要调用该方法释放资源

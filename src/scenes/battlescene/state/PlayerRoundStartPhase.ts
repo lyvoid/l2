@@ -26,7 +26,7 @@ class PlayerRoundStartPhase extends ISceneState {
 		// 回合开始的技能及效果（待增加
 
 		// 切下一个阶段
-		PhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
+		this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
 	}
 
 	public unInitial() {

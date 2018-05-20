@@ -30,7 +30,7 @@ var PlayerUseCardPhase = (function (_super) {
         MessageManager.Ins.removeEventListener(MessageType.UseCardPhaseEnd, this.onUseCardPhaseEnd, this);
         // 一收到结束消息就要去掉使用卡牌的侦听
         MessageManager.Ins.removeEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
-        PhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
+        this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
     };
     PlayerUseCardPhase.prototype.onCardTouchTap = function (e) {
         var card = e.messageContent;
@@ -72,6 +72,7 @@ var PlayerUseCardPhase = (function (_super) {
         // this.scene.battleUI.roundEndButton.visible = false;
         // 结束的时候也要去掉侦听
         MessageManager.Ins.removeEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
+        MessageManager.Ins.removeEventListener(MessageType.UseCardPhaseEnd, this.onUseCardPhaseEnd, this);
     };
     return PlayerUseCardPhase;
 }(ISceneState));

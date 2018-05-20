@@ -37,6 +37,8 @@ var IScene = (function () {
         layer.uiLayer.removeChildren();
         layer.popUpLayer.removeChildren();
         layer.maskLayer.visible = false;
+        // 长按功能清理
+        LongTouchUtil.clear();
     };
     /**
      * 每一帧调用

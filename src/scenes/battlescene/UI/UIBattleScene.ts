@@ -1,7 +1,7 @@
 class UIBattleScene extends eui.Component {
 	private addCardButton: eui.Button;
 	private addFireButton: eui.Button;
-	public roundEndButton:eui.Button;
+	public roundEndButton: eui.Button;
 
 	public constructor() {
 		super();
