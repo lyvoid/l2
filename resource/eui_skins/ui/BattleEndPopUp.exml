@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e:Skin class="BattleEndPopUp" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+<e:Skin class="mySkin.BattleEndPopUp" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
 	<w:Config id="1635d45e939" ></w:Config>
 	<e:Label id="titleLabel" text="战斗胜利" horizontalCenter="23" top="20" size="50" fontFamily="DFKai-SB"/>
 	<e:Button id="exitButton" label="离开" horizontalCenter="-100" bottom="50"/>

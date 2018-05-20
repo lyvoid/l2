@@ -78,7 +78,7 @@ var BattleScene = (function (_super) {
             console.log(e);
         }).then(function () {
             console.log("battlescene场景初始化完成");
-            // TODO 移除loading界面
+            MessageManager.Ins.sendMessage(MessageType.LoadingFinish);
             _this.setState(BattleSSEnum.PlayerRoundStartPhase);
         });
     };

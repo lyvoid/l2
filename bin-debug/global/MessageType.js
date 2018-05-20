@@ -27,6 +27,8 @@ var MessageType = (function () {
     MessageType.SkillPerformAllEnd = "SkillPerformAllEnd";
     // 卡牌被点击事件
     MessageType.CardTouchTap = "CardTouchTap";
+    // 载入完成事件
+    MessageType.LoadingFinish = "LoadingFinish";
     return MessageType;
 }());
 __reflect(MessageType.prototype, "MessageType");

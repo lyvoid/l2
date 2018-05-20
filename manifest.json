@@ -14,8 +14,7 @@
 	"game": [
 		"bin-debug/scenes/battlescene/skill/IManualSkill.js",
 		"bin-debug/scenesystem/IScene.js",
-		"bin-debug/scenes/battlescene/DBManager.js",
-		"bin-debug/Platform.js",
+		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/common/LongTouchUtil.js",
 		"bin-debug/global/LayerManager.js",
@@ -31,8 +30,8 @@
 		"bin-debug/scenes/battlescene/CardBoard.js",
 		"bin-debug/scenes/battlescene/Character.js",
 		"bin-debug/scenes/battlescene/DamageFloat.js",
-		"bin-debug/LoadingUI.js",
-		"bin-debug/scenes/battlescene/FireBoard.js",
+		"bin-debug/scenes/battlescene/DBManager.js",
+		"bin-debug/Main.js",
 		"bin-debug/scenes/battlescene/GlowFilterForTouch.js",
 		"bin-debug/scenes/battlescene/Hurt.js",
 		"bin-debug/scenes/battlescene/buff/IBuff.js",
@@ -47,9 +46,10 @@
 		"bin-debug/scenes/battlescene/state/PlayerRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerUseCardPhase.js",
 		"bin-debug/scenes/battlescene/UI/BattleEndPopUp.js",
-		"bin-debug/scenes/battlescene/UI/LongTouchInfo.js",
 		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
-		"bin-debug/Main.js",
-		"bin-debug/scenesystem/SceneManager.js"
+		"bin-debug/Platform.js",
+		"bin-debug/scenesystem/SceneManager.js",
+		"bin-debug/UI/LoadingUI.js",
+		"bin-debug/UI/LongTouchInfo.js"
 	]
 }

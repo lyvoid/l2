@@ -54,11 +54,11 @@ class Main extends eui.UILayer {
 
         this.runGame().catch(e => {
             console.log(e);
-        })
+        });
     }
 
     private async runGame() {
-        await this.loadResource()
+        await this.loadResource();
         this.createGameScene();
         await platform.login();
         const userInfo = await platform.getUserInfo();
@@ -68,9 +68,10 @@ class Main extends eui.UILayer {
 
     private async loadResource() {
         try {
-            const loadingView = new LoadingUI();
-            this.stage.addChild(loadingView);
             await RES.loadConfig("resource/default.res.json", "resource/");
+            await RES.getResAsync("loadingbg_png");
+            const loadingView = new LoadingUI(this.stage.stageHeight, this.stage.stageWidth);
+            this.stage.addChild(loadingView);
             await this.loadTheme();
             await RES.loadGroup("preload", 0, loadingView);
             this.stage.removeChild(loadingView);

@@ -75,7 +75,7 @@ class BattleScene extends IScene {
 			console.log(e);
 		}).then(() => {
 			console.log("battlescene场景初始化完成");
-			// TODO 移除loading界面
+			MessageManager.Ins.sendMessage(MessageType.LoadingFinish);
 			this.setState(BattleSSEnum.PlayerRoundStartPhase);
 		});
 

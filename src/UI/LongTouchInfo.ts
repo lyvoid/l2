@@ -5,7 +5,7 @@ class LongTouchInfo extends eui.Component {
 
 	public constructor() {
 		super();
-		this.skinName = "resource/eui_skins/ui/LongTouchInfo.exml";
+		this.skinName = "mySkin.LongTouchInfo";
 	}
 	
 }

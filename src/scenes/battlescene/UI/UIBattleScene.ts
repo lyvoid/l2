@@ -5,7 +5,7 @@ class UIBattleScene extends eui.Component {
 
 	public constructor() {
 		super();
-		this.skinName = "resource/eui_skins/ui/UIBattleScene.exml";
+		this.skinName = "mySkin.UIBattleSceneSkin";
 
 		// 这里的三个侦听事件就不做手动释放了，应该都会自己释放的
 		this.roundEndButton.addEventListener(

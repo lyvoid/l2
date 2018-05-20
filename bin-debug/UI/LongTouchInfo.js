@@ -12,7 +12,7 @@ var LongTouchInfo = (function (_super) {
     __extends(LongTouchInfo, _super);
     function LongTouchInfo() {
         var _this = _super.call(this) || this;
-        _this.skinName = "resource/eui_skins/ui/LongTouchInfo.exml";
+        _this.skinName = "mySkin.LongTouchInfo";
         return _this;
     }
     return LongTouchInfo;

@@ -31,5 +31,8 @@ class MessageType{
 	public static SkillPerformAllEnd = "SkillPerformAllEnd";
 
 	// 卡牌被点击事件
-	public static CardTouchTap = "CardTouchTap"
+	public static CardTouchTap = "CardTouchTap";
+
+	// 载入完成事件
+	public static LoadingFinish = "LoadingFinish";
 }

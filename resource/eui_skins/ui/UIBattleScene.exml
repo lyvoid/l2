@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e:Skin class="UIBattleSceneSkin" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+<e:Skin class="mySkin.UIBattleSceneSkin" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
 	<w:Config id="163493a6b56" ></w:Config>
 	<e:Button id="addFireButton" label="whosyourdad-addFire" right="10" bottom="180"/>
 	<e:Button id="addCardButton" label="whosyourdad-addCard" right="10" bottom="125"/>

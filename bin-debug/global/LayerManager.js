@@ -10,18 +10,6 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
  */
 var LayerManager = (function () {
     function LayerManager() {
-        this.loadingLayer = new eui.UILayer();
-        this.loadingLayer.touchEnabled = true;
-        this.loadingLayer.visible = false;
-        this.uiLayer = new eui.UILayer();
-        this.uiLayer.touchEnabled = false;
-        var gameLayer = new egret.DisplayObjectContainer();
-        this.gameLayer = gameLayer;
-        this.maskLayer = new eui.UILayer();
-        this.maskLayer.touchEnabled = true;
-        this.maskLayer.visible = false;
-        this.popUpLayer = new eui.UILayer();
-        this.popUpLayer.touchEnabled = false;
     }
     Object.defineProperty(LayerManager, "Ins", {
         get: function () {
@@ -42,6 +30,18 @@ var LayerManager = (function () {
         var stageHeight = stage.stageHeight;
         this.stageWidth = stageWidth;
         this.stageHeight = stageHeight;
+        this.loadingLayer = new LoadingUI(stageHeight, stageWidth);
+        this.loadingLayer.touchEnabled = true;
+        this.loadingLayer.visible = false;
+        this.uiLayer = new eui.UILayer();
+        this.uiLayer.touchEnabled = false;
+        var gameLayer = new egret.DisplayObjectContainer();
+        this.gameLayer = gameLayer;
+        this.maskLayer = new eui.UILayer;
+        this.maskLayer.touchEnabled = true;
+        this.maskLayer.visible = false;
+        this.popUpLayer = new eui.UILayer();
+        this.popUpLayer.touchEnabled = false;
         var maskbg = new egret.Bitmap(RES.getRes("maskbg_png"));
         maskbg.height = stageHeight;
         maskbg.width = stageWidth;
