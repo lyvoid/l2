@@ -15,6 +15,7 @@ var CardBoard = (function (_super) {
     __extends(CardBoard, _super);
     function CardBoard() {
         var _this = _super.call(this) || this;
+        _this.overFlowNum = 0;
         _this.cards = [];
         _this.cardPool = [];
         _this.y = LayerManager.Ins.stageHeight - 140;
@@ -32,29 +33,45 @@ var CardBoard = (function (_super) {
         else {
             card = new Card(skills[index]);
         }
-        card.initial();
-        this.cards.push(card);
-        this.addCardToBoard(card);
+        this.addCard(card);
+    };
+    CardBoard.prototype.addCard = function (card) {
+        var _this = this;
+        if (this.cards.length < CardBoard.maxCardNum) {
+            card.initial();
+            this.cards.push(card);
+            this.addCardToBoard(card, this.cards.length - 1);
+        }
+        else {
+            this.overFlowNum += 1;
+            this.addCardToBoard(card, CardBoard.maxCardNum + this.overFlowNum - 1).call(function () {
+                _this.removeCardFromBoard(card, CardBoard.maxCardNum);
+                _this.overFlowNum -= 1;
+            });
+        }
     };
     /**
      * 根据当前的cards的数量调整所有卡牌的对应位置
      */
-    CardBoard.prototype.adjustCardsPosition = function (twTime) {
+    CardBoard.prototype.adjustCardsPosition = function (twTime, minIndex) {
         if (twTime === void 0) { twTime = 600; }
+        if (minIndex === void 0) { minIndex = 0; }
         var cards = this.cards;
         for (var i in cards) {
-            var card = cards[i];
-            this.adjustCardPosition(card, parseInt(i), twTime);
+            if (parseInt(i) >= minIndex) {
+                var card = cards[i];
+                this.adjustCardPosition(card, parseInt(i), twTime);
+            }
         }
     };
     /**
      * 将一张卡牌调整到正确的位置
      */
     CardBoard.prototype.adjustCardPosition = function (card, index, twTime) {
-        if (twTime === void 0) { twTime = 600; }
+        if (twTime === void 0) { twTime = 400; }
         var newX = this.getCardX(index);
         var tw = egret.Tween.get(card);
-        tw.to({ x: newX }, twTime);
+        return tw.to({ x: newX }, twTime);
     };
     /**
      * 计算卡牌的正确的X轴位置
@@ -64,20 +81,26 @@ var CardBoard = (function (_super) {
     };
     /**
      * 添加一张卡牌到cardboard中
-     * 在调用该方法前，需要先将card加入到cards中
      */
-    CardBoard.prototype.addCardToBoard = function (newCard) {
+    CardBoard.prototype.addCardToBoard = function (newCard, index) {
         newCard.x = this.width + 100;
         this.addChild(newCard);
-        var index = this.cards.indexOf(newCard);
-        this.adjustCardPosition(newCard, index);
+        return this.adjustCardPosition(newCard, index, 400);
     };
     /**
-     * 从cardboard中移除一张卡牌，主要是表现效果
-     * 表现前需要先从cards中移除对应卡牌
+     * 从玩家手中移除一张卡牌
      */
-    CardBoard.prototype.removeCardFromBoard = function (card) {
+    CardBoard.prototype.removeCard = function (card) {
+        // 逻辑上去除
+        var cards = this.cards;
+        card.unInitial();
+        var index = cards.indexOf(card);
+        cards.splice(index, 1);
+        this.removeCardFromBoard(card, index);
+    };
+    CardBoard.prototype.removeCardFromBoard = function (card, index) {
         var _this = this;
+        // 表现上去除
         var tw = egret.Tween.get(card);
         var cardx = card.x;
         var cardy = card.y;
@@ -85,25 +108,17 @@ var CardBoard = (function (_super) {
         var cardh = card.height;
         var newcardx = cardx - 0.25 * cardw;
         var newcardy = cardy - 0.25 * cardh;
-        this.adjustCardsPosition(400);
+        this.adjustCardsPosition(450, index);
         tw.to({
             scaleX: 1.5,
             scaleY: 1.5,
             alpha: 0,
             x: newcardx,
             y: newcardy
-        }, 400).call(function () { return _this.removeChild(card); });
-    };
-    /**
-     * 从玩家手中移除一张卡牌
-     */
-    CardBoard.prototype.removeCard = function (card) {
-        var cards = this.cards;
-        card.unInitial();
-        var index = cards.indexOf(card);
-        cards.splice(index, 1);
-        this.removeCardFromBoard(card);
-        this.cardPool.push(card);
+        }, 300).call(function () {
+            _this.removeChild(card);
+            _this.cardPool.push(card);
+        });
     };
     /**
      * 销毁前要调用该方法释放资源
@@ -121,6 +136,7 @@ var CardBoard = (function (_super) {
         this.cards = null;
         this.cardPool = null;
     };
+    CardBoard.maxCardNum = 10;
     return CardBoard;
 }(egret.DisplayObjectContainer));
 __reflect(CardBoard.prototype, "CardBoard");

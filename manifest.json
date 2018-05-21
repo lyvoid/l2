@@ -17,6 +17,7 @@
 		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/common/LongTouchUtil.js",
+		"bin-debug/common/Util.js",
 		"bin-debug/global/LayerManager.js",
 		"bin-debug/global/MessageManager.js",
 		"bin-debug/global/MessageType.js",
