@@ -11,22 +11,22 @@ var PhaseUtil = (function () {
     PhaseUtil.prototype.changePhase = function (phase) {
         this.nextPhase = phase;
         var scene = SceneManager.Ins.curScene;
-        if (!scene.isSkillPerforming) {
+        if (!scene.isPerforming) {
             // 如果不再演出中，直接跳到下一个状态
             scene.setState(phase);
         }
         else {
             // 如果正在演出
             // 侦听演出全部结束事件，全部结束也说明要切阶段了
-            MessageManager.Ins.addEventListener(MessageType.SkillPerformAllEnd, this.onSkillPerformAllEnd, this);
+            MessageManager.Ins.addEventListener(MessageType.PerformAllEnd, this.onSkillPerformAllEnd, this);
         }
     };
     PhaseUtil.prototype.onSkillPerformAllEnd = function () {
-        MessageManager.Ins.removeEventListener(MessageType.SkillPerformAllEnd, this.onSkillPerformAllEnd, this);
+        MessageManager.Ins.removeEventListener(MessageType.PerformAllEnd, this.onSkillPerformAllEnd, this);
         SceneManager.Ins.curScene.setState(this.nextPhase);
     };
     PhaseUtil.prototype.clear = function () {
-        MessageManager.Ins.removeEventListener(MessageType.SkillPerformAllEnd, this.onSkillPerformAllEnd, this);
+        MessageManager.Ins.removeEventListener(MessageType.PerformAllEnd, this.onSkillPerformAllEnd, this);
     };
     return PhaseUtil;
 }());

@@ -18,7 +18,7 @@ class MessageType{
 	public static CharDie = "CharDie";
 	public static Resurgence = "Resurgence";
 	// 演出全部结束
-	public static SkillPerformAllEnd = "SkillPerformAllEnd";
+	public static PerformAllEnd = "SkillPerformAllEnd";
 	// 卡牌被点击事件
 	public static CardTouchTap = "CardTouchTap";
 

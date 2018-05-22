@@ -33,7 +33,7 @@ class SkillOneDamageWithOut extends IManualSkill {
 		}, 200).call(
 			() => {
 				IManualSkill.statePerformance(affectResult);
-				this.caster.play("attack1_+1", 1, "idle");
+				this.caster.playDBAnim("attack1_+1", 1, "idle");
 				this.caster.armatureDisplay.addEventListener(
 					dragonBones.EventObject.COMPLETE,
 					this.casterAniEnd,
@@ -51,13 +51,13 @@ class SkillOneDamageWithOut extends IManualSkill {
 			this
 		);
 		let newP: { x: number, y: number } = this.caster.getPositon();
-		this.caster.play("idle", 0);
+		this.caster.playDBAnim("idle", 0);
 		egret.Tween.get(this.caster).to({
 			x: newP.x,
 			y: newP.y
 		}, 200).call(
 			() => {	
-				(SceneManager.Ins.curScene as BattleScene).oneSkillperformEnd();
+				(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
 			}
 		);
 	}

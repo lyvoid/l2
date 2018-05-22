@@ -9,7 +9,19 @@ class BattleScene extends IScene {
 	 * 用户的卡牌
 	 */
 	public cardBoard: CardBoard;
-	public bcr: BattleCR; // 通用资源
+
+	/**
+	 * 玩家的人物选择圈
+	 */
+	public selfSelectImg: egret.Bitmap;
+	/**
+	 * 敌方的任务选择圈
+	 */
+	public enemySlectImg: egret.Bitmap;
+	/**
+	 * touchbegin时候的滤镜
+	 */
+	public filterManager: FilterManager;
 
 	public enemies: Character[];
 	public friends: Character[];
@@ -34,7 +46,7 @@ class BattleScene extends IScene {
 	/**
 	 * 演出列表
 	 */ 
-	public performQue: Queue<[IManualSkill, any]>;
+	public performQue: Queue<[{performance:Function}, any]>;
 	/**
 	 * 待释放技能
 	 */
@@ -74,7 +86,7 @@ class BattleScene extends IScene {
 		this.skillManualPool = [];
 		this.dbManager = new DBManager();
 		this.cardBoard = new CardBoard();
-		this.performQue = new Queue<[IManualSkill, any]>();
+		this.performQue = new Queue<[{performance: Function}, any]>();
 		this.skillTodoQue = new Queue<IManualSkill>();
 		this.damageFloatManager = new DamageFloatManager();
 
@@ -119,7 +131,18 @@ class BattleScene extends IScene {
 		await RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingLayer);
 		console.log("战场通用资源载入完成");
 
-		this.bcr = new BattleCR();
+		// 选择圈及滤镜
+		let selfSelectTex = RES.getRes("selfSelectChar_png");
+		let enemySelectTex = RES.getRes("enemySelectChar_png");
+		let selfSelectImg = new egret.Bitmap(selfSelectTex);
+		selfSelectImg.x = -selfSelectImg.width / 2;
+		selfSelectImg.y = -selfSelectImg.height / 2;
+		let enemySlectImg = new egret.Bitmap(enemySelectTex);
+		enemySlectImg.x = selfSelectImg.x;
+		enemySlectImg.y = selfSelectImg.y;
+		this.selfSelectImg = selfSelectImg;
+		this.enemySlectImg = enemySlectImg;
+		this.filterManager = new FilterManager();
 
 		// 载入龙骨资源
 		for (let charactorName of ["Dragon", "Swordsman"]) {
@@ -184,14 +207,14 @@ class BattleScene extends IScene {
 		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Dragon");
 			chars[i] = char1;
-			char1.play("idle", 0);
+			char1.playDBAnim("idle", 0);
 			char1.camp = CharCamp.Enemy;
 		}
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
 		this.selectedEnemy = chars[0];
-		chars[0].bgLayer.addChild(this.bcr.enemySlectImg);
+		chars[0].bgLayer.addChild(this.enemySlectImg);
 
 
 		chars[1].col = CharColType.backRow;
@@ -223,13 +246,13 @@ class BattleScene extends IScene {
 		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Swordsman");
 			chars[i] = char1;
-			char1.play("idle", 0);
+			char1.playDBAnim("idle", 0);
 		}
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
 		this.selectedFriend = chars[0];
-		chars[0].bgLayer.addChild(this.bcr.selfSelectImg);
+		chars[0].bgLayer.addChild(this.selfSelectImg);
 
 
 		chars[1].col = CharColType.backRow;
@@ -321,13 +344,6 @@ class BattleScene extends IScene {
 		}
 	}
 
-	/**
-	 * 点击开始时候的滤镜动画效果
-	 */
-	public touchBeginGlowAnim(obj: any): void {
-		this.bcr.touchGlow.setHolderAnim(obj);
-	}
-
 	public startTodoSkill():void{
 		if (this.skillTodoQue.length > 0){
 			this.skillTodoQue.pop().useSkill();
@@ -397,7 +413,7 @@ class BattleScene extends IScene {
 	/**
 	 * 是否正在演出skill的演出内容
 	 */
-	public isSkillPerforming: boolean = false;
+	public isPerforming: boolean = false;
 	
 	/**
 	 * 一个技能演出结束的时候自行调用
@@ -405,22 +421,19 @@ class BattleScene extends IScene {
 	 * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
 	 * 如果胜负未分发送演出全部结束消息
 	 */
-	public oneSkillperformEnd(): void{
+	public onePerformEnd(): void{
+		this.isPerforming = false;
 		if (this.performQue.length == 0){
-			// 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
-			this.isSkillPerforming = false;
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
 			if (this.winnerCamp){
 				this.onBattleEnd();
 			}else{
-				MessageManager.Ins.sendMessage(MessageType.SkillPerformAllEnd);
+				// 如果游戏没有结束，发送演出全部结束消息
+				MessageManager.Ins.sendMessage(MessageType.PerformAllEnd);
 			}
 			return;
 		}
-		let skill: IManualSkill;
-		let affectResult:any;
-		[skill, affectResult] = this.performQue.pop();
-		skill.performance(affectResult);
+		this.performStart();
 	}
 
 	/**
@@ -441,16 +454,16 @@ class BattleScene extends IScene {
 	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
 	 * 如果当前正在演出会直接返回，防止两件事同时被演出
 	 */
-	public skillPerformStart(): void{
-		if(this.isSkillPerforming){
+	public performStart(): void{
+		if(this.isPerforming){
 			// 如果正在演出，那就不管这个消息
 			return;
 		}
-		this.isSkillPerforming = true;
-		let skill: IManualSkill;
+		this.isPerforming = true;
+		let performanceObj: {performance: Function};
 		let affectResult:any;
-		[skill, affectResult] = this.performQue.pop();
-		skill.performance(affectResult);
+		[performanceObj, affectResult] = this.performQue.pop();
+		performanceObj.performance(affectResult);
 	}
 
 	private readConfig(): void {
@@ -484,9 +497,6 @@ class BattleScene extends IScene {
 		this.cardBoard.release();
 		this.cardBoard = null;
 
-		this.bcr.release();
-		this.bcr = null;
-
 		this.battleUI = null;
 		this.battleEndPopUp = null;
 
@@ -499,6 +509,11 @@ class BattleScene extends IScene {
 		this.phaseUtil.clear();
 		this.phaseUtil = null;
 		LongTouchUtil.clear();
+
+		this.selfSelectImg = null;
+		this.enemySlectImg = null;
+		this.filterManager.release();
+		this.filterManager = null;
 
 		// 释放载入的美术资源
 		this.releaseResource().then(()=>{

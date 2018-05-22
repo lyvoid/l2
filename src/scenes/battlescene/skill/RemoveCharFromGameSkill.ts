@@ -19,7 +19,7 @@ class RemoveCharFromGameSkill extends IManualSkill{
 		for (let target of this.targets){
 			target.parent.removeChild(target);
 		}
-		(SceneManager.Ins.curScene as BattleScene).oneSkillperformEnd();
+		(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
 	}
 
 	public needCast():boolean{

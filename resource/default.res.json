@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,loadingbg2_png,loadingbg22_png,loadingbg3_png,loadingbg4_png,loadingbg5_png",
+			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png",
 			"name": "preload"
 		},
 		{
@@ -220,31 +220,6 @@
 			"name": "loadingbg_png",
 			"type": "image",
 			"url": "common/loadingbg.png"
-		},
-		{
-			"name": "loadingbg2_png",
-			"type": "image",
-			"url": "Testload/loadingbg.png"
-		},
-		{
-			"name": "loadingbg22_png",
-			"type": "image",
-			"url": "Testload/loadingbg2.png"
-		},
-		{
-			"name": "loadingbg3_png",
-			"type": "image",
-			"url": "Testload/loadingbg3.png"
-		},
-		{
-			"name": "loadingbg4_png",
-			"type": "image",
-			"url": "Testload/loadingbg4.png"
-		},
-		{
-			"name": "loadingbg5_png",
-			"type": "image",
-			"url": "Testload/loadingbg5.png"
 		}
 	]
 }

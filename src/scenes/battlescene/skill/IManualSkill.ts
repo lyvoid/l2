@@ -28,7 +28,7 @@ abstract class IManualSkill {
 	/**
 	 * 技能归属
 	 */
-	public camp:CharCamp;
+	public camp: CharCamp;
 
 	/**
 	 * 技能描述
@@ -38,7 +38,7 @@ abstract class IManualSkill {
 	protected friends: Character[];
 	protected enemies: Character[];
 
-	public constructor(caster: Character = null, camp:CharCamp = CharCamp.Neut) {
+	public constructor(caster: Character = null, camp: CharCamp = CharCamp.Neut) {
 		this.caster = caster;
 		this.camp = caster ? caster.camp : camp;
 		this.setCampChar();
@@ -74,10 +74,10 @@ abstract class IManualSkill {
 				this.targets = [this.caster];
 				break;
 			case TargetType.AllAliveFriend:
-				this.targets =  IManualSkill.getAllAliveChar(this.friends);
+				this.targets = IManualSkill.getAllAliveChar(this.friends);
 				break;
 			case TargetType.AllAliveEnemy:
-				this.targets =  IManualSkill.getAllAliveChar(this.enemies);
+				this.targets = IManualSkill.getAllAliveChar(this.enemies);
 				break;
 			case TargetType.SpecialEnemy:
 				this.targets = [scene.selectedEnemy];
@@ -94,10 +94,10 @@ abstract class IManualSkill {
 		}
 	}
 
-	public static getAllAliveChar(input: Character[]): Character[]{
-		let ls:Character[] = [];
-		for(let c of input){
-			if (c.alive && c.isInBattle){
+	public static getAllAliveChar(input: Character[]): Character[] {
+		let ls: Character[] = [];
+		for (let c of input) {
+			if (c.alive && c.isInBattle) {
 				ls.push(c);
 			}
 		}
@@ -122,9 +122,9 @@ abstract class IManualSkill {
 		}
 	};
 
-	public static getFirstAlive(input: Character[]): Character{
-		for(let c of input){
-			if (c.alive && c.isInBattle){
+	public static getFirstAlive(input: Character[]): Character {
+		for (let c of input) {
+			if (c.alive && c.isInBattle) {
 				return c;
 			}
 		}
@@ -138,7 +138,7 @@ abstract class IManualSkill {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 
 		// 如果游戏已经结束就不再释放
-		if (scene.winnerCamp){
+		if (scene.winnerCamp) {
 			return;
 		}
 
@@ -148,15 +148,15 @@ abstract class IManualSkill {
 		}
 
 		// 选择首要目标
-		if (this.camp == CharCamp.Player){
+		if (this.camp == CharCamp.Player) {
 			this.manualChooseTarget();
 		}
-		else{
+		else {
 			this.autoChooseTarget();
 		}
 
 		// 判断技能是不是需要释放
-		if (!this.needCast()){
+		if (!this.needCast()) {
 			return;
 		}
 
@@ -166,7 +166,7 @@ abstract class IManualSkill {
 		// 确实需要释放时，将演出加到预演出列表
 		scene.performQue.push([this, affectResult]);
 		// 没次加入新的表现序列都调用一次应该是没错的
-		scene.skillPerformStart();
+		scene.performStart();
 
 
 		// 运行在在SkillToDo中的技能
@@ -197,9 +197,9 @@ abstract class IManualSkill {
 	 * IManualSkill中的该方法仅适用于判定对单个目标造成伤害的类型的技能
 	 * 走到这个函数说明技能已经释放出去了，已经消耗了能量，只是可能已经不需要产生作用了
 	 */
-	protected needCast():boolean{
-		for (let t of this.targets){
-			if (t.alive && t.isInBattle){
+	protected needCast(): boolean {
+		for (let t of this.targets) {
+			if (t.alive && t.isInBattle) {
 				return true;
 			}
 		}
@@ -225,24 +225,32 @@ abstract class IManualSkill {
 					// 血条变化完之后如果此次人物还死亡了的话
 					() => {
 						if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-							target.addChild(new eui.Label("死亡"));
+							target.stopDBAnim();
+							(SceneManager.Ins.curScene as BattleScene).filterManager.addGreyFilter(target);
+						}
+						if (change.isInBattleNew == false) {
+							// 如果扣血后移除
+							IManualSkill.removeFromGamePerform(target);
 						}
 					}
 				);
 				// 飘字
 				damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-			}
-			// 如果被排除出游戏
-			if (change.isInBattleNew == false){
-				egret.Tween.get(target.armatureDisplay).to({
-					alpha: 0
-				}, 1000).call(
-					()=>{
-						target.parent.removeChild(target);
-					}
-				);
+			} else if (change.isInBattleNew == false) {
+				// 如果直接被排除出游戏
+				IManualSkill.removeFromGamePerform(target);
 			}
 		}
+	}
+
+	private static removeFromGamePerform(target: Character) {
+		egret.Tween.get(target.armatureDisplay).to({
+			alpha: 0
+		}, 1000).call(
+			() => {
+				target.parent.removeChild(target);
+			}
+		);
 	}
 
 	public release(): void {

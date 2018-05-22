@@ -31,7 +31,7 @@ var RemoveCharFromGameSkill = (function (_super) {
             var target = _a[_i];
             target.parent.removeChild(target);
         }
-        SceneManager.Ins.curScene.oneSkillperformEnd();
+        SceneManager.Ins.curScene.onePerformEnd();
     };
     RemoveCharFromGameSkill.prototype.needCast = function () {
         var target = this.targets[0];

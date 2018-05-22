@@ -64,7 +64,7 @@ var Card = (function (_super) {
      * touchbegin统一在scene里做处理
      */
     Card.prototype.onTouchBegin = function () {
-        SceneManager.Ins.curScene.touchBeginGlowAnim(this);
+        SceneManager.Ins.curScene.filterManager.setOutGlowHolderWithAnim(this);
     };
     /**
      * 被点击时发送cardtouchtap事件，附带信息为卡牌自己

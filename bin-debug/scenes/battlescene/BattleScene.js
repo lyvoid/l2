@@ -50,7 +50,7 @@ var BattleScene = (function (_super) {
         /**
          * 是否正在演出skill的演出内容
          */
-        _this.isSkillPerforming = false;
+        _this.isPerforming = false;
         return _this;
     }
     BattleScene.prototype.initial = function () {
@@ -94,7 +94,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer;
+            var selfSelectTex, enemySelectTex, selfSelectImg, enemySlectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -104,7 +104,17 @@ var BattleScene = (function (_super) {
                         // 载入通用资源
                         _d.sent();
                         console.log("战场通用资源载入完成");
-                        this.bcr = new BattleCR();
+                        selfSelectTex = RES.getRes("selfSelectChar_png");
+                        enemySelectTex = RES.getRes("enemySelectChar_png");
+                        selfSelectImg = new egret.Bitmap(selfSelectTex);
+                        selfSelectImg.x = -selfSelectImg.width / 2;
+                        selfSelectImg.y = -selfSelectImg.height / 2;
+                        enemySlectImg = new egret.Bitmap(enemySelectTex);
+                        enemySlectImg.x = selfSelectImg.x;
+                        enemySlectImg.y = selfSelectImg.y;
+                        this.selfSelectImg = selfSelectImg;
+                        this.enemySlectImg = enemySlectImg;
+                        this.filterManager = new FilterManager();
                         _i = 0, _a = ["Dragon", "Swordsman"];
                         _d.label = 2;
                     case 2:
@@ -159,14 +169,14 @@ var BattleScene = (function (_super) {
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Dragon");
                             chars[i] = char1;
-                            char1.play("idle", 0);
+                            char1.playDBAnim("idle", 0);
                             char1.camp = CharCamp.Enemy;
                         }
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
                         chars[0].setPosition();
                         this.selectedEnemy = chars[0];
-                        chars[0].bgLayer.addChild(this.bcr.enemySlectImg);
+                        chars[0].bgLayer.addChild(this.enemySlectImg);
                         chars[1].col = CharColType.backRow;
                         chars[1].row = CharRowType.up;
                         chars[1].setPosition();
@@ -189,13 +199,13 @@ var BattleScene = (function (_super) {
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Swordsman");
                             chars[i] = char1;
-                            char1.play("idle", 0);
+                            char1.playDBAnim("idle", 0);
                         }
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
                         chars[0].setPosition();
                         this.selectedFriend = chars[0];
-                        chars[0].bgLayer.addChild(this.bcr.selfSelectImg);
+                        chars[0].bgLayer.addChild(this.selfSelectImg);
                         chars[1].col = CharColType.backRow;
                         chars[1].row = CharRowType.up;
                         chars[1].setPosition();
@@ -263,12 +273,6 @@ var BattleScene = (function (_super) {
         else if (!isPlayerAlive) {
             this.winnerCamp = CharCamp.Enemy;
         }
-    };
-    /**
-     * 点击开始时候的滤镜动画效果
-     */
-    BattleScene.prototype.touchBeginGlowAnim = function (obj) {
-        this.bcr.touchGlow.setHolderAnim(obj);
     };
     BattleScene.prototype.startTodoSkill = function () {
         if (this.skillTodoQue.length > 0) {
@@ -339,24 +343,20 @@ var BattleScene = (function (_super) {
      * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
      * 如果胜负未分发送演出全部结束消息
      */
-    BattleScene.prototype.oneSkillperformEnd = function () {
+    BattleScene.prototype.onePerformEnd = function () {
+        this.isPerforming = false;
         if (this.performQue.length == 0) {
-            // 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
-            this.isSkillPerforming = false;
             // 如果演出结束同时游戏结束时，播放游戏结束演出
             if (this.winnerCamp) {
                 this.onBattleEnd();
             }
             else {
-                MessageManager.Ins.sendMessage(MessageType.SkillPerformAllEnd);
+                // 如果游戏没有结束，发送演出全部结束消息
+                MessageManager.Ins.sendMessage(MessageType.PerformAllEnd);
             }
             return;
         }
-        var skill;
-        var affectResult;
-        _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];
-        skill.performance(affectResult);
-        var _a;
+        this.performStart();
     };
     /**
      * 战斗结束
@@ -376,16 +376,16 @@ var BattleScene = (function (_super) {
      * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
      * 如果当前正在演出会直接返回，防止两件事同时被演出
      */
-    BattleScene.prototype.skillPerformStart = function () {
-        if (this.isSkillPerforming) {
+    BattleScene.prototype.performStart = function () {
+        if (this.isPerforming) {
             // 如果正在演出，那就不管这个消息
             return;
         }
-        this.isSkillPerforming = true;
-        var skill;
+        this.isPerforming = true;
+        var performanceObj;
         var affectResult;
-        _a = this.performQue.pop(), skill = _a[0], affectResult = _a[1];
-        skill.performance(affectResult);
+        _a = this.performQue.pop(), performanceObj = _a[0], affectResult = _a[1];
+        performanceObj.performance(affectResult);
         var _a;
     };
     BattleScene.prototype.readConfig = function () {
@@ -408,8 +408,6 @@ var BattleScene = (function (_super) {
         this.dbManager = null;
         this.cardBoard.release();
         this.cardBoard = null;
-        this.bcr.release();
-        this.bcr = null;
         this.battleUI = null;
         this.battleEndPopUp = null;
         this.damageFloatManager.release();
@@ -419,6 +417,10 @@ var BattleScene = (function (_super) {
         this.phaseUtil.clear();
         this.phaseUtil = null;
         LongTouchUtil.clear();
+        this.selfSelectImg = null;
+        this.enemySlectImg = null;
+        this.filterManager.release();
+        this.filterManager = null;
         // 释放载入的美术资源
         this.releaseResource().then(function () {
             SceneManager.Ins.onSceneReleaseCompelete();

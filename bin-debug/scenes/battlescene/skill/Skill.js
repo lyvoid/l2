@@ -45,19 +45,19 @@ var SkillOneDamageWithOut = (function (_super) {
             y: this.targets[0].y + 20
         }, 200).call(function () {
             IManualSkill.statePerformance(affectResult);
-            _this.caster.play("attack1_+1", 1, "idle");
+            _this.caster.playDBAnim("attack1_+1", 1, "idle");
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });
     };
     SkillOneDamageWithOut.prototype.casterAniEnd = function () {
         this.caster.armatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
         var newP = this.caster.getPositon();
-        this.caster.play("idle", 0);
+        this.caster.playDBAnim("idle", 0);
         egret.Tween.get(this.caster).to({
             x: newP.x,
             y: newP.y
         }, 200).call(function () {
-            SceneManager.Ins.curScene.oneSkillperformEnd();
+            SceneManager.Ins.curScene.onePerformEnd();
         });
     };
     return SkillOneDamageWithOut;

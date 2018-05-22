@@ -19,7 +19,7 @@ var MessageType = (function () {
     MessageType.CharDie = "CharDie";
     MessageType.Resurgence = "Resurgence";
     // 演出全部结束
-    MessageType.SkillPerformAllEnd = "SkillPerformAllEnd";
+    MessageType.PerformAllEnd = "SkillPerformAllEnd";
     // 卡牌被点击事件
     MessageType.CardTouchTap = "CardTouchTap";
     return MessageType;

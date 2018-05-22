@@ -9,14 +9,14 @@ class PhaseUtil {
     public changePhase(phase:BattleSSEnum){
         this.nextPhase = phase;
         let scene = SceneManager.Ins.curScene as BattleScene;
-		if (!scene.isSkillPerforming) {
+		if (!scene.isPerforming) {
             // 如果不再演出中，直接跳到下一个状态
 			scene.setState(phase);
 		} else {
 			// 如果正在演出
 			// 侦听演出全部结束事件，全部结束也说明要切阶段了
 			MessageManager.Ins.addEventListener(
-				MessageType.SkillPerformAllEnd,
+				MessageType.PerformAllEnd,
 				this.onSkillPerformAllEnd,
 				this
 			);
@@ -25,7 +25,7 @@ class PhaseUtil {
 
 	private onSkillPerformAllEnd(): void {
 		MessageManager.Ins.removeEventListener(
-			MessageType.SkillPerformAllEnd,
+			MessageType.PerformAllEnd,
 			this.onSkillPerformAllEnd,
 			this
 		);
@@ -35,7 +35,7 @@ class PhaseUtil {
 
 	public clear(): void{
 		MessageManager.Ins.removeEventListener(
-			MessageType.SkillPerformAllEnd,
+			MessageType.PerformAllEnd,
 			this.onSkillPerformAllEnd,
 			this
 		);

@@ -132,7 +132,7 @@ var IManualSkill = (function () {
         // 确实需要释放时，将演出加到预演出列表
         scene.performQue.push([this, affectResult]);
         // 没次加入新的表现序列都调用一次应该是没错的
-        scene.skillPerformStart();
+        scene.performStart();
         // 运行在在SkillToDo中的技能
         if (scene.skillTodoQue.length > 0) {
             scene.skillTodoQue.pop().useSkill();
@@ -173,25 +173,33 @@ var IManualSkill = (function () {
                 // 血条变化完之后如果此次人物还死亡了的话
                 function () {
                     if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-                        target.addChild(new eui.Label("死亡"));
+                        target.stopDBAnim();
+                        SceneManager.Ins.curScene.filterManager.addGreyFilter(target);
+                    }
+                    if (change.isInBattleNew == false) {
+                        // 如果扣血后移除
+                        IManualSkill.removeFromGamePerform(target);
                     }
                 });
                 // 飘字
                 damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
             }
-            // 如果被排除出游戏
-            if (change.isInBattleNew == false) {
-                egret.Tween.get(target.armatureDisplay).to({
-                    alpha: 0
-                }, 1000).call(function () {
-                    target.parent.removeChild(target);
-                });
+            else if (change.isInBattleNew == false) {
+                // 如果直接被排除出游戏
+                IManualSkill.removeFromGamePerform(target);
             }
         };
         for (var _i = 0, stateChange_1 = stateChange; _i < stateChange_1.length; _i++) {
             var result = stateChange_1[_i];
             _loop_1(result);
         }
+    };
+    IManualSkill.removeFromGamePerform = function (target) {
+        egret.Tween.get(target.armatureDisplay).to({
+            alpha: 0
+        }, 1000).call(function () {
+            target.parent.removeChild(target);
+        });
     };
     IManualSkill.prototype.release = function () {
         this.caster = null;

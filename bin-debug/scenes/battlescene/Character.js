@@ -165,7 +165,10 @@ var Character = (function (_super) {
         // 绑定TouchBegin事件（发送TouchBegin消息）
         this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, this);
     };
-    Character.prototype.play = function (animationName, animationTimes, animationNameBack) {
+    /**
+     * 播放龙骨动画
+     */
+    Character.prototype.playDBAnim = function (animationName, animationTimes, animationNameBack) {
         if (animationTimes === void 0) { animationTimes = -1; }
         if (animationNameBack === void 0) { animationNameBack = "idle"; }
         if (this.armatureDisplay.animation.animationNames.indexOf(animationName) >= 0) {
@@ -175,8 +178,14 @@ var Character = (function (_super) {
             this.armatureDisplay.animation.play(animationNameBack, animationTimes);
         }
     };
+    /**
+     * 停止龙骨动画
+     */
+    Character.prototype.stopDBAnim = function () {
+        this.armatureDisplay.animation.stop();
+    };
     Character.prototype.onTouchBegin = function () {
-        SceneManager.Ins.curScene.touchBeginGlowAnim(this.armatureDisplay);
+        SceneManager.Ins.curScene.filterManager.setOutGlowHolderWithAnim(this.armatureDisplay);
     };
     /**
      * 点击时触发
@@ -186,11 +195,11 @@ var Character = (function (_super) {
     Character.prototype.onTouchTap = function () {
         var battleScene = SceneManager.Ins.curScene;
         if (this.camp == CharCamp.Enemy) {
-            this.bgLayer.addChild(battleScene.bcr.enemySlectImg);
+            this.bgLayer.addChild(battleScene.enemySlectImg);
             battleScene.selectedEnemy = this;
         }
         else {
-            this.bgLayer.addChild(battleScene.bcr.selfSelectImg);
+            this.bgLayer.addChild(battleScene.selfSelectImg);
             battleScene.selectedFriend = this;
         }
     };

@@ -211,7 +211,10 @@ class Character extends egret.DisplayObjectContainer {
 		);
 	}
 
-	public play(
+	/**
+	 * 播放龙骨动画
+	 */
+	public playDBAnim(
 		animationName:string, 
 		animationTimes:number=-1, 
 		animationNameBack:string="idle"
@@ -223,8 +226,15 @@ class Character extends egret.DisplayObjectContainer {
 		}
 	}
 
+	/**
+	 * 停止龙骨动画
+	 */
+	public stopDBAnim(){
+		this.armatureDisplay.animation.stop();
+	}
+
 	private onTouchBegin(): void {
-		(SceneManager.Ins.curScene as BattleScene).touchBeginGlowAnim(this.armatureDisplay);
+		(SceneManager.Ins.curScene as BattleScene).filterManager.setOutGlowHolderWithAnim(this.armatureDisplay);
 	}
 
 	/**
@@ -236,12 +246,12 @@ class Character extends egret.DisplayObjectContainer {
 		let battleScene = (SceneManager.Ins.curScene as BattleScene);
 		if (this.camp == CharCamp.Enemy) {
 			this.bgLayer.addChild(
-				battleScene.bcr.enemySlectImg
+				battleScene.enemySlectImg
 			);
 			battleScene.selectedEnemy = this;
 		} else {
 			this.bgLayer.addChild(
-				battleScene.bcr.selfSelectImg
+				battleScene.selfSelectImg
 			);
 			battleScene.selectedFriend = this;
 		}
