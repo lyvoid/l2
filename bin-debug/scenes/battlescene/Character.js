@@ -85,9 +85,9 @@ var Character = (function (_super) {
         set: function (value) {
             // 如果角色本来在游戏中但被排除出游戏
             if (this._isInBattle && (!value)) {
+                var scene = SceneManager.Ins.curScene;
                 if (this.camp == CharCamp.Player) {
                     // 移除手牌中属于当前角色的牌
-                    var scene = SceneManager.Ins.curScene;
                     scene.cardBoard.removeCardOfChar(this);
                     // 移除SkillPool中归属于该角色的技能
                     var skillPools = scene.skillManualPool;
@@ -103,8 +103,22 @@ var Character = (function (_super) {
                         Util.deleteObjFromList(skillPools, skill);
                     }
                 }
+                // 更新排除出游戏状态
+                this._isInBattle = value;
+                // 如果选中的角色时当前角色，如果还有备选方案，选中者替换成其他人
+                var newTarget = null;
+                if (scene.selectedFriend === this) {
+                    console.log("frient");
+                    newTarget = IManualSkill.getFirstInBattle(scene.friends);
+                }
+                else if (scene.selectedEnemy === this) {
+                    console.log("enemy");
+                    newTarget = IManualSkill.getFirstInBattle(scene.enemies);
+                }
+                if (newTarget) {
+                    scene.setSelectTarget(newTarget);
+                }
             }
-            this._isInBattle = value;
         },
         enumerable: true,
         configurable: true
@@ -184,6 +198,7 @@ var Character = (function (_super) {
     Character.prototype.stopDBAnim = function () {
         this.armatureDisplay.animation.stop();
     };
+    // 点击的时候播放外发光滤镜动画
     Character.prototype.onTouchBegin = function () {
         SceneManager.Ins.curScene.filterManager.setOutGlowHolderWithAnim(this.armatureDisplay);
     };
@@ -193,15 +208,7 @@ var Character = (function (_super) {
      * 同时将scene下的selectEnemy及Friend调整为合适的对象
      */
     Character.prototype.onTouchTap = function () {
-        var battleScene = SceneManager.Ins.curScene;
-        if (this.camp == CharCamp.Enemy) {
-            this.bgLayer.addChild(battleScene.enemySlectImg);
-            battleScene.selectedEnemy = this;
-        }
-        else {
-            this.bgLayer.addChild(battleScene.selfSelectImg);
-            battleScene.selectedFriend = this;
-        }
+        SceneManager.Ins.curScene.setSelectTarget(this);
     };
     /**
      * 隐藏生命条

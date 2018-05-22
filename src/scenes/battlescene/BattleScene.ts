@@ -13,20 +13,46 @@ class BattleScene extends IScene {
 	/**
 	 * 玩家的人物选择圈
 	 */
-	public selfSelectImg: egret.Bitmap;
+	private selfSelectImg: egret.Bitmap;
 	/**
 	 * 敌方的任务选择圈
 	 */
-	public enemySlectImg: egret.Bitmap;
+	private enemySlectImg: egret.Bitmap;
 	/**
-	 * touchbegin时候的滤镜
+	 * 滤镜管理器
 	 */
 	public filterManager: FilterManager;
 
 	public enemies: Character[];
 	public friends: Character[];
-	public selectedEnemy: Character;
-	public selectedFriend: Character;
+	private _selectedEnemy: Character;
+	private _selectedFriend: Character;
+
+	/**
+	 * 设置选中对象
+	 */
+	public setSelectTarget(value: Character){
+		if (value.camp === CharCamp.Enemy){
+			value.bgLayer.addChild(
+				this.enemySlectImg
+			);
+			this._selectedEnemy = value;
+		} else {
+			value.bgLayer.addChild(
+				this.selfSelectImg
+			);
+			this._selectedFriend = value;
+		}
+	}
+
+	public get selectedEnemy(): Character{
+		return this._selectedEnemy;
+	}
+
+	public get selectedFriend(): Character{
+		return this._selectedFriend;
+	}
+
 
 	/**
 	 * 玩家能量板
@@ -213,7 +239,7 @@ class BattleScene extends IScene {
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
-		this.selectedEnemy = chars[0];
+		this.setSelectTarget(chars[0]);
 		chars[0].bgLayer.addChild(this.enemySlectImg);
 
 
@@ -251,7 +277,7 @@ class BattleScene extends IScene {
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
-		this.selectedFriend = chars[0];
+		this.setSelectTarget(chars[0]);
 		chars[0].bgLayer.addChild(this.selfSelectImg);
 
 
@@ -361,6 +387,9 @@ class BattleScene extends IScene {
 		this.popUpInfoWin.desc.text = obj.desc;
 		LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
 		if (obj instanceof Card) {
+			// 隐藏选择圈
+			this.selfSelectImg.visible = false;
+			this.enemySlectImg.visible = false;
 			let card = (obj as Card);
 			// 释放者闪烁
 			let caster = card.skill.caster;
@@ -393,6 +422,9 @@ class BattleScene extends IScene {
 		let obj = e.messageContent;
 		LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
 		if (obj instanceof Card) {
+			// 显示选择圈
+			this.selfSelectImg.visible = true;
+			this.enemySlectImg.visible = true;
 			let card = obj as Card;
 			let caster = card.skill.caster
 			if (caster) {

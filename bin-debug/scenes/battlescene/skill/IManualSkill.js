@@ -95,10 +95,18 @@ var IManualSkill = (function () {
         }
     };
     ;
-    IManualSkill.getFirstAlive = function (input) {
-        for (var _i = 0, input_2 = input; _i < input_2.length; _i++) {
-            var c = input_2[_i];
+    IManualSkill.getFirstAlive = function (chars) {
+        for (var _i = 0, chars_1 = chars; _i < chars_1.length; _i++) {
+            var c = chars_1[_i];
             if (c.alive && c.isInBattle) {
+                return c;
+            }
+        }
+    };
+    IManualSkill.getFirstInBattle = function (chars) {
+        for (var _i = 0, chars_2 = chars; _i < chars_2.length; _i++) {
+            var c = chars_2[_i];
+            if (c.isInBattle) {
                 return c;
             }
         }

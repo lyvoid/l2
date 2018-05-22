@@ -53,6 +53,33 @@ var BattleScene = (function (_super) {
         _this.isPerforming = false;
         return _this;
     }
+    /**
+     * 设置选中对象
+     */
+    BattleScene.prototype.setSelectTarget = function (value) {
+        if (value.camp === CharCamp.Enemy) {
+            value.bgLayer.addChild(this.enemySlectImg);
+            this._selectedEnemy = value;
+        }
+        else {
+            value.bgLayer.addChild(this.selfSelectImg);
+            this._selectedFriend = value;
+        }
+    };
+    Object.defineProperty(BattleScene.prototype, "selectedEnemy", {
+        get: function () {
+            return this._selectedEnemy;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BattleScene.prototype, "selectedFriend", {
+        get: function () {
+            return this._selectedFriend;
+        },
+        enumerable: true,
+        configurable: true
+    });
     BattleScene.prototype.initial = function () {
         var _this = this;
         _super.prototype.initial.call(this);
@@ -175,7 +202,7 @@ var BattleScene = (function (_super) {
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
                         chars[0].setPosition();
-                        this.selectedEnemy = chars[0];
+                        this.setSelectTarget(chars[0]);
                         chars[0].bgLayer.addChild(this.enemySlectImg);
                         chars[1].col = CharColType.backRow;
                         chars[1].row = CharRowType.up;
@@ -204,7 +231,7 @@ var BattleScene = (function (_super) {
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
                         chars[0].setPosition();
-                        this.selectedFriend = chars[0];
+                        this.setSelectTarget(chars[0]);
                         chars[0].bgLayer.addChild(this.selfSelectImg);
                         chars[1].col = CharColType.backRow;
                         chars[1].row = CharRowType.up;
@@ -290,6 +317,9 @@ var BattleScene = (function (_super) {
         this.popUpInfoWin.desc.text = obj.desc;
         LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
         if (obj instanceof Card) {
+            // 隐藏选择圈
+            this.selfSelectImg.visible = false;
+            this.enemySlectImg.visible = false;
             var card = obj;
             // 释放者闪烁
             var caster = card.skill.caster;
@@ -321,6 +351,9 @@ var BattleScene = (function (_super) {
         var obj = e.messageContent;
         LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
         if (obj instanceof Card) {
+            // 显示选择圈
+            this.selfSelectImg.visible = true;
+            this.enemySlectImg.visible = true;
             var card = obj;
             var caster = card.skill.caster;
             if (caster) {

@@ -13,6 +13,7 @@ class Character extends egret.DisplayObjectContainer {
 	private lifeBarFg: egret.Bitmap;
 	// 血条整体
 	private lifeBar: egret.DisplayObjectContainer;
+	// 护盾条（属于血条的一部分）
 	private shieldBar: egret.Bitmap;
 
 	/**
@@ -22,44 +23,59 @@ class Character extends egret.DisplayObjectContainer {
 		return this.attr.toString();
 	}
 
-	
+
 	/**
 	 * 是否存在游戏中
 	 */
-	private _isInBattle: boolean=true;
+	private _isInBattle: boolean = true;
 
-	public get isInBattle(): boolean{
+	public get isInBattle(): boolean {
 		return this._isInBattle;
 	}
 
-	public set isInBattle(value:boolean){
+	public set isInBattle(value: boolean) {
 		// 如果角色本来在游戏中但被排除出游戏
-		if (this._isInBattle && (!value)){
-			if (this.camp == CharCamp.Player){
+		if (this._isInBattle && (!value)) {
+			let scene = SceneManager.Ins.curScene as BattleScene;
+			if (this.camp == CharCamp.Player) {
 				// 移除手牌中属于当前角色的牌
-				let scene = SceneManager.Ins.curScene as BattleScene;
 				scene.cardBoard.removeCardOfChar(this);
-				
 				// 移除SkillPool中归属于该角色的技能
 				let skillPools = scene.skillManualPool;
-				let skillsForDelete:IManualSkill[] = [];
-				for (let skill of skillPools){
-					if (skill.caster === this){
+				let skillsForDelete: IManualSkill[] = [];
+				for (let skill of skillPools) {
+					if (skill.caster === this) {
 						skillsForDelete.push(skill);
 					}
 				}
-				for (let skill of skillsForDelete){
+				for (let skill of skillsForDelete) {
 					Util.deleteObjFromList(skillPools, skill);
 				}
 			}
+			// 更新排除出游戏状态
+			this._isInBattle = value;
+
+			// 如果选中的角色时当前角色，如果还有备选方案，选中者替换成其他人
+			let newTarget: Character = null;
+			if (scene.selectedFriend === this) {
+				console.log("frient");
+				
+				newTarget = IManualSkill.getFirstInBattle(scene.friends)
+			} else if (scene.selectedEnemy === this){
+				console.log("enemy");
+				
+				newTarget = IManualSkill.getFirstInBattle(scene.enemies);
+			}
+			if (newTarget){
+				scene.setSelectTarget(newTarget);
+			}
 		}
-		this._isInBattle = value;
 	}
 
 	/**
 	 * 是否存活
 	 */
-	public get alive(): boolean{
+	public get alive(): boolean {
 		return this.attr.hp != 0;
 	}
 
@@ -128,7 +144,7 @@ class Character extends egret.DisplayObjectContainer {
 		this.addChild(lifeBar);
 		this.lifeBar = lifeBar;
 		this.lifeBarFg = lifeBarFg;
-		
+
 		// 加护盾条
 		let shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
 		shieldBar.height = 8;
@@ -148,7 +164,7 @@ class Character extends egret.DisplayObjectContainer {
 	 * 播放血条动画，血条在1s内从之前的状态到达当前血量的状态
 	 */
 	public lifeBarAnim(newHp?: number): egret.Tween {
-		if (!newHp){
+		if (!newHp) {
 			newHp = this.attr.hp;
 		}
 		let lifeBarNewLen = 100 * newHp / this.attr.maxHp;
@@ -161,7 +177,7 @@ class Character extends egret.DisplayObjectContainer {
 	 * 播放shield条动画
 	 */
 	public lifeBarShieldAnim(newShield?: number): egret.Tween {
-		if (!newShield){
+		if (!newShield) {
 			newShield = this.attr.shield;
 		}
 		let lifeBarNewLen = 80 * newShield / this.attr.maxHp;
@@ -215,13 +231,13 @@ class Character extends egret.DisplayObjectContainer {
 	 * 播放龙骨动画
 	 */
 	public playDBAnim(
-		animationName:string, 
-		animationTimes:number=-1, 
-		animationNameBack:string="idle"
-	): void{
-		if (this.armatureDisplay.animation.animationNames.indexOf(animationName) >= 0){
+		animationName: string,
+		animationTimes: number = -1,
+		animationNameBack: string = "idle"
+	): void {
+		if (this.armatureDisplay.animation.animationNames.indexOf(animationName) >= 0) {
 			this.armatureDisplay.animation.play(animationName, animationTimes);
-		}else{
+		} else {
 			this.armatureDisplay.animation.play(animationNameBack, animationTimes);
 		}
 	}
@@ -229,10 +245,11 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 停止龙骨动画
 	 */
-	public stopDBAnim(){
+	public stopDBAnim() {
 		this.armatureDisplay.animation.stop();
 	}
 
+	// 点击的时候播放外发光滤镜动画
 	private onTouchBegin(): void {
 		(SceneManager.Ins.curScene as BattleScene).filterManager.setOutGlowHolderWithAnim(this.armatureDisplay);
 	}
@@ -243,18 +260,7 @@ class Character extends egret.DisplayObjectContainer {
 	 * 同时将scene下的selectEnemy及Friend调整为合适的对象
 	 */
 	private onTouchTap(): void {
-		let battleScene = (SceneManager.Ins.curScene as BattleScene);
-		if (this.camp == CharCamp.Enemy) {
-			this.bgLayer.addChild(
-				battleScene.enemySlectImg
-			);
-			battleScene.selectedEnemy = this;
-		} else {
-			this.bgLayer.addChild(
-				battleScene.selfSelectImg
-			);
-			battleScene.selectedFriend = this;
-		}
+		(SceneManager.Ins.curScene as BattleScene).setSelectTarget(this);
 	}
 
 	/**
@@ -337,7 +343,7 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * db动画停止闪烁
 	 */
-	public armatureUnBlink() : void{
+	public armatureUnBlink(): void {
 		egret.Tween.removeTweens(this.armatureDisplay);
 	}
 

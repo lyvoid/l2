@@ -34,7 +34,7 @@ var ToastInfoManager = (function () {
         label.alpha = 1;
         label.text = info;
         LayerManager.Ins.popUpLayer.addChild(label);
-        egret.Tween.get(label).to({ y: 20, alpha: 0 }, 1000).call(function () {
+        egret.Tween.get(label).to({ y: 20, alpha: 0 }, 2000, egret.Ease.quintInOut).call(function () {
             LayerManager.Ins.popUpLayer.removeChild(label);
             _this.labelPools.push(label);
         });

@@ -122,9 +122,17 @@ abstract class IManualSkill {
 		}
 	};
 
-	public static getFirstAlive(input: Character[]): Character {
-		for (let c of input) {
+	public static getFirstAlive(chars: Character[]): Character {
+		for (let c of chars) {
 			if (c.alive && c.isInBattle) {
+				return c;
+			}
+		}
+	}
+
+	public static getFirstInBattle(chars: Character[]): Character{
+		for (let c of chars) {
+			if (c.isInBattle) {
 				return c;
 			}
 		}
