@@ -24,4 +24,13 @@ class LoadingUI extends eui.UILayer implements RES.PromiseTaskReporter{
 	public onProgress(current: number, total: number): void {
         this.textField.text = `Loading...${current}/${total}`;
     }
+
+	/**
+	 * 不要用tw动画，否则会被清理
+	 */
+	public initial(): void{
+
+	}
+
+	public unInitial(): void{}
 }

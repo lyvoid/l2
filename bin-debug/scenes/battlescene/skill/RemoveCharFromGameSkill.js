@@ -23,7 +23,7 @@ var RemoveCharFromGameSkill = (function (_super) {
     RemoveCharFromGameSkill.prototype.affect = function () {
         for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
             var target = _a[_i];
-            target.attr.isInBattle = false;
+            target.isInBattle = false;
         }
     };
     RemoveCharFromGameSkill.prototype.performance = function (affectResult) {
@@ -31,14 +31,14 @@ var RemoveCharFromGameSkill = (function (_super) {
             var target = _a[_i];
             target.parent.removeChild(target);
         }
-        MessageManager.Ins.sendMessage(MessageType.PerformanceEnd);
+        SceneManager.Ins.curScene.oneSkillperformEnd();
     };
     RemoveCharFromGameSkill.prototype.needCast = function () {
         var target = this.targets[0];
         if (!target) {
             return false;
         }
-        if (!target.attr.isInBattle) {
+        if (!target.isInBattle) {
             return false;
         }
         return true;

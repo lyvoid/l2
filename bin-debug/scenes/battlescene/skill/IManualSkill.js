@@ -71,7 +71,7 @@ var IManualSkill = (function () {
         var ls = [];
         for (var _i = 0, input_1 = input; _i < input_1.length; _i++) {
             var c = input_1[_i];
-            if (c.alive && c.attr.isInBattle) {
+            if (c.alive && c.isInBattle) {
                 ls.push(c);
             }
         }
@@ -85,10 +85,12 @@ var IManualSkill = (function () {
         this.manualChooseTarget();
         switch (this.targetType) {
             case TargetType.SpecialEnemy:
-                this.targets = [IManualSkill.getFirstAlive(this.enemies)];
+                var fe = IManualSkill.getFirstAlive(this.enemies);
+                this.targets = fe ? [fe] : [];
                 break;
             case TargetType.SpecialFriend:
-                this.targets = [IManualSkill.getFirstAlive(this.friends)];
+                var ff = IManualSkill.getFirstAlive(this.friends);
+                this.targets = ff ? [ff] : [];
                 break;
         }
     };
@@ -96,7 +98,7 @@ var IManualSkill = (function () {
     IManualSkill.getFirstAlive = function (input) {
         for (var _i = 0, input_2 = input; _i < input_2.length; _i++) {
             var c = input_2[_i];
-            if (c.alive && c.attr.isInBattle) {
+            if (c.alive && c.isInBattle) {
                 return c;
             }
         }
@@ -111,7 +113,7 @@ var IManualSkill = (function () {
             return;
         }
         // 如果释放者存在且无法释放
-        if (this.caster && !(this.caster.alive && this.caster.attr.isInBattle)) {
+        if (this.caster && !(this.caster.alive && this.caster.isInBattle)) {
             return;
         }
         // 选择首要目标
@@ -130,7 +132,7 @@ var IManualSkill = (function () {
         // 确实需要释放时，将演出加到预演出列表
         scene.performQue.push([this, affectResult]);
         // 没次加入新的表现序列都调用一次应该是没错的
-        MessageManager.Ins.sendMessage(MessageType.PerformanceChainStart);
+        scene.skillPerformStart();
         // 运行在在SkillToDo中的技能
         if (scene.skillTodoQue.length > 0) {
             scene.skillTodoQue.pop().useSkill();
@@ -140,16 +142,22 @@ var IManualSkill = (function () {
     };
     /**
      * 技能是否该释放
+     * 这里只要判断技能的目标效果就好，不用再判断释放者和胜利
      * IManualSkill中的该方法仅适用于判定对单个目标造成伤害的类型的技能
      * 走到这个函数说明技能已经释放出去了，已经消耗了能量，只是可能已经不需要产生作用了
      */
     IManualSkill.prototype.needCast = function () {
-        var target = this.targets[0];
-        return target.alive;
+        for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
+            var t = _a[_i];
+            if (t.alive && t.isInBattle) {
+                return true;
+            }
+        }
+        return false;
     };
     /**
      * 状态表现
-     * 对血量护盾复活死亡进行表现
+     * 对血量护盾复活死亡排除出游戏进行表现
      */
     IManualSkill.statePerformance = function (stateChange) {
         var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
@@ -170,6 +178,14 @@ var IManualSkill = (function () {
                 });
                 // 飘字
                 damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
+            }
+            // 如果被排除出游戏
+            if (change.isInBattleNew == false) {
+                egret.Tween.get(target.armatureDisplay).to({
+                    alpha: 0
+                }, 1000).call(function () {
+                    target.parent.removeChild(target);
+                });
             }
         };
         for (var _i = 0, stateChange_1 = stateChange; _i < stateChange_1.length; _i++) {

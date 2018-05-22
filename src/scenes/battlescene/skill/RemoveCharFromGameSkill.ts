@@ -11,7 +11,7 @@ class RemoveCharFromGameSkill extends IManualSkill{
 
 	public affect(): any{
 		for(let target of this.targets){
-			target.attr.isInBattle = false;
+			target.isInBattle = false;
 		}
 	}
 
@@ -19,7 +19,7 @@ class RemoveCharFromGameSkill extends IManualSkill{
 		for (let target of this.targets){
 			target.parent.removeChild(target);
 		}
-		MessageManager.Ins.sendMessage(MessageType.PerformanceEnd);
+		(SceneManager.Ins.curScene as BattleScene).oneSkillperformEnd();
 	}
 
 	public needCast():boolean{
@@ -27,7 +27,7 @@ class RemoveCharFromGameSkill extends IManualSkill{
 		if (!target){
 			return false;
 		}
-		if (!target.attr.isInBattle){
+		if (!target.isInBattle){
 			return false;
 		}
 		return true;

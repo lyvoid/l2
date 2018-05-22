@@ -17,7 +17,8 @@ var UIBattleScene = (function (_super) {
         _this.roundEndButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
             // 如果玩家点击了回合结束按键，进入到回合结束阶段
             _this.roundEndButton.visible = false;
-            MessageManager.Ins.sendMessage(MessageType.UseCardPhaseEnd);
+            // 回合结束
+            SceneManager.Ins.curScene.state.phaseEnd();
         }, _this);
         // 两个作弊功能
         _this.addCardButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {

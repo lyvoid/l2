@@ -5,5 +5,7 @@ interface IAttrChange {
 	hpOld: number;
 	hpNew: number;
 	aliveNew: boolean;
-	aliveOld: boolean
+	aliveOld: boolean;
+	isInBattleNew: boolean;
+	isInBattleOld: boolean;
 }

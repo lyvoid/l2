@@ -88,7 +88,7 @@ var BattleScene = (function (_super) {
             console.log(e);
         }).then(function () {
             console.log("battlescene场景初始化完成");
-            MessageManager.Ins.sendMessage(MessageType.LoadingFinish);
+            SceneManager.Ins.onSceneLoadingCompelete();
             _this.setState(BattleSSEnum.PlayerRoundStartPhase);
         });
     };
@@ -159,7 +159,7 @@ var BattleScene = (function (_super) {
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Dragon");
                             chars[i] = char1;
-                            char1.armatureDisplay.animation.play("idle", 0);
+                            char1.play("idle", 0);
                             char1.camp = CharCamp.Enemy;
                         }
                         chars[0].col = CharColType.backRow;
@@ -189,7 +189,7 @@ var BattleScene = (function (_super) {
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Swordsman");
                             chars[i] = char1;
-                            char1.armatureDisplay.animation.play("idle", 0);
+                            char1.play("idle", 0);
                         }
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
@@ -220,21 +220,12 @@ var BattleScene = (function (_super) {
                         // 初始2张卡牌
                         this.cardBoard.distCardNormal();
                         this.cardBoard.distCardNormal();
-                        // chars[5].row = CharRowType.frontRow;
-                        // chars[5].position = CharPositionType.up;
-                        // chars[5].setPosition();
-                        // 点击滤镜动画
-                        MessageManager.Ins.addEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
                         // 长按显示info;
                         MessageManager.Ins.addEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
                         // 取消长按关闭info
                         MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
-                        // 一个perform演出完成时开始下一个演出
-                        MessageManager.Ins.addEventListener(MessageType.PerformanceEnd, this.onPerformEnd, this);
-                        // 开始演出
-                        MessageManager.Ins.addEventListener(MessageType.PerformanceChainStart, this.onPerformChainStart, this);
                         this.phaseUtil = new PhaseUtil();
-                        // 初始化场景中的状态
+                        // 初始化场景中的StatePool
                         this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
                         this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
                         this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase(this);
@@ -254,14 +245,14 @@ var BattleScene = (function (_super) {
         var isPlayerAlive = false;
         for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
             var char = _a[_i];
-            if (char.alive && char.attr.isInBattle) {
+            if (char.alive && char.isInBattle) {
                 isEnemyAlive = true;
                 break;
             }
         }
         for (var _b = 0, _c = this.friends; _b < _c.length; _b++) {
             var char = _c[_b];
-            if (char.alive && char.attr.isInBattle) {
+            if (char.alive && char.isInBattle) {
                 isPlayerAlive = true;
                 break;
             }
@@ -276,9 +267,13 @@ var BattleScene = (function (_super) {
     /**
      * 点击开始时候的滤镜动画效果
      */
-    BattleScene.prototype.onObjTouchGlowAnim = function (e) {
-        var obj = e.messageContent;
+    BattleScene.prototype.touchBeginGlowAnim = function (obj) {
         this.bcr.touchGlow.setHolderAnim(obj);
+    };
+    BattleScene.prototype.startTodoSkill = function () {
+        if (this.skillTodoQue.length > 0) {
+            this.skillTodoQue.pop().useSkill();
+        }
     };
     /**
      * 长按开始时候弹出info界面加入到popuplayer中
@@ -339,12 +334,12 @@ var BattleScene = (function (_super) {
         }
     };
     /**
-     * 当收到一个skill的演出结束消息时候调用
+     * 一个技能演出结束的时候自行调用
      * 从perfrom队列中获取下一个开始演出
      * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
      * 如果胜负未分发送演出全部结束消息
      */
-    BattleScene.prototype.onPerformEnd = function () {
+    BattleScene.prototype.oneSkillperformEnd = function () {
         if (this.performQue.length == 0) {
             // 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
             this.isSkillPerforming = false;
@@ -381,7 +376,7 @@ var BattleScene = (function (_super) {
      * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
      * 如果当前正在演出会直接返回，防止两件事同时被演出
      */
-    BattleScene.prototype.onPerformChainStart = function () {
+    BattleScene.prototype.skillPerformStart = function () {
         if (this.isSkillPerforming) {
             // 如果正在演出，那就不管这个消息
             return;
@@ -408,10 +403,7 @@ var BattleScene = (function (_super) {
     BattleScene.prototype.release = function () {
         _super.prototype.release.call(this);
         MessageManager.Ins.removeEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
-        MessageManager.Ins.removeEventListener(MessageType.PerformanceChainStart, this.onPerformChainStart, this);
         MessageManager.Ins.removeEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
-        MessageManager.Ins.removeEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
-        MessageManager.Ins.removeEventListener(MessageType.PerformanceEnd, this.onPerformEnd, this);
         this.dbManager.release();
         this.dbManager = null;
         this.cardBoard.release();
@@ -429,7 +421,7 @@ var BattleScene = (function (_super) {
         LongTouchUtil.clear();
         // 释放载入的美术资源
         this.releaseResource().then(function () {
-            MessageManager.Ins.sendMessage(MessageType.SceneReleaseCompelete);
+            SceneManager.Ins.onSceneReleaseCompelete();
         });
     };
     BattleScene.prototype.releaseResource = function () {

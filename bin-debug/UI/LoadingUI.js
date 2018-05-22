@@ -32,6 +32,12 @@ var LoadingUI = (function (_super) {
     LoadingUI.prototype.onProgress = function (current, total) {
         this.textField.text = "Loading..." + current + "/" + total;
     };
+    /**
+     * 不要用tw动画，否则会被清理
+     */
+    LoadingUI.prototype.initial = function () {
+    };
+    LoadingUI.prototype.unInitial = function () { };
     return LoadingUI;
 }(eui.UILayer));
 __reflect(LoadingUI.prototype, "LoadingUI", ["RES.PromiseTaskReporter"]);

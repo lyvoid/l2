@@ -22,6 +22,36 @@ var CardBoard = (function (_super) {
         _this.overFlowNum = 0;
         return _this;
     }
+    /**
+     * 删除对应的角色的卡牌
+     */
+    CardBoard.prototype.removeCardOfChar = function (char) {
+        var cardsForDelete = [];
+        for (var _i = 0, _a = this.cards; _i < _a.length; _i++) {
+            var card = _a[_i];
+            if (card.skill.caster === char) {
+                cardsForDelete.push(card);
+            }
+        }
+        this.removeCards(cardsForDelete);
+    };
+    /**
+     * 删除多张卡牌
+     */
+    CardBoard.prototype.removeCards = function (cards) {
+        for (var index in cards) {
+            var card = cards[index];
+            Util.deleteObjFromList(this.cards, card);
+            card.unInitial();
+            if (parseInt(index) == cards.length - 1) {
+                // 如果是最后一张，对全体调整
+                this.removeCardFromBoard(card, 0);
+            }
+            else {
+                this.removeCardFromBoard(card, this.cards.length);
+            }
+        }
+    };
     CardBoard.prototype.distCardNormal = function () {
         var skills = SceneManager.Ins.curScene.skillManualPool;
         var index = Math.floor(Math.random() * skills.length);

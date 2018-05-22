@@ -4,9 +4,9 @@
  */
 abstract class IScene{
     // 场景切换管理器
-    protected sceneManager: SceneManager;
+    public sceneManager: SceneManager;
     // 当前场景状态
-    protected state: ISceneState;
+    public state: ISceneState;
     // 当前场景拥有的所有状态
     protected statePool: {[key:number]: ISceneState} = {};
 
@@ -45,6 +45,7 @@ abstract class IScene{
 
         // 长按功能清理
         LongTouchUtil.clear();
+        egret.Tween.removeAllTweens();
     }
 
     /**

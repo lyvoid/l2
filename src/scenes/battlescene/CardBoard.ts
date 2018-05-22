@@ -21,6 +21,36 @@ class CardBoard extends egret.DisplayObjectContainer {
 		this.overFlowNum = 0;
 	}
 
+	/**
+	 * 删除对应的角色的卡牌
+	 */
+	public removeCardOfChar(char: Character): void{
+		let cardsForDelete: Card[] = [];
+		for (let card of this.cards){
+			if (card.skill.caster === char){
+				cardsForDelete.push(card);
+			}
+		}
+		this.removeCards(cardsForDelete);
+	}
+
+	/**
+	 * 删除多张卡牌
+	 */
+	public removeCards(cards:Card[]): void{
+		for(let index in cards){
+			let card = cards[index]
+			Util.deleteObjFromList(this.cards, card);
+			card.unInitial();
+			if (parseInt(index) == cards.length-1){
+				// 如果是最后一张，对全体调整
+				this.removeCardFromBoard(card, 0);
+			} else {
+				this.removeCardFromBoard(card, this.cards.length);
+			}
+		}
+	}
+
 	public distCardNormal(){
 		let skills = (SceneManager.Ins.curScene as BattleScene).skillManualPool;
 		let index = Math.floor(Math.random() * skills.length);

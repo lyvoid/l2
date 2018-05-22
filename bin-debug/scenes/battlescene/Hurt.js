@@ -36,7 +36,9 @@ var Hurt = (function () {
             hpOld: targetAttr.hp,
             hpNew: 0,
             aliveOld: target.alive,
-            aliveNew: false
+            aliveNew: false,
+            isInBattleOld: target.isInBattle,
+            isInBattleNew: target.isInBattle
         };
         // 处理护甲
         if (this.isAbs) {

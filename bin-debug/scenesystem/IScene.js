@@ -39,6 +39,7 @@ var IScene = (function () {
         layer.maskLayer.visible = false;
         // 长按功能清理
         LongTouchUtil.clear();
+        egret.Tween.removeAllTweens();
     };
     /**
      * 每一帧调用

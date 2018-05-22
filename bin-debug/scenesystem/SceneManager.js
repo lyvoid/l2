@@ -4,14 +4,10 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var SceneManager = (function () {
     /**
      * 侦听enter_frame事件，绑定update函数
-     * 侦听loadingfinish事件
+     * 侦听SceneReleaseCompelete loadingfinish事件
      */
     function SceneManager() {
-        var _this = this;
         MessageManager.Ins.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
-        MessageManager.Ins.addEventListener(MessageType.SceneReleaseCompelete, function () {
-            _this.curScene.initial();
-        }, this);
     }
     Object.defineProperty(SceneManager, "Ins", {
         get: function () {
@@ -25,6 +21,20 @@ var SceneManager = (function () {
         configurable: true
     });
     /**
+     * 场景释放完成时自行调用
+     */
+    SceneManager.prototype.onSceneReleaseCompelete = function () {
+        this.curScene.initial();
+    };
+    /**
+     * 场景加载完成时自行调用
+     */
+    SceneManager.prototype.onSceneLoadingCompelete = function () {
+        // 如果载入完成，载入层设置为不可见
+        LayerManager.Ins.loadingLayer.visible = false;
+        LayerManager.Ins.loadingLayer.unInitial();
+    };
+    /**
      * 设置初始场景
      */
     SceneManager.prototype.initial = function () {
@@ -37,7 +47,9 @@ var SceneManager = (function () {
      */
     SceneManager.prototype.setScene = function (scene) {
         LayerManager.Ins.loadingLayer.visible = true;
+        LayerManager.Ins.loadingLayer.initial();
         var oldScene = this.curScene;
+        // 先设置当前场景再释放场景，保证释放完毕时可以直接initial
         this.curScene = scene;
         if (oldScene != null) {
             oldScene.release();

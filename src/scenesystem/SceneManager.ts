@@ -13,7 +13,7 @@ class SceneManager{
 
 	/**
 	 * 侦听enter_frame事件，绑定update函数
-	 * 侦听loadingfinish事件
+	 * 侦听SceneReleaseCompelete loadingfinish事件
 	 */
 	private constructor(){
 		MessageManager.Ins.addEventListener(
@@ -21,13 +21,23 @@ class SceneManager{
             this.update, 
             this
         );
-		MessageManager.Ins.addEventListener(
-			MessageType.SceneReleaseCompelete,
-			()=>{
-				this.curScene.initial();
-			},
-			this
-		);
+	}
+
+	/**
+	 * 场景释放完成时自行调用
+	 */
+	public onSceneReleaseCompelete(): void{
+		this.curScene.initial();
+	}
+
+
+	/**
+	 * 场景加载完成时自行调用
+	 */
+	public onSceneLoadingCompelete(): void{
+		// 如果载入完成，载入层设置为不可见
+		LayerManager.Ins.loadingLayer.visible = false;
+		LayerManager.Ins.loadingLayer.unInitial();
 	}
 
 	/**
@@ -44,7 +54,9 @@ class SceneManager{
 	 */
 	public setScene(scene: IScene){
 		LayerManager.Ins.loadingLayer.visible = true;
+		LayerManager.Ins.loadingLayer.initial();
 		let oldScene = this.curScene;
+		// 先设置当前场景再释放场景，保证释放完毕时可以直接initial
 		this.curScene = scene;
 		if (oldScene != null){
 			oldScene.release();

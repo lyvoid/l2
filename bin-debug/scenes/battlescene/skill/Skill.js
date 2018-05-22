@@ -29,10 +29,11 @@ var SkillOneDamageWithOut = (function (_super) {
         for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
             var char = _a[_i];
             var change = hurt.affect(char);
-            affectResult.push(change);
             if (!char.alive) {
-                scene.skillTodoQue.push(new RemoveCharFromGameSkill([char]));
+                char.isInBattle = false;
+                change.isInBattleNew = false;
             }
+            affectResult.push(change);
         }
         return affectResult;
     };
@@ -44,18 +45,20 @@ var SkillOneDamageWithOut = (function (_super) {
             y: this.targets[0].y + 20
         }, 200).call(function () {
             IManualSkill.statePerformance(affectResult);
-            _this.caster.armatureDisplay.animation.play("attack1_+1", 1);
+            _this.caster.play("attack1_+1", 1, "idle");
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });
     };
     SkillOneDamageWithOut.prototype.casterAniEnd = function () {
         this.caster.armatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
         var newP = this.caster.getPositon();
-        this.caster.armatureDisplay.animation.play("idle");
+        this.caster.play("idle", 0);
         egret.Tween.get(this.caster).to({
             x: newP.x,
             y: newP.y
-        }, 200).call(function () { return MessageManager.Ins.sendMessage(MessageType.PerformanceEnd); });
+        }, 200).call(function () {
+            SceneManager.Ins.curScene.oneSkillperformEnd();
+        });
     };
     return SkillOneDamageWithOut;
 }(IManualSkill));

@@ -53,7 +53,6 @@ var LayerManager = (function () {
         stage.addChild(this.maskLayer);
         stage.addChild(this.popUpLayer);
         stage.addChild(this.loadingLayer);
-        MessageManager.Ins.addEventListener(MessageType.LoadingFinish, this.onLoadingFinish, this);
         MessageManager.Ins.addEventListener(MessageType.LoadingProcess, this.onLoadingProcess, this);
         return this;
     };
@@ -63,10 +62,6 @@ var LayerManager = (function () {
     LayerManager.prototype.onLoadingProcess = function (e) {
         var content = e.messageContent;
         this.loadingLayer.onProgress(content.current, content.total);
-    };
-    LayerManager.prototype.onLoadingFinish = function () {
-        // 如果载入完成，载入层设置为不可见
-        this.loadingLayer.visible = false;
     };
     return LayerManager;
 }());

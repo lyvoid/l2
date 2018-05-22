@@ -70,10 +70,7 @@ class Card extends egret.DisplayObjectContainer {
 	 * touchbegin统一在scene里做处理
 	 */
 	private onTouchBegin(): void {
-		MessageManager.Ins.sendMessage(
-			MessageType.TouchBegin,
-			this
-		);
+		(SceneManager.Ins.curScene as BattleScene).touchBeginGlowAnim(this);
 	}
 
 	/**

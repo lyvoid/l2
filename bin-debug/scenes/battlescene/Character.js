@@ -16,6 +16,10 @@ var Character = (function (_super) {
     function Character(charactorName) {
         var _this = _super.call(this) || this;
         /**
+         * 是否存在游戏中
+         */
+        _this._isInBattle = true;
+        /**
          * 阵营
          */
         _this.camp = CharCamp.Player;
@@ -70,6 +74,37 @@ var Character = (function (_super) {
          */
         get: function () {
             return this.attr.toString();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Character.prototype, "isInBattle", {
+        get: function () {
+            return this._isInBattle;
+        },
+        set: function (value) {
+            // 如果角色本来在游戏中但被排除出游戏
+            if (this._isInBattle && (!value)) {
+                if (this.camp == CharCamp.Player) {
+                    // 移除手牌中属于当前角色的牌
+                    var scene = SceneManager.Ins.curScene;
+                    scene.cardBoard.removeCardOfChar(this);
+                    // 移除SkillPool中归属于该角色的技能
+                    var skillPools = scene.skillManualPool;
+                    var skillsForDelete = [];
+                    for (var _i = 0, skillPools_1 = skillPools; _i < skillPools_1.length; _i++) {
+                        var skill = skillPools_1[_i];
+                        if (skill.caster === this) {
+                            skillsForDelete.push(skill);
+                        }
+                    }
+                    for (var _a = 0, skillsForDelete_1 = skillsForDelete; _a < skillsForDelete_1.length; _a++) {
+                        var skill = skillsForDelete_1[_a];
+                        Util.deleteObjFromList(skillPools, skill);
+                    }
+                }
+            }
+            this._isInBattle = value;
         },
         enumerable: true,
         configurable: true
@@ -130,8 +165,18 @@ var Character = (function (_super) {
         // 绑定TouchBegin事件（发送TouchBegin消息）
         this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, this);
     };
+    Character.prototype.play = function (animationName, animationTimes, animationNameBack) {
+        if (animationTimes === void 0) { animationTimes = -1; }
+        if (animationNameBack === void 0) { animationNameBack = "idle"; }
+        if (this.armatureDisplay.animation.animationNames.indexOf(animationName) >= 0) {
+            this.armatureDisplay.animation.play(animationName, animationTimes);
+        }
+        else {
+            this.armatureDisplay.animation.play(animationNameBack, animationTimes);
+        }
+    };
     Character.prototype.onTouchBegin = function () {
-        MessageManager.Ins.sendMessage(MessageType.TouchBegin, this.armatureDisplay);
+        SceneManager.Ins.curScene.touchBeginGlowAnim(this.armatureDisplay);
     };
     /**
      * 点击时触发

@@ -22,6 +22,40 @@ class Character extends egret.DisplayObjectContainer {
 		return this.attr.toString();
 	}
 
+	
+	/**
+	 * 是否存在游戏中
+	 */
+	private _isInBattle: boolean=true;
+
+	public get isInBattle(): boolean{
+		return this._isInBattle;
+	}
+
+	public set isInBattle(value:boolean){
+		// 如果角色本来在游戏中但被排除出游戏
+		if (this._isInBattle && (!value)){
+			if (this.camp == CharCamp.Player){
+				// 移除手牌中属于当前角色的牌
+				let scene = SceneManager.Ins.curScene as BattleScene;
+				scene.cardBoard.removeCardOfChar(this);
+				
+				// 移除SkillPool中归属于该角色的技能
+				let skillPools = scene.skillManualPool;
+				let skillsForDelete:IManualSkill[] = [];
+				for (let skill of skillPools){
+					if (skill.caster === this){
+						skillsForDelete.push(skill);
+					}
+				}
+				for (let skill of skillsForDelete){
+					Util.deleteObjFromList(skillPools, skill);
+				}
+			}
+		}
+		this._isInBattle = value;
+	}
+
 	/**
 	 * 是否存活
 	 */
@@ -177,11 +211,20 @@ class Character extends egret.DisplayObjectContainer {
 		);
 	}
 
+	public play(
+		animationName:string, 
+		animationTimes:number=-1, 
+		animationNameBack:string="idle"
+	): void{
+		if (this.armatureDisplay.animation.animationNames.indexOf(animationName) >= 0){
+			this.armatureDisplay.animation.play(animationName, animationTimes);
+		}else{
+			this.armatureDisplay.animation.play(animationNameBack, animationTimes);
+		}
+	}
+
 	private onTouchBegin(): void {
-		MessageManager.Ins.sendMessage(
-			MessageType.TouchBegin,
-			this.armatureDisplay
-		);
+		(SceneManager.Ins.curScene as BattleScene).touchBeginGlowAnim(this.armatureDisplay);
 	}
 
 	/**

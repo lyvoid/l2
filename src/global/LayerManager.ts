@@ -70,12 +70,6 @@ class LayerManager {
 		stage.addChild(this.loadingLayer);
 
 		MessageManager.Ins.addEventListener(
-			MessageType.LoadingFinish,
-			this.onLoadingFinish,
-			this
-		);
-
-		MessageManager.Ins.addEventListener(
 			MessageType.LoadingProcess,
 			this.onLoadingProcess,
 			this
@@ -92,11 +86,6 @@ class LayerManager {
 	private onLoadingProcess(e:Message): void{
 		let content = e.messageContent as {current: number, total: number};
 		this.loadingLayer.onProgress(content.current, content.total);
-	}
-
-	private onLoadingFinish(): void{
-		// 如果载入完成，载入层设置为不可见
-		this.loadingLayer.visible = false;
 	}
 
 }

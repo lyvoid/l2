@@ -20,8 +20,8 @@ var EnemyUseCardPhase = (function (_super) {
         // 技能效果
         var s = new SkillOneDamageWithOut(IManualSkill.getFirstAlive(this.scene.enemies));
         this.scene.skillTodoQue.push(s);
-        this.scene.skillTodoQue.push(s);
-        s.useSkill();
+        // this.scene.skillTodoQue.push(s);
+        this.scene.startTodoSkill();
         // 如果不在演出说明没有需要演出的技能，直接切下一个阶段
         this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundEndPhase);
     };

@@ -1,20 +1,15 @@
 class MessageType{
-	public static AddCard = "AddCard";
-	public static RemoveCard = "RemoveCard";
-	public static UseCard="UseCard";
 
-
-
-	// battle scene ui
-	// 使用卡牌阶段结束，这个在自动模式下会自动发送该消息
-	public static UseCardPhaseEnd = "UseCardPhaseEnd";
-
-	// battle scene character
-	public static TouchBegin = "TouchBegin";
+	// Global
+	// 长按相关消息
 	public static LongTouchStart = "LongTouchStart";
 	public static LongTouchEnd = "LongTouchEnd";
+	// 载入过程事件
+	public static LoadingProcess = "LoadingProcess";
 
 
+
+	// BattleScene
 	// 伤害或治疗消息
 	public static HealHp = "HealHp";
 	public static HealShield = "HealShield";
@@ -22,21 +17,10 @@ class MessageType{
 	public static HarmShield = "HarmShield";
 	public static CharDie = "CharDie";
 	public static Resurgence = "Resurgence";
-
-	public static PerformanceEnd = "NextPerformance";
-	public static PerformanceChainStart = "PerformanceChainStart";
-
-
 	// 演出全部结束
 	public static SkillPerformAllEnd = "SkillPerformAllEnd";
-
 	// 卡牌被点击事件
 	public static CardTouchTap = "CardTouchTap";
 
-	// 载入完成事件
-	public static LoadingFinish = "LoadingFinish";
-	public static LoadingProcess = "LoadingProcess";
 
-
-	public static SceneReleaseCompelete = "SceneReleaseCompelete";
 }

@@ -21,13 +21,11 @@ var PlayerUseCardPhase = (function (_super) {
         // 绑定卡牌tap使用事件
         MessageManager.Ins.addEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
         // TODO 自动模式下自动释放技能
-        // 收到按键消息，准备跳转下一个阶段
-        MessageManager.Ins.addEventListener(MessageType.UseCardPhaseEnd, this.onUseCardPhaseEnd, this);
-        // TODO 如果自动模式发送回合结束消息
-        // MessageManager.Ins.sendMessage(MessageType.UseCardPhaseEnd);
     };
-    PlayerUseCardPhase.prototype.onUseCardPhaseEnd = function () {
-        MessageManager.Ins.removeEventListener(MessageType.UseCardPhaseEnd, this.onUseCardPhaseEnd, this);
+    /**
+     * 阶段结束需要自行调用
+     */
+    PlayerUseCardPhase.prototype.phaseEnd = function () {
         // 一收到结束消息就要去掉使用卡牌的侦听
         MessageManager.Ins.removeEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
         this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
@@ -39,7 +37,7 @@ var PlayerUseCardPhase = (function (_super) {
             ToastInfoManager.Ins.newToast("胜负已分");
             return;
         }
-        if (!(card.skill.caster && card.skill.caster.alive && card.skill.caster.attr.isInBattle)) {
+        if (!(card.skill.caster && card.skill.caster.alive && card.skill.caster.isInBattle)) {
             ToastInfoManager.Ins.newToast("释放者处于无法释放的状态中");
             return;
         }
@@ -50,7 +48,7 @@ var PlayerUseCardPhase = (function (_super) {
             return;
         }
         if (card.skill.targetType == TargetType.SpecialEnemy &&
-            (!scene.selectedEnemy.attr.isInBattle)) {
+            (!scene.selectedEnemy.isInBattle)) {
             ToastInfoManager.Ins.newToast("选中目标已从游戏中排除");
             return;
         }
@@ -76,7 +74,6 @@ var PlayerUseCardPhase = (function (_super) {
         // this.scene.battleUI.roundEndButton.visible = false;
         // 结束的时候也要去掉侦听
         MessageManager.Ins.removeEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
-        MessageManager.Ins.removeEventListener(MessageType.UseCardPhaseEnd, this.onUseCardPhaseEnd, this);
     };
     return PlayerUseCardPhase;
 }(ISceneState));

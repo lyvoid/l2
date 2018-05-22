@@ -107,7 +107,7 @@ class BattleScene extends IScene {
 			console.log(e);
 		}).then(() => {
 			console.log("battlescene场景初始化完成");
-			MessageManager.Ins.sendMessage(MessageType.LoadingFinish);
+			SceneManager.Ins.onSceneLoadingCompelete();
 			this.setState(BattleSSEnum.PlayerRoundStartPhase);
 		});
 
@@ -184,7 +184,7 @@ class BattleScene extends IScene {
 		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Dragon");
 			chars[i] = char1;
-			char1.armatureDisplay.animation.play("idle", 0);
+			char1.play("idle", 0);
 			char1.camp = CharCamp.Enemy;
 		}
 		chars[0].col = CharColType.backRow;
@@ -223,7 +223,7 @@ class BattleScene extends IScene {
 		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Swordsman");
 			chars[i] = char1;
-			char1.armatureDisplay.animation.play("idle", 0);
+			char1.play("idle", 0);
 		}
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
@@ -269,20 +269,6 @@ class BattleScene extends IScene {
 		this.cardBoard.distCardNormal();
 		this.cardBoard.distCardNormal();
 
-
-
-		// chars[5].row = CharRowType.frontRow;
-		// chars[5].position = CharPositionType.up;
-		// chars[5].setPosition();
-
-		// 点击滤镜动画
-		MessageManager.Ins.addEventListener(
-			MessageType.TouchBegin,
-			this.onObjTouchGlowAnim,
-			this
-		);
-
-
 		// 长按显示info;
 		MessageManager.Ins.addEventListener(
 			MessageType.LongTouchStart,
@@ -297,23 +283,9 @@ class BattleScene extends IScene {
 			this
 		);
 
-		// 一个perform演出完成时开始下一个演出
-		MessageManager.Ins.addEventListener(
-			MessageType.PerformanceEnd,
-			this.onPerformEnd,
-			this
-		);
-
-		// 开始演出
-		MessageManager.Ins.addEventListener(
-			MessageType.PerformanceChainStart,
-			this.onPerformChainStart,
-			this
-		);
-
 		this.phaseUtil = new PhaseUtil();
 
-		// 初始化场景中的状态
+		// 初始化场景中的StatePool
 		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
 		this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
 		this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase(this);
@@ -330,13 +302,13 @@ class BattleScene extends IScene {
 		let isEnemyAlive: boolean=false;
 		let isPlayerAlive: boolean=false;
 		for (let char of this.enemies){
-			if (char.alive && char.attr.isInBattle){
+			if (char.alive && char.isInBattle){
 				isEnemyAlive = true;
 				break;
 			}
 		}
 		for (let char of this.friends){
-			if (char.alive && char.attr.isInBattle){
+			if (char.alive && char.isInBattle){
 				isPlayerAlive = true;
 				break;
 			}
@@ -352,9 +324,14 @@ class BattleScene extends IScene {
 	/**
 	 * 点击开始时候的滤镜动画效果
 	 */
-	private onObjTouchGlowAnim(e: Message): void {
-		let obj = e.messageContent;
+	public touchBeginGlowAnim(obj: any): void {
 		this.bcr.touchGlow.setHolderAnim(obj);
+	}
+
+	public startTodoSkill():void{
+		if (this.skillTodoQue.length > 0){
+			this.skillTodoQue.pop().useSkill();
+		}
 	}
 
 	/**
@@ -423,12 +400,12 @@ class BattleScene extends IScene {
 	public isSkillPerforming: boolean = false;
 	
 	/**
-	 * 当收到一个skill的演出结束消息时候调用
+	 * 一个技能演出结束的时候自行调用
 	 * 从perfrom队列中获取下一个开始演出
 	 * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
 	 * 如果胜负未分发送演出全部结束消息
 	 */
-	private onPerformEnd(): void{
+	public oneSkillperformEnd(): void{
 		if (this.performQue.length == 0){
 			// 如果演出列表已经空了，就把正在演出状态置为false，同时退出演出
 			this.isSkillPerforming = false;
@@ -464,7 +441,7 @@ class BattleScene extends IScene {
 	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
 	 * 如果当前正在演出会直接返回，防止两件事同时被演出
 	 */
-	private onPerformChainStart(): void{
+	public skillPerformStart(): void{
 		if(this.isSkillPerforming){
 			// 如果正在演出，那就不管这个消息
 			return;
@@ -496,25 +473,10 @@ class BattleScene extends IScene {
 			this
 		);
 		MessageManager.Ins.removeEventListener(
-			MessageType.PerformanceChainStart,
-			this.onPerformChainStart,
-			this
-		)
-		MessageManager.Ins.removeEventListener(
 			MessageType.LongTouchEnd,
 			this.onObjLongTouchEnd,
 			this
 		)
-		MessageManager.Ins.removeEventListener(
-			MessageType.TouchBegin,
-			this.onObjTouchGlowAnim,
-			this
-		);
-		MessageManager.Ins.removeEventListener(
-			MessageType.PerformanceEnd,
-			this.onPerformEnd,
-			this
-		);
 
 		this.dbManager.release();
 		this.dbManager = null;
@@ -540,7 +502,7 @@ class BattleScene extends IScene {
 
 		// 释放载入的美术资源
 		this.releaseResource().then(()=>{
-			MessageManager.Ins.sendMessage(MessageType.SceneReleaseCompelete);
+			SceneManager.Ins.onSceneReleaseCompelete();
 		});
 	}
 
