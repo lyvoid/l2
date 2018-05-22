@@ -47,11 +47,11 @@ var IManualSkill = (function () {
             case TargetType.Self:
                 this.targets = [this.caster];
                 break;
-            case TargetType.AllFriend:
-                this.targets = this.friends;
+            case TargetType.AllAliveFriend:
+                this.targets = IManualSkill.getAllAliveChar(this.friends);
                 break;
-            case TargetType.AllEnemy:
-                this.targets = this.enemies;
+            case TargetType.AllAliveEnemy:
+                this.targets = IManualSkill.getAllAliveChar(this.enemies);
                 break;
             case TargetType.SpecialEnemy:
                 this.targets = [scene.selectedEnemy];
@@ -67,38 +67,40 @@ var IManualSkill = (function () {
                 break;
         }
     };
+    IManualSkill.getAllAliveChar = function (input) {
+        var ls = [];
+        for (var _i = 0, input_1 = input; _i < input_1.length; _i++) {
+            var c = input_1[_i];
+            if (c.alive && c.attr.isInBattle) {
+                ls.push(c);
+            }
+        }
+        return ls;
+    };
     /**
      * 这里选出的目标主要用在自动模式下
      * 敌方的所有选择均使用这个
      */
     IManualSkill.prototype.autoChooseTarget = function () {
+        this.manualChooseTarget();
         switch (this.targetType) {
-            case TargetType.PreSet:
-                break;
-            case TargetType.Self:
-                this.targets = [this.caster];
-                break;
-            case TargetType.AllFriend:
-                this.targets = this.friends;
-                break;
-            case TargetType.AllEnemy:
-                this.targets = this.enemies;
-                break;
             case TargetType.SpecialEnemy:
-                this.targets = [this.enemies[0]];
+                this.targets = [IManualSkill.getFirstAlive(this.enemies)];
                 break;
             case TargetType.SpecialFriend:
-                this.targets = [this.friends[0]];
-                break;
-            case TargetType.NoTarget:
-                this.targets = [];
-                break;
-            case TargetType.All:
-                this.targets = this.enemies.concat(this.friends);
+                this.targets = [IManualSkill.getFirstAlive(this.friends)];
                 break;
         }
     };
     ;
+    IManualSkill.getFirstAlive = function (input) {
+        for (var _i = 0, input_2 = input; _i < input_2.length; _i++) {
+            var c = input_2[_i];
+            if (c.alive && c.attr.isInBattle) {
+                return c;
+            }
+        }
+    };
     /**
      * 释放技能
      */
@@ -106,6 +108,10 @@ var IManualSkill = (function () {
         var scene = SceneManager.Ins.curScene;
         // 如果游戏已经结束就不再释放
         if (scene.winnerCamp) {
+            return;
+        }
+        // 如果释放者存在且无法释放
+        if (this.caster && !(this.caster.alive && this.caster.attr.isInBattle)) {
             return;
         }
         // 选择首要目标
@@ -183,8 +189,8 @@ __reflect(IManualSkill.prototype, "IManualSkill");
 var TargetType;
 (function (TargetType) {
     TargetType[TargetType["Self"] = 0] = "Self";
-    TargetType[TargetType["AllFriend"] = 1] = "AllFriend";
-    TargetType[TargetType["AllEnemy"] = 2] = "AllEnemy";
+    TargetType[TargetType["AllAliveFriend"] = 1] = "AllAliveFriend";
+    TargetType[TargetType["AllAliveEnemy"] = 2] = "AllAliveEnemy";
     TargetType[TargetType["SpecialFriend"] = 3] = "SpecialFriend";
     TargetType[TargetType["SpecialEnemy"] = 4] = "SpecialEnemy";
     TargetType[TargetType["NoTarget"] = 5] = "NoTarget";

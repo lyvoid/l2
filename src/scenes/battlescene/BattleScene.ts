@@ -174,13 +174,8 @@ class BattleScene extends IScene {
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.cardLayer
 		).addChild(this.playerFireBoard);
-
-		this.playerFireBoard.addFire();
-		this.playerFireBoard.addFire();
-		this.playerFireBoard.addFire();
-		this.playerFireBoard.addFire();
-		this.playerFireBoard.addFire();
-		this.playerFireBoard.addFire();
+		// 初始2火
+		this.playerFireBoard.addFires(2);
 
 
 		// TODO 初始化游戏角色及UI
@@ -270,8 +265,7 @@ class BattleScene extends IScene {
 			BattleSLEnum.CharLayer
 		).addChild(this.cardBoard);
 
-		this.cardBoard.distCardNormal();
-		this.cardBoard.distCardNormal();
+		// 初始2张卡牌
 		this.cardBoard.distCardNormal();
 		this.cardBoard.distCardNormal();
 

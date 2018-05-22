@@ -60,7 +60,7 @@ var Character = (function (_super) {
         _this.shieldBar = shieldBar;
         // 加技能
         _this.manualSkills = [];
-        var skill1 = new SkillTmp(_this);
+        var skill1 = new SkillOneDamageWithOut(_this);
         _this.manualSkills.push(skill1);
         return _this;
     }

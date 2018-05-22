@@ -39,6 +39,10 @@ var PlayerUseCardPhase = (function (_super) {
             ToastInfoManager.Ins.newToast("胜负已分");
             return;
         }
+        if (!(card.skill.caster && card.skill.caster.alive && card.skill.caster.attr.isInBattle)) {
+            ToastInfoManager.Ins.newToast("释放者处于无法释放的状态中");
+            return;
+        }
         var fireboard = scene.playerFireBoard;
         var fireNeed = card.skill.fireNeed;
         if (fireNeed > fireboard.fireNum) {

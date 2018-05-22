@@ -19,7 +19,7 @@ class PlayerRoundStartPhase extends ISceneState {
 		scene.cardBoard.distCardNormal();
 
 		// 加能量
-		scene.playerFireBoard.addFires(1);
+		scene.playerFireBoard.addFires(2);
 
 		// buff结算(待增加
 

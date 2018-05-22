@@ -17,7 +17,11 @@ var EnemyUseCardPhase = (function (_super) {
         _super.prototype.initial.call(this);
         ToastInfoManager.Ins.newToast("敌方出牌阶段");
         // TODO 回合结束阶段buff结算
-        // 回合结束阶段技能效果
+        // 技能效果
+        var s = new SkillOneDamageWithOut(IManualSkill.getFirstAlive(this.scene.enemies));
+        this.scene.skillTodoQue.push(s);
+        this.scene.skillTodoQue.push(s);
+        s.useSkill();
         // 如果不在演出说明没有需要演出的技能，直接切下一个阶段
         this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundEndPhase);
     };

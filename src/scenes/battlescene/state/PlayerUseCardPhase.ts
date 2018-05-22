@@ -48,6 +48,11 @@ class PlayerUseCardPhase extends ISceneState {
 			ToastInfoManager.Ins.newToast("胜负已分");
 			return;
 		}
+
+		if (!(card.skill.caster && card.skill.caster.alive && card.skill.caster.attr.isInBattle)) {
+			ToastInfoManager.Ins.newToast("释放者处于无法释放的状态中");
+			return;
+		}
 		let fireboard = scene.playerFireBoard;
 		let fireNeed = card.skill.fireNeed;
 		if (fireNeed > fireboard.fireNum) {

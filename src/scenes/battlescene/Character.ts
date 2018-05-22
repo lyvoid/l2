@@ -106,7 +106,7 @@ class Character extends egret.DisplayObjectContainer {
 
 		// 加技能
 		this.manualSkills = [];
-		let skill1 = new SkillTmp(this);
+		let skill1 = new SkillOneDamageWithOut(this);
 		this.manualSkills.push(skill1);
 	}
 

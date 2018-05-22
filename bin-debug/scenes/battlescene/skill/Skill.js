@@ -11,18 +11,18 @@ r.prototype = e.prototype, t.prototype = new r();
 /**
  * 临时技能，单纯用来测试
  */
-var SkillTmp = (function (_super) {
-    __extends(SkillTmp, _super);
-    function SkillTmp(caster, camp) {
+var SkillOneDamageWithOut = (function (_super) {
+    __extends(SkillOneDamageWithOut, _super);
+    function SkillOneDamageWithOut(caster, camp) {
         if (caster === void 0) { caster = null; }
         if (camp === void 0) { camp = CharCamp.Neut; }
         var _this = _super.call(this, caster, camp) || this;
         _this.targetType = TargetType.SpecialEnemy;
-        _this.fireNeed = 1;
-        _this.desc = "对敌方全体造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
+        _this.fireNeed = 2;
+        _this.desc = "对敌方单体造成1*攻击的物理伤害，如果目标死亡则将其从游戏中排除";
         return _this;
     }
-    SkillTmp.prototype.affect = function () {
+    SkillOneDamageWithOut.prototype.affect = function () {
         var scene = SceneManager.Ins.curScene;
         var hurt = new Hurt(HurtType.Pysic, this.caster);
         var affectResult = [];
@@ -36,7 +36,7 @@ var SkillTmp = (function (_super) {
         }
         return affectResult;
     };
-    SkillTmp.prototype.performance = function (affectResult) {
+    SkillOneDamageWithOut.prototype.performance = function (affectResult) {
         var _this = this;
         var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
         egret.Tween.get(this.caster).to({
@@ -48,7 +48,7 @@ var SkillTmp = (function (_super) {
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });
     };
-    SkillTmp.prototype.casterAniEnd = function () {
+    SkillOneDamageWithOut.prototype.casterAniEnd = function () {
         this.caster.armatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
         var newP = this.caster.getPositon();
         this.caster.armatureDisplay.animation.play("idle");
@@ -57,6 +57,6 @@ var SkillTmp = (function (_super) {
             y: newP.y
         }, 200).call(function () { return MessageManager.Ins.sendMessage(MessageType.PerformanceEnd); });
     };
-    return SkillTmp;
+    return SkillOneDamageWithOut;
 }(IManualSkill));
-__reflect(SkillTmp.prototype, "SkillTmp");
+__reflect(SkillOneDamageWithOut.prototype, "SkillOneDamageWithOut");

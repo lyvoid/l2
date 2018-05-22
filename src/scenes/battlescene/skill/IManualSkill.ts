@@ -73,11 +73,11 @@ abstract class IManualSkill {
 			case TargetType.Self:
 				this.targets = [this.caster];
 				break;
-			case TargetType.AllFriend:
-				this.targets = this.friends;
+			case TargetType.AllAliveFriend:
+				this.targets =  IManualSkill.getAllAliveChar(this.friends);
 				break;
-			case TargetType.AllEnemy:
-				this.targets = this.enemies;
+			case TargetType.AllAliveEnemy:
+				this.targets =  IManualSkill.getAllAliveChar(this.enemies);
 				break;
 			case TargetType.SpecialEnemy:
 				this.targets = [scene.selectedEnemy];
@@ -94,37 +94,39 @@ abstract class IManualSkill {
 		}
 	}
 
+	public static getAllAliveChar(input: Character[]): Character[]{
+		let ls:Character[] = [];
+		for(let c of input){
+			if (c.alive && c.attr.isInBattle){
+				ls.push(c);
+			}
+		}
+		return ls;
+	}
+
 	/**
 	 * 这里选出的目标主要用在自动模式下
 	 * 敌方的所有选择均使用这个
 	 */
 	public autoChooseTarget(): void {
+		this.manualChooseTarget();
 		switch (this.targetType) {
-			case TargetType.PreSet:
-				break;
-			case TargetType.Self:
-				this.targets = [this.caster];
-				break;
-			case TargetType.AllFriend:
-				this.targets = this.friends;
-				break;
-			case TargetType.AllEnemy:
-				this.targets = this.enemies;
-				break;
 			case TargetType.SpecialEnemy:
-				this.targets = [this.enemies[0]];
+				this.targets = [IManualSkill.getFirstAlive(this.enemies)];
 				break;
 			case TargetType.SpecialFriend:
-				this.targets = [this.friends[0]];
-				break;
-			case TargetType.NoTarget:
-				this.targets = [];
-				break;
-			case TargetType.All:
-				this.targets = this.enemies.concat(this.friends);
+				this.targets = [IManualSkill.getFirstAlive(this.friends)];
 				break;
 		}
 	};
+
+	public static getFirstAlive(input: Character[]){
+		for(let c of input){
+			if (c.alive && c.attr.isInBattle){
+				return c;
+			}
+		}
+	}
 
 	/**
 	 * 释放技能
@@ -135,6 +137,11 @@ abstract class IManualSkill {
 
 		// 如果游戏已经结束就不再释放
 		if (scene.winnerCamp){
+			return;
+		}
+
+		// 如果释放者存在且无法释放
+		if (this.caster && !(this.caster.alive && this.caster.attr.isInBattle)) {
 			return;
 		}
 
@@ -231,8 +238,8 @@ abstract class IManualSkill {
 
 enum TargetType {
 	Self,// 自己
-	AllFriend, // 友方全体
-	AllEnemy, // 敌方全体
+	AllAliveFriend, // 友方存活全体
+	AllAliveEnemy, // 敌方存活全体
 	SpecialFriend, // 选定的我方
 	SpecialEnemy, // 选定的敌方
 	NoTarget, // 无目标

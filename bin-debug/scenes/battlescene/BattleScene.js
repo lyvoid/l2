@@ -153,12 +153,8 @@ var BattleScene = (function (_super) {
                         //  能量槽
                         this.playerFireBoard = new FireBoard();
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.cardLayer).addChild(this.playerFireBoard);
-                        this.playerFireBoard.addFire();
-                        this.playerFireBoard.addFire();
-                        this.playerFireBoard.addFire();
-                        this.playerFireBoard.addFire();
-                        this.playerFireBoard.addFire();
-                        this.playerFireBoard.addFire();
+                        // 初始2火
+                        this.playerFireBoard.addFires(2);
                         chars = [];
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Dragon");
@@ -221,8 +217,7 @@ var BattleScene = (function (_super) {
                             this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
                         }
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer).addChild(this.cardBoard);
-                        this.cardBoard.distCardNormal();
-                        this.cardBoard.distCardNormal();
+                        // 初始2张卡牌
                         this.cardBoard.distCardNormal();
                         this.cardBoard.distCardNormal();
                         // chars[5].row = CharRowType.frontRow;
