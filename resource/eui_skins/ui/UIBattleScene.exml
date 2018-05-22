@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <e:Skin class="mySkin.UIBattleSceneSkin" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
 	<w:Config id="163493a6b56" ></w:Config>
-	<e:Button id="addFireButton" label="whosyourdad-addFire" right="10" bottom="180"/>
-	<e:Button id="addCardButton" label="whosyourdad-addCard" right="10" bottom="125"/>
-	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="20" anchorOffsetY="0" height="100" visible="false"/>
+	<e:Button id="addFireButton" label="whosyourdaddy-addFire" right="0" top="0" height="50" anchorOffsetX="0" width="240"/>
+	<e:Button id="addCardButton" label="whosyourdaddy-addCard" right="240" top="0" height="50" anchorOffsetX="0" width="240"/>
+	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="10" anchorOffsetY="0" height="57" visible="false"/>
+	<e:Label id="cardNumLabel" text="10/10" right="10" bottom="75"/>
+	<e:Label id="fireNumLabel" text="10/10" right="10" bottom="105"/>
+	<e:Label text="能量：" right="90" bottom="105"/>
+	<e:Label text="卡牌：" right="90" bottom="75"/>
 </e:Skin>

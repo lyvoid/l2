@@ -56,6 +56,16 @@ var BattleScene = (function (_super) {
     BattleScene.prototype.initial = function () {
         var _this = this;
         _super.prototype.initial.call(this);
+        // TODO 初始化UI
+        var ui = new UIBattleScene();
+        ui.height = LayerManager.Ins.stageHeight;
+        ui.width = LayerManager.Ins.stageWidth;
+        LayerManager.Ins.uiLayer.addChild(ui);
+        this.battleUI = ui;
+        var battleEndPopUp = new BattleEndPopUp();
+        battleEndPopUp.height = LayerManager.Ins.stageHeight;
+        battleEndPopUp.width = LayerManager.Ins.stageWidth;
+        this.battleEndPopUp = battleEndPopUp;
         this.enemies = [];
         this.friends = [];
         this.skillManualPool = [];
@@ -84,7 +94,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, ui, battleEndPopUp;
+            var _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -215,15 +225,9 @@ var BattleScene = (function (_super) {
                         this.cardBoard.distCardNormal();
                         this.cardBoard.distCardNormal();
                         this.cardBoard.distCardNormal();
-                        ui = new UIBattleScene();
-                        ui.height = LayerManager.Ins.stageHeight;
-                        ui.width = LayerManager.Ins.stageWidth;
-                        LayerManager.Ins.uiLayer.addChild(ui);
-                        this.battleUI = ui;
-                        battleEndPopUp = new BattleEndPopUp();
-                        battleEndPopUp.height = LayerManager.Ins.stageHeight;
-                        battleEndPopUp.width = LayerManager.Ins.stageWidth;
-                        this.battleEndPopUp = battleEndPopUp;
+                        // chars[5].row = CharRowType.frontRow;
+                        // chars[5].position = CharPositionType.up;
+                        // chars[5].setPosition();
                         // 点击滤镜动画
                         MessageManager.Ins.addEventListener(MessageType.TouchBegin, this.onObjTouchGlowAnim, this);
                         // 长按显示info;

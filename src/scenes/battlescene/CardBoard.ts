@@ -9,7 +9,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	private cards: Card[];
 	private cardPool: Card[]; // 对象池
 	public static maxCardNum = 10;
-	public overFlowNum: number = 0;
+	public overFlowNum: number;
 
 	public constructor() {
 		super();
@@ -18,6 +18,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 
 		this.y = LayerManager.Ins.stageHeight - 140;
 		this.width = LayerManager.Ins.stageWidth;
+		this.overFlowNum = 0;
 	}
 
 	public distCardNormal(){
@@ -38,6 +39,15 @@ class CardBoard extends egret.DisplayObjectContainer {
 			card.initial();
 			this.cards.push(card);
 			this.addCardToBoard(card, this.cards.length - 1);
+			
+			let scene = SceneManager.Ins.curScene as BattleScene;
+			let cardNumLabel = scene.battleUI.cardNumLabel;
+			cardNumLabel.text = `${this.cards.length}/${CardBoard.maxCardNum}`
+			if (this.cards.length == CardBoard.maxCardNum){
+				cardNumLabel.textColor = 0xFF0000;
+			} else {
+				cardNumLabel.textColor = 0xADFF2F;
+			}
 		} else {
 			this.overFlowNum += 1;
 			this.addCardToBoard(card, CardBoard.maxCardNum + this.overFlowNum -1).call(
@@ -98,6 +108,10 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let cardNumLabel = scene.battleUI.cardNumLabel;
+		cardNumLabel.text = `${this.cards.length}/${CardBoard.maxCardNum}`
+		cardNumLabel.textColor = 0xADFF2F;
 	}
 
 	public removeCardFromBoard(card: Card, index:number): void{

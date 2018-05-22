@@ -33,6 +33,15 @@ var FireBoard = (function (_super) {
         if (this.fireNum < FireBoard.maxFireNum) {
             this.particles[this.fireNum].start();
             this.fireNum += 1;
+            var scene = SceneManager.Ins.curScene;
+            var fireNumLabel = scene.battleUI.fireNumLabel;
+            fireNumLabel.text = this.fireNum + "/" + FireBoard.maxFireNum;
+            if (this.fireNum == FireBoard.maxFireNum) {
+                fireNumLabel.textColor = 0xFF0000;
+            }
+            else {
+                fireNumLabel.textColor = 0xADFF2F;
+            }
         }
         else if (this.overflowFireNum < FireBoard.maxOverflowFireNum) {
             var index_1 = FireBoard.maxFireNum + this.overflowFireNum;
@@ -43,7 +52,7 @@ var FireBoard = (function (_super) {
                 Util.deleteObjFromList(_this.timeOutHandles, to_1);
                 egret.clearTimeout(to_1);
                 _this.overflowFireNum -= 1;
-            }, this, 500);
+            }, this, 300);
             this.timeOutHandles.push(to_1);
         }
     };
@@ -56,6 +65,10 @@ var FireBoard = (function (_super) {
         if (this.fireNum > 0) {
             this.particles[this.fireNum - 1].stop();
             this.fireNum -= 1;
+            var scene = SceneManager.Ins.curScene;
+            var fireNumLabel = scene.battleUI.fireNumLabel;
+            fireNumLabel.text = this.fireNum + "/" + FireBoard.maxFireNum;
+            fireNumLabel.textColor = 0xADFF2F;
         }
     };
     FireBoard.prototype.removeFires = function (n) {

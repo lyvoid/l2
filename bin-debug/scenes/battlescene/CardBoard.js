@@ -15,11 +15,11 @@ var CardBoard = (function (_super) {
     __extends(CardBoard, _super);
     function CardBoard() {
         var _this = _super.call(this) || this;
-        _this.overFlowNum = 0;
         _this.cards = [];
         _this.cardPool = [];
         _this.y = LayerManager.Ins.stageHeight - 140;
         _this.width = LayerManager.Ins.stageWidth;
+        _this.overFlowNum = 0;
         return _this;
     }
     CardBoard.prototype.distCardNormal = function () {
@@ -41,6 +41,15 @@ var CardBoard = (function (_super) {
             card.initial();
             this.cards.push(card);
             this.addCardToBoard(card, this.cards.length - 1);
+            var scene = SceneManager.Ins.curScene;
+            var cardNumLabel = scene.battleUI.cardNumLabel;
+            cardNumLabel.text = this.cards.length + "/" + CardBoard.maxCardNum;
+            if (this.cards.length == CardBoard.maxCardNum) {
+                cardNumLabel.textColor = 0xFF0000;
+            }
+            else {
+                cardNumLabel.textColor = 0xADFF2F;
+            }
         }
         else {
             this.overFlowNum += 1;
@@ -97,6 +106,10 @@ var CardBoard = (function (_super) {
         var index = cards.indexOf(card);
         cards.splice(index, 1);
         this.removeCardFromBoard(card, index);
+        var scene = SceneManager.Ins.curScene;
+        var cardNumLabel = scene.battleUI.cardNumLabel;
+        cardNumLabel.text = this.cards.length + "/" + CardBoard.maxCardNum;
+        cardNumLabel.textColor = 0xADFF2F;
     };
     CardBoard.prototype.removeCardFromBoard = function (card, index) {
         var _this = this;

@@ -57,6 +57,18 @@ class BattleScene extends IScene {
 
 	public initial() {
 		super.initial();
+		
+		// TODO 初始化UI
+		let ui = new UIBattleScene();
+		ui.height = LayerManager.Ins.stageHeight;
+		ui.width = LayerManager.Ins.stageWidth;
+		LayerManager.Ins.uiLayer.addChild(ui);
+		this.battleUI = ui;
+		let battleEndPopUp = new BattleEndPopUp();
+		battleEndPopUp.height = LayerManager.Ins.stageHeight;
+		battleEndPopUp.width = LayerManager.Ins.stageWidth;
+		this.battleEndPopUp = battleEndPopUp;
+
 		this.enemies = [];
 		this.friends = [];
 		this.skillManualPool = [];
@@ -268,21 +280,6 @@ class BattleScene extends IScene {
 		// chars[5].row = CharRowType.frontRow;
 		// chars[5].position = CharPositionType.up;
 		// chars[5].setPosition();
-
-		// TODO 填满statePool
-
-		// TODO 设置初始State
-
-		// TODO 初始化UI
-		let ui = new UIBattleScene();
-		ui.height = LayerManager.Ins.stageHeight;
-		ui.width = LayerManager.Ins.stageWidth;
-		LayerManager.Ins.uiLayer.addChild(ui);
-		this.battleUI = ui;
-		let battleEndPopUp = new BattleEndPopUp();
-		battleEndPopUp.height = LayerManager.Ins.stageHeight;
-		battleEndPopUp.width = LayerManager.Ins.stageWidth;
-		this.battleEndPopUp = battleEndPopUp;
 
 		// 点击滤镜动画
 		MessageManager.Ins.addEventListener(
