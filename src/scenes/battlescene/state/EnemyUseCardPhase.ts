@@ -11,7 +11,7 @@ class EnemyUseCardPhase extends ISceneState{
 		let s =new SkillOneDamageWithOut(
 			IManualSkill.getFirstAlive(this.scene.enemies)
 		);
-		this.scene.skillTodoQue.push(s);
+		this.scene.castQue.push(s);
 		// this.scene.skillTodoQue.push(s);
 		this.scene.startTodoSkill();
 		

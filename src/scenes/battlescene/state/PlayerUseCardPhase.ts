@@ -63,7 +63,7 @@ class PlayerUseCardPhase extends ISceneState {
 		}
 
 		// 使用技能
-		card.skill.useSkill();
+		card.skill.cast();
 
 		// 移除所需要的点数
 		for (let i = 0; i < card.skill.fireNeed; i++) {

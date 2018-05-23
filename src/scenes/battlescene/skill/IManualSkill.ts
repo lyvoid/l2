@@ -141,7 +141,7 @@ abstract class IManualSkill {
 	/**
 	 * 释放技能
 	 */
-	public useSkill(): void {
+	public cast(): void {
 
 		let scene = SceneManager.Ins.curScene as BattleScene;
 
@@ -178,8 +178,8 @@ abstract class IManualSkill {
 
 
 		// 运行在在SkillToDo中的技能
-		if (scene.skillTodoQue.length > 0) {
-			scene.skillTodoQue.pop().useSkill();
+		if (scene.castQue.length > 0) {
+			scene.castQue.pop().cast();
 		}
 
 		// 判断游戏是否结束
@@ -234,7 +234,7 @@ abstract class IManualSkill {
 					() => {
 						if (change.aliveNew != change.aliveOld && !change.aliveNew) {
 							target.stopDBAnim();
-							(SceneManager.Ins.curScene as BattleScene).filterManager.addGreyFilter(target);
+							(SceneManager.Ins.curScene as BattleScene).filterManager.addGreyFilter(target.armatureDisplay);
 						}
 						if (change.isInBattleNew == false) {
 							// 如果扣血后移除

@@ -114,7 +114,7 @@ var IManualSkill = (function () {
     /**
      * 释放技能
      */
-    IManualSkill.prototype.useSkill = function () {
+    IManualSkill.prototype.cast = function () {
         var scene = SceneManager.Ins.curScene;
         // 如果游戏已经结束就不再释放
         if (scene.winnerCamp) {
@@ -142,8 +142,8 @@ var IManualSkill = (function () {
         // 没次加入新的表现序列都调用一次应该是没错的
         scene.performStart();
         // 运行在在SkillToDo中的技能
-        if (scene.skillTodoQue.length > 0) {
-            scene.skillTodoQue.pop().useSkill();
+        if (scene.castQue.length > 0) {
+            scene.castQue.pop().cast();
         }
         // 判断游戏是否结束
         scene.judge();

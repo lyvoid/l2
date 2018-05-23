@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="mySkin.CharacterInfo" width="1064" xmlns:e="http://ns.egret.com/eui" height="640">
+	<e:Image width="500" height="300" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0" verticalCenter="-21"/>
+	<e:Label text="Label" horizontalCenter="0" top="145" width="500" anchorOffsetY="0" height="200"/>
+	<e:Scroller width="500" height="250" horizontalCenter="0" top="200">
+		<e:Group>
+			<e:List width="500" height="250" x="0" y="0" anchorOffsetX="0" scaleX="1" scaleY="1" anchorOffsetY="0"/>
+		</e:Group>
+	</e:Scroller>
+</e:Skin>

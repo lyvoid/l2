@@ -72,7 +72,7 @@ var BattleScene = (function (_super) {
         this.dbManager = new DBManager();
         this.cardBoard = new CardBoard();
         this.performQue = new Queue();
-        this.skillTodoQue = new Queue();
+        this.castQue = new Queue();
         this.damageFloatManager = new DamageFloatManager();
         var popUpInfo = new LongTouchInfo();
         popUpInfo.width = LayerManager.Ins.stageWidth;
@@ -271,8 +271,8 @@ var BattleScene = (function (_super) {
         }
     };
     BattleScene.prototype.startTodoSkill = function () {
-        if (this.skillTodoQue.length > 0) {
-            this.skillTodoQue.pop().useSkill();
+        if (this.castQue.length > 0) {
+            this.castQue.pop().cast();
         }
     };
     /**

@@ -44,13 +44,13 @@ class BattleScene extends IScene {
 	public popUpInfoWin: LongTouchInfo;
 
 	/**
-	 * 演出列表
+	 * 可演出内容列表
 	 */ 
 	public performQue: Queue<[{performance:Function}, any]>;
 	/**
-	 * 待释放技能
+	 * 可释放内容列表
 	 */
-	public skillTodoQue: Queue<IManualSkill>;
+	public castQue: Queue<{cast:Function}>;
 
 	/**
 	 * 飘字管理器
@@ -87,7 +87,7 @@ class BattleScene extends IScene {
 		this.dbManager = new DBManager();
 		this.cardBoard = new CardBoard();
 		this.performQue = new Queue<[{performance: Function}, any]>();
-		this.skillTodoQue = new Queue<IManualSkill>();
+		this.castQue = new Queue<{cast: Function}>();
 		this.damageFloatManager = new DamageFloatManager();
 
 		let popUpInfo = new LongTouchInfo();
@@ -331,8 +331,8 @@ class BattleScene extends IScene {
 	}
 
 	public startTodoSkill():void{
-		if (this.skillTodoQue.length > 0){
-			this.skillTodoQue.pop().useSkill();
+		if (this.castQue.length > 0){
+			this.castQue.pop().cast();
 		}
 	}
 
