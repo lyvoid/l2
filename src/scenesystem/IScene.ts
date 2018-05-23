@@ -41,7 +41,7 @@ abstract class IScene{
         layer.gameLayer.removeChildren();
         layer.uiLayer.removeChildren();
         layer.popUpLayer.removeChildren();
-		layer.maskLayer.visible = false;
+		layer.maskLayer.removeChildren();
 
         // 长按功能清理
         LongTouchUtil.clear();

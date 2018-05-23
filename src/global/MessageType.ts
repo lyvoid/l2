@@ -1,9 +1,5 @@
 class MessageType{
 
-	// Global
-	// 长按相关消息
-	public static LongTouchStart = "LongTouchStart";
-	public static LongTouchEnd = "LongTouchEnd";
 	// 载入过程事件
 	public static LoadingProcess = "LoadingProcess";
 
@@ -18,7 +14,7 @@ class MessageType{
 	public static CharDie = "CharDie";
 	public static Resurgence = "Resurgence";
 	// 演出全部结束
-	public static PerformAllEnd = "SkillPerformAllEnd";
+	public static PerformAllEnd = "PerformAllEnd";
 	// 卡牌被点击事件
 	public static CardTouchTap = "CardTouchTap";
 

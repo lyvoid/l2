@@ -16,6 +16,8 @@ class LayerManager {
 	public stageWidth: number;
 	public stageHeight: number;
 
+	public maskBg: egret.Bitmap;
+
 	private static instance: LayerManager;
 
 	public static get Ins(): LayerManager{
@@ -50,8 +52,7 @@ class LayerManager {
 		this.gameLayer = gameLayer;
 
 		this.maskLayer = new eui.UILayer;
-		this.maskLayer.touchEnabled = true;
-		this.maskLayer.visible = false;
+		this.maskLayer.touchEnabled = false;
 
 		this.popUpLayer = new eui.UILayer();
 		this.popUpLayer.touchEnabled = false;
@@ -60,7 +61,8 @@ class LayerManager {
 		maskbg.height = stageHeight;
 		maskbg.width = stageWidth;
 		maskbg.alpha = 0.3;
-		this.maskLayer.addChild(maskbg);
+		maskbg.touchEnabled = true;
+		this.maskBg = maskbg;
 		
 		// 将几个主layer加入到stage中
 		stage.addChild(this.gameLayer);

@@ -13,6 +13,12 @@ var Util = (function () {
         }
         return false;
     };
+    Util.safeRemove = function (element) {
+        var p = element.parent;
+        if (p) {
+            p.removeChild(element);
+        }
+    };
     return Util;
 }());
 __reflect(Util.prototype, "Util");

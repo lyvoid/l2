@@ -59,14 +59,14 @@ class Character extends egret.DisplayObjectContainer {
 			let newTarget: Character = null;
 			if (scene.selectedFriend === this) {
 				console.log("frient");
-				
+
 				newTarget = IManualSkill.getFirstInBattle(scene.friends)
-			} else if (scene.selectedEnemy === this){
+			} else if (scene.selectedEnemy === this) {
 				console.log("enemy");
-				
+
 				newTarget = IManualSkill.getFirstInBattle(scene.enemies);
 			}
-			if (newTarget){
+			if (newTarget) {
 				scene.setSelectTarget(newTarget);
 			}
 		}
@@ -240,6 +240,17 @@ class Character extends egret.DisplayObjectContainer {
 		} else {
 			this.armatureDisplay.animation.play(animationNameBack, animationTimes);
 		}
+	}
+
+	private onLongTouchEnd(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+	}
+
+	private onLongTouchBegin(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.popUpInfoWin.desc.text = this.desc;
+		LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
 	}
 
 	/**

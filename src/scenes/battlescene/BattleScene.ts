@@ -13,11 +13,11 @@ class BattleScene extends IScene {
 	/**
 	 * 玩家的人物选择圈
 	 */
-	private selfSelectImg: egret.Bitmap;
+	public selfSelectImg: egret.Bitmap;
 	/**
 	 * 敌方的任务选择圈
 	 */
-	private enemySlectImg: egret.Bitmap;
+	public enemySlectImg: egret.Bitmap;
 	/**
 	 * 滤镜管理器
 	 */
@@ -25,34 +25,8 @@ class BattleScene extends IScene {
 
 	public enemies: Character[];
 	public friends: Character[];
-	private _selectedEnemy: Character;
-	private _selectedFriend: Character;
-
-	/**
-	 * 设置选中对象
-	 */
-	public setSelectTarget(value: Character){
-		if (value.camp === CharCamp.Enemy){
-			value.bgLayer.addChild(
-				this.enemySlectImg
-			);
-			this._selectedEnemy = value;
-		} else {
-			value.bgLayer.addChild(
-				this.selfSelectImg
-			);
-			this._selectedFriend = value;
-		}
-	}
-
-	public get selectedEnemy(): Character{
-		return this._selectedEnemy;
-	}
-
-	public get selectedFriend(): Character{
-		return this._selectedFriend;
-	}
-
+	public selectedEnemy: Character;
+	public selectedFriend: Character;
 
 	/**
 	 * 玩家能量板
@@ -318,20 +292,6 @@ class BattleScene extends IScene {
 		this.cardBoard.distCardNormal();
 		this.cardBoard.distCardNormal();
 
-		// 长按显示info;
-		MessageManager.Ins.addEventListener(
-			MessageType.LongTouchStart,
-			this.onObjLongTouchBegin,
-			this
-		);
-
-		// 取消长按关闭info
-		MessageManager.Ins.addEventListener(
-			MessageType.LongTouchEnd,
-			this.onObjLongTouchEnd,
-			this
-		);
-
 		this.phaseUtil = new PhaseUtil();
 
 		// 初始化场景中的StatePool
@@ -377,72 +337,6 @@ class BattleScene extends IScene {
 	}
 
 	/**
-	 * 长按开始时候弹出info界面加入到popuplayer中
-	 * 如果是长按的card还会对其释放者的龙骨动画加入闪烁提示
-	 * 同时调用skill的manulachoosetarget得到主要目标
-	 * 然后让主要目标的血条开始闪烁
-	 */
-	private onObjLongTouchBegin(e: Message): void {
-		let obj = e.messageContent;
-		this.popUpInfoWin.desc.text = obj.desc;
-		LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
-		if (obj instanceof Card) {
-			// 隐藏选择圈
-			this.selfSelectImg.visible = false;
-			this.enemySlectImg.visible = false;
-			let card = (obj as Card);
-			// 释放者闪烁
-			let caster = card.skill.caster;
-			if (caster) {
-				caster.armatureBlink();
-			}
-
-			card.skill.manualChooseTarget();
-			// 隐藏目标以外的血条
-			for(let char of this.enemies.concat(this.friends)){
-				if(card.skill.targets.indexOf(char) < 0){
-					char.lifeBarHide();
-				}
-			}
-
-			// 目标血条闪烁
-			card.skill.manualChooseTarget();
-			for (let target of card.skill.targets) {
-				target.lifeBarBlink();
-			}
-		}
-	}
-
-	/**
-	 * 长按停止时的效果
-	 * 关闭info界面
-	 * 同时关闭所有闪烁动画以及重新展示此前隐藏的内容
-	 */
-	private onObjLongTouchEnd(e: Message): void {
-		let obj = e.messageContent;
-		LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
-		if (obj instanceof Card) {
-			// 显示选择圈
-			this.selfSelectImg.visible = true;
-			this.enemySlectImg.visible = true;
-			let card = obj as Card;
-			let caster = card.skill.caster
-			if (caster) {
-				caster.armatureUnBlink();
-			}
-
-			for(let char of this.enemies.concat(this.friends)){
-				char.lifeBarShow();
-			}
-
-			card.skill.caster.armatureDisplay.alpha = 1;
-			for (let target of card.skill.targets) {
-				target.lifeBarUnBlink();
-			}
-		}
-	}
-
-	/**
 	 * 是否正在演出skill的演出内容
 	 */
 	public isPerforming: boolean = false;
@@ -472,8 +366,8 @@ class BattleScene extends IScene {
 	 * 战斗结束
 	 */
 	private onBattleEnd(): void{
-		LongTouchUtil.clear();
-		LayerManager.Ins.maskLayer.visible = true;
+		let lm = LayerManager.Ins
+		lm.maskLayer.addChild(lm.maskBg);
 		if (this.winnerCamp == CharCamp.Player){
 			this.battleEndPopUp.winUIAdjust();
 		}else{
@@ -502,6 +396,23 @@ class BattleScene extends IScene {
 
 	}
 
+	/**
+	 * 设置选中对象
+	 */
+	public setSelectTarget(value: Character){
+		if (value.camp === CharCamp.Enemy){
+			value.bgLayer.addChild(
+				this.enemySlectImg
+			);
+			this.selectedEnemy = value;
+		} else {
+			value.bgLayer.addChild(
+				this.selfSelectImg
+			);
+			this.selectedFriend = value;
+		}
+	}
+
 	private async loadResource() {
 
 	}
@@ -512,16 +423,6 @@ class BattleScene extends IScene {
 
 	public release() {
 		super.release();
-		MessageManager.Ins.removeEventListener(
-			MessageType.LongTouchStart,
-			this.onObjLongTouchBegin,
-			this
-		);
-		MessageManager.Ins.removeEventListener(
-			MessageType.LongTouchEnd,
-			this.onObjLongTouchEnd,
-			this
-		)
 
 		this.dbManager.release();
 		this.dbManager = null;

@@ -8,4 +8,11 @@ class Util{
         }
         return false;
     }
+
+    public static safeRemove(element:any): void{
+		let p = element.parent;
+		if (p){
+			p.removeChild(element);
+		}
+	}
 }

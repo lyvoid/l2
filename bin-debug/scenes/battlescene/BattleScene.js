@@ -53,33 +53,6 @@ var BattleScene = (function (_super) {
         _this.isPerforming = false;
         return _this;
     }
-    /**
-     * 设置选中对象
-     */
-    BattleScene.prototype.setSelectTarget = function (value) {
-        if (value.camp === CharCamp.Enemy) {
-            value.bgLayer.addChild(this.enemySlectImg);
-            this._selectedEnemy = value;
-        }
-        else {
-            value.bgLayer.addChild(this.selfSelectImg);
-            this._selectedFriend = value;
-        }
-    };
-    Object.defineProperty(BattleScene.prototype, "selectedEnemy", {
-        get: function () {
-            return this._selectedEnemy;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BattleScene.prototype, "selectedFriend", {
-        get: function () {
-            return this._selectedFriend;
-        },
-        enumerable: true,
-        configurable: true
-    });
     BattleScene.prototype.initial = function () {
         var _this = this;
         _super.prototype.initial.call(this);
@@ -257,10 +230,6 @@ var BattleScene = (function (_super) {
                         // 初始2张卡牌
                         this.cardBoard.distCardNormal();
                         this.cardBoard.distCardNormal();
-                        // 长按显示info;
-                        MessageManager.Ins.addEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
-                        // 取消长按关闭info
-                        MessageManager.Ins.addEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
                         this.phaseUtil = new PhaseUtil();
                         // 初始化场景中的StatePool
                         this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
@@ -307,70 +276,6 @@ var BattleScene = (function (_super) {
         }
     };
     /**
-     * 长按开始时候弹出info界面加入到popuplayer中
-     * 如果是长按的card还会对其释放者的龙骨动画加入闪烁提示
-     * 同时调用skill的manulachoosetarget得到主要目标
-     * 然后让主要目标的血条开始闪烁
-     */
-    BattleScene.prototype.onObjLongTouchBegin = function (e) {
-        var obj = e.messageContent;
-        this.popUpInfoWin.desc.text = obj.desc;
-        LayerManager.Ins.popUpLayer.addChild(this.popUpInfoWin);
-        if (obj instanceof Card) {
-            // 隐藏选择圈
-            this.selfSelectImg.visible = false;
-            this.enemySlectImg.visible = false;
-            var card = obj;
-            // 释放者闪烁
-            var caster = card.skill.caster;
-            if (caster) {
-                caster.armatureBlink();
-            }
-            card.skill.manualChooseTarget();
-            // 隐藏目标以外的血条
-            for (var _i = 0, _a = this.enemies.concat(this.friends); _i < _a.length; _i++) {
-                var char = _a[_i];
-                if (card.skill.targets.indexOf(char) < 0) {
-                    char.lifeBarHide();
-                }
-            }
-            // 目标血条闪烁
-            card.skill.manualChooseTarget();
-            for (var _b = 0, _c = card.skill.targets; _b < _c.length; _b++) {
-                var target = _c[_b];
-                target.lifeBarBlink();
-            }
-        }
-    };
-    /**
-     * 长按停止时的效果
-     * 关闭info界面
-     * 同时关闭所有闪烁动画以及重新展示此前隐藏的内容
-     */
-    BattleScene.prototype.onObjLongTouchEnd = function (e) {
-        var obj = e.messageContent;
-        LayerManager.Ins.popUpLayer.removeChild(this.popUpInfoWin);
-        if (obj instanceof Card) {
-            // 显示选择圈
-            this.selfSelectImg.visible = true;
-            this.enemySlectImg.visible = true;
-            var card = obj;
-            var caster = card.skill.caster;
-            if (caster) {
-                caster.armatureUnBlink();
-            }
-            for (var _i = 0, _a = this.enemies.concat(this.friends); _i < _a.length; _i++) {
-                var char = _a[_i];
-                char.lifeBarShow();
-            }
-            card.skill.caster.armatureDisplay.alpha = 1;
-            for (var _b = 0, _c = card.skill.targets; _b < _c.length; _b++) {
-                var target = _c[_b];
-                target.lifeBarUnBlink();
-            }
-        }
-    };
-    /**
      * 一个技能演出结束的时候自行调用
      * 从perfrom队列中获取下一个开始演出
      * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
@@ -395,8 +300,8 @@ var BattleScene = (function (_super) {
      * 战斗结束
      */
     BattleScene.prototype.onBattleEnd = function () {
-        LongTouchUtil.clear();
-        LayerManager.Ins.maskLayer.visible = true;
+        var lm = LayerManager.Ins;
+        lm.maskLayer.addChild(lm.maskBg);
         if (this.winnerCamp == CharCamp.Player) {
             this.battleEndPopUp.winUIAdjust();
         }
@@ -423,6 +328,19 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.readConfig = function () {
     };
+    /**
+     * 设置选中对象
+     */
+    BattleScene.prototype.setSelectTarget = function (value) {
+        if (value.camp === CharCamp.Enemy) {
+            value.bgLayer.addChild(this.enemySlectImg);
+            this.selectedEnemy = value;
+        }
+        else {
+            value.bgLayer.addChild(this.selfSelectImg);
+            this.selectedFriend = value;
+        }
+    };
     BattleScene.prototype.loadResource = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -435,8 +353,6 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.release = function () {
         _super.prototype.release.call(this);
-        MessageManager.Ins.removeEventListener(MessageType.LongTouchStart, this.onObjLongTouchBegin, this);
-        MessageManager.Ins.removeEventListener(MessageType.LongTouchEnd, this.onObjLongTouchEnd, this);
         this.dbManager.release();
         this.dbManager = null;
         this.cardBoard.release();

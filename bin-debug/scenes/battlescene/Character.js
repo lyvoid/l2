@@ -192,6 +192,15 @@ var Character = (function (_super) {
             this.armatureDisplay.animation.play(animationNameBack, animationTimes);
         }
     };
+    Character.prototype.onLongTouchEnd = function () {
+        var scene = SceneManager.Ins.curScene;
+        LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+    };
+    Character.prototype.onLongTouchBegin = function () {
+        var scene = SceneManager.Ins.curScene;
+        scene.popUpInfoWin.desc.text = this.desc;
+        LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+    };
     /**
      * 停止龙骨动画
      */

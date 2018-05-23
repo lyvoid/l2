@@ -18,12 +18,12 @@
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/common/FiltersManager.js",
 		"bin-debug/common/Queue.js",
-		"bin-debug/common/Util.js",
 		"bin-debug/global/LayerManager.js",
 		"bin-debug/global/LongTouchUtil.js",
 		"bin-debug/global/MessageManager.js",
 		"bin-debug/global/MessageType.js",
 		"bin-debug/global/ToastInfo.js",
+		"bin-debug/global/Util.js",
 		"bin-debug/scenes/battlescene/AttrChange.js",
 		"bin-debug/scenes/battlescene/Attribute.js",
 		"bin-debug/scenes/battlescene/BattleScene.js",
@@ -46,10 +46,10 @@
 		"bin-debug/scenes/battlescene/state/PlayerRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerUseCardPhase.js",
 		"bin-debug/scenes/battlescene/UI/BattleEndPopUp.js",
+		"bin-debug/scenes/battlescene/UI/LongTouchInfo.js",
 		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
 		"bin-debug/Platform.js",
 		"bin-debug/scenesystem/SceneManager.js",
-		"bin-debug/UI/LoadingUI.js",
-		"bin-debug/UI/LongTouchInfo.js"
+		"bin-debug/UI/LoadingUI.js"
 	]
 }

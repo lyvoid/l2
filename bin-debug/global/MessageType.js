@@ -4,10 +4,6 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var MessageType = (function () {
     function MessageType() {
     }
-    // Global
-    // 长按相关消息
-    MessageType.LongTouchStart = "LongTouchStart";
-    MessageType.LongTouchEnd = "LongTouchEnd";
     // 载入过程事件
     MessageType.LoadingProcess = "LoadingProcess";
     // BattleScene
@@ -19,7 +15,7 @@ var MessageType = (function () {
     MessageType.CharDie = "CharDie";
     MessageType.Resurgence = "Resurgence";
     // 演出全部结束
-    MessageType.PerformAllEnd = "SkillPerformAllEnd";
+    MessageType.PerformAllEnd = "PerformAllEnd";
     // 卡牌被点击事件
     MessageType.CardTouchTap = "CardTouchTap";
     return MessageType;

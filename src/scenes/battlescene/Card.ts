@@ -16,6 +16,55 @@ class Card extends egret.DisplayObjectContainer {
 		this.setSkill(skill);
 	}
 
+	private onLongTouchEnd(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+		// 显示选择圈
+		scene.selfSelectImg.visible = true;
+		scene.enemySlectImg.visible = true;
+		let caster = this.skill.caster
+		if (caster) {
+			caster.armatureUnBlink();
+		}
+
+		for (let char of scene.enemies.concat(scene.friends)) {
+			char.lifeBarShow();
+		}
+
+		this.skill.caster.armatureDisplay.alpha = 1;
+		for (let target of this.skill.targets) {
+			target.lifeBarUnBlink();
+		}
+
+	}
+	private onLongTouchBegin(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.popUpInfoWin.desc.text = this.desc;
+		LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+		// 隐藏选择圈
+		scene.selfSelectImg.visible = false;
+		scene.enemySlectImg.visible = false;
+		// 释放者闪烁
+		let caster = this.skill.caster;
+		if (caster) {
+			caster.armatureBlink();
+		}
+
+		this.skill.manualChooseTarget();
+		// 隐藏目标以外的血条
+		for (let char of scene.enemies.concat(scene.friends)) {
+			if (this.skill.targets.indexOf(char) < 0) {
+				char.lifeBarHide();
+			}
+		}
+
+		// 目标血条闪烁
+		this.skill.manualChooseTarget();
+		for (let target of this.skill.targets) {
+			target.lifeBarBlink();
+		}
+	}
+
 	/**
 	 * 从对象池调出的时候调用，主要是绑定好事件
 	 */
@@ -37,7 +86,7 @@ class Card extends egret.DisplayObjectContainer {
 	/**
 	 * TODO: 这里还需要根据skill的图标资源名，给对应卡片设置对应贴图资源
 	 */
-	public setSkill(skill: IManualSkill): void{
+	public setSkill(skill: IManualSkill): void {
 		this.skill = skill;
 		this.alpha = 1;
 		this.scaleX = 1;

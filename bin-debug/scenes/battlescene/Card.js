@@ -28,6 +28,53 @@ var Card = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Card.prototype.onLongTouchEnd = function () {
+        var scene = SceneManager.Ins.curScene;
+        LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+        // 显示选择圈
+        scene.selfSelectImg.visible = true;
+        scene.enemySlectImg.visible = true;
+        var caster = this.skill.caster;
+        if (caster) {
+            caster.armatureUnBlink();
+        }
+        for (var _i = 0, _a = scene.enemies.concat(scene.friends); _i < _a.length; _i++) {
+            var char = _a[_i];
+            char.lifeBarShow();
+        }
+        this.skill.caster.armatureDisplay.alpha = 1;
+        for (var _b = 0, _c = this.skill.targets; _b < _c.length; _b++) {
+            var target = _c[_b];
+            target.lifeBarUnBlink();
+        }
+    };
+    Card.prototype.onLongTouchBegin = function () {
+        var scene = SceneManager.Ins.curScene;
+        scene.popUpInfoWin.desc.text = this.desc;
+        LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+        // 隐藏选择圈
+        scene.selfSelectImg.visible = false;
+        scene.enemySlectImg.visible = false;
+        // 释放者闪烁
+        var caster = this.skill.caster;
+        if (caster) {
+            caster.armatureBlink();
+        }
+        this.skill.manualChooseTarget();
+        // 隐藏目标以外的血条
+        for (var _i = 0, _a = scene.enemies.concat(scene.friends); _i < _a.length; _i++) {
+            var char = _a[_i];
+            if (this.skill.targets.indexOf(char) < 0) {
+                char.lifeBarHide();
+            }
+        }
+        // 目标血条闪烁
+        this.skill.manualChooseTarget();
+        for (var _b = 0, _c = this.skill.targets; _b < _c.length; _b++) {
+            var target = _c[_b];
+            target.lifeBarBlink();
+        }
+    };
     /**
      * 从对象池调出的时候调用，主要是绑定好事件
      */
