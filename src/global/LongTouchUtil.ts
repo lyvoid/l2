@@ -6,8 +6,8 @@
  */
 class LongTouchUtil {
 	private static touchBeginTime;
-	private static holderObj; // 一个时间点只能有一个对象进入长按逻辑
-	private static isInLongTouch: boolean = false;
+	public static holderObj; // 一个时间点只能有一个对象进入长按逻辑
+	public static isInLongTouch: boolean = false;
 	private static longTouchMask = new egret.DisplayObjectContainer();
 
 	/**

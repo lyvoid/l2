@@ -99,6 +99,10 @@ class Card extends egret.DisplayObjectContainer {
 	 * 解除事件侦听
 	 */
 	public unInitial(): void {
+		// 如果当前单位被长按功能选中且处于长按，手动发送一个out的消息来解除长按
+		if (LongTouchUtil.holderObj === this && LongTouchUtil.isInLongTouch){
+			this.dispatchEvent(new egret.Event(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE));
+		}
 		this.touchEnabled = false;
 		LongTouchUtil.unbindLongTouch(this, this);
 		this.removeEventListener(
