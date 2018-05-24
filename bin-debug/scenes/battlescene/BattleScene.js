@@ -56,28 +56,6 @@ var BattleScene = (function (_super) {
     BattleScene.prototype.initial = function () {
         var _this = this;
         _super.prototype.initial.call(this);
-        // TODO 初始化UI
-        var ui = new UIBattleScene();
-        ui.height = LayerManager.Ins.stageHeight;
-        ui.width = LayerManager.Ins.stageWidth;
-        LayerManager.Ins.uiLayer.addChild(ui);
-        this.battleUI = ui;
-        var battleEndPopUp = new BattleEndPopUp();
-        battleEndPopUp.height = LayerManager.Ins.stageHeight;
-        battleEndPopUp.width = LayerManager.Ins.stageWidth;
-        this.battleEndPopUp = battleEndPopUp;
-        this.enemies = [];
-        this.friends = [];
-        this.skillManualPool = [];
-        this.dbManager = new DBManager();
-        this.cardBoard = new CardBoard();
-        this.performQue = new Queue();
-        this.castQue = new Queue();
-        this.damageFloatManager = new DamageFloatManager();
-        var popUpInfo = new LongTouchInfo();
-        popUpInfo.width = LayerManager.Ins.stageWidth;
-        popUpInfo.height = LayerManager.Ins.stageHeight;
-        this.popUpInfoWin = popUpInfo;
         // 实例化GameLayer的层
         var gameLayer = LayerManager.Ins.gameLayer;
         gameLayer.addChildAt(new egret.DisplayObjectContainer(), BattleSLEnum.bgLayer);
@@ -94,7 +72,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var selfSelectTex, enemySelectTex, selfSelectImg, enemySlectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer;
+            var ui, battleEndPopUp, charInfoPopupUI, popUpInfo, selfSelectTex, enemySelectTex, selfSelectImg, enemySlectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -104,6 +82,23 @@ var BattleScene = (function (_super) {
                         // 载入通用资源
                         _d.sent();
                         console.log("战场通用资源载入完成");
+                        ui = new UIBattleScene();
+                        ui.height = LayerManager.Ins.stageHeight;
+                        ui.width = LayerManager.Ins.stageWidth;
+                        LayerManager.Ins.uiLayer.addChild(ui);
+                        this.battleUI = ui;
+                        battleEndPopUp = new BattleEndPopUp();
+                        battleEndPopUp.height = LayerManager.Ins.stageHeight;
+                        battleEndPopUp.width = LayerManager.Ins.stageWidth;
+                        this.battleEndPopUp = battleEndPopUp;
+                        charInfoPopupUI = new CharacterInfoPopupUI();
+                        charInfoPopupUI.width = LayerManager.Ins.stageWidth;
+                        charInfoPopupUI.height = LayerManager.Ins.stageHeight;
+                        this.charInfoPopupUI = charInfoPopupUI;
+                        popUpInfo = new CardInfoPopupUI();
+                        popUpInfo.width = LayerManager.Ins.stageWidth;
+                        popUpInfo.height = LayerManager.Ins.stageHeight;
+                        this.cardInfoPopupUI = popUpInfo;
                         selfSelectTex = RES.getRes("selfSelectChar_png");
                         enemySelectTex = RES.getRes("enemySelectChar_png");
                         selfSelectImg = new egret.Bitmap(selfSelectTex);
@@ -135,10 +130,10 @@ var BattleScene = (function (_super) {
                         return [3 /*break*/, 2];
                     case 7:
                         console.log("角色龙骨资源载入完成");
-                        // 载入背景图片资源
+                        // 载入game层背景图片资源
                         return [4 /*yield*/, RES.getResAsync("bg_json")];
                     case 8:
-                        // 载入背景图片资源
+                        // 载入game层背景图片资源
                         _d.sent();
                         console.log("战斗背景图片载入完成");
                         bgTex_1 = RES.getRes("bg_json.-2_png");
@@ -160,11 +155,20 @@ var BattleScene = (function (_super) {
                         img4.y = LayerManager.Ins.stageHeight - img4.height;
                         img4.alpha = 0.5;
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.fgLayer).addChild(img4);
-                        //  能量槽
+                        //  初始化能量槽
                         this.playerFireBoard = new FireBoard();
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.cardLayer).addChild(this.playerFireBoard);
-                        // 初始2火
                         this.playerFireBoard.addFires(2);
+                        // 初始化game层的内容
+                        this.enemies = [];
+                        this.friends = [];
+                        this.skillManualPool = [];
+                        this.dbManager = new DBManager();
+                        this.cardBoard = new CardBoard();
+                        this.performQue = new Queue();
+                        this.castQue = new Queue();
+                        this.damageFloatManager = new DamageFloatManager();
+                        this.phaseUtil = new PhaseUtil();
                         chars = [];
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Dragon");
@@ -223,14 +227,14 @@ var BattleScene = (function (_super) {
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
                             charLayer.addChildAt(char, char.row * 1000);
                             this.friends.push(char);
-                            // 填充技能池子
+                            // TODO: 填充技能池子
                             this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
                         }
+                        // 发放游戏开始的卡牌
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer).addChild(this.cardBoard);
                         // 初始2张卡牌
                         this.cardBoard.distCardNormal();
                         this.cardBoard.distCardNormal();
-                        this.phaseUtil = new PhaseUtil();
                         // 初始化场景中的StatePool
                         this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
                         this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);

@@ -28,6 +28,7 @@ var SceneManager = (function () {
     };
     /**
      * 场景加载完成时自行调用
+     * （去除loadingLayer的遮挡）
      */
     SceneManager.prototype.onSceneLoadingCompelete = function () {
         // 如果载入完成，载入层设置为不可见

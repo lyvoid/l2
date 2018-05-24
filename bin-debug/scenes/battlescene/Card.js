@@ -23,14 +23,16 @@ var Card = (function (_super) {
     }
     Object.defineProperty(Card.prototype, "desc", {
         get: function () {
-            return this.skill.desc;
+            var caster = this.skill.caster;
+            var casterName = caster ? caster.charName : "无";
+            return "<font color=\"#EE7942\"><b>" + this.skill.skillName + "</b></font>\n<b>\u91CA\u653E\u5355\u4F4D:</b> " + casterName + "\n<b>\u6D88\u8017\u80FD\u91CF:</b> " + this.skill.fireNeed + "\n<b>\u4F5C\u7528\u6548\u679C:</b> " + this.skill.desc;
         },
         enumerable: true,
         configurable: true
     });
     Card.prototype.onLongTouchEnd = function () {
         var scene = SceneManager.Ins.curScene;
-        LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+        LayerManager.Ins.popUpLayer.removeChild(scene.cardInfoPopupUI);
         // 显示选择圈
         scene.selfSelectImg.visible = true;
         scene.enemySlectImg.visible = true;
@@ -50,8 +52,8 @@ var Card = (function (_super) {
     };
     Card.prototype.onLongTouchBegin = function () {
         var scene = SceneManager.Ins.curScene;
-        scene.popUpInfoWin.desc.text = this.desc;
-        LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+        scene.cardInfoPopupUI.setDescFlowText(this.desc);
+        LayerManager.Ins.popUpLayer.addChild(scene.cardInfoPopupUI);
         // 隐藏选择圈
         scene.selfSelectImg.visible = false;
         scene.enemySlectImg.visible = false;

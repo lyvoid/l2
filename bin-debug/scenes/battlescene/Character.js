@@ -16,6 +16,14 @@ var Character = (function (_super) {
     function Character(charactorName) {
         var _this = _super.call(this) || this;
         /**
+         * 角色名
+         */
+        _this.charName = "还没有名字";
+        /**
+         * 简介
+         */
+        _this.feature = "特征是什么呢？";
+        /**
          * 是否存在游戏中
          */
         _this._isInBattle = true;
@@ -73,7 +81,30 @@ var Character = (function (_super) {
          * 人物当前状态描述，在长按中展示
          */
         get: function () {
-            return this.attr.toString();
+            var color = "#000000";
+            if (this.camp === CharCamp.Enemy) {
+                color = "#EE2C2C";
+            }
+            else if (this.camp === CharCamp.Player) {
+                color = "#7FFF00";
+            }
+            return "<b><font color=\"" + color + "\">" + this.charName + "</font></b>" +
+                ("\n<font color=\"#3D3D3D\" size=\"15\">" + this.feature + "</font>\n\n" + this.attr.toString());
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Character.prototype, "skillDesc", {
+        /**
+         * 人物技能及当前buff描述，长按中展示
+         */
+        get: function () {
+            var skillsDesc = "";
+            for (var _i = 0, _a = this.manualSkills; _i < _a.length; _i++) {
+                var skill = _a[_i];
+                skillsDesc = skillsDesc + "<b>" + skill.skillName + ":</b>" + skill.desc + "\n";
+            }
+            return "<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n<font color=\"#7FFF00\"><b>\u6FC0\u6012(2):</b></font> \u8BE5\u5355\u4F4D\u589E\u52A050%\u7684\u989D\u5916\u653B\u51FB\u529B\n\n<font color=\"#EE7942\"><b>\u4E3B\u52A8\u6280\u80FD</b></font>\n" + skillsDesc;
         },
         enumerable: true,
         configurable: true
@@ -194,12 +225,13 @@ var Character = (function (_super) {
     };
     Character.prototype.onLongTouchEnd = function () {
         var scene = SceneManager.Ins.curScene;
-        LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+        LayerManager.Ins.popUpLayer.removeChild(scene.charInfoPopupUI);
     };
     Character.prototype.onLongTouchBegin = function () {
         var scene = SceneManager.Ins.curScene;
-        scene.popUpInfoWin.desc.text = this.desc;
-        LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+        scene.charInfoPopupUI.setDescFlowText(this.desc);
+        scene.charInfoPopupUI.setSkillDescFlowText(this.skillDesc);
+        LayerManager.Ins.popUpLayer.addChild(scene.charInfoPopupUI);
     };
     /**
      * 停止龙骨动画

@@ -33,6 +33,7 @@ class SceneManager{
 
 	/**
 	 * 场景加载完成时自行调用
+	 * （去除loadingLayer的遮挡）
 	 */
 	public onSceneLoadingCompelete(): void{
 		// 如果载入完成，载入层设置为不可见

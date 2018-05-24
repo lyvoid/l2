@@ -2,7 +2,12 @@ class Card extends egret.DisplayObjectContainer {
 
 	public skill: IManualSkill;
 	public get desc(): string {
-		return this.skill.desc;
+		let caster = this.skill.caster;
+		let casterName = caster ? caster.charName : "无";
+		return `<font color="#EE7942"><b>${this.skill.skillName}</b></font>
+<b>释放单位:</b> ${casterName}
+<b>消耗能量:</b> ${this.skill.fireNeed}
+<b>作用效果:</b> ${this.skill.desc}`;
 	}
 
 	public constructor(skill: IManualSkill) {
@@ -18,7 +23,7 @@ class Card extends egret.DisplayObjectContainer {
 
 	private onLongTouchEnd(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+		LayerManager.Ins.popUpLayer.removeChild(scene.cardInfoPopupUI);
 		// 显示选择圈
 		scene.selfSelectImg.visible = true;
 		scene.enemySlectImg.visible = true;
@@ -39,8 +44,8 @@ class Card extends egret.DisplayObjectContainer {
 	}
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.popUpInfoWin.desc.text = this.desc;
-		LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+		scene.cardInfoPopupUI.setDescFlowText(this.desc);
+		LayerManager.Ins.popUpLayer.addChild(scene.cardInfoPopupUI);
 		// 隐藏选择圈
 		scene.selfSelectImg.visible = false;
 		scene.enemySlectImg.visible = false;

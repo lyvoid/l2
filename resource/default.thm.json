@@ -29,9 +29,10 @@
         "resource/eui_skins/ToggleSwitchSkin.exml",
         "resource/eui_skins/VScrollBarSkin.exml",
         "resource/eui_skins/VSliderSkin.exml",
-        "resource/eui_skins/ui/LongTouchInfo.exml",
-        "resource/eui_skins/ui/UIBattleScene.exml",
-        "resource/eui_skins/ui/BattleEndPopUp.exml"
+        "resource/custom_skin/CardInfoPopupUI.exml",
+        "resource/custom_skin/UIBattleScene.exml",
+        "resource/custom_skin/BattleEndPopUp.exml",
+        "resource/custom_skin/CharacterInfo.exml"
     ],
     "path": "resource/default.thm.json"
 }

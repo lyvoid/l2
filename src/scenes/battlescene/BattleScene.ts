@@ -41,7 +41,9 @@ class BattleScene extends IScene {
 	// UI
 	public battleUI: UIBattleScene;
 	public battleEndPopUp: BattleEndPopUp;
-	public popUpInfoWin: LongTouchInfo;
+	public cardInfoPopupUI: CardInfoPopupUI;
+
+	public charInfoPopupUI: CharacterInfoPopupUI;
 
 	/**
 	 * 可演出内容列表
@@ -69,31 +71,6 @@ class BattleScene extends IScene {
 
 	public initial() {
 		super.initial();
-		
-		// TODO 初始化UI
-		let ui = new UIBattleScene();
-		ui.height = LayerManager.Ins.stageHeight;
-		ui.width = LayerManager.Ins.stageWidth;
-		LayerManager.Ins.uiLayer.addChild(ui);
-		this.battleUI = ui;
-		let battleEndPopUp = new BattleEndPopUp();
-		battleEndPopUp.height = LayerManager.Ins.stageHeight;
-		battleEndPopUp.width = LayerManager.Ins.stageWidth;
-		this.battleEndPopUp = battleEndPopUp;
-
-		this.enemies = [];
-		this.friends = [];
-		this.skillManualPool = [];
-		this.dbManager = new DBManager();
-		this.cardBoard = new CardBoard();
-		this.performQue = new Queue<[{performance: Function}, any]>();
-		this.castQue = new Queue<{cast: Function}>();
-		this.damageFloatManager = new DamageFloatManager();
-
-		let popUpInfo = new LongTouchInfo();
-		popUpInfo.width = LayerManager.Ins.stageWidth;
-		popUpInfo.height = LayerManager.Ins.stageHeight;
-		this.popUpInfoWin = popUpInfo;
 
 		// 实例化GameLayer的层
 		let gameLayer = LayerManager.Ins.gameLayer;
@@ -114,7 +91,6 @@ class BattleScene extends IScene {
 			BattleSLEnum.cardLayer
 		);
 
-
 		this.runScene().catch(e => {
 			console.log(e);
 		}).then(() => {
@@ -131,7 +107,28 @@ class BattleScene extends IScene {
 		await RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingLayer);
 		console.log("战场通用资源载入完成");
 
-		// 选择圈及滤镜
+		// 初始化UI
+		let ui = new UIBattleScene();
+		ui.height = LayerManager.Ins.stageHeight;
+		ui.width = LayerManager.Ins.stageWidth;
+		LayerManager.Ins.uiLayer.addChild(ui);
+		this.battleUI = ui;
+		let battleEndPopUp = new BattleEndPopUp();
+		battleEndPopUp.height = LayerManager.Ins.stageHeight;
+		battleEndPopUp.width = LayerManager.Ins.stageWidth;
+		this.battleEndPopUp = battleEndPopUp;
+		
+		let charInfoPopupUI = new CharacterInfoPopupUI();
+		charInfoPopupUI.width = LayerManager.Ins.stageWidth;
+		charInfoPopupUI.height = LayerManager.Ins.stageHeight;
+		this.charInfoPopupUI = charInfoPopupUI;
+
+		let popUpInfo = new CardInfoPopupUI();
+		popUpInfo.width = LayerManager.Ins.stageWidth;
+		popUpInfo.height = LayerManager.Ins.stageHeight;
+		this.cardInfoPopupUI = popUpInfo;
+
+		// 选择圈及滤镜初始化
 		let selfSelectTex = RES.getRes("selfSelectChar_png");
 		let enemySelectTex = RES.getRes("enemySelectChar_png");
 		let selfSelectImg = new egret.Bitmap(selfSelectTex);
@@ -152,7 +149,7 @@ class BattleScene extends IScene {
 		}
 		console.log("角色龙骨资源载入完成");
 
-		// 载入背景图片资源
+		// 载入game层背景图片资源
 		await RES.getResAsync("bg_json");
 		console.log("战斗背景图片载入完成");
 		let bgTex_1: egret.Texture = RES.getRes("bg_json.-2_png");
@@ -191,18 +188,26 @@ class BattleScene extends IScene {
 			BattleSLEnum.fgLayer
 		).addChild(img4);
 
-		//  能量槽
+		//  初始化能量槽
 		this.playerFireBoard = new FireBoard();
 		LayerManager.getSubLayerAt(
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.cardLayer
 		).addChild(this.playerFireBoard);
-		// 初始2火
 		this.playerFireBoard.addFires(2);
 
+		// 初始化game层的内容
+		this.enemies = [];
+		this.friends = [];
+		this.skillManualPool = [];
+		this.dbManager = new DBManager();
+		this.cardBoard = new CardBoard();
+		this.performQue = new Queue<[{performance: Function}, any]>();
+		this.castQue = new Queue<{cast: Function}>();
+		this.damageFloatManager = new DamageFloatManager();
+		this.phaseUtil = new PhaseUtil();
 
-		// TODO 初始化游戏角色及UI
-
+		// TODO: 初始化游戏角色
 		let chars: Character[] = [];
 		for (let i in [0, 1, 2, 3, 4]) {
 			let char1 = new Character("Dragon");
@@ -278,11 +283,11 @@ class BattleScene extends IScene {
 			);
 			charLayer.addChildAt(char, char.row * 1000);
 			this.friends.push(char);
-
-			// 填充技能池子
+			// TODO: 填充技能池子
 			this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
 		}
 
+		// 发放游戏开始的卡牌
 		LayerManager.getSubLayerAt(
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.CharLayer
@@ -292,8 +297,6 @@ class BattleScene extends IScene {
 		this.cardBoard.distCardNormal();
 		this.cardBoard.distCardNormal();
 
-		this.phaseUtil = new PhaseUtil();
-
 		// 初始化场景中的StatePool
 		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
 		this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
@@ -301,7 +304,6 @@ class BattleScene extends IScene {
 		this.statePool[BattleSSEnum.PlayerRoundEndPhase] = new PlayerRoundEndPhase(this);
 		this.statePool[BattleSSEnum.PlayerRoundStartPhase] = new PlayerRoundStartPhase(this);
 		this.statePool[BattleSSEnum.PlayerUseCardPhase] = new PlayerUseCardPhase(this);
-
 	}
 
 	/**

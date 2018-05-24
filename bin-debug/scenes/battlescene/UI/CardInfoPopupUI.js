@@ -8,13 +8,16 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var LongTouchInfo = (function (_super) {
-    __extends(LongTouchInfo, _super);
-    function LongTouchInfo() {
+var CardInfoPopupUI = (function (_super) {
+    __extends(CardInfoPopupUI, _super);
+    function CardInfoPopupUI() {
         var _this = _super.call(this) || this;
-        _this.skinName = "mySkin.LongTouchInfoSkin";
+        _this.skinName = "mySkin.CardInfoPopupUI";
         return _this;
     }
-    return LongTouchInfo;
+    CardInfoPopupUI.prototype.setDescFlowText = function (content) {
+        this.desc.textFlow = (new egret.HtmlTextParser).parse(content);
+    };
+    return CardInfoPopupUI;
 }(eui.Component));
-__reflect(LongTouchInfo.prototype, "LongTouchInfo");
+__reflect(CardInfoPopupUI.prototype, "CardInfoPopupUI");

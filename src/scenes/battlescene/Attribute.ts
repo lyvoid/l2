@@ -39,12 +39,12 @@ class Attribute {
 
 	public toString(): string {
 		return ''+
-`生命:${this.hp}/${this.maxHp}
-护盾:${this.shield}/${this.maxShield}
-攻击:${this.ap}
-物理护甲:${this.arPys}
-魔法护甲:${this.arMagic}
-穿甲:${this.pierceAr}`;
+`生命:<font color="#7CFC00">${this.hp}</font>/${this.maxHp}
+护盾:<font color="#7CFC00">${this.shield}</font>/${this.maxShield}
+攻击:<font color="#7CFC00">${this.ap}</font>
+物理护甲:<font color="#7CFC00">${this.arPys}</font>
+魔法护甲:<font color="#7CFC00">${this.arMagic}</font>
+穿甲:<font color="#7CFC00">${this.pierceAr}</font>`;
 	}
 
 }

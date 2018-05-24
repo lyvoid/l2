@@ -182,7 +182,7 @@ var IManualSkill = (function () {
                 function () {
                     if (change.aliveNew != change.aliveOld && !change.aliveNew) {
                         target.stopDBAnim();
-                        SceneManager.Ins.curScene.filterManager.addGreyFilter(target);
+                        SceneManager.Ins.curScene.filterManager.addGreyFilter(target.armatureDisplay);
                     }
                     if (change.isInBattleNew == false) {
                         // 如果扣血后移除

@@ -8,6 +8,25 @@ class Character extends egret.DisplayObjectContainer {
 	public armatureDisplay: dragonBones.EgretArmatureDisplay;
 
 	/**
+	 * 角色名
+	 */
+	public charName: string = "还没有名字";
+	/**
+	 * 简介
+	 */
+	public feature: string = "特征是什么呢？";
+
+	/**
+	 * 被动技能（buff）列表
+	 */
+	public passiveSkills: IBuff[];
+
+	/**
+	 * 普通buff列表
+	 */
+	public buffs: IBuff[];
+
+	/**
 	 * 人物血条前景，实际血量标识
 	 */
 	private lifeBarFg: egret.Bitmap;
@@ -20,7 +39,29 @@ class Character extends egret.DisplayObjectContainer {
 	 * 人物当前状态描述，在长按中展示
 	 */
 	public get desc(): string {
-		return this.attr.toString();
+		let color = "#000000";
+		if (this.camp === CharCamp.Enemy){
+			color = "#EE2C2C";
+		} else if (this.camp === CharCamp.Player){
+			color = "#7FFF00";
+		}
+		return  `<b><font color="${color}">${this.charName}</font></b>` + 
+			`\n<font color="#3D3D3D" size="15">${this.feature}</font>\n\n${this.attr.toString()}`;
+	}
+
+	/**
+	 * 人物技能及当前buff描述，长按中展示
+	 */
+	public get skillDesc(): string{
+		let skillsDesc = "";
+		for (let skill of this.manualSkills){
+			skillsDesc = `${skillsDesc}<b>${skill.skillName}:</b>${skill.desc}\n`;
+		}		
+		return `<font color="#EE7942"><b>当前状态</b></font>
+<font color="#7FFF00"><b>激怒(2):</b></font> 该单位增加50%的额外攻击力
+
+<font color="#EE7942"><b>主动技能</b></font>
+${skillsDesc}`;
 	}
 
 
@@ -90,11 +131,6 @@ class Character extends egret.DisplayObjectContainer {
 	public manualSkills: IManualSkill[];
 
 	/**
-	 * 被动技能
-	 */
-	public passiveSkill;
-
-	/**
 	 * 背景层，用来放选中圈，影子等
 	 */
 	public bgLayer: egret.DisplayObjectContainer;
@@ -158,6 +194,10 @@ class Character extends egret.DisplayObjectContainer {
 		this.manualSkills = [];
 		let skill1 = new SkillOneDamageWithOut(this);
 		this.manualSkills.push(skill1);
+
+
+		this.passiveSkills = [];
+		this.buffs = [];
 	}
 
 	/**
@@ -244,13 +284,14 @@ class Character extends egret.DisplayObjectContainer {
 
 	private onLongTouchEnd(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.popUpInfoWin);
+		LayerManager.Ins.popUpLayer.removeChild(scene.charInfoPopupUI);
 	}
 
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.popUpInfoWin.desc.text = this.desc;
-		LayerManager.Ins.popUpLayer.addChild(scene.popUpInfoWin);
+		scene.charInfoPopupUI.setDescFlowText(this.desc);
+		scene.charInfoPopupUI.setSkillDescFlowText(this.skillDesc);
+		LayerManager.Ins.popUpLayer.addChild(scene.charInfoPopupUI);
 	}
 
 	/**

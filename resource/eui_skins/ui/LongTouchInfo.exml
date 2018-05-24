@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<e:Skin class="mySkin.LongTouchInfoSkin" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
-	<w:Config id="1635d45e939" ></w:Config>
-	<e:Image width="400" height="200" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0" verticalCenter="0" source="infobg_png" alpha="0.7"/>
-	<e:Label id="desc" text="Label" horizontalCenter="0" verticalCenter="0" anchorOffsetX="0" width="400" anchorOffsetY="0" height="200" textColor="0x000000"/>
-</e:Skin>

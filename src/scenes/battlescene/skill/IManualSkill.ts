@@ -13,6 +13,10 @@ abstract class IManualSkill {
 	 */
 	public caster: Character;
 	/**
+	 * 技能名
+	 */
+	public skillName: string;
+	/**
 	 * 目标类型
 	 */
 	public targetType: TargetType;
@@ -176,14 +180,15 @@ abstract class IManualSkill {
 		// 没次加入新的表现序列都调用一次应该是没错的
 		scene.performStart();
 
+		// 判断游戏是否结束
+		scene.judge();
+
 
 		// 运行在在SkillToDo中的技能
 		if (scene.castQue.length > 0) {
 			scene.castQue.pop().cast();
 		}
 
-		// 判断游戏是否结束
-		scene.judge();
 	}
 
 	/**

@@ -38,7 +38,7 @@ var Attribute = (function () {
     }
     Attribute.prototype.toString = function () {
         return '' +
-            ("\u751F\u547D:" + this.hp + "/" + this.maxHp + "\n\u62A4\u76FE:" + this.shield + "/" + this.maxShield + "\n\u653B\u51FB:" + this.ap + "\n\u7269\u7406\u62A4\u7532:" + this.arPys + "\n\u9B54\u6CD5\u62A4\u7532:" + this.arMagic + "\n\u7A7F\u7532:" + this.pierceAr);
+            ("\u751F\u547D:<font color=\"#7CFC00\">" + this.hp + "</font>/" + this.maxHp + "\n\u62A4\u76FE:<font color=\"#7CFC00\">" + this.shield + "</font>/" + this.maxShield + "\n\u653B\u51FB:<font color=\"#7CFC00\">" + this.ap + "</font>\n\u7269\u7406\u62A4\u7532:<font color=\"#7CFC00\">" + this.arPys + "</font>\n\u9B54\u6CD5\u62A4\u7532:<font color=\"#7CFC00\">" + this.arMagic + "</font>\n\u7A7F\u7532:<font color=\"#7CFC00\">" + this.pierceAr + "</font>");
     };
     return Attribute;
 }());
