@@ -126,6 +126,11 @@ ${skillsDesc}`;
 	public attr: Attribute;
 
 	/**
+	 * buff条
+	 */
+	public buffLine: egret.DisplayObjectContainer;
+
+	/**
 	 * 主动技能列表
 	 */
 	public manualSkills: IManualSkill[];
@@ -180,6 +185,12 @@ ${skillsDesc}`;
 		this.addChild(lifeBar);
 		this.lifeBar = lifeBar;
 		this.lifeBarFg = lifeBarFg;
+
+		// 加buff条
+		let buffLine = new egret.DisplayObjectContainer();
+		buffLine.y = -12;
+		this.buffLine = buffLine;
+		this.lifeBar.addChild(buffLine)
 
 		// 加护盾条
 		let shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));

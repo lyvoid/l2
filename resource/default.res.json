@@ -9,7 +9,7 @@
 			"name": "assets"
 		},
 		{
-			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg",
+			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg,bufficontest_png",
 			"name": "battlecommon"
 		}
 	],
@@ -207,19 +207,24 @@
 			"name": "lifebarbg_jpg"
 		},
 		{
-			"name": "maskbg_png",
+			"url": "common/maskbg.png",
 			"type": "image",
-			"url": "common/maskbg.png"
+			"name": "maskbg_png"
 		},
 		{
-			"name": "black_png",
+			"url": "common/black.png",
 			"type": "image",
-			"url": "common/black.png"
+			"name": "black_png"
 		},
 		{
-			"name": "loadingbg_png",
+			"url": "common/loadingbg.png",
 			"type": "image",
-			"url": "common/loadingbg.png"
+			"name": "loadingbg_png"
+		},
+		{
+			"url": "battle/common/bufficontest.png",
+			"type": "image",
+			"name": "bufficontest_png"
 		}
 	]
 }
