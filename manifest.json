@@ -34,7 +34,7 @@
 		"bin-debug/scenes/battlescene/DBManager.js",
 		"bin-debug/Main.js",
 		"bin-debug/scenes/battlescene/Hurt.js",
-		"bin-debug/scenes/battlescene/buff/IBuff.js",
+		"bin-debug/scenes/battlescene/buff/Buff.js",
 		"bin-debug/AssetAdapter.js",
 		"bin-debug/scenes/battlescene/skill/RemoveCharFromGameSkill.js",
 		"bin-debug/scenes/battlescene/skill/Skill.js",

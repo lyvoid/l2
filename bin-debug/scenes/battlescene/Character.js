@@ -63,6 +63,11 @@ var Character = (function (_super) {
         _this.addChild(lifeBar);
         _this.lifeBar = lifeBar;
         _this.lifeBarFg = lifeBarFg;
+        // 加buff条
+        var buffLine = new egret.DisplayObjectContainer();
+        buffLine.y = -12;
+        _this.buffLine = buffLine;
+        _this.lifeBar.addChild(buffLine);
         // 加护盾条
         var shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
         shieldBar.height = 8;
@@ -74,6 +79,8 @@ var Character = (function (_super) {
         _this.manualSkills = [];
         var skill1 = new SkillOneDamageWithOut(_this);
         _this.manualSkills.push(skill1);
+        _this.passiveSkills = [];
+        _this.buffs = [];
         return _this;
     }
     Object.defineProperty(Character.prototype, "desc", {
@@ -99,12 +106,14 @@ var Character = (function (_super) {
          * 人物技能及当前buff描述，长按中展示
          */
         get: function () {
+            var passiveSkillsDesc = "";
+            var buffsDesc = "";
             var skillsDesc = "";
             for (var _i = 0, _a = this.manualSkills; _i < _a.length; _i++) {
                 var skill = _a[_i];
                 skillsDesc = skillsDesc + "<b>" + skill.skillName + ":</b>" + skill.desc + "\n";
             }
-            return "<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n<font color=\"#7FFF00\"><b>\u6FC0\u6012(2):</b></font> \u8BE5\u5355\u4F4D\u589E\u52A050%\u7684\u989D\u5916\u653B\u51FB\u529B\n\n<font color=\"#EE7942\"><b>\u4E3B\u52A8\u6280\u80FD</b></font>\n" + skillsDesc;
+            return "<font color=\"#EE7942\"><b>\u88AB\u52A8\u6280\u80FD</b></font>\n<font color=\"#7FFF00\"><b>\u6FC0\u6012(2):</b></font> \u8BE5\u5355\u4F4D\u589E\u52A050%\u7684\u989D\u5916\u653B\u51FB\u529B\n\n<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n<font color=\"#7FFF00\"><b>\u6FC0\u6012(2):</b></font> \u8BE5\u5355\u4F4D\u589E\u52A050%\u7684\u989D\u5916\u653B\u51FB\u529B\n\n<font color=\"#EE7942\"><b>\u4E3B\u52A8\u6280\u80FD</b></font>\n" + skillsDesc;
         },
         enumerable: true,
         configurable: true

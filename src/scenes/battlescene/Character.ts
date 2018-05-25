@@ -19,12 +19,17 @@ class Character extends egret.DisplayObjectContainer {
 	/**
 	 * 被动技能（buff）列表
 	 */
-	public passiveSkills: IBuff[];
+	public passiveSkills: Buff[];
 
 	/**
 	 * 普通buff列表
 	 */
-	public buffs: IBuff[];
+	public buffs: Buff[];
+
+	/**
+	 * 隐藏buff
+	 */
+	public hideBuffs: Buff[];
 
 	/**
 	 * 人物血条前景，实际血量标识
@@ -53,11 +58,16 @@ class Character extends egret.DisplayObjectContainer {
 	 * 人物技能及当前buff描述，长按中展示
 	 */
 	public get skillDesc(): string{
+		let passiveSkillsDesc = "";
+		let buffsDesc = "";
 		let skillsDesc = "";
 		for (let skill of this.manualSkills){
 			skillsDesc = `${skillsDesc}<b>${skill.skillName}:</b>${skill.desc}\n`;
 		}		
-		return `<font color="#EE7942"><b>当前状态</b></font>
+		return `<font color="#EE7942"><b>被动技能</b></font>
+<font color="#7FFF00"><b>激怒(2):</b></font> 该单位增加50%的额外攻击力
+
+<font color="#EE7942"><b>当前状态</b></font>
 <font color="#7FFF00"><b>激怒(2):</b></font> 该单位增加50%的额外攻击力
 
 <font color="#EE7942"><b>主动技能</b></font>

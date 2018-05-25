@@ -1,4 +1,4 @@
-class IBuff {
+class Buff {
 	public constructor() {
 		this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
 		this.buffName = "狂暴";
@@ -87,6 +87,14 @@ class IBuff {
 	public removeFromChar(target: Character){
 
 	}
+
+	// TODO: affect if need
+	public onCharStartPhase(){
+
+	}
+
+	// TODO: round-- and clear buff if needed
+	public onCharEndPhase(){}
 
 	/**
 	 * 根据当前在charbuff列表中所处的位置，调整buffIcon的位置
