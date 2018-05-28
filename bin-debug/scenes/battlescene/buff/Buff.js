@@ -24,7 +24,7 @@ var Buff = (function () {
         this.isAffect = true;
         this.remainAffectTime = 2;
         this.affectPhase = BuffAffectPhase.TargetRoundStart;
-        this.affectHurt = new Hurt(HurtType.Pysic, this.char, 2, true, 10);
+        this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 20);
         this.remainRound = 2;
     }
     Buff.prototype.attachToChar = function (target) {
@@ -101,11 +101,7 @@ var Buff = (function () {
         if (this.remainAffectTime > 0) {
             this.remainAffectTime = this.remainAffectTime - 1;
         }
-        SceneManager.Ins.curScene.performQue.push([{
-                performance: IManualSkill.statePerformance
-            },
-            this.affectHurt.affect(this.char)]);
-        SceneManager.Ins.curScene.performStart();
+        this.affectHurt.affect(this.char);
         // if affect times is 0
         if (this.remainAffectTime == 0) {
             this.removeFromChar();

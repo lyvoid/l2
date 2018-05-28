@@ -163,52 +163,6 @@ var IManualSkill = (function () {
         }
         return false;
     };
-    /**
-     * 状态表现
-     * 对血量护盾复活死亡排除出游戏进行表现
-     */
-    IManualSkill.statePerformance = function (stateChange) {
-        var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
-        var _loop_1 = function (result) {
-            var change = result;
-            var target = change.char;
-            if (change.shieldNew != change.shieldOld) {
-                target.lifeBarShieldAnim(change.shieldNew);
-                damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
-            }
-            if (change.hpOld != change.hpNew) {
-                target.lifeBarAnim(change.hpNew).call(
-                // 血条变化完之后如果此次人物还死亡了的话
-                function () {
-                    if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-                        target.stopDBAnim();
-                        SceneManager.Ins.curScene.filterManager.addGreyFilter(target.armatureDisplay);
-                    }
-                    if (change.isInBattleNew == false) {
-                        // 如果扣血后移除
-                        IManualSkill.removeFromGamePerform(target);
-                    }
-                });
-                // 飘字
-                damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-            }
-            else if (change.isInBattleNew == false) {
-                // 如果直接被排除出游戏
-                IManualSkill.removeFromGamePerform(target);
-            }
-        };
-        for (var _i = 0, stateChange_1 = stateChange; _i < stateChange_1.length; _i++) {
-            var result = stateChange_1[_i];
-            _loop_1(result);
-        }
-    };
-    IManualSkill.removeFromGamePerform = function (target) {
-        egret.Tween.get(target.armatureDisplay).to({
-            alpha: 0
-        }, 1000).call(function () {
-            target.parent.removeChild(target);
-        });
-    };
     IManualSkill.prototype.release = function () {
         this.caster = null;
         this.targets = null;

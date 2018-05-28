@@ -26,26 +26,20 @@ var SkillOneDamageWithOut = (function (_super) {
     SkillOneDamageWithOut.prototype.affect = function () {
         var scene = SceneManager.Ins.curScene;
         var hurt = new Hurt(HurtType.Pysic, this.caster);
+        hurt.isRemoveFromGameWhenDie = true;
         var affectResult = [];
         for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
             var char = _a[_i];
-            var change = hurt.affect(char);
-            if (!char.alive) {
-                char.isInBattle = false;
-                change.isInBattleNew = false;
-            }
-            affectResult.push(change);
+            hurt.affect(char);
         }
-        return affectResult;
     };
-    SkillOneDamageWithOut.prototype.performance = function (affectResult) {
+    SkillOneDamageWithOut.prototype.performance = function () {
         var _this = this;
         var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
         egret.Tween.get(this.caster).to({
             x: this.targets[0].x + 100 * this.targets[0].camp,
             y: this.targets[0].y + 20
         }, 200).call(function () {
-            IManualSkill.statePerformance(affectResult);
             _this.caster.playDBAnim("attack1_+1", 1, "idle");
             _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });

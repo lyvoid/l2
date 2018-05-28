@@ -13,27 +13,21 @@ class SkillOneDamageWithOut extends IManualSkill {
 	protected affect(): any {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let hurt = new Hurt(HurtType.Pysic, this.caster);
+		hurt.isRemoveFromGameWhenDie = true;
 		let affectResult: any[] = [];
 		for (let char of this.targets) {
-			let change = hurt.affect(char);
-			if (!char.alive){
-				char.isInBattle = false;
-				change.isInBattleNew = false;
-			}
-			affectResult.push(change);
+			hurt.affect(char);
 		}
-		return affectResult;
 	}
 
 
-	public performance(affectResult: any): void {
+	public performance(): void {
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).damageFloatManager;
 		egret.Tween.get(this.caster).to({
 			x: this.targets[0].x + 100 * this.targets[0].camp,
 			y: this.targets[0].y + 20
 		}, 200).call(
 			() => {
-				IManualSkill.statePerformance(affectResult);
 				this.caster.playDBAnim("attack1_+1", 1, "idle");
 				this.caster.armatureDisplay.addEventListener(
 					dragonBones.EventObject.COMPLETE,

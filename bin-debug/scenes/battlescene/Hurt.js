@@ -22,10 +22,24 @@ var Hurt = (function () {
         this.isDoubleShield = isDoubleShield;
         this.isResurgence = isResurgence;
     }
+    Hurt.prototype.affect = function (target) {
+        var aliveBefore = target.alive;
+        var change = this.affectWithoutPerm(target);
+        ;
+        if (!change.aliveNew && this.isRemoveFromGameWhenDie) {
+            target.isInBattle = false;
+            change.isInBattleNew = false;
+        }
+        if (this.isRemoveFromGame) {
+            target.isInBattle = false;
+            change.isInBattleNew = false;
+        }
+        Hurt.statePerformance(change);
+    };
     /**
      * 施加伤害，返回收到影响的属性列表
      */
-    Hurt.prototype.affect = function (target) {
+    Hurt.prototype.affectWithoutPerm = function (target) {
         var mm = MessageManager.Ins;
         var targetAttr = target.attr;
         var harm = 0;
@@ -141,6 +155,45 @@ var Hurt = (function () {
         attrChange.aliveNew = char.alive;
         attrChange.shieldNew = newAttr.shield;
         return attrChange;
+    };
+    /**
+     * 状态表现
+     * 对血量护盾复活死亡排除出游戏进行表现
+     */
+    Hurt.statePerformance = function (change) {
+        var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
+        var target = change.char;
+        if (change.shieldNew != change.shieldOld) {
+            target.lifeBarShieldAnim(change.shieldNew);
+            damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
+        }
+        if (change.hpOld != change.hpNew) {
+            target.lifeBarAnim(change.hpNew).call(
+            // 血条变化完之后如果此次人物还死亡了的话
+            function () {
+                if (change.aliveNew != change.aliveOld && !change.aliveNew) {
+                    target.stopDBAnim();
+                    SceneManager.Ins.curScene.filterManager.addGreyFilter(target.armatureDisplay);
+                }
+                if (change.isInBattleNew == false) {
+                    // 如果扣血后移除
+                    Hurt.removeFromGamePerform(target);
+                }
+            });
+            // 飘字
+            damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
+        }
+        else if (change.isInBattleNew == false) {
+            // 如果直接被排除出游戏
+            Hurt.removeFromGamePerform(target);
+        }
+    };
+    Hurt.removeFromGamePerform = function (target) {
+        egret.Tween.get(target.armatureDisplay).to({
+            alpha: 0
+        }, 1000).call(function () {
+            target.parent.removeChild(target);
+        });
     };
     return Hurt;
 }());

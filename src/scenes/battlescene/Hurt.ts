@@ -10,6 +10,8 @@ class Hurt {
 	private isPericeShield: boolean;// 是否穿透护盾（无视护盾，直接伤血）  治疗效果时无效
 	private isDoubleShield: boolean;// 是否破盾（对有护盾的单位造成双倍伤害） 治疗效果时无效
 	private isResurgence: boolean;// 是否复活 （仅治愈生命类型有效）
+	public isRemoveFromGameWhenDie: boolean;// 是否死亡移除游戏
+	public isRemoveFromGame: boolean; //是否直接移除游戏
 
 	public constructor(
 		hurtType: HurtType,
@@ -31,10 +33,24 @@ class Hurt {
 		this.isResurgence = isResurgence;
 	}
 
+	public affect(target: Character) {
+		let aliveBefore = target.alive;
+		let change = this.affectWithoutPerm(target);;
+		if (!change.aliveNew && this.isRemoveFromGameWhenDie){
+			target.isInBattle = false;
+			change.isInBattleNew = false;
+		}
+		if (this.isRemoveFromGame){
+			target.isInBattle = false;
+			change.isInBattleNew = false;
+		}
+		Hurt.statePerformance(change);
+	}
+
 	/**
 	 * 施加伤害，返回收到影响的属性列表
 	 */
-	public affect(target: Character): IAttrChange {
+	public affectWithoutPerm(target: Character): IAttrChange {
 
 		let mm = MessageManager.Ins;
 
@@ -122,7 +138,7 @@ class Hurt {
 		}
 
 		// 处理最终增伤
-		if (this.hurtType == HurtType.Magic){
+		if (this.hurtType == HurtType.Magic) {
 			harm = harm - targetAttr.magicDamageReduceAbs;
 			harm = harm > 0 ? harm : 0;
 			harm = harm * (1 - targetAttr.magicDamageReducePerc)
@@ -189,6 +205,50 @@ class Hurt {
 		attrChange.aliveNew = char.alive;
 		attrChange.shieldNew = newAttr.shield;
 		return attrChange;
+	}
+
+	/**
+	 * 状态表现
+	 * 对血量护盾复活死亡排除出游戏进行表现
+	 */
+	public static statePerformance(change: IAttrChange) {
+		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).damageFloatManager;
+		let target = change.char;
+		if (change.shieldNew != change.shieldOld) {
+			target.lifeBarShieldAnim(change.shieldNew);
+			damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
+		}
+
+		if (change.hpOld != change.hpNew) {
+			target.lifeBarAnim(change.hpNew).call(
+				// 血条变化完之后如果此次人物还死亡了的话
+				() => {
+					if (change.aliveNew != change.aliveOld && !change.aliveNew) {
+						target.stopDBAnim();
+						(SceneManager.Ins.curScene as BattleScene).filterManager.addGreyFilter(target.armatureDisplay);
+					}
+					if (change.isInBattleNew == false) {
+						// 如果扣血后移除
+						Hurt.removeFromGamePerform(target);
+					}
+				}
+			);
+			// 飘字
+			damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
+		} else if (change.isInBattleNew == false) {
+			// 如果直接被排除出游戏
+			Hurt.removeFromGamePerform(target);
+		}
+	}
+
+	private static removeFromGamePerform(target: Character) {
+		egret.Tween.get(target.armatureDisplay).to({
+			alpha: 0
+		}, 1000).call(
+			() => {
+				target.parent.removeChild(target);
+			}
+			);
 	}
 }
 

@@ -219,53 +219,6 @@ abstract class IManualSkill {
 		return false;
 	}
 
-	/**
-	 * 状态表现
-	 * 对血量护盾复活死亡排除出游戏进行表现
-	 */
-	public static statePerformance(stateChange: IAttrChange[]) {
-		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).damageFloatManager;
-		for (let result of stateChange) {
-			let change: IAttrChange = result;
-			let target = change.char;
-			if (change.shieldNew != change.shieldOld) {
-				target.lifeBarShieldAnim(change.shieldNew);
-				damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
-			}
-
-			if (change.hpOld != change.hpNew) {
-				target.lifeBarAnim(change.hpNew).call(
-					// 血条变化完之后如果此次人物还死亡了的话
-					() => {
-						if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-							target.stopDBAnim();
-							(SceneManager.Ins.curScene as BattleScene).filterManager.addGreyFilter(target.armatureDisplay);
-						}
-						if (change.isInBattleNew == false) {
-							// 如果扣血后移除
-							IManualSkill.removeFromGamePerform(target);
-						}
-					}
-				);
-				// 飘字
-				damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-			} else if (change.isInBattleNew == false) {
-				// 如果直接被排除出游戏
-				IManualSkill.removeFromGamePerform(target);
-			}
-		}
-	}
-
-	private static removeFromGamePerform(target: Character) {
-		egret.Tween.get(target.armatureDisplay).to({
-			alpha: 0
-		}, 1000).call(
-			() => {
-				target.parent.removeChild(target);
-			}
-		);
-	}
-
 	public release(): void {
 		this.caster = null;
 		this.targets = null;
