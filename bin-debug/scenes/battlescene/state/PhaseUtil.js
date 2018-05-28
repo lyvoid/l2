@@ -6,7 +6,9 @@ var PhaseUtil = (function () {
     }
     PhaseUtil.prototype.changePhaseWithDelay = function (phase, delay) {
         if (delay === void 0) { delay = 1000; }
-        egret.setTimeout(this.changePhase, this, delay, phase);
+        if (SceneManager.Ins.curScene.winnerCamp == null) {
+            egret.setTimeout(this.changePhase, this, delay, phase);
+        }
     };
     PhaseUtil.prototype.changePhase = function (phase) {
         this.nextPhase = phase;

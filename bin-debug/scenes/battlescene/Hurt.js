@@ -34,8 +34,28 @@ var Hurt = (function () {
             target.isInBattle = false;
             change.isInBattleNew = false;
         }
-        Hurt.statePerformance(change);
-        SceneManager.Ins.curScene.judge();
+        var scene = SceneManager.Ins.curScene;
+        scene.performQue.push([
+            { performance: Hurt.statePerformance },
+            change
+        ]);
+        // 移除buff
+        if (!target.alive) {
+            for (var _i = 0, _a = target.buffs.concat(target.hideBuffs).concat(target.passiveSkills); _i < _a.length; _i++) {
+                var buff = _a[_i];
+                if (buff.isDeadRemove) {
+                    buff.removeFromChar();
+                }
+            }
+        }
+        if (!target.isInBattle) {
+            for (var _b = 0, _c = target.buffs.concat(target.hideBuffs).concat(target.passiveSkills); _b < _c.length; _b++) {
+                var buff = _c[_b];
+                buff.removeFromChar();
+            }
+        }
+        scene.judge();
+        scene.performStart();
     };
     /**
      * 施加伤害，返回收到影响的属性列表
@@ -162,6 +182,7 @@ var Hurt = (function () {
      * 对血量护盾复活死亡排除出游戏进行表现
      */
     Hurt.statePerformance = function (change) {
+        SceneManager.Ins.curScene.onePerformEnd();
         var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
         var target = change.char;
         if (change.shieldNew != change.shieldOld) {

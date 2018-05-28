@@ -4,12 +4,12 @@ class Buff {
 		this.attrsMul = Object.create(Attribute.AttrsTemplate);
 		// TODO: 待删除的测试数据
 		this.buffName = "狂暴";
-		this.desc = "增加10点ap，每回合对自己造成10点伤害"
+		this.desc = "增加10点ap，每回合对自己造成5点伤害"
 		this.attrsAdd[AttrName.Ap] = 10;
 		this.isAffect = true;
 		this.remainAffectTime = 2;
 		this.affectPhase = BuffAffectPhase.TargetRoundStart;
-		this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 10);
+		this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 2);
 		this.remainRound = -1;
 	}
 
@@ -27,6 +27,7 @@ class Buff {
 	public isNormal: boolean = true; // 是否是普通buff
 	public isNegtive: boolean = false; // 是否是负面效果
 	public maxLayer: number = 1;  // 最大得加层数
+	public isDeadRemove: boolean = true; // 是否对象死亡时移除
 	public layId: number = 0;// 叠加id，相同的叠加id在一起计算maxLayer
 	public remainRound: number = -1; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
 	// 属性加成
@@ -64,6 +65,7 @@ class Buff {
 				sameBuff = buff;
 			}
 		}
+		// 如果到了上限
 		if (buffLayNum >= this.maxLayer) {
 			if (sameBuff) {
 				sameBuff.remainRound = this.remainRound;
@@ -76,7 +78,7 @@ class Buff {
 		if (sameBuff) {
 			sameBuff.layer += 1;
 		} else {
-			// 给target上buff
+			// 如果没有相同buff, 给target上buff
 			this.char = target;
 			if (this.isHide) {
 				target.hideBuffs.push(this);

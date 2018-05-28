@@ -9,6 +9,7 @@ var Buff = (function () {
         this.isNormal = true; // 是否是普通buff
         this.isNegtive = false; // 是否是负面效果
         this.maxLayer = 1; // 最大得加层数
+        this.isDeadRemove = true; // 是否对象死亡时移除
         this.layId = 0; // 叠加id，相同的叠加id在一起计算maxLayer
         this.remainRound = -1; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
         // 状态
@@ -20,12 +21,12 @@ var Buff = (function () {
         this.attrsMul = Object.create(Attribute.AttrsTemplate);
         // TODO: 待删除的测试数据
         this.buffName = "狂暴";
-        this.desc = "增加10点ap，每回合对自己造成10点伤害";
+        this.desc = "增加10点ap，每回合对自己造成5点伤害";
         this.attrsAdd[AttrName.Ap] = 10;
         this.isAffect = true;
         this.remainAffectTime = 2;
         this.affectPhase = BuffAffectPhase.TargetRoundStart;
-        this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 10);
+        this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 2);
         this.remainRound = -1;
     }
     Buff.prototype.attachToChar = function (target) {

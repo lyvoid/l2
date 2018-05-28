@@ -36,16 +36,38 @@ class Hurt {
 	public affect(target: Character) {
 		let aliveBefore = target.alive;
 		let change = this.affectWithoutPerm(target);;
-		if (!change.aliveNew && this.isRemoveFromGameWhenDie){
+		if (!change.aliveNew && this.isRemoveFromGameWhenDie) {
 			target.isInBattle = false;
 			change.isInBattleNew = false;
 		}
-		if (this.isRemoveFromGame){
+		if (this.isRemoveFromGame) {
 			target.isInBattle = false;
 			change.isInBattleNew = false;
 		}
-		Hurt.statePerformance(change);
-		(SceneManager.Ins.curScene as BattleScene).judge();
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.performQue.push([
+			{ performance: Hurt.statePerformance },
+			change
+		]);
+		// 移除buff
+		if (!target.alive) {
+			for (let buff of target.buffs.concat(target.hideBuffs
+			).concat(target.passiveSkills)) {
+				if (buff.isDeadRemove) {
+					buff.removeFromChar();
+				}
+			}
+		}
+
+		if (!target.isInBattle) {
+			for (let buff of target.buffs.concat(target.hideBuffs
+			).concat(target.passiveSkills)) {
+				buff.removeFromChar();
+			}
+		}
+
+		scene.judge();
+		scene.performStart();
 	}
 
 	/**
@@ -213,6 +235,7 @@ class Hurt {
 	 * 对血量护盾复活死亡排除出游戏进行表现
 	 */
 	public static statePerformance(change: IAttrChange) {
+		(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).damageFloatManager;
 		let target = change.char;
 		if (change.shieldNew != change.shieldOld) {
