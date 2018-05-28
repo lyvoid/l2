@@ -234,6 +234,8 @@ var BattleScene = (function (_super) {
                             buff = new Buff();
                             buff.id = 12344;
                             buff.layId = 12344;
+                            buff.remainAffectTime = 5;
+                            buff.remainRound = 4;
                             buff.attachToChar(char);
                             charLayer.addChildAt(char, char.row * 1000);
                             this.friends.push(char);

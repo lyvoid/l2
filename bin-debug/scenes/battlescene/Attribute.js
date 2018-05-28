@@ -14,14 +14,14 @@ var Attribute = (function () {
         for (var _i = 0, _a = [AttrName.MagicDamageReduceAbs,
             AttrName.PysDamageReduceAbs]; _i < _a.length; _i++) {
             var i = _a[_i];
-            this.attrs[i] = 5;
-            this.attrsRaw[i] = 5;
+            this.attrs[i] = 0;
+            this.attrsRaw[i] = 0;
         }
         for (var _b = 0, _c = [AttrName.MagicDamageReducePerc,
             AttrName.PysDamageReducePerc]; _b < _c.length; _b++) {
             var i = _c[_b];
-            this.attrs[i] = 0.9;
-            this.attrsRaw[i] = 0.9;
+            this.attrs[i] = 0;
+            this.attrsRaw[i] = 0;
         }
     }
     Object.defineProperty(Attribute.prototype, "ap", {

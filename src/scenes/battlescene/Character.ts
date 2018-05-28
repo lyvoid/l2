@@ -61,14 +61,24 @@ class Character extends egret.DisplayObjectContainer {
 		let passiveSkillsDesc = "";
 		let buffsDesc = "";
 		let skillsDesc = "";
+		for (let buff of this.passiveSkills){
+			passiveSkillsDesc = `${passiveSkillsDesc}<font color="#7FFF00"><b>` + 
+				`${buff.buffName}:</b></font>${buff.desc}\n`
+		}
+		for (let buff of this.buffs){
+			let remainRound:string = buff.remainRound + "";
+			remainRound = remainRound == "-1" ? "" : `(${remainRound})`;
+			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` + 
+				`${buff.buffName}${remainRound}(*${buff.layer}):</b></font>${buff.desc}\n`
+		}
 		for (let skill of this.manualSkills){
 			skillsDesc = `${skillsDesc}<b>${skill.skillName}:</b>${skill.desc}\n`;
-		}		
+		}
 		return `<font color="#EE7942"><b>被动技能</b></font>
-<font color="#7FFF00"><b>激怒(2):</b></font> 该单位增加50%的额外攻击力
+${passiveSkillsDesc}
 
 <font color="#EE7942"><b>当前状态</b></font>
-<font color="#7FFF00"><b>激怒(2):</b></font> 该单位增加50%的额外攻击力
+${buffsDesc}
 
 <font color="#EE7942"><b>主动技能</b></font>
 ${skillsDesc}`;

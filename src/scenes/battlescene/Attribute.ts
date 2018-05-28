@@ -117,14 +117,14 @@ class Attribute {
 		}
 		for (let i of [AttrName.MagicDamageReduceAbs,
 			AttrName.PysDamageReduceAbs]){
-			this.attrs[i] = 5;
-			this.attrsRaw[i] = 5;
+			this.attrs[i] = 0;
+			this.attrsRaw[i] = 0;
 		}
 
 		for (let i of [AttrName.MagicDamageReducePerc,
 			AttrName.PysDamageReducePerc]){
-			this.attrs[i] = 0.9;
-			this.attrsRaw[i] = 0.9;
+			this.attrs[i] = 0;
+			this.attrsRaw[i] = 0;
 		}
 	}
 

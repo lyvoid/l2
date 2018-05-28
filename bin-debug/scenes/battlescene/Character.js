@@ -110,11 +110,23 @@ var Character = (function (_super) {
             var passiveSkillsDesc = "";
             var buffsDesc = "";
             var skillsDesc = "";
-            for (var _i = 0, _a = this.manualSkills; _i < _a.length; _i++) {
-                var skill = _a[_i];
+            for (var _i = 0, _a = this.passiveSkills; _i < _a.length; _i++) {
+                var buff = _a[_i];
+                passiveSkillsDesc = passiveSkillsDesc + "<font color=\"#7FFF00\"><b>" +
+                    (buff.buffName + ":</b></font>" + buff.desc + "\n");
+            }
+            for (var _b = 0, _c = this.buffs; _b < _c.length; _b++) {
+                var buff = _c[_b];
+                var remainRound = buff.remainRound + "";
+                remainRound = remainRound == "-1" ? "" : "(" + remainRound + ")";
+                buffsDesc = buffsDesc + "<font color=\"#7FFF00\"><b>" +
+                    ("" + buff.buffName + remainRound + "(*" + buff.layer + "):</b></font>" + buff.desc + "\n");
+            }
+            for (var _d = 0, _e = this.manualSkills; _d < _e.length; _d++) {
+                var skill = _e[_d];
                 skillsDesc = skillsDesc + "<b>" + skill.skillName + ":</b>" + skill.desc + "\n";
             }
-            return "<font color=\"#EE7942\"><b>\u88AB\u52A8\u6280\u80FD</b></font>\n<font color=\"#7FFF00\"><b>\u6FC0\u6012(2):</b></font> \u8BE5\u5355\u4F4D\u589E\u52A050%\u7684\u989D\u5916\u653B\u51FB\u529B\n\n<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n<font color=\"#7FFF00\"><b>\u6FC0\u6012(2):</b></font> \u8BE5\u5355\u4F4D\u589E\u52A050%\u7684\u989D\u5916\u653B\u51FB\u529B\n\n<font color=\"#EE7942\"><b>\u4E3B\u52A8\u6280\u80FD</b></font>\n" + skillsDesc;
+            return "<font color=\"#EE7942\"><b>\u88AB\u52A8\u6280\u80FD</b></font>\n" + passiveSkillsDesc + "\n\n<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n" + buffsDesc + "\n\n<font color=\"#EE7942\"><b>\u4E3B\u52A8\u6280\u80FD</b></font>\n" + skillsDesc;
         },
         enumerable: true,
         configurable: true

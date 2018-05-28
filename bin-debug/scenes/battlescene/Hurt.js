@@ -35,6 +35,7 @@ var Hurt = (function () {
             change.isInBattleNew = false;
         }
         Hurt.statePerformance(change);
+        SceneManager.Ins.curScene.judge();
     };
     /**
      * 施加伤害，返回收到影响的属性列表

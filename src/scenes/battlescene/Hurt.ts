@@ -45,6 +45,7 @@ class Hurt {
 			change.isInBattleNew = false;
 		}
 		Hurt.statePerformance(change);
+		(SceneManager.Ins.curScene as BattleScene).judge();
 	}
 
 	/**

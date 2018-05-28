@@ -5,11 +5,12 @@ class Buff {
 		// TODO: 待删除的测试数据
 		this.buffName = "狂暴";
 		this.desc = "增加10点ap，每回合对自己造成10点伤害"
+		this.attrsAdd[AttrName.Ap] = 10;
 		this.isAffect = true;
 		this.remainAffectTime = 2;
 		this.affectPhase = BuffAffectPhase.TargetRoundStart;
-		this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 20);
-		this.remainRound = 2;
+		this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 10);
+		this.remainRound = -1;
 	}
 
 	// buff归属
