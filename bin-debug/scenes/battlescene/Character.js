@@ -81,6 +81,7 @@ var Character = (function (_super) {
         _this.manualSkills.push(skill1);
         _this.passiveSkills = [];
         _this.buffs = [];
+        _this.hideBuffs = [];
         return _this;
     }
     Object.defineProperty(Character.prototype, "desc", {

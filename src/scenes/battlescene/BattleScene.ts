@@ -281,11 +281,24 @@ class BattleScene extends IScene {
 				LayerManager.Ins.gameLayer,
 				BattleSLEnum.CharLayer
 			);
+			// TODO: 测试 加buff
+			let buff = new Buff();
+			buff.id = 12345;
+			buff.layId = 12345;
+			buff.maxLayer = 2;
+			buff.attachToChar(char);
+			buff.attachToChar(char);			
+			buff = new Buff();
+			buff.id = 12344;
+			buff.layId = 12344;
+			buff.attachToChar(char);
+
 			charLayer.addChildAt(char, char.row * 1000);
 			this.friends.push(char);
 			// TODO: 填充技能池子
 			this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
 		}
+
 
 		// 发放游戏开始的卡牌
 		LayerManager.getSubLayerAt(

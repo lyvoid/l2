@@ -13,7 +13,7 @@ class Hurt {
 
 	public constructor(
 		hurtType: HurtType,
-		fromChar: Character=null,
+		fromChar: Character = null,
 		rate: number = 1,
 		isAbs: boolean = false,
 		absValue: number = 10,
@@ -58,11 +58,16 @@ class Hurt {
 			harm = this.absValue;
 		} else {
 			let fromAttr = this.fromChar.attr;
-			let ar = this.hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
-			ar -= fromAttr.pierceAr;
-			ar = ar > 0 ? ar : 0;
-			harm = fromAttr.ap - ar;
-			harm = harm > 0 ? harm : (fromAttr.ap / 10);
+			if (this.hurtType == HurtType.Pysic || this.hurtType == HurtType.Magic) {
+				let ar = this.hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
+				ar -= fromAttr.pierceAr;
+				ar = ar > 0 ? ar : 0;
+				harm = fromAttr.ap - ar;
+				harm = harm > 0 ? harm : (fromAttr.ap / 10);
+			}
+			else if (this.hurtType == HurtType.HealHp || this.hurtType == HurtType.HealShield) {
+				harm = fromAttr.ap;
+			}
 		}
 
 		// 处理倍率
@@ -94,7 +99,7 @@ class Hurt {
 		}
 
 		// 非治疗状态下，对已死亡单位无效
-		if (!target.alive){
+		if (!target.alive) {
 			return Hurt.fullNewAttrToChange(changeInfo, target);
 		}
 
@@ -114,6 +119,19 @@ class Hurt {
 		// 处理破盾
 		if (targetAttr.shield > 0 && this.isDoubleShield) {
 			harm *= 2;
+		}
+
+		// 处理最终增伤
+		if (this.hurtType == HurtType.Magic){
+			harm = harm - targetAttr.magicDamageReduceAbs;
+			harm = harm > 0 ? harm : 0;
+			harm = harm * (1 - targetAttr.magicDamageReducePerc)
+			harm = harm > 0 ? Math.ceil(harm) : 0;
+		} else if (this.hurtType == HurtType.Pysic) {
+			harm = harm - targetAttr.pysDamageReduceAbs;
+			harm = harm > 0 ? harm : 0;
+			harm = harm * (1 - targetAttr.pysDamageReducePerc)
+			harm = harm > 0 ? Math.ceil(harm) : 0;
 		}
 
 		// 处理非穿盾
@@ -163,9 +181,9 @@ class Hurt {
 	 * 辅助函数，把char中的属性填充到attrChange中
 	 */
 	private static fullNewAttrToChange(
-		attrChange:IAttrChange, 
+		attrChange: IAttrChange,
 		char: Character
-	): IAttrChange{
+	): IAttrChange {
 		let newAttr = char.attr;
 		attrChange.hpNew = newAttr.hp;
 		attrChange.aliveNew = char.alive;

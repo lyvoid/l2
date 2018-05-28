@@ -18,6 +18,13 @@ var EnemyRoundEndPhase = (function (_super) {
         // TODO 删除模拟延迟
         ToastInfoManager.Ins.newToast("敌方回合结束阶段");
         // TODO 回合结束阶段buff结算
+        for (var _i = 0, _a = this.scene.enemies; _i < _a.length; _i++) {
+            var char = _a[_i];
+            for (var _b = 0, _c = char.buffs.concat(char.hideBuffs).concat(char.passiveSkills); _b < _c.length; _b++) {
+                var buff = _c[_b];
+                buff.onCharEndPhase();
+            }
+        }
         // 回合结束阶段技能效果
         this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);
     };

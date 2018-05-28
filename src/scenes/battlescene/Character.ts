@@ -219,6 +219,7 @@ ${skillsDesc}`;
 
 		this.passiveSkills = [];
 		this.buffs = [];
+		this.hideBuffs = [];
 	}
 
 	/**

@@ -12,7 +12,7 @@ var BattleEndPopUp = (function (_super) {
     __extends(BattleEndPopUp, _super);
     function BattleEndPopUp() {
         var _this = _super.call(this) || this;
-        _this.skinName = "mySkin.BattleEndPopUpSkin";
+        _this.skinName = "mySkin.BattleEndPopUp";
         _this.nextButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
             SceneManager.Ins.setScene(new BattleScene(SceneManager.Ins));
         }, _this);

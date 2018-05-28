@@ -8,7 +8,7 @@ class BattleEndPopUp extends eui.Component {
 
 	public constructor() {
 		super();
-		this.skinName = "mySkin.BattleEndPopUpSkin";
+		this.skinName = "mySkin.BattleEndPopUp";
 		this.nextButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			()=>{

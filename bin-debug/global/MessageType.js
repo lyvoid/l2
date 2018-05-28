@@ -14,6 +14,9 @@ var MessageType = (function () {
     MessageType.HarmShield = "HarmShield";
     MessageType.CharDie = "CharDie";
     MessageType.Resurgence = "Resurgence";
+    // 开始回合
+    MessageType.EnemyRoundStart = "EnemyRoundStart";
+    MessageType.PlayerRoundStart = "PlayerRoundStart";
     // 演出全部结束
     MessageType.PerformAllEnd = "PerformAllEnd";
     // 卡牌被点击事件

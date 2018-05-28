@@ -13,6 +13,8 @@ class PlayerRoundStartPhase extends ISceneState {
 		// 3.回合开始的技能及效果
 		ToastInfoManager.Ins.newToast("我方回合开始阶段");
 
+		MessageManager.Ins.sendMessage(MessageType.PlayerRoundStart);
+
 		// 发牌
 		let scene = this.scene;
 		scene.cardBoard.distCardNormal();

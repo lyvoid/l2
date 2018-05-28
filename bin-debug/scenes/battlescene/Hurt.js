@@ -46,11 +46,16 @@ var Hurt = (function () {
         }
         else {
             var fromAttr = this.fromChar.attr;
-            var ar = this.hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
-            ar -= fromAttr.pierceAr;
-            ar = ar > 0 ? ar : 0;
-            harm = fromAttr.ap - ar;
-            harm = harm > 0 ? harm : (fromAttr.ap / 10);
+            if (this.hurtType == HurtType.Pysic || this.hurtType == HurtType.Magic) {
+                var ar = this.hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
+                ar -= fromAttr.pierceAr;
+                ar = ar > 0 ? ar : 0;
+                harm = fromAttr.ap - ar;
+                harm = harm > 0 ? harm : (fromAttr.ap / 10);
+            }
+            else if (this.hurtType == HurtType.HealHp || this.hurtType == HurtType.HealShield) {
+                harm = fromAttr.ap;
+            }
         }
         // 处理倍率
         harm *= this.rate;
@@ -86,6 +91,19 @@ var Hurt = (function () {
         // 处理破盾
         if (targetAttr.shield > 0 && this.isDoubleShield) {
             harm *= 2;
+        }
+        // 处理最终增伤
+        if (this.hurtType == HurtType.Magic) {
+            harm = harm - targetAttr.magicDamageReduceAbs;
+            harm = harm > 0 ? harm : 0;
+            harm = harm * (1 - targetAttr.magicDamageReducePerc);
+            harm = harm > 0 ? Math.ceil(harm) : 0;
+        }
+        else if (this.hurtType == HurtType.Pysic) {
+            harm = harm - targetAttr.pysDamageReduceAbs;
+            harm = harm > 0 ? harm : 0;
+            harm = harm * (1 - targetAttr.pysDamageReducePerc);
+            harm = harm > 0 ? Math.ceil(harm) : 0;
         }
         // 处理非穿盾
         var harmRemain = harm;

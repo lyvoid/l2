@@ -6,7 +6,14 @@ class EnemyRoundEndPhase extends ISceneState{
 		// TODO 删除模拟延迟
 
 		ToastInfoManager.Ins.newToast("敌方回合结束阶段");
+
 		// TODO 回合结束阶段buff结算
+		for (let char of this.scene.enemies){
+			for (let buff of char.buffs.concat(char.hideBuffs).concat(char.passiveSkills)){
+				buff.onCharEndPhase();
+			}
+		}
+
 		// 回合结束阶段技能效果
 
 		this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);

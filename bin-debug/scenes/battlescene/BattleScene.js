@@ -72,7 +72,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var ui, battleEndPopUp, charInfoPopupUI, popUpInfo, selfSelectTex, enemySelectTex, selfSelectImg, enemySlectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer;
+            var ui, battleEndPopUp, charInfoPopupUI, popUpInfo, selfSelectTex, enemySelectTex, selfSelectImg, enemySlectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, buff;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -225,6 +225,16 @@ var BattleScene = (function (_super) {
                         for (_c = 0, chars_2 = chars; _c < chars_2.length; _c++) {
                             char = chars_2[_c];
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
+                            buff = new Buff();
+                            buff.id = 12345;
+                            buff.layId = 12345;
+                            buff.maxLayer = 2;
+                            buff.attachToChar(char);
+                            buff.attachToChar(char);
+                            buff = new Buff();
+                            buff.id = 12344;
+                            buff.layId = 12344;
+                            buff.attachToChar(char);
                             charLayer.addChildAt(char, char.row * 1000);
                             this.friends.push(char);
                             // TODO: 填充技能池子

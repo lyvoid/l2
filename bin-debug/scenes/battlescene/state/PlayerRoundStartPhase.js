@@ -23,6 +23,7 @@ var PlayerRoundStartPhase = (function (_super) {
         // 2.buff结算
         // 3.回合开始的技能及效果
         ToastInfoManager.Ins.newToast("我方回合开始阶段");
+        MessageManager.Ins.sendMessage(MessageType.PlayerRoundStart);
         // 发牌
         var scene = this.scene;
         scene.cardBoard.distCardNormal();

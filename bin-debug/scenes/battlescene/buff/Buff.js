@@ -3,57 +3,197 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 };
 var Buff = (function () {
     function Buff() {
-        /// 属性加成内容
-        // 属性加成 - ap arPys arMagic hp pierceAr shield
-        // 减免物理伤害 10 10% 
-        // 减免魔法伤害 10 10%
-        // 受到物理伤害加重
-        // 受到魔法伤害加重
-        // 眩晕
-        // 结算条件
-        // 无条件
-        // 某个buff达多少层
-        // 死亡时
-        /// 结算内容
-        // 回血
-        // 扣血
-        // 复活
-        // 死亡
-        // 从游戏中排除
-        // 剩余回合类型 按照结算次数  按照回合次数 同时
-        /**
-         * 剩余计数器，-1为永久
-         * 在char所在的一方的回合开始阶段结算效果并-1 (结算时间点也可能放在其他地方)
-         * 在char所在一方的回合结束阶段如果buff的持续时间为0则驱散
-         */
-        this.remainRound = -1;
-        // 剩余效果次数
-        this.remainAffect = -1;
-        this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
+        this.layer = 1; //层数
+        this.isHide = false; // 是否是隐藏buff
+        this.isPassive = false; // 是否是被动
+        this.isNormal = true; // 是否是普通buff
+        this.isNegtive = false; // 是否是负面效果
+        this.maxLayer = 1; // 最大得加层数
+        this.layId = 0; // 叠加id，相同的叠加id在一起计算maxLayer
+        this.remainRound = -1; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
+        // 状态
+        this.isDiz = false; // 是否眩晕
+        // 结算时机
+        this.isAffect = false; // 是否具有结算效果
+        this.remainAffectTime = -1; // 剩余结算次数，-1为无限
+        this.attrsAdd = Object.create(Attribute.AttrsTemplate);
+        this.attrsMul = Object.create(Attribute.AttrsTemplate);
+        // TODO: 待删除的测试数据
         this.buffName = "狂暴";
+        this.desc = "增加10点ap，每回合对自己造成10点伤害";
+        this.isAffect = true;
+        this.remainAffectTime = 2;
+        this.affectPhase = BuffAffectPhase.TargetRoundStart;
+        this.affectHurt = new Hurt(HurtType.Pysic, this.char, 2, true, 10);
+        this.remainRound = 2;
     }
     Buff.prototype.attachToChar = function (target) {
+        // 如果叠加层数到上限，且没有相同id的buff就return
+        // 如果存在相同id，该buff刷新一下时间
+        var allBuff = target.passiveSkills.concat(target.buffs).concat(target.hideBuffs);
+        var sameBuff;
+        var buffLayNum = 0;
+        for (var _i = 0, allBuff_1 = allBuff; _i < allBuff_1.length; _i++) {
+            var buff = allBuff_1[_i];
+            if (buff.layId == this.layId) {
+                buffLayNum += buff.layer;
+            }
+            if (buff.id == this.id) {
+                sameBuff = buff;
+            }
+        }
+        if (buffLayNum >= this.maxLayer) {
+            if (sameBuff) {
+                sameBuff.remainRound = this.remainRound;
+                sameBuff.remainAffectTime = this.remainAffectTime;
+            }
+            return;
+        }
+        // 如果存在相同buff id 同时没到上限
+        if (sameBuff) {
+            sameBuff.layer += 1;
+        }
+        else {
+            // 给target上buff
+            this.char = target;
+            if (this.isHide) {
+                target.hideBuffs.push(this);
+            }
+            if (this.isPassive) {
+                target.passiveSkills.push(this);
+            }
+            if (this.isNormal) {
+                target.buffs.push(this);
+                this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
+                var index = target.buffs.indexOf(this);
+                target.buffLine.addChild(this.buffIcon);
+                this.adjustIconPosition();
+            }
+        }
+        // 增加属性
+        var attrAdd = this.attrsAdd;
+        var attrMul = this.attrsMul;
+        var targetAttr = target.attr;
+        for (var attrId in attrAdd) {
+            var index = parseInt(attrId);
+            if (attrAdd[index] > 0) {
+                targetAttr.setAttrAddition(index, attrAdd[attrId], AttrAdditionType.ADD);
+            }
+        }
+        for (var attrId in attrMul) {
+            var index = parseInt(attrId);
+            if (attrMul[index] > 0) {
+                targetAttr.setAttrAddition(index, attrMul[attrId], AttrAdditionType.MUL);
+            }
+        }
+        // TODO: if have effect, listen affect affectPhase
+        if (this.isAffect) {
+            if (this.affectPhase == BuffAffectPhase.TargetRoundStart) {
+                var eType = MessageType.PlayerRoundStart;
+                if (target.camp == CharCamp.Enemy) {
+                    eType = MessageType.EnemyRoundStart;
+                }
+                MessageManager.Ins.addEventListener(eType, this.affect, this);
+            }
+        }
     };
     Buff.prototype.affect = function () {
+        if (this.remainAffectTime > 0) {
+            this.remainAffectTime = this.remainAffectTime - 1;
+        }
+        SceneManager.Ins.curScene.performQue.push([{
+                performance: IManualSkill.statePerformance
+            },
+            this.affectHurt.affect(this.char)]);
+        SceneManager.Ins.curScene.performStart();
+        // if affect times is 0
+        if (this.remainAffectTime == 0) {
+            this.removeFromChar();
+        }
     };
-    Buff.prototype.removeFromChar = function (target) {
-    };
-    // TODO: affect if need
-    Buff.prototype.onCharStartPhase = function () {
-    };
-    // TODO: round-- and clear buff if needed
-    Buff.prototype.onCharEndPhase = function () { };
     /**
-     * 根据当前在charbuff列表中所处的位置，调整buffIcon的位置
-     * 主要在删除buff的时候使用
+     * 场景清空的时候也要调用该方法来保证资源释放
      */
-    Buff.prototype.adjustPosition = function () {
+    Buff.prototype.removeFromChar = function () {
+        // 去除属性
+        var attrAdd = this.attrsAdd;
+        var attrMul = this.attrsMul;
+        var target = this.char;
+        var targetAttr = target.attr;
+        for (var attrId in attrAdd) {
+            var index = parseInt(attrId);
+            if (attrAdd[index] > 0) {
+                targetAttr.setAttrAddition(index, -attrAdd[attrId] * this.layer, AttrAdditionType.ADD);
+            }
+        }
+        for (var attrId in attrMul) {
+            var index = parseInt(attrId);
+            if (attrMul[index] > 0) {
+                targetAttr.setAttrAddition(index, -attrMul[attrId] * this.layer, AttrAdditionType.MUL);
+            }
+        }
+        if (this.isNormal == true) {
+            var buffs = this.char.buffs;
+            target.buffLine.removeChild(this.buffIcon);
+            Util.deleteObjFromList(buffs, this);
+            for (var _i = 0, buffs_1 = buffs; _i < buffs_1.length; _i++) {
+                var buff = buffs_1[_i];
+                buff.adjustIconPosition();
+            }
+        }
+        else if (this.isPassive == true) {
+            Util.deleteObjFromList(target.passiveSkills, this);
+        }
+        else if (this.isHide == true) {
+            Util.deleteObjFromList(target.hideBuffs, this);
+        }
+        // TODO: remove listen
+        if (this.isAffect) {
+            if (this.affectPhase == BuffAffectPhase.TargetRoundStart) {
+                var eType = MessageType.PlayerRoundStart;
+                if (target.camp == CharCamp.Enemy) {
+                    eType = MessageType.EnemyRoundStart;
+                }
+                MessageManager.Ins.removeEventListener(eType, this.affect, this);
+            }
+        }
+        this.char = null;
+        this.buffIcon = null;
+    };
+    Buff.prototype.onCharStartPhase = function () {
+        if (this.isAffect && this.affectPhase == BuffAffectPhase.TargetRoundStart) {
+            this.affect();
+        }
+    };
+    Buff.prototype.onCharEndPhase = function () {
+        if (this.remainRound > 0) {
+            this.remainRound--;
+        }
+        if (this.remainRound == 0) {
+            this.removeFromChar();
+        }
+    };
+    Buff.prototype.adjustIconPosition = function () {
+        var buffs = this.char.buffs;
+        var index = buffs.indexOf(this);
+        this.buffIcon.x = index * 12;
     };
     return Buff;
 }());
 __reflect(Buff.prototype, "Buff");
-var BuffType;
-(function (BuffType) {
-    BuffType[BuffType["Normal"] = 0] = "Normal";
-    BuffType[BuffType["Attack"] = 1] = "Attack";
-})(BuffType || (BuffType = {}));
+var BuffAffectPhase;
+(function (BuffAffectPhase) {
+    BuffAffectPhase[BuffAffectPhase["TargetRoundStart"] = 0] = "TargetRoundStart";
+    BuffAffectPhase[BuffAffectPhase["BuffLayer"] = 1] = "BuffLayer";
+    BuffAffectPhase[BuffAffectPhase["EnemyHarm"] = 2] = "EnemyHarm";
+    BuffAffectPhase[BuffAffectPhase["SelfHarm"] = 3] = "SelfHarm";
+    BuffAffectPhase[BuffAffectPhase["FriendHarm"] = 4] = "FriendHarm"; // 队友受伤
+})(BuffAffectPhase || (BuffAffectPhase = {}));
+var AffectCaseBuffTargetType;
+(function (AffectCaseBuffTargetType) {
+    AffectCaseBuffTargetType[AffectCaseBuffTargetType["AllFriends"] = 0] = "AllFriends";
+    AffectCaseBuffTargetType[AffectCaseBuffTargetType["AllEnemies"] = 1] = "AllEnemies";
+    AffectCaseBuffTargetType[AffectCaseBuffTargetType["AnyOneFriend"] = 2] = "AnyOneFriend";
+    AffectCaseBuffTargetType[AffectCaseBuffTargetType["AnyOneEnemy"] = 3] = "AnyOneEnemy";
+    AffectCaseBuffTargetType[AffectCaseBuffTargetType["Self"] = 4] = "Self"; // 自己
+})(AffectCaseBuffTargetType || (AffectCaseBuffTargetType = {}));
