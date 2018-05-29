@@ -287,6 +287,10 @@ class BattleScene extends IScene {
 			buff.layId = 12345;
 			buff.maxLayer = 2;
 			buff.attachToChar(char);
+			buff = new Buff();
+			buff.id = 12345;
+			buff.layId = 12345;
+			buff.maxLayer = 2;
 			buff.attachToChar(char);			
 			buff = new Buff();
 			buff.id = 12344;

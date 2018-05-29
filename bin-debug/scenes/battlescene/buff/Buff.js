@@ -44,35 +44,15 @@ var Buff = (function () {
                 sameBuff = buff;
             }
         }
+        if (sameBuff) {
+            sameBuff.remainRound = this.remainRound;
+            sameBuff.remainAffectTime = this.remainAffectTime;
+        }
+        // 如果到了上限
         if (buffLayNum >= this.maxLayer) {
-            if (sameBuff) {
-                sameBuff.remainRound = this.remainRound;
-                sameBuff.remainAffectTime = this.remainAffectTime;
-            }
             return;
         }
-        // 如果存在相同buff id 同时没到上限
-        if (sameBuff) {
-            sameBuff.layer += 1;
-        }
-        else {
-            // 给target上buff
-            this.char = target;
-            if (this.isHide) {
-                target.hideBuffs.push(this);
-            }
-            if (this.isPassive) {
-                target.passiveSkills.push(this);
-            }
-            if (this.isNormal) {
-                target.buffs.push(this);
-                this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
-                var index = target.buffs.indexOf(this);
-                target.buffLine.addChild(this.buffIcon);
-                this.adjustIconPosition();
-            }
-        }
-        // 增加属性
+        // add attr
         var attrAdd = this.attrsAdd;
         var attrMul = this.attrsMul;
         var targetAttr = target.attr;
@@ -87,6 +67,26 @@ var Buff = (function () {
             if (attrMul[index] > 0) {
                 targetAttr.setAttrAddition(index, attrMul[attrId], AttrAdditionType.MUL);
             }
+        }
+        // if have same buff id
+        if (sameBuff) {
+            sameBuff.layer += 1;
+            return;
+        }
+        // if not have same id
+        this.char = target;
+        if (this.isHide) {
+            target.hideBuffs.push(this);
+        }
+        if (this.isPassive) {
+            target.passiveSkills.push(this);
+        }
+        if (this.isNormal) {
+            target.buffs.push(this);
+            this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
+            var index = target.buffs.indexOf(this);
+            target.buffLine.addChild(this.buffIcon);
+            this.adjustIconPosition();
         }
         // TODO: if have effect, listen affect affectPhase
         if (this.isAffect) {
@@ -103,7 +103,9 @@ var Buff = (function () {
         if (this.remainAffectTime > 0) {
             this.remainAffectTime = this.remainAffectTime - 1;
         }
+        this.affectHurt.rate *= this.layer;
         this.affectHurt.affect(this.char);
+        this.affectHurt.rate /= this.layer;
         // if affect times is 0
         if (this.remainAffectTime == 0) {
             this.removeFromChar();
@@ -155,6 +157,8 @@ var Buff = (function () {
                 MessageManager.Ins.removeEventListener(eType, this.affect, this);
             }
         }
+        console.log(this.id);
+        console.log(this.char.hashCode);
         this.char = null;
         this.buffIcon = null;
     };

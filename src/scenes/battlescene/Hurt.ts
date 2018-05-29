@@ -4,7 +4,7 @@
 class Hurt {
 	private hurtType: HurtType; // 伤害类型（物理/魔法/治疗生命/增加护盾）
 	private fromChar: Character; // 伤害来源
-	private rate: number; // 伤害倍率
+	public rate: number; // 伤害倍率
 	private isAbs: boolean; // 是否绝对伤害（不考虑护甲）
 	private absValue: number;// 绝对伤害对应的值是多少
 	private isPericeShield: boolean;// 是否穿透护盾（无视护盾，直接伤血）  治疗效果时无效
