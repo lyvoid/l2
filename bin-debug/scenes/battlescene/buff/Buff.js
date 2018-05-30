@@ -21,12 +21,13 @@ var Buff = (function () {
         this.attrsMul = Object.create(Attribute.AttrsTemplate);
         // TODO: 待删除的测试数据
         this.buffName = "狂暴";
-        this.desc = "增加10点ap，每回合对自己造成5点伤害";
+        this.desc = "增加10点ap，每回合对自己造成5点治愈";
         this.attrsAdd[AttrName.Ap] = 10;
+        this.attrsAdd[AttrName.PysDamageReduceAbs] = 4;
         this.isAffect = true;
         this.remainAffectTime = 2;
         this.affectPhase = BuffAffectPhase.TargetRoundStart;
-        this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 2);
+        this.affectHurt = new Hurt(HurtType.HealShield, this.char, 1, true, 5);
         this.remainRound = -1;
     }
     Buff.prototype.attachToChar = function (target) {
@@ -100,6 +101,9 @@ var Buff = (function () {
         }
     };
     Buff.prototype.affect = function () {
+        if (this.char == null) {
+            return;
+        }
         if (this.remainAffectTime > 0) {
             this.remainAffectTime = this.remainAffectTime - 1;
         }
@@ -115,6 +119,10 @@ var Buff = (function () {
      * 场景清空的时候也要调用该方法来保证资源释放
      */
     Buff.prototype.removeFromChar = function () {
+        if (this.char == null) {
+            // 如果附加到的对象为空，说明已经被移除过了
+            return;
+        }
         // 去除属性
         var attrAdd = this.attrsAdd;
         var attrMul = this.attrsMul;
@@ -157,8 +165,6 @@ var Buff = (function () {
                 MessageManager.Ins.removeEventListener(eType, this.affect, this);
             }
         }
-        console.log(this.id);
-        console.log(this.char.hashCode);
         this.char = null;
         this.buffIcon = null;
     };

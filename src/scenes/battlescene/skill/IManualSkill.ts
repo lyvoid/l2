@@ -7,15 +7,24 @@
  * performance 表现效果（强制实现）结束时需要注意要发送MessageType.PerformanceEnd消息，不然会阻塞其他演出
  * needCast 是否需要释放
  */
-abstract class IManualSkill {
+class IManualSkill {
 	/**
-	 * 技能释放者
+	 * 技能释放者，可以没有释放者
 	 */
 	public caster: Character;
 	/**
 	 * 技能名
 	 */
 	public skillName: string;
+
+	/**
+	 * 后续技能
+	 */
+	public skillsAfter: IManualSkill[];
+	/**
+	 * 给目标的buff
+	 */
+	 public buffsIdToTarget: number[];
 	/**
 	 * 目标类型
 	 */
@@ -24,6 +33,8 @@ abstract class IManualSkill {
 	 * 目标容器
 	 */
 	public targets: Character[];
+
+	public isPerformance: boolean = true;
 	/**
 	 * 需要能量
 	 */
@@ -194,12 +205,22 @@ abstract class IManualSkill {
 	 * 这个值会扔给performance使用，只要同一个skill的affect的返回值和performance
 	 * 能够接上返回什么格式都可以
 	 */
-	protected abstract affect(): any;
+	public affect(): any{
+		
+	};
 
 	/**
 	 * 演出表现
 	 */
-	abstract performance(affectResult: any): void;
+	public performance(affectResult: any){
+		if (!this.isPerformance){
+			// 如果技能不需要表现，直接发送表现结束
+			(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
+			return;
+		}
+		
+
+	};
 
 	/**
 	 * 技能是否该释放

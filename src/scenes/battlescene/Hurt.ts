@@ -259,7 +259,7 @@ class Hurt {
 			);
 			// 飘字
 			damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-		} else if (change.isInBattleNew == false) {
+		} else if (change.isInBattleOld && !change.isInBattleNew) {
 			// 如果直接被排除出游戏
 			Hurt.removeFromGamePerform(target);
 		}

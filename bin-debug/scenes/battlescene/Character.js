@@ -118,9 +118,11 @@ var Character = (function (_super) {
             for (var _b = 0, _c = this.buffs; _b < _c.length; _b++) {
                 var buff = _c[_b];
                 var remainRound = buff.remainRound + "";
-                remainRound = remainRound == "-1" ? "" : "(" + remainRound + ")";
+                remainRound = remainRound == "-1" ? "" : "(" + remainRound + "\u56DE\u5408)";
+                var remainAffect = buff.remainAffectTime + "";
+                remainAffect = remainAffect == "-1" ? "" : "(" + remainAffect + "\u6B21)";
                 buffsDesc = buffsDesc + "<font color=\"#7FFF00\"><b>" +
-                    ("" + buff.buffName + remainRound + "(*" + buff.layer + "):</b></font>" + buff.desc + "\n");
+                    ("" + buff.buffName + remainRound + remainAffect + "(" + buff.layer + "\u5C42):</b></font>" + buff.desc + "\n");
             }
             for (var _d = 0, _e = this.manualSkills; _d < _e.length; _d++) {
                 var skill = _e[_d];
@@ -161,11 +163,9 @@ var Character = (function (_super) {
                 // 如果选中的角色时当前角色，如果还有备选方案，选中者替换成其他人
                 var newTarget = null;
                 if (scene.selectedFriend === this) {
-                    console.log("frient");
                     newTarget = IManualSkill.getFirstInBattle(scene.friends);
                 }
                 else if (scene.selectedEnemy === this) {
-                    console.log("enemy");
                     newTarget = IManualSkill.getFirstInBattle(scene.enemies);
                 }
                 if (newTarget) {

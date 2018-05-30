@@ -4,12 +4,13 @@ class Buff {
 		this.attrsMul = Object.create(Attribute.AttrsTemplate);
 		// TODO: 待删除的测试数据
 		this.buffName = "狂暴";
-		this.desc = "增加10点ap，每回合对自己造成5点伤害"
+		this.desc = "增加10点ap，每回合对自己造成5点治愈"
 		this.attrsAdd[AttrName.Ap] = 10;
+		this.attrsAdd[AttrName.PysDamageReduceAbs] = 4;
 		this.isAffect = true;
 		this.remainAffectTime = 2;
 		this.affectPhase = BuffAffectPhase.TargetRoundStart;
-		this.affectHurt = new Hurt(HurtType.Pysic, this.char, 1, true, 2);
+		this.affectHurt = new Hurt(HurtType.HealShield, this.char, 1, true, 5);
 		this.remainRound = -1;
 	}
 
@@ -132,6 +133,9 @@ class Buff {
 
 
 	public affect() {
+		if (this.char == null){
+			return;
+		}
 		if (this.remainAffectTime > 0) {
 			this.remainAffectTime = this.remainAffectTime - 1;
 		}
@@ -148,6 +152,10 @@ class Buff {
 	 * 场景清空的时候也要调用该方法来保证资源释放
 	 */
 	public removeFromChar() {
+		if (this.char == null){
+			// 如果附加到的对象为空，说明已经被移除过了
+			return;
+		}
 		// 去除属性
 		let attrAdd = this.attrsAdd;
 		let attrMul = this.attrsMul;
@@ -193,13 +201,8 @@ class Buff {
 				);
 			}
 		}
-		console.log(this.id);
-		console.log(this.char.hashCode);
-		
 		this.char = null;
 		this.buffIcon = null;
-		
-		
 	}
 
 	public onCharStartPhase() {

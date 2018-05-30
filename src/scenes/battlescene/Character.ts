@@ -67,9 +67,11 @@ class Character extends egret.DisplayObjectContainer {
 		}
 		for (let buff of this.buffs){
 			let remainRound:string = buff.remainRound + "";
-			remainRound = remainRound == "-1" ? "" : `(${remainRound})`;
+			remainRound = remainRound == "-1" ? "" : `(${remainRound}回合)`;
+			let remainAffect:string = buff.remainAffectTime + "";
+			remainAffect = remainAffect == "-1" ? "" : `(${remainAffect}次)`;
 			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` + 
-				`${buff.buffName}${remainRound}(*${buff.layer}):</b></font>${buff.desc}\n`
+				`${buff.buffName}${remainRound}${remainAffect}(${buff.layer}层):</b></font>${buff.desc}\n`
 		}
 		for (let skill of this.manualSkills){
 			skillsDesc = `${skillsDesc}<b>${skill.skillName}:</b>${skill.desc}\n`;
@@ -119,12 +121,8 @@ ${skillsDesc}`;
 			// 如果选中的角色时当前角色，如果还有备选方案，选中者替换成其他人
 			let newTarget: Character = null;
 			if (scene.selectedFriend === this) {
-				console.log("frient");
-
 				newTarget = IManualSkill.getFirstInBattle(scene.friends)
 			} else if (scene.selectedEnemy === this) {
-				console.log("enemy");
-
 				newTarget = IManualSkill.getFirstInBattle(scene.enemies);
 			}
 			if (newTarget) {
