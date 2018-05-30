@@ -6,7 +6,10 @@ import xlrd
 
 def data_load(excel_path):
     """
-    载入excel表格的首张sheet中的数据，以list的形式给出，数据的行列数均采用首行与首列的长度来确定
+    载入excel表格的首张sheet中的数据，
+    以list的形式给出，
+    数据的行列数均采用首行与首列的长度来确定
+    遇到空行后直接跳过后面的行或列
     :param excel_path:excel表的路径
     :return: (table_name, table_data)
     """

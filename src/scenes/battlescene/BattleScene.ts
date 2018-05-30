@@ -48,11 +48,11 @@ class BattleScene extends IScene {
 	/**
 	 * 可演出内容列表
 	 */ 
-	public performQue: Queue<[{performance:Function}, any]>;
+	public performQue: Queue<{performance:()=>void}>;
 	/**
 	 * 可释放内容列表
 	 */
-	public castQue: Queue<{cast:Function}>;
+	public castQue: Queue<{cast:()=>void}>;
 
 	/**
 	 * 飘字管理器
@@ -202,8 +202,8 @@ class BattleScene extends IScene {
 		this.skillManualPool = [];
 		this.dbManager = new DBManager();
 		this.cardBoard = new CardBoard();
-		this.performQue = new Queue<[{performance: Function}, any]>();
-		this.castQue = new Queue<{cast: Function}>();
+		this.performQue = new Queue<{performance: ()=>void}>();
+		this.castQue = new Queue<{cast: ()=>void}>();
 		this.damageFloatManager = new DamageFloatManager();
 		this.phaseUtil = new PhaseUtil();
 
@@ -407,10 +407,8 @@ class BattleScene extends IScene {
 			return;
 		}
 		this.isPerforming = true;
-		let performanceObj: {performance: Function};
-		let affectResult:any;
-		[performanceObj, affectResult] = this.performQue.pop();
-		performanceObj.performance(affectResult);
+		let performanceObj = this.performQue.pop();
+		performanceObj.performance();
 	}
 
 	private readConfig(): void {

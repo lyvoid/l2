@@ -24,7 +24,7 @@ class IManualSkill {
 	/**
 	 * 给目标的buff
 	 */
-	 public buffsIdToTarget: number[];
+	public buffsIdToTarget: number[];
 	/**
 	 * 目标类型
 	 */
@@ -145,7 +145,7 @@ class IManualSkill {
 		}
 	}
 
-	public static getFirstInBattle(chars: Character[]): Character{
+	public static getFirstInBattle(chars: Character[]): Character {
 		for (let c of chars) {
 			if (c.isInBattle) {
 				return c;
@@ -185,42 +185,103 @@ class IManualSkill {
 
 		// 运行实际效果
 		let affectResult = this.affect();
-
-		// 确实需要释放时，将演出加到预演出列表
-		scene.performQue.push([this, affectResult]);
-		// 没次加入新的表现序列都调用一次应该是没错的
-		scene.performStart();
-
+		// 将演出加到预演出列表
+		this.preparePerformance();
 
 		// 运行在在SkillToDo中的技能
 		if (scene.castQue.length > 0) {
 			scene.castQue.pop().cast();
 		}
 
+		scene.performStart();
 	}
 
 	/**
 	 * 实际作用
-	 * 返回的any中存放需要表现的效果的一些参数（比如哪些人被打了多少伤害等等）
-	 * 这个值会扔给performance使用，只要同一个skill的affect的返回值和performance
-	 * 能够接上返回什么格式都可以
 	 */
-	public affect(): any{
-		
+	public affect(): void {
+
 	};
 
 	/**
-	 * 演出表现
+	 * 准备演出演出表现内容
 	 */
-	public performance(affectResult: any){
-		if (!this.isPerformance){
-			// 如果技能不需要表现，直接发送表现结束
-			(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
+	private preparePerformance(): void {
+		let self = this.caster;
+		if (!self) {
+			// 如果没有释放者，直接返回，以后可能还要加其他效果
 			return;
 		}
-		
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let targets = this.targets;
+		let selfCamp = self.camp;
+		let enemiesNum = 0;
+		let stageWidthHalf = LayerManager.Ins.stageWidth / 2;
+		let minX = stageWidthHalf;
+		let properEnemy: Character;
+		for (let char of targets) {
+			// chooce proper position
+			if (char.camp != selfCamp) {
+				enemiesNum++;
+				let distance = Math.abs(char.x - stageWidthHalf);
+				if (distance < minX) {
+					properEnemy = char;
+					minX = distance;
+				}
+			}
+		}
 
-	};
+		let isMove: boolean = false;
+		if (enemiesNum == targets.length && enemiesNum > 0)
+			isMove = true;
+
+		let animEnd = () => {
+			self.armatureDisplay.removeEventListener(
+				dragonBones.EventObject.COMPLETE,
+				animEnd,
+				this
+			);
+			scene.onePerformEnd();
+		}
+
+		if (isMove) {
+			// if need move, self move
+			scene.performQue.push({
+				performance: () => {
+					egret.Tween.get(self).to({
+						x: properEnemy.x + 100 * properEnemy.camp,
+						y: properEnemy.y + 20
+					}, 200).call(scene.onePerformEnd)
+				}
+			})
+		}
+
+		scene.performQue.push({
+			// anim
+			performance: () => {
+				self.playDBAnim("attack1_+1", 1, "idle");
+				self.armatureDisplay.addEventListener(
+					dragonBones.EventObject.COMPLETE,
+					animEnd,
+					this
+				);
+			}
+		});
+
+		if (isMove) {
+			// move back
+			scene.performQue.push({
+				performance: () => {
+					let newP: { x: number, y: number } = self.getPositon();
+					self.playDBAnim("idle", 0);
+					egret.Tween.get(self).to({
+						x: newP.x,
+						y: newP.y
+					}, 200).call(scene.onePerformEnd)
+				}
+			});
+		}
+	}
 
 	/**
 	 * 技能是否该释放

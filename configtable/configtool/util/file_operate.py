@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import os
-from urllib import request
+import requests
 import pickle
 
 
@@ -42,7 +42,7 @@ def save_image_from_url(url, path, name):
         img_type = "jpg"
     file_name = name + "." + img_type
     file_name = os.path.join(path, file_name)
-    with request.urlopen(url, timeout=2) as f_url:
+    with requests.get(url, timeout=2) as f_url:
         data = f_url.read()
         with open(file_name, 'wb') as f_save:
             f_save.write(data)

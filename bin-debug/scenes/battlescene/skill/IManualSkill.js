@@ -14,6 +14,7 @@ var IManualSkill = (function () {
     function IManualSkill(caster, camp) {
         if (caster === void 0) { caster = null; }
         if (camp === void 0) { camp = CharCamp.Neut; }
+        this.isPerformance = true;
         this.caster = caster;
         this.camp = caster ? caster.camp : camp;
         this.setCampChar();
@@ -146,6 +147,26 @@ var IManualSkill = (function () {
             scene.castQue.pop().cast();
         }
     };
+    /**
+     * 实际作用
+     * 返回的any中存放需要表现的效果的一些参数（比如哪些人被打了多少伤害等等）
+     * 这个值会扔给performance使用，只要同一个skill的affect的返回值和performance
+     * 能够接上返回什么格式都可以
+     */
+    IManualSkill.prototype.affect = function () {
+    };
+    ;
+    /**
+     * 演出表现
+     */
+    IManualSkill.prototype.performance = function (affectResult) {
+        if (!this.isPerformance) {
+            // 如果技能不需要表现，直接发送表现结束
+            SceneManager.Ins.curScene.onePerformEnd();
+            return;
+        }
+    };
+    ;
     /**
      * 技能是否该释放
      * 这里只要判断技能的目标效果就好，不用再判断释放者和胜利
