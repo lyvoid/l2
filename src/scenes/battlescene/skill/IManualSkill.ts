@@ -126,6 +126,23 @@ class IManualSkill {
 	public autoChooseTarget(): void {
 		this.manualChooseTarget();
 		switch (this.targetType) {
+			case TargetType.PreSet:
+				break;
+			case TargetType.Self:
+				this.targets = [this.caster];
+				break;
+			case TargetType.AllAliveFriend:
+				this.targets = IManualSkill.getAllAliveChar(this.friends);
+				break;
+			case TargetType.AllAliveEnemy:
+				this.targets = IManualSkill.getAllAliveChar(this.enemies);
+				break;
+			case TargetType.NoTarget:
+				this.targets = [];
+				break;
+			case TargetType.All:
+				this.targets = this.enemies.concat(this.friends);
+				break;
 			case TargetType.SpecialEnemy:
 				let fe = IManualSkill.getFirstAlive(this.enemies);
 				this.targets = fe ? [fe] : [];
