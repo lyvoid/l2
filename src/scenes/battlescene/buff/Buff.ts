@@ -37,6 +37,8 @@ class Buff {
 
 	// 状态
 	public isDiz: boolean = false;// 是否眩晕
+	public isSlience: boolean = false;
+	public isUnarm: boolean = false;
 
 	// 结算时机
 	public isAffect: boolean = false; // 是否具有结算效果
