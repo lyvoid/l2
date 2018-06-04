@@ -43,7 +43,7 @@ class FireBoard extends egret.DisplayObjectContainer {
 			let to = egret.setTimeout(
 				() => {
 					this.particles[index].stop();
-					Util.deleteObjFromList(this.timeOutHandles, to);
+					Util.removeObjFromArray(this.timeOutHandles, to);
 					egret.clearTimeout(to);
 					this.overflowFireNum -= 1;
 				},

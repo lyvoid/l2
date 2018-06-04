@@ -31,6 +31,8 @@ class Character extends egret.DisplayObjectContainer {
 	 */
 	public hideBuffs: Buff[];
 
+	public selectChar: Character;
+
 	/**
 	 * 人物血条前景，实际血量标识
 	 */
@@ -112,22 +114,11 @@ ${skillsDesc}`;
 					}
 				}
 				for (let skill of skillsForDelete) {
-					Util.deleteObjFromList(skillPools, skill);
+					Util.removeObjFromArray(skillPools, skill);
 				}
 			}
 			// 更新排除出游戏状态
 			this._isInBattle = value;
-
-			// 如果选中的角色时当前角色，如果还有备选方案，选中者替换成其他人
-			let newTarget: Character = null;
-			if (scene.selectedFriend === this) {
-				newTarget = IManualSkill.getFirstInBattle(scene.friends)
-			} else if (scene.selectedEnemy === this) {
-				newTarget = IManualSkill.getFirstInBattle(scene.enemies);
-			}
-			if (newTarget) {
-				scene.setSelectTarget(newTarget);
-			}
 		}
 	}
 

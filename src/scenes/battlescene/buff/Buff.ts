@@ -177,14 +177,14 @@ class Buff {
 		if (this.isNormal == true) {
 			let buffs = this.char.buffs;
 			target.buffLine.removeChild(this.buffIcon);
-			Util.deleteObjFromList(buffs, this);
+			Util.removeObjFromArray(buffs, this);
 			for (let buff of buffs) {
 				buff.adjustIconPosition();
 			}
 		} else if (this.isPassive == true) {
-			Util.deleteObjFromList(target.passiveSkills, this);
+			Util.removeObjFromArray(target.passiveSkills, this);
 		} else if (this.isHide == true) {
-			Util.deleteObjFromList(target.hideBuffs, this);
+			Util.removeObjFromArray(target.hideBuffs, this);
 		}
 
 		// TODO: remove listen

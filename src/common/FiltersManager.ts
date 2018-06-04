@@ -70,7 +70,7 @@ class FilterManager {
 			return;
 		}
 		if (obj.filters.length > 1)
-			Util.deleteObjFromList(obj.filters, filter);
+			Util.removeObjFromArray(obj.filters, filter);
 		else
 			obj.filters = null;
 	}

@@ -17,6 +17,8 @@ class IManualSkill {
 	 */
 	public skillName: string;
 
+	public targetSelect:TargetSelect;
+
 	/**
 	 * 后续技能
 	 */

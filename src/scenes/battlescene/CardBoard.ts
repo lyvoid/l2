@@ -40,7 +40,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public removeCards(cards:Card[]): void{
 		for(let index in cards){
 			let card = cards[index]
-			Util.deleteObjFromList(this.cards, card);
+			Util.removeObjFromArray(this.cards, card);
 			card.unInitial();
 			if (parseInt(index) == cards.length-1){
 				// 如果是最后一张，对全体调整
