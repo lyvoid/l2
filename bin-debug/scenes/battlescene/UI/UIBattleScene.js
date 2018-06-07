@@ -23,12 +23,12 @@ var UIBattleScene = (function (_super) {
         // 两个作弊功能
         _this.addCardButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
             var scene = SceneManager.Ins.curScene;
-            scene.cardBoard.distCardNormal();
+            scene.mCardBoard.distCardNormal();
         }, _this);
         // 作弊功能
         _this.addFireButton.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
             var scene = SceneManager.Ins.curScene;
-            scene.playerFireBoard.addFires(2);
+            scene.mPlayerFireBoard.addFires(2);
         }, _this);
         return _this;
     }

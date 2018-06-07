@@ -17,16 +17,16 @@ var PlayerRoundEndPhase = (function (_super) {
         _super.prototype.initial.call(this);
         ToastInfoManager.Ins.newToast("我方回合结束阶段");
         // TODO 回合结束阶段buff结算
-        for (var _i = 0, _a = this.scene.friends; _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.scene.mFriends; _i < _a.length; _i++) {
             var char = _a[_i];
-            for (var _b = 0, _c = char.buffs.concat(char.hideBuffs).concat(char.passiveSkills); _b < _c.length; _b++) {
+            for (var _b = 0, _c = char.mBuffs.concat(char.mHideBuffs).concat(char.mPassiveSkills); _b < _c.length; _b++) {
                 var buff = _c[_b];
                 buff.onCharEndPhase();
             }
         }
         // 回合结束阶段技能效果
         // 如果不在演出说明没有需要演出的技能，直接切下一个阶段
-        this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundStartPhase);
+        this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundStartPhase);
     };
     PlayerRoundEndPhase.prototype.unInitial = function () {
         _super.prototype.unInitial.call(this);

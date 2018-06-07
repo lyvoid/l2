@@ -57,7 +57,7 @@ class Buff {
 	public attachToChar(target: Character): void {
 		// 如果叠加层数到上限，且没有相同id的buff就return
 		// 如果存在相同id，该buff刷新一下时间
-		let allBuff = target.passiveSkills.concat(target.buffs).concat(target.hideBuffs);
+		let allBuff = target.mPassiveSkills.concat(target.mBuffs).concat(target.mHideBuffs);
 		let sameBuff: Buff;
 		let buffLayNum = 0;
 		for (let buff of allBuff) {
@@ -103,16 +103,16 @@ class Buff {
 		// if not have same id
 		this.char = target;
 		if (this.isHide) {
-			target.hideBuffs.push(this);
+			target.mHideBuffs.push(this);
 		}
 		if (this.isPassive) {
-			target.passiveSkills.push(this);
+			target.mPassiveSkills.push(this);
 		}
 		if (this.isNormal) {
-			target.buffs.push(this);
+			target.mBuffs.push(this);
 			this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
-			let index = target.buffs.indexOf(this);
-			target.buffLine.addChild(this.buffIcon);
+			let index = target.mBuffs.indexOf(this);
+			target.mBuffLine.addChild(this.buffIcon);
 			this.adjustIconPosition();
 		}
 
@@ -177,16 +177,16 @@ class Buff {
 			}
 		}
 		if (this.isNormal == true) {
-			let buffs = this.char.buffs;
-			target.buffLine.removeChild(this.buffIcon);
+			let buffs = this.char.mBuffs;
+			target.mBuffLine.removeChild(this.buffIcon);
 			Util.removeObjFromArray(buffs, this);
 			for (let buff of buffs) {
 				buff.adjustIconPosition();
 			}
 		} else if (this.isPassive == true) {
-			Util.removeObjFromArray(target.passiveSkills, this);
+			Util.removeObjFromArray(target.mPassiveSkills, this);
 		} else if (this.isHide == true) {
-			Util.removeObjFromArray(target.hideBuffs, this);
+			Util.removeObjFromArray(target.mHideBuffs, this);
 		}
 
 		// TODO: remove listen
@@ -223,7 +223,7 @@ class Buff {
 	}
 
 	public adjustIconPosition() {
-		let buffs = this.char.buffs;
+		let buffs = this.char.mBuffs;
 		let index = buffs.indexOf(this);
 		this.buffIcon.x = index * 12;
 	}

@@ -1,7 +1,7 @@
 /**
  * 临时技能，单纯用来测试
  */
-class SkillOneDamageWithOut extends IManualSkill {
+class SkillOneDamageWithOut extends ManualSkill {
 	public constructor(caster: Character = null, camp:CharCamp = CharCamp.Neut) {
 		super(caster, camp);
 		this.targetType = TargetType.SpecialEnemy;
@@ -22,14 +22,14 @@ class SkillOneDamageWithOut extends IManualSkill {
 
 
 	public performance(): void {
-		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).damageFloatManager;
+		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		egret.Tween.get(this.caster).to({
 			x: this.targets[0].x + 100 * this.targets[0].camp,
 			y: this.targets[0].y + 20
 		}, 200).call(
 			() => {
 				this.caster.playDBAnim("attack1_+1", 1, "idle");
-				this.caster.armatureDisplay.addEventListener(
+				this.caster.mArmatureDisplay.addEventListener(
 					dragonBones.EventObject.COMPLETE,
 					this.casterAniEnd,
 					this
@@ -40,7 +40,7 @@ class SkillOneDamageWithOut extends IManualSkill {
 
 
 	private casterAniEnd() {
-		this.caster.armatureDisplay.removeEventListener(
+		this.caster.mArmatureDisplay.removeEventListener(
 			dragonBones.EventObject.COMPLETE,
 			this.casterAniEnd,
 			this

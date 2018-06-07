@@ -52,7 +52,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	public distCardNormal(){
-		let skills = (SceneManager.Ins.curScene as BattleScene).skillManualPool;
+		let skills = (SceneManager.Ins.curScene as BattleScene).mManualSkillIdPool;
 		let index = Math.floor(Math.random() * skills.length);
 		let card: Card;
 		if (this.cardPool.length > 0){
@@ -71,7 +71,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 			this.addCardToBoard(card, this.cards.length - 1);
 			
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			let cardNumLabel = scene.battleUI.cardNumLabel;
+			let cardNumLabel = scene.mBattleUI.cardNumLabel;
 			cardNumLabel.text = `${this.cards.length}/${CardBoard.maxCardNum}`
 			if (this.cards.length == CardBoard.maxCardNum){
 				cardNumLabel.textColor = 0xFF0000;
@@ -139,7 +139,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		let cardNumLabel = scene.battleUI.cardNumLabel;
+		let cardNumLabel = scene.mBattleUI.cardNumLabel;
 		cardNumLabel.text = `${this.cards.length}/${CardBoard.maxCardNum}`
 		cardNumLabel.textColor = 0xADFF2F;
 	}

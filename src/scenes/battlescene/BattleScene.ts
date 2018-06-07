@@ -1,73 +1,28 @@
 class BattleScene extends IScene {
+	public mDbManager: DBManager;
+	public mCardBoard: CardBoard;
+	public mSelectImg: egret.Bitmap;
+	public mFilterManager: FilterManager;
+	public mEnemies: Character[];
+	public mFriends: Character[];
+	public mSelectedChar: Character;
+	public mPlayerFireBoard: FireBoard;
+	public mManualSkillIdPool: [number, Character][];
+	public mManualSkillManager: ManualSkillManager;
+	public mTargetSelectManager: TargetSelectManager;
 
-	/**
-	 * 龙骨管理器
-	 */
-	public dbManager: DBManager;
+	// ui
+	public mBattleUI: UIBattleScene;
+	public mBattleEndPopUp: BattleEndPopUp;
+	public mCardInfoPopupUI: CardInfoPopupUI;
+	public mCharInfoPopupUI: CharacterInfoPopupUI;
 
-	/**
-	 * 用户的卡牌
-	 */
-	public cardBoard: CardBoard;
+	public mPerformQueue: Queue<{performance:()=>void}>;
+	public mCastQueue: Queue<{cast:()=>void}>;
 
-	/**
-	 * 玩家的人物选择圈
-	 */
-	public selfSelectImg: egret.Bitmap;
-	/**
-	 * 敌方的任务选择圈
-	 */
-	public enemySlectImg: egret.Bitmap;
-	/**
-	 * 滤镜管理器
-	 */
-	public filterManager: FilterManager;
-
-	public enemies: Character[];
-	public friends: Character[];
-	public selectedEnemy: Character;
-	public selectedFriend: Character;
-
-	/**
-	 * 玩家能量板
-	 */
-	public playerFireBoard: FireBoard;
-
-	/**
-	 * 手动技能池（玩家的卡牌池子）
-	 */
-	public skillManualPool: IManualSkill[];
-
-	// UI
-	public battleUI: UIBattleScene;
-	public battleEndPopUp: BattleEndPopUp;
-	public cardInfoPopupUI: CardInfoPopupUI;
-
-	public charInfoPopupUI: CharacterInfoPopupUI;
-
-	/**
-	 * 可演出内容列表
-	 */ 
-	public performQue: Queue<{performance:()=>void}>;
-	/**
-	 * 可释放内容列表
-	 */
-	public castQue: Queue<{cast:()=>void}>;
-
-	/**
-	 * 飘字管理器
-	 */
-	public damageFloatManager: DamageFloatManager;
-
-	/**
-	 * 获胜阵营
-	 */
-	public winnerCamp: CharCamp;
-
-	/**
-	 * 切换阶段使用
-	 */
-	public phaseUtil: PhaseUtil;
+	public mDamageFloatManager: DamageFloatManager;
+	public mWinnerCamp: CharCamp = CharCamp.Neut;
+	public mPhaseUtil: PhaseUtil;
 
 	public initial() {
 		super.initial();
@@ -112,34 +67,29 @@ class BattleScene extends IScene {
 		ui.height = LayerManager.Ins.stageHeight;
 		ui.width = LayerManager.Ins.stageWidth;
 		LayerManager.Ins.uiLayer.addChild(ui);
-		this.battleUI = ui;
+		this.mBattleUI = ui;
 		let battleEndPopUp = new BattleEndPopUp();
 		battleEndPopUp.height = LayerManager.Ins.stageHeight;
 		battleEndPopUp.width = LayerManager.Ins.stageWidth;
-		this.battleEndPopUp = battleEndPopUp;
+		this.mBattleEndPopUp = battleEndPopUp;
 		
 		let charInfoPopupUI = new CharacterInfoPopupUI();
 		charInfoPopupUI.width = LayerManager.Ins.stageWidth;
 		charInfoPopupUI.height = LayerManager.Ins.stageHeight;
-		this.charInfoPopupUI = charInfoPopupUI;
+		this.mCharInfoPopupUI = charInfoPopupUI;
 
 		let popUpInfo = new CardInfoPopupUI();
 		popUpInfo.width = LayerManager.Ins.stageWidth;
 		popUpInfo.height = LayerManager.Ins.stageHeight;
-		this.cardInfoPopupUI = popUpInfo;
+		this.mCardInfoPopupUI = popUpInfo;
 
 		// 选择圈及滤镜初始化
-		let selfSelectTex = RES.getRes("selfSelectChar_png");
-		let enemySelectTex = RES.getRes("enemySelectChar_png");
-		let selfSelectImg = new egret.Bitmap(selfSelectTex);
-		selfSelectImg.x = -selfSelectImg.width / 2;
-		selfSelectImg.y = -selfSelectImg.height / 2;
-		let enemySlectImg = new egret.Bitmap(enemySelectTex);
-		enemySlectImg.x = selfSelectImg.x;
-		enemySlectImg.y = selfSelectImg.y;
-		this.selfSelectImg = selfSelectImg;
-		this.enemySlectImg = enemySlectImg;
-		this.filterManager = new FilterManager();
+		let selectTex = RES.getRes("selfSelectChar_png");
+		let selectImg = new egret.Bitmap(selectTex);
+		selectImg.x = -selectImg.width / 2;
+		selectImg.y = -selectImg.height / 2;
+		this.mSelectImg = selectImg;
+		this.mFilterManager = new FilterManager();
 
 		// 载入龙骨资源
 		for (let charactorName of ["Dragon", "Swordsman"]) {
@@ -189,23 +139,25 @@ class BattleScene extends IScene {
 		).addChild(img4);
 
 		//  初始化能量槽
-		this.playerFireBoard = new FireBoard();
+		this.mPlayerFireBoard = new FireBoard();
 		LayerManager.getSubLayerAt(
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.cardLayer
-		).addChild(this.playerFireBoard);
-		this.playerFireBoard.addFires(2);
+		).addChild(this.mPlayerFireBoard);
+		this.mPlayerFireBoard.addFires(2);
 
 		// 初始化game层的内容
-		this.enemies = [];
-		this.friends = [];
-		this.skillManualPool = [];
-		this.dbManager = new DBManager();
-		this.cardBoard = new CardBoard();
-		this.performQue = new Queue<{performance: ()=>void}>();
-		this.castQue = new Queue<{cast: ()=>void}>();
-		this.damageFloatManager = new DamageFloatManager();
-		this.phaseUtil = new PhaseUtil();
+		this.mEnemies = [];
+		this.mFriends = [];
+		this.mManualSkillIdPool = [];
+		this.mDbManager = new DBManager();
+		this.mCardBoard = new CardBoard();
+		this.mPerformQueue = new Queue<{performance: ()=>void}>();
+		this.mCastQueue = new Queue<{cast: ()=>void}>();
+		this.mDamageFloatManager = new DamageFloatManager();
+		this.mPhaseUtil = new PhaseUtil();
+		this.mManualSkillManager = new ManualSkillManager();
+		this.mTargetSelectManager = new TargetSelectManager();
 
 		// TODO: 初始化游戏角色
 		let chars: Character[] = [];
@@ -218,9 +170,7 @@ class BattleScene extends IScene {
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
-		this.setSelectTarget(chars[0]);
-		chars[0].bgLayer.addChild(this.enemySlectImg);
-
+		chars[0].setAsSelect();
 
 		chars[1].col = CharColType.backRow;
 		chars[1].row = CharRowType.up;
@@ -244,7 +194,7 @@ class BattleScene extends IScene {
 				BattleSLEnum.CharLayer
 			);
 			charLayer.addChildAt(char, char.row * 1000);
-			this.enemies.push(char);
+			this.mEnemies.push(char);
 		}
 
 		chars = [];
@@ -256,8 +206,6 @@ class BattleScene extends IScene {
 		chars[0].col = CharColType.backRow;
 		chars[0].row = CharRowType.down;
 		chars[0].setPosition();
-		this.setSelectTarget(chars[0]);
-		chars[0].bgLayer.addChild(this.selfSelectImg);
 
 
 		chars[1].col = CharColType.backRow;
@@ -300,9 +248,9 @@ class BattleScene extends IScene {
 			buff.attachToChar(char);
 
 			charLayer.addChildAt(char, char.row * 1000);
-			this.friends.push(char);
+			this.mFriends.push(char);
 			// TODO: 填充技能池子
-			this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
+			this.mManualSkillIdPool = this.mManualSkillIdPool.concat();
 		}
 
 
@@ -310,11 +258,11 @@ class BattleScene extends IScene {
 		LayerManager.getSubLayerAt(
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.CharLayer
-		).addChild(this.cardBoard);
+		).addChild(this.mCardBoard);
 
 		// 初始2张卡牌
-		this.cardBoard.distCardNormal();
-		this.cardBoard.distCardNormal();
+		this.mCardBoard.distCardNormal();
+		this.mCardBoard.distCardNormal();
 
 		// 初始化场景中的StatePool
 		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
@@ -331,13 +279,13 @@ class BattleScene extends IScene {
 	public judge(){
 		let isEnemyAlive: boolean=false;
 		let isPlayerAlive: boolean=false;
-		for (let char of this.enemies){
+		for (let char of this.mEnemies){
 			if (char.alive && char.isInBattle){
 				isEnemyAlive = true;
 				break;
 			}
 		}
-		for (let char of this.friends){
+		for (let char of this.mFriends){
 			if (char.alive && char.isInBattle){
 				isPlayerAlive = true;
 				break;
@@ -345,22 +293,22 @@ class BattleScene extends IScene {
 		}
 
 		if (!isEnemyAlive){
-			this.winnerCamp = CharCamp.Player;
+			this.mWinnerCamp = CharCamp.Player;
 		}else if (!isPlayerAlive){
-			this.winnerCamp = CharCamp.Enemy;
+			this.mWinnerCamp = CharCamp.Enemy;
 		}
 	}
 
 	public startTodoSkill():void{
-		if (this.castQue.length > 0){
-			this.castQue.pop().cast();
+		if (this.mCastQueue.length > 0){
+			this.mCastQueue.pop().cast();
 		}
 	}
 
 	/**
 	 * 是否正在演出skill的演出内容
 	 */
-	public isPerforming: boolean = false;
+	private _isPerforming: boolean = false;
 	
 	/**
 	 * 一个技能演出结束的时候自行调用
@@ -369,10 +317,10 @@ class BattleScene extends IScene {
 	 * 如果胜负未分发送演出全部结束消息
 	 */
 	public onePerformEnd(): void{
-		this.isPerforming = false;
-		if (this.performQue.length == 0){
+		this._isPerforming = false;
+		if (this.mPerformQueue.length == 0){
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
-			if (this.winnerCamp){
+			if (this.mWinnerCamp != CharCamp.Neut){
 				this.onBattleEnd();
 			}else{
 				// 如果游戏没有结束，发送演出全部结束消息
@@ -389,12 +337,12 @@ class BattleScene extends IScene {
 	private onBattleEnd(): void{
 		let lm = LayerManager.Ins
 		lm.maskLayer.addChild(lm.maskBg);
-		if (this.winnerCamp == CharCamp.Player){
-			this.battleEndPopUp.winUIAdjust();
+		if (this.mWinnerCamp == CharCamp.Player){
+			this.mBattleEndPopUp.winUIAdjust();
 		}else{
-			this.battleEndPopUp.lostUIAdjust();
+			this.mBattleEndPopUp.lostUIAdjust();
 		}
-		LayerManager.Ins.popUpLayer.addChild(this.battleEndPopUp);
+		LayerManager.Ins.popUpLayer.addChild(this.mBattleEndPopUp);
 	}
 
 	/**
@@ -402,34 +350,17 @@ class BattleScene extends IScene {
 	 * 如果当前正在演出会直接返回，防止两件事同时被演出
 	 */
 	public performStart(): void{
-		if(this.isPerforming){
+		if(this._isPerforming){
 			// 如果正在演出，那就不管这个消息
 			return;
 		}
-		this.isPerforming = true;
-		let performanceObj = this.performQue.pop();
+		this._isPerforming = true;
+		let performanceObj = this.mPerformQueue.pop();
 		performanceObj.performance();
 	}
 
 	private readConfig(): void {
 
-	}
-
-	/**
-	 * 设置选中对象
-	 */
-	public setSelectTarget(value: Character){
-		if (value.camp === CharCamp.Enemy){
-			value.bgLayer.addChild(
-				this.enemySlectImg
-			);
-			this.selectedEnemy = value;
-		} else {
-			value.bgLayer.addChild(
-				this.selfSelectImg
-			);
-			this.selectedFriend = value;
-		}
 	}
 
 	private async loadResource() {
@@ -443,29 +374,29 @@ class BattleScene extends IScene {
 	public release() {
 		super.release();
 
-		this.dbManager.release();
-		this.dbManager = null;
+		this.mDbManager.release();
+		this.mDbManager = null;
 
-		this.cardBoard.release();
-		this.cardBoard = null;
+		this.mCardBoard.release();
+		this.mCardBoard = null;
 
-		this.battleUI = null;
-		this.battleEndPopUp = null;
+		this.mBattleUI = null;
+		this.mBattleEndPopUp = null;
 
-		this.damageFloatManager.release();
-		this.damageFloatManager = null;
+		this.mDamageFloatManager.release();
+		this.mDamageFloatManager = null;
 		
-		this.playerFireBoard.release();
-		this.playerFireBoard = null;
+		this.mPlayerFireBoard.release();
+		this.mPlayerFireBoard = null;
 
-		this.phaseUtil.clear();
-		this.phaseUtil = null;
+		this.mPhaseUtil.clear();
+		this.mPhaseUtil = null;
 		LongTouchUtil.clear();
 
-		this.selfSelectImg = null;
-		this.enemySlectImg = null;
-		this.filterManager.release();
-		this.filterManager = null;
+		this.mSelectImg = null;
+		this.mSelectedChar = null;
+		this.mFilterManager.release();
+		this.mFilterManager = null;
 
 		// 释放载入的美术资源
 		this.releaseResource().then(()=>{

@@ -17,7 +17,7 @@ var PlayerUseCardPhase = (function (_super) {
         _super.prototype.initial.call(this);
         ToastInfoManager.Ins.newToast("我方出牌阶段");
         // 显示下一个回合的按键
-        this.scene.battleUI.roundEndButton.visible = true;
+        this.scene.mBattleUI.roundEndButton.visible = true;
         // 绑定卡牌tap使用事件
         MessageManager.Ins.addEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
         // TODO 自动模式下自动释放技能
@@ -28,12 +28,12 @@ var PlayerUseCardPhase = (function (_super) {
     PlayerUseCardPhase.prototype.phaseEnd = function () {
         // 一收到结束消息就要去掉使用卡牌的侦听
         MessageManager.Ins.removeEventListener(MessageType.CardTouchTap, this.onCardTouchTap, this);
-        this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
+        this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
     };
     PlayerUseCardPhase.prototype.onCardTouchTap = function (e) {
         var card = e.messageContent;
         var scene = this.scene;
-        if (scene.winnerCamp) {
+        if (scene.mWinnerCamp) {
             ToastInfoManager.Ins.newToast("胜负已分");
             return;
         }
@@ -41,7 +41,7 @@ var PlayerUseCardPhase = (function (_super) {
             ToastInfoManager.Ins.newToast("释放者处于无法释放的状态中");
             return;
         }
-        var fireboard = scene.playerFireBoard;
+        var fireboard = scene.mPlayerFireBoard;
         var fireNeed = card.skill.fireNeed;
         if (fireNeed > fireboard.fireNum) {
             ToastInfoManager.Ins.newToast("能量不足");
@@ -66,7 +66,7 @@ var PlayerUseCardPhase = (function (_super) {
             fireboard.removeFire();
         }
         // 移除卡牌
-        scene.cardBoard.removeCard(card);
+        scene.mCardBoard.removeCard(card);
     };
     PlayerUseCardPhase.prototype.unInitial = function () {
         _super.prototype.unInitial.call(this);

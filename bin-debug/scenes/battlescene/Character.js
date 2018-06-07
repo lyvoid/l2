@@ -15,30 +15,12 @@ var Character = (function (_super) {
     __extends(Character, _super);
     function Character(charactorName) {
         var _this = _super.call(this) || this;
-        /**
-         * 角色名
-         */
-        _this.charName = "还没有名字";
-        /**
-         * 简介
-         */
-        _this.feature = "特征是什么呢？";
-        /**
-         * 是否存在游戏中
-         */
+        _this.mCharName = "还没有名字";
+        _this.mFeature = "特征是什么呢？";
         _this._isInBattle = true;
-        /**
-         * 阵营
-         */
         _this.camp = CharCamp.Player;
-        /**
-         * 前中后三排 站位
-         */
-        _this.col = CharColType.frontRow;
-        /**
-         * 位置 上中下三行
-         */
-        _this.row = CharRowType.mid;
+        _this.col = CharColType.frontRow; //前中后三排 站位
+        _this.row = CharRowType.mid; //位置 上中下三行
         // 背景层
         var bg = new egret.DisplayObjectContainer();
         _this.bgLayer = bg;
@@ -61,33 +43,37 @@ var Character = (function (_super) {
         lifeBarFg.y = 1;
         lifeBar.addChild(lifeBarFg);
         _this.addChild(lifeBar);
-        _this.lifeBar = lifeBar;
-        _this.lifeBarFg = lifeBarFg;
+        _this._headBar = lifeBar;
+        _this._lifeBarFg = lifeBarFg;
         // 加buff条
         var buffLine = new egret.DisplayObjectContainer();
         buffLine.y = -12;
-        _this.buffLine = buffLine;
-        _this.lifeBar.addChild(buffLine);
+        _this.mBuffLine = buffLine;
+        _this._headBar.addChild(buffLine);
         // 加护盾条
         var shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
         shieldBar.height = 8;
         shieldBar.y = 13;
         shieldBar.width = 80 * _this.attr.shield / _this.attr.maxShield;
         lifeBar.addChild(shieldBar);
-        _this.shieldBar = shieldBar;
+        _this._shieldBar = shieldBar;
         // 加技能
-        _this.manualSkills = [];
-        var skill1 = new SkillOneDamageWithOut(_this);
-        _this.manualSkills.push(skill1);
-        _this.passiveSkills = [];
-        _this.buffs = [];
-        _this.hideBuffs = [];
+        _this.mManualSkillsId = [];
+        // TODO: push skill id to mManualSkillsId
+        // for (let id of [1,2]){
+        // 	this.mManualSkillsId.push(id);
+        // }
+        _this.mPassiveSkills = [];
+        _this.mBuffs = [];
+        _this.mHideBuffs = [];
         return _this;
     }
-    Object.defineProperty(Character.prototype, "desc", {
-        /**
-         * 人物当前状态描述，在长按中展示
-         */
+    Object.defineProperty(Character.prototype, "alive", {
+        get: function () { return this.attr.hp != 0; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Character.prototype, "description", {
         get: function () {
             var color = "#000000";
             if (this.camp === CharCamp.Enemy) {
@@ -96,26 +82,23 @@ var Character = (function (_super) {
             else if (this.camp === CharCamp.Player) {
                 color = "#7FFF00";
             }
-            return "<b><font color=\"" + color + "\">" + this.charName + "</font></b>" +
-                ("\n<font color=\"#3D3D3D\" size=\"15\">" + this.feature + "</font>\n\n" + this.attr.toString());
+            return "<b><font color=\"" + color + "\">" + this.mCharName + "</font></b>" +
+                ("\n<font color=\"#3D3D3D\" size=\"15\">" + this.mFeature + "</font>\n\n" + this.attr.toString());
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Character.prototype, "skillDesc", {
-        /**
-         * 人物技能及当前buff描述，长按中展示
-         */
+    Object.defineProperty(Character.prototype, "statDescription", {
         get: function () {
             var passiveSkillsDesc = "";
             var buffsDesc = "";
             var skillsDesc = "";
-            for (var _i = 0, _a = this.passiveSkills; _i < _a.length; _i++) {
+            for (var _i = 0, _a = this.mPassiveSkills; _i < _a.length; _i++) {
                 var buff = _a[_i];
                 passiveSkillsDesc = passiveSkillsDesc + "<font color=\"#7FFF00\"><b>" +
                     (buff.buffName + ":</b></font>" + buff.desc + "\n");
             }
-            for (var _b = 0, _c = this.buffs; _b < _c.length; _b++) {
+            for (var _b = 0, _c = this.mBuffs; _b < _c.length; _b++) {
                 var buff = _c[_b];
                 var remainRound = buff.remainRound + "";
                 remainRound = remainRound == "-1" ? "" : "(" + remainRound + "\u56DE\u5408)";
@@ -124,11 +107,7 @@ var Character = (function (_super) {
                 buffsDesc = buffsDesc + "<font color=\"#7FFF00\"><b>" +
                     ("" + buff.buffName + remainRound + remainAffect + "(" + buff.layer + "\u5C42):</b></font>" + buff.desc + "\n");
             }
-            for (var _d = 0, _e = this.manualSkills; _d < _e.length; _d++) {
-                var skill = _e[_d];
-                skillsDesc = skillsDesc + "<b>" + skill.skillName + ":</b>" + skill.desc + "\n";
-            }
-            return "<font color=\"#EE7942\"><b>\u88AB\u52A8\u6280\u80FD</b></font>\n" + passiveSkillsDesc + "\n\n<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n" + buffsDesc + "\n\n<font color=\"#EE7942\"><b>\u4E3B\u52A8\u6280\u80FD</b></font>\n" + skillsDesc;
+            return "<font color=\"#EE7942\"><b>\u88AB\u52A8\u6280\u80FD</b></font>\n" + passiveSkillsDesc + "\n\n<font color=\"#EE7942\"><b>\u5F53\u524D\u72B6\u6001</b></font>\n" + buffsDesc;
         },
         enumerable: true,
         configurable: true
@@ -143,45 +122,24 @@ var Character = (function (_super) {
                 var scene = SceneManager.Ins.curScene;
                 if (this.camp == CharCamp.Player) {
                     // 移除手牌中属于当前角色的牌
-                    scene.cardBoard.removeCardOfChar(this);
+                    scene.mCardBoard.removeCardOfChar(this);
                     // 移除SkillPool中归属于该角色的技能
-                    var skillPools = scene.skillManualPool;
+                    var skillPools = scene.mManualSkillIdPool;
                     var skillsForDelete = [];
                     for (var _i = 0, skillPools_1 = skillPools; _i < skillPools_1.length; _i++) {
                         var skill = skillPools_1[_i];
-                        if (skill.caster === this) {
+                        if (skill[1] == this) {
                             skillsForDelete.push(skill);
                         }
                     }
                     for (var _a = 0, skillsForDelete_1 = skillsForDelete; _a < skillsForDelete_1.length; _a++) {
                         var skill = skillsForDelete_1[_a];
-                        Util.deleteObjFromList(skillPools, skill);
+                        Util.removeObjFromArray(skillPools, skill);
                     }
                 }
                 // 更新排除出游戏状态
                 this._isInBattle = value;
-                // 如果选中的角色时当前角色，如果还有备选方案，选中者替换成其他人
-                var newTarget = null;
-                if (scene.selectedFriend === this) {
-                    newTarget = IManualSkill.getFirstInBattle(scene.friends);
-                }
-                else if (scene.selectedEnemy === this) {
-                    newTarget = IManualSkill.getFirstInBattle(scene.enemies);
-                }
-                if (newTarget) {
-                    scene.setSelectTarget(newTarget);
-                }
             }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Character.prototype, "alive", {
-        /**
-         * 是否存活
-         */
-        get: function () {
-            return this.attr.hp != 0;
         },
         enumerable: true,
         configurable: true
@@ -194,7 +152,7 @@ var Character = (function (_super) {
             newHp = this.attr.hp;
         }
         var lifeBarNewLen = 100 * newHp / this.attr.maxHp;
-        return egret.Tween.get(this.lifeBarFg).to({
+        return egret.Tween.get(this._lifeBarFg).to({
             width: lifeBarNewLen,
         }, 1000, egret.Ease.quintOut);
     };
@@ -206,13 +164,13 @@ var Character = (function (_super) {
             newShield = this.attr.shield;
         }
         var lifeBarNewLen = 80 * newShield / this.attr.maxHp;
-        return egret.Tween.get(this.shieldBar).to({
+        return egret.Tween.get(this._shieldBar).to({
             width: lifeBarNewLen,
         }, 1000, egret.Ease.quintOut);
     };
     Character.prototype.loadArmature = function (charactorName) {
         // 从当前场景中获取dbManager，因此在实例化charactor前
-        var dbManager = SceneManager.Ins.curScene.dbManager;
+        var dbManager = SceneManager.Ins.curScene.mDbManager;
         var armatureDisplay = dbManager.getArmatureDisplay(charactorName);
         // 设置龙骨动画资源大小
         var demandArmatureWidth = 100;
@@ -226,7 +184,7 @@ var Character = (function (_super) {
         armatureDisplay.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTap, this);
         // 龙骨动画添加到Character中
         this.addChild(armatureDisplay);
-        this.armatureDisplay = armatureDisplay;
+        this.mArmatureDisplay = armatureDisplay;
         // 绑定长按动作
         LongTouchUtil.bindLongTouch(armatureDisplay, this);
         // 绑定TouchBegin事件（发送TouchBegin消息）
@@ -238,32 +196,32 @@ var Character = (function (_super) {
     Character.prototype.playDBAnim = function (animationName, animationTimes, animationNameBack) {
         if (animationTimes === void 0) { animationTimes = -1; }
         if (animationNameBack === void 0) { animationNameBack = "idle"; }
-        if (this.armatureDisplay.animation.animationNames.indexOf(animationName) >= 0) {
-            this.armatureDisplay.animation.play(animationName, animationTimes);
+        if (this.mArmatureDisplay.animation.animationNames.indexOf(animationName) >= 0) {
+            this.mArmatureDisplay.animation.play(animationName, animationTimes);
         }
         else {
-            this.armatureDisplay.animation.play(animationNameBack, animationTimes);
+            this.mArmatureDisplay.animation.play(animationNameBack, animationTimes);
         }
     };
     Character.prototype.onLongTouchEnd = function () {
         var scene = SceneManager.Ins.curScene;
-        LayerManager.Ins.popUpLayer.removeChild(scene.charInfoPopupUI);
+        LayerManager.Ins.popUpLayer.removeChild(scene.mCharInfoPopupUI);
     };
     Character.prototype.onLongTouchBegin = function () {
         var scene = SceneManager.Ins.curScene;
-        scene.charInfoPopupUI.setDescFlowText(this.desc);
-        scene.charInfoPopupUI.setSkillDescFlowText(this.skillDesc);
-        LayerManager.Ins.popUpLayer.addChild(scene.charInfoPopupUI);
+        scene.mCharInfoPopupUI.setDescFlowText(this.description);
+        scene.mCharInfoPopupUI.setSkillDescFlowText(this.statDescription);
+        LayerManager.Ins.popUpLayer.addChild(scene.mCharInfoPopupUI);
     };
     /**
      * 停止龙骨动画
      */
     Character.prototype.stopDBAnim = function () {
-        this.armatureDisplay.animation.stop();
+        this.mArmatureDisplay.animation.stop();
     };
     // 点击的时候播放外发光滤镜动画
     Character.prototype.onTouchBegin = function () {
-        SceneManager.Ins.curScene.filterManager.setOutGlowHolderWithAnim(this.armatureDisplay);
+        SceneManager.Ins.curScene.mFilterManager.setOutGlowHolderWithAnim(this.mArmatureDisplay);
     };
     /**
      * 点击时触发
@@ -271,39 +229,39 @@ var Character = (function (_super) {
      * 同时将scene下的selectEnemy及Friend调整为合适的对象
      */
     Character.prototype.onTouchTap = function () {
-        SceneManager.Ins.curScene.setSelectTarget(this);
+        this.setAsSelect();
     };
     /**
      * 隐藏生命条
      */
     Character.prototype.lifeBarHide = function () {
-        this.lifeBar.visible = false;
+        this._headBar.visible = false;
     };
     /**
      * 显示生命条
      */
     Character.prototype.lifeBarShow = function () {
-        this.lifeBar.visible = true;
+        this._headBar.visible = true;
     };
     /**
      * 生命条开始闪烁
      */
     Character.prototype.lifeBarBlink = function () {
-        egret.Tween.get(this.lifeBar, { loop: true }).to({ alpha: 0 }, 300).to({ alpha: 1 }, 300);
+        egret.Tween.get(this._headBar, { loop: true }).to({ alpha: 0 }, 300).to({ alpha: 1 }, 300);
     };
     /**
      * 停止生命条闪烁
      */
     Character.prototype.lifeBarUnBlink = function () {
-        egret.Tween.removeTweens(this.lifeBar);
-        this.lifeBar.alpha = 1;
+        egret.Tween.removeTweens(this._headBar);
+        this._headBar.alpha = 1;
     };
     /**
      * 将角色设置为应该在的位置
      */
     Character.prototype.setPosition = function () {
         // 修改动画朝向为正确朝向
-        this.armatureDisplay.scaleX = Math.abs(this.armatureDisplay.scaleX) * this.camp;
+        this.mArmatureDisplay.scaleX = Math.abs(this.mArmatureDisplay.scaleX) * this.camp;
         // 修改动画位置
         var newP = this.getPositon();
         this.x = newP.x;
@@ -324,32 +282,30 @@ var Character = (function (_super) {
      * db动画闪烁
      */
     Character.prototype.armatureBlink = function () {
-        egret.Tween.get(this.armatureDisplay, { loop: true }).to({ alpha: 0 }, 300).to({ alpha: 1 }, 300);
+        egret.Tween.get(this.mArmatureDisplay, { loop: true }).to({ alpha: 0 }, 300).to({ alpha: 1 }, 300);
     };
-    /**
-     * 获取对比后的属性改动信息
-     */
+    Character.prototype.setAsSelect = function () {
+        var scene = SceneManager.Ins.curScene;
+        this.bgLayer.addChild(scene.mSelectImg);
+        scene.mSelectedChar = this;
+    };
     /**
      * db动画停止闪烁
      */
     Character.prototype.armatureUnBlink = function () {
-        egret.Tween.removeTweens(this.armatureDisplay);
+        egret.Tween.removeTweens(this.mArmatureDisplay);
     };
     Character.prototype.release = function () {
-        LongTouchUtil.unbindLongTouch(this.armatureDisplay, this);
-        this.armatureDisplay.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTap, this);
-        this.armatureDisplay.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, this);
-        this.armatureDisplay = null;
-        for (var _i = 0, _a = this.manualSkills; _i < _a.length; _i++) {
-            var skill = _a[_i];
-            skill.release();
-        }
-        this.manualSkills = null;
+        LongTouchUtil.unbindLongTouch(this.mArmatureDisplay, this);
+        this.mArmatureDisplay.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTap, this);
+        this.mArmatureDisplay.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onTouchBegin, this);
+        this.mArmatureDisplay = null;
+        this.mManualSkillsId = null;
         this.attr = null;
-        this.lifeBarFg = null;
+        this._lifeBarFg = null;
         this.bgLayer = null;
-        this.lifeBar = null;
-        this.shieldBar = null;
+        this._headBar = null;
+        this._shieldBar = null;
     };
     return Character;
 }(egret.DisplayObjectContainer));

@@ -27,7 +27,7 @@ class UIBattleScene extends eui.Component {
 			egret.TouchEvent.TOUCH_TAP,
 			()=>{
 				let scene = SceneManager.Ins.curScene as BattleScene;
-				scene.cardBoard.distCardNormal();
+				scene.mCardBoard.distCardNormal();
 			},
 			this
 		);
@@ -36,7 +36,7 @@ class UIBattleScene extends eui.Component {
 			egret.TouchEvent.TOUCH_TAP,
 			() =>{
 				let scene = SceneManager.Ins.curScene as BattleScene;
-				scene.playerFireBoard.addFires(2);
+				scene.mPlayerFireBoard.addFires(2);
 			},
 			this
 		);

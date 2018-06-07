@@ -9,14 +9,14 @@ class EnemyUseCardPhase extends ISceneState{
 
 		// 技能效果
 		let s =new SkillOneDamageWithOut(
-			IManualSkill.getFirstAlive(this.scene.enemies)
+			ManualSkill.getFirstAlive(this.scene.mEnemies)
 		);
-		this.scene.castQue.push(s);
+		this.scene.mCastQueue.push(s);
 		// this.scene.skillTodoQue.push(s);
 		this.scene.startTodoSkill();
 		
 		// 如果不在演出说明没有需要演出的技能，直接切下一个阶段
-		this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundEndPhase);
+		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.EnemyRoundEndPhase);
 
 	}
 

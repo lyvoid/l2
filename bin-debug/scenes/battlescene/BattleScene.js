@@ -47,10 +47,11 @@ var BattleScene = (function (_super) {
     __extends(BattleScene, _super);
     function BattleScene() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.mWinnerCamp = CharCamp.Neut;
         /**
          * 是否正在演出skill的演出内容
          */
-        _this.isPerforming = false;
+        _this._isPerforming = false;
         return _this;
     }
     BattleScene.prototype.initial = function () {
@@ -72,7 +73,7 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.runScene = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var ui, battleEndPopUp, charInfoPopupUI, popUpInfo, selfSelectTex, enemySelectTex, selfSelectImg, enemySlectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, buff;
+            var ui, battleEndPopUp, charInfoPopupUI, popUpInfo, selectTex, selectImg, _i, _a, charactorName, bgTex_1, img1, bgTex_2, img2, bgTex_3, img3, bgTex_4, img4, chars, i, char1, _b, chars_1, char, charLayer, i, char1, _c, chars_2, char, charLayer, buff;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0: 
@@ -86,30 +87,25 @@ var BattleScene = (function (_super) {
                         ui.height = LayerManager.Ins.stageHeight;
                         ui.width = LayerManager.Ins.stageWidth;
                         LayerManager.Ins.uiLayer.addChild(ui);
-                        this.battleUI = ui;
+                        this.mBattleUI = ui;
                         battleEndPopUp = new BattleEndPopUp();
                         battleEndPopUp.height = LayerManager.Ins.stageHeight;
                         battleEndPopUp.width = LayerManager.Ins.stageWidth;
-                        this.battleEndPopUp = battleEndPopUp;
+                        this.mBattleEndPopUp = battleEndPopUp;
                         charInfoPopupUI = new CharacterInfoPopupUI();
                         charInfoPopupUI.width = LayerManager.Ins.stageWidth;
                         charInfoPopupUI.height = LayerManager.Ins.stageHeight;
-                        this.charInfoPopupUI = charInfoPopupUI;
+                        this.mCharInfoPopupUI = charInfoPopupUI;
                         popUpInfo = new CardInfoPopupUI();
                         popUpInfo.width = LayerManager.Ins.stageWidth;
                         popUpInfo.height = LayerManager.Ins.stageHeight;
-                        this.cardInfoPopupUI = popUpInfo;
-                        selfSelectTex = RES.getRes("selfSelectChar_png");
-                        enemySelectTex = RES.getRes("enemySelectChar_png");
-                        selfSelectImg = new egret.Bitmap(selfSelectTex);
-                        selfSelectImg.x = -selfSelectImg.width / 2;
-                        selfSelectImg.y = -selfSelectImg.height / 2;
-                        enemySlectImg = new egret.Bitmap(enemySelectTex);
-                        enemySlectImg.x = selfSelectImg.x;
-                        enemySlectImg.y = selfSelectImg.y;
-                        this.selfSelectImg = selfSelectImg;
-                        this.enemySlectImg = enemySlectImg;
-                        this.filterManager = new FilterManager();
+                        this.mCardInfoPopupUI = popUpInfo;
+                        selectTex = RES.getRes("selfSelectChar_png");
+                        selectImg = new egret.Bitmap(selectTex);
+                        selectImg.x = -selectImg.width / 2;
+                        selectImg.y = -selectImg.height / 2;
+                        this.mSelectImg = selectImg;
+                        this.mFilterManager = new FilterManager();
                         _i = 0, _a = ["Dragon", "Swordsman"];
                         _d.label = 2;
                     case 2:
@@ -156,19 +152,21 @@ var BattleScene = (function (_super) {
                         img4.alpha = 0.5;
                         LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.fgLayer).addChild(img4);
                         //  初始化能量槽
-                        this.playerFireBoard = new FireBoard();
-                        LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.cardLayer).addChild(this.playerFireBoard);
-                        this.playerFireBoard.addFires(2);
+                        this.mPlayerFireBoard = new FireBoard();
+                        LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.cardLayer).addChild(this.mPlayerFireBoard);
+                        this.mPlayerFireBoard.addFires(2);
                         // 初始化game层的内容
-                        this.enemies = [];
-                        this.friends = [];
-                        this.skillManualPool = [];
-                        this.dbManager = new DBManager();
-                        this.cardBoard = new CardBoard();
-                        this.performQue = new Queue();
-                        this.castQue = new Queue();
-                        this.damageFloatManager = new DamageFloatManager();
-                        this.phaseUtil = new PhaseUtil();
+                        this.mEnemies = [];
+                        this.mFriends = [];
+                        this.mManualSkillIdPool = [];
+                        this.mDbManager = new DBManager();
+                        this.mCardBoard = new CardBoard();
+                        this.mPerformQueue = new Queue();
+                        this.mCastQueue = new Queue();
+                        this.mDamageFloatManager = new DamageFloatManager();
+                        this.mPhaseUtil = new PhaseUtil();
+                        this.mManualSkillManager = new ManualSkillManager();
+                        this.mTargetSelectManager = new TargetSelectManager();
                         chars = [];
                         for (i in [0, 1, 2, 3, 4]) {
                             char1 = new Character("Dragon");
@@ -179,8 +177,7 @@ var BattleScene = (function (_super) {
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
                         chars[0].setPosition();
-                        this.setSelectTarget(chars[0]);
-                        chars[0].bgLayer.addChild(this.enemySlectImg);
+                        chars[0].setAsSelect();
                         chars[1].col = CharColType.backRow;
                         chars[1].row = CharRowType.up;
                         chars[1].setPosition();
@@ -197,7 +194,7 @@ var BattleScene = (function (_super) {
                             char = chars_1[_b];
                             charLayer = LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer);
                             charLayer.addChildAt(char, char.row * 1000);
-                            this.enemies.push(char);
+                            this.mEnemies.push(char);
                         }
                         chars = [];
                         for (i in [0, 1, 2, 3, 4]) {
@@ -208,8 +205,6 @@ var BattleScene = (function (_super) {
                         chars[0].col = CharColType.backRow;
                         chars[0].row = CharRowType.down;
                         chars[0].setPosition();
-                        this.setSelectTarget(chars[0]);
-                        chars[0].bgLayer.addChild(this.selfSelectImg);
                         chars[1].col = CharColType.backRow;
                         chars[1].row = CharRowType.up;
                         chars[1].setPosition();
@@ -242,15 +237,15 @@ var BattleScene = (function (_super) {
                             buff.remainRound = 4;
                             buff.attachToChar(char);
                             charLayer.addChildAt(char, char.row * 1000);
-                            this.friends.push(char);
+                            this.mFriends.push(char);
                             // TODO: 填充技能池子
-                            this.skillManualPool = this.skillManualPool.concat(char.manualSkills);
+                            this.mManualSkillIdPool = this.mManualSkillIdPool.concat();
                         }
                         // 发放游戏开始的卡牌
-                        LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer).addChild(this.cardBoard);
+                        LayerManager.getSubLayerAt(LayerManager.Ins.gameLayer, BattleSLEnum.CharLayer).addChild(this.mCardBoard);
                         // 初始2张卡牌
-                        this.cardBoard.distCardNormal();
-                        this.cardBoard.distCardNormal();
+                        this.mCardBoard.distCardNormal();
+                        this.mCardBoard.distCardNormal();
                         // 初始化场景中的StatePool
                         this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
                         this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
@@ -269,14 +264,14 @@ var BattleScene = (function (_super) {
     BattleScene.prototype.judge = function () {
         var isEnemyAlive = false;
         var isPlayerAlive = false;
-        for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.mEnemies; _i < _a.length; _i++) {
             var char = _a[_i];
             if (char.alive && char.isInBattle) {
                 isEnemyAlive = true;
                 break;
             }
         }
-        for (var _b = 0, _c = this.friends; _b < _c.length; _b++) {
+        for (var _b = 0, _c = this.mFriends; _b < _c.length; _b++) {
             var char = _c[_b];
             if (char.alive && char.isInBattle) {
                 isPlayerAlive = true;
@@ -284,15 +279,15 @@ var BattleScene = (function (_super) {
             }
         }
         if (!isEnemyAlive) {
-            this.winnerCamp = CharCamp.Player;
+            this.mWinnerCamp = CharCamp.Player;
         }
         else if (!isPlayerAlive) {
-            this.winnerCamp = CharCamp.Enemy;
+            this.mWinnerCamp = CharCamp.Enemy;
         }
     };
     BattleScene.prototype.startTodoSkill = function () {
-        if (this.castQue.length > 0) {
-            this.castQue.pop().cast();
+        if (this.mCastQueue.length > 0) {
+            this.mCastQueue.pop().cast();
         }
     };
     /**
@@ -302,10 +297,10 @@ var BattleScene = (function (_super) {
      * 如果胜负未分发送演出全部结束消息
      */
     BattleScene.prototype.onePerformEnd = function () {
-        this.isPerforming = false;
-        if (this.performQue.length == 0) {
+        this._isPerforming = false;
+        if (this.mPerformQueue.length == 0) {
             // 如果演出结束同时游戏结束时，播放游戏结束演出
-            if (this.winnerCamp) {
+            if (this.mWinnerCamp != CharCamp.Neut) {
                 this.onBattleEnd();
             }
             else {
@@ -322,44 +317,28 @@ var BattleScene = (function (_super) {
     BattleScene.prototype.onBattleEnd = function () {
         var lm = LayerManager.Ins;
         lm.maskLayer.addChild(lm.maskBg);
-        if (this.winnerCamp == CharCamp.Player) {
-            this.battleEndPopUp.winUIAdjust();
+        if (this.mWinnerCamp == CharCamp.Player) {
+            this.mBattleEndPopUp.winUIAdjust();
         }
         else {
-            this.battleEndPopUp.lostUIAdjust();
+            this.mBattleEndPopUp.lostUIAdjust();
         }
-        LayerManager.Ins.popUpLayer.addChild(this.battleEndPopUp);
+        LayerManager.Ins.popUpLayer.addChild(this.mBattleEndPopUp);
     };
     /**
      * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
      * 如果当前正在演出会直接返回，防止两件事同时被演出
      */
     BattleScene.prototype.performStart = function () {
-        if (this.isPerforming) {
+        if (this._isPerforming) {
             // 如果正在演出，那就不管这个消息
             return;
         }
-        this.isPerforming = true;
-        var performanceObj;
-        var affectResult;
-        _a = this.performQue.pop(), performanceObj = _a[0], affectResult = _a[1];
-        performanceObj.performance(affectResult);
-        var _a;
+        this._isPerforming = true;
+        var performanceObj = this.mPerformQueue.pop();
+        performanceObj.performance();
     };
     BattleScene.prototype.readConfig = function () {
-    };
-    /**
-     * 设置选中对象
-     */
-    BattleScene.prototype.setSelectTarget = function (value) {
-        if (value.camp === CharCamp.Enemy) {
-            value.bgLayer.addChild(this.enemySlectImg);
-            this.selectedEnemy = value;
-        }
-        else {
-            value.bgLayer.addChild(this.selfSelectImg);
-            this.selectedFriend = value;
-        }
     };
     BattleScene.prototype.loadResource = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -373,23 +352,23 @@ var BattleScene = (function (_super) {
     };
     BattleScene.prototype.release = function () {
         _super.prototype.release.call(this);
-        this.dbManager.release();
-        this.dbManager = null;
-        this.cardBoard.release();
-        this.cardBoard = null;
-        this.battleUI = null;
-        this.battleEndPopUp = null;
-        this.damageFloatManager.release();
-        this.damageFloatManager = null;
-        this.playerFireBoard.release();
-        this.playerFireBoard = null;
-        this.phaseUtil.clear();
-        this.phaseUtil = null;
+        this.mDbManager.release();
+        this.mDbManager = null;
+        this.mCardBoard.release();
+        this.mCardBoard = null;
+        this.mBattleUI = null;
+        this.mBattleEndPopUp = null;
+        this.mDamageFloatManager.release();
+        this.mDamageFloatManager = null;
+        this.mPlayerFireBoard.release();
+        this.mPlayerFireBoard = null;
+        this.mPhaseUtil.clear();
+        this.mPhaseUtil = null;
         LongTouchUtil.clear();
-        this.selfSelectImg = null;
-        this.enemySlectImg = null;
-        this.filterManager.release();
-        this.filterManager = null;
+        this.mSelectImg = null;
+        this.mSelectedChar = null;
+        this.mFilterManager.release();
+        this.mFilterManager = null;
         // 释放载入的美术资源
         this.releaseResource().then(function () {
             SceneManager.Ins.onSceneReleaseCompelete();

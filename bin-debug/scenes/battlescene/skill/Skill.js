@@ -35,17 +35,17 @@ var SkillOneDamageWithOut = (function (_super) {
     };
     SkillOneDamageWithOut.prototype.performance = function () {
         var _this = this;
-        var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
+        var damageFloatManage = SceneManager.Ins.curScene.mDamageFloatManager;
         egret.Tween.get(this.caster).to({
             x: this.targets[0].x + 100 * this.targets[0].camp,
             y: this.targets[0].y + 20
         }, 200).call(function () {
             _this.caster.playDBAnim("attack1_+1", 1, "idle");
-            _this.caster.armatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
+            _this.caster.mArmatureDisplay.addEventListener(dragonBones.EventObject.COMPLETE, _this.casterAniEnd, _this);
         });
     };
     SkillOneDamageWithOut.prototype.casterAniEnd = function () {
-        this.caster.armatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
+        this.caster.mArmatureDisplay.removeEventListener(dragonBones.EventObject.COMPLETE, this.casterAniEnd, this);
         var newP = this.caster.getPositon();
         this.caster.playDBAnim("idle", 0);
         egret.Tween.get(this.caster).to({
@@ -56,5 +56,5 @@ var SkillOneDamageWithOut = (function (_super) {
         });
     };
     return SkillOneDamageWithOut;
-}(IManualSkill));
+}(ManualSkill));
 __reflect(SkillOneDamageWithOut.prototype, "SkillOneDamageWithOut");

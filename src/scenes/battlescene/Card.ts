@@ -1,16 +1,16 @@
 class Card extends egret.DisplayObjectContainer {
 
-	public skill: IManualSkill;
+	public skill: ManualSkill;
 	public get desc(): string {
 		let caster = this.skill.caster;
-		let casterName = caster ? caster.charName : "无";
+		let casterName = caster ? caster.mCharName : "无";
 		return `<font color="#EE7942"><b>${this.skill.skillName}</b></font>
 <b>释放单位:</b> ${casterName}
 <b>消耗能量:</b> ${this.skill.fireNeed}
 <b>作用效果:</b> ${this.skill.desc}`;
 	}
 
-	public constructor(skill: IManualSkill) {
+	public constructor(skill: ManualSkill) {
 		super();
 		this.width = 80;
 		this.height = 130;
@@ -23,7 +23,7 @@ class Card extends egret.DisplayObjectContainer {
 
 	private onLongTouchEnd(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.cardInfoPopupUI);
+		LayerManager.Ins.popUpLayer.removeChild(scene.mCardInfoPopupUI);
 		// 显示选择圈
 		scene.selfSelectImg.visible = true;
 		scene.enemySlectImg.visible = true;
@@ -32,11 +32,11 @@ class Card extends egret.DisplayObjectContainer {
 			caster.armatureUnBlink();
 		}
 
-		for (let char of scene.enemies.concat(scene.friends)) {
+		for (let char of scene.mEnemies.concat(scene.mFriends)) {
 			char.lifeBarShow();
 		}
 
-		this.skill.caster.armatureDisplay.alpha = 1;
+		this.skill.caster.mArmatureDisplay.alpha = 1;
 		for (let target of this.skill.targets) {
 			target.lifeBarUnBlink();
 		}
@@ -44,8 +44,8 @@ class Card extends egret.DisplayObjectContainer {
 	}
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.cardInfoPopupUI.setDescFlowText(this.desc);
-		LayerManager.Ins.popUpLayer.addChild(scene.cardInfoPopupUI);
+		scene.mCardInfoPopupUI.setDescFlowText(this.desc);
+		LayerManager.Ins.popUpLayer.addChild(scene.mCardInfoPopupUI);
 		// 隐藏选择圈
 		scene.selfSelectImg.visible = false;
 		scene.enemySlectImg.visible = false;
@@ -57,7 +57,7 @@ class Card extends egret.DisplayObjectContainer {
 
 		this.skill.manualChooseTarget();
 		// 隐藏目标以外的血条
-		for (let char of scene.enemies.concat(scene.friends)) {
+		for (let char of scene.mEnemies.concat(scene.mFriends)) {
 			if (this.skill.targets.indexOf(char) < 0) {
 				char.lifeBarHide();
 			}
@@ -91,7 +91,7 @@ class Card extends egret.DisplayObjectContainer {
 	/**
 	 * TODO: 这里还需要根据skill的图标资源名，给对应卡片设置对应贴图资源
 	 */
-	public setSkill(skill: IManualSkill): void {
+	public setSkill(skill: ManualSkill): void {
 		this.skill = skill;
 		this.alpha = 1;
 		this.scaleX = 1;
@@ -128,7 +128,7 @@ class Card extends egret.DisplayObjectContainer {
 	 * touchbegin统一在scene里做处理
 	 */
 	private onTouchBegin(): void {
-		(SceneManager.Ins.curScene as BattleScene).filterManager.setOutGlowHolderWithAnim(this);
+		(SceneManager.Ins.curScene as BattleScene).mFilterManager.setOutGlowHolderWithAnim(this);
 	}
 
 	/**

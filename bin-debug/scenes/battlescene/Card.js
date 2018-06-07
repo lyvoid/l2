@@ -24,7 +24,7 @@ var Card = (function (_super) {
     Object.defineProperty(Card.prototype, "desc", {
         get: function () {
             var caster = this.skill.caster;
-            var casterName = caster ? caster.charName : "无";
+            var casterName = caster ? caster.mCharName : "无";
             return "<font color=\"#EE7942\"><b>" + this.skill.skillName + "</b></font>\n<b>\u91CA\u653E\u5355\u4F4D:</b> " + casterName + "\n<b>\u6D88\u8017\u80FD\u91CF:</b> " + this.skill.fireNeed + "\n<b>\u4F5C\u7528\u6548\u679C:</b> " + this.skill.desc;
         },
         enumerable: true,
@@ -32,7 +32,7 @@ var Card = (function (_super) {
     });
     Card.prototype.onLongTouchEnd = function () {
         var scene = SceneManager.Ins.curScene;
-        LayerManager.Ins.popUpLayer.removeChild(scene.cardInfoPopupUI);
+        LayerManager.Ins.popUpLayer.removeChild(scene.mCardInfoPopupUI);
         // 显示选择圈
         scene.selfSelectImg.visible = true;
         scene.enemySlectImg.visible = true;
@@ -40,11 +40,11 @@ var Card = (function (_super) {
         if (caster) {
             caster.armatureUnBlink();
         }
-        for (var _i = 0, _a = scene.enemies.concat(scene.friends); _i < _a.length; _i++) {
+        for (var _i = 0, _a = scene.mEnemies.concat(scene.mFriends); _i < _a.length; _i++) {
             var char = _a[_i];
             char.lifeBarShow();
         }
-        this.skill.caster.armatureDisplay.alpha = 1;
+        this.skill.caster.mArmatureDisplay.alpha = 1;
         for (var _b = 0, _c = this.skill.targets; _b < _c.length; _b++) {
             var target = _c[_b];
             target.lifeBarUnBlink();
@@ -52,8 +52,8 @@ var Card = (function (_super) {
     };
     Card.prototype.onLongTouchBegin = function () {
         var scene = SceneManager.Ins.curScene;
-        scene.cardInfoPopupUI.setDescFlowText(this.desc);
-        LayerManager.Ins.popUpLayer.addChild(scene.cardInfoPopupUI);
+        scene.mCardInfoPopupUI.setDescFlowText(this.desc);
+        LayerManager.Ins.popUpLayer.addChild(scene.mCardInfoPopupUI);
         // 隐藏选择圈
         scene.selfSelectImg.visible = false;
         scene.enemySlectImg.visible = false;
@@ -64,7 +64,7 @@ var Card = (function (_super) {
         }
         this.skill.manualChooseTarget();
         // 隐藏目标以外的血条
-        for (var _i = 0, _a = scene.enemies.concat(scene.friends); _i < _a.length; _i++) {
+        for (var _i = 0, _a = scene.mEnemies.concat(scene.mFriends); _i < _a.length; _i++) {
             var char = _a[_i];
             if (this.skill.targets.indexOf(char) < 0) {
                 char.lifeBarHide();
@@ -117,7 +117,7 @@ var Card = (function (_super) {
      * touchbegin统一在scene里做处理
      */
     Card.prototype.onTouchBegin = function () {
-        SceneManager.Ins.curScene.filterManager.setOutGlowHolderWithAnim(this);
+        SceneManager.Ins.curScene.mFilterManager.setOutGlowHolderWithAnim(this);
     };
     /**
      * 被点击时发送cardtouchtap事件，附带信息为卡牌自己

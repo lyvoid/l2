@@ -26,14 +26,14 @@ var PlayerRoundStartPhase = (function (_super) {
         MessageManager.Ins.sendMessage(MessageType.PlayerRoundStart);
         // 发牌
         var scene = this.scene;
-        scene.cardBoard.distCardNormal();
-        scene.cardBoard.distCardNormal();
+        scene.mCardBoard.distCardNormal();
+        scene.mCardBoard.distCardNormal();
         // 加能量
-        scene.playerFireBoard.addFires(2);
+        scene.mPlayerFireBoard.addFires(2);
         // buff结算(待增加
         // 回合开始的技能及效果（待增加
         // 切下一个阶段
-        this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
+        this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
     };
     PlayerRoundStartPhase.prototype.unInitial = function () {
         _super.prototype.unInitial.call(this);

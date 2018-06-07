@@ -17,18 +17,18 @@ class PlayerRoundStartPhase extends ISceneState {
 
 		// 发牌
 		let scene = this.scene;
-		scene.cardBoard.distCardNormal();
-		scene.cardBoard.distCardNormal();
+		scene.mCardBoard.distCardNormal();
+		scene.mCardBoard.distCardNormal();
 
 		// 加能量
-		scene.playerFireBoard.addFires(2);
+		scene.mPlayerFireBoard.addFires(2);
 
 		// buff结算(待增加
 
 		// 回合开始的技能及效果（待增加
 
 		// 切下一个阶段
-		this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
+		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
 	}
 
 	public unInitial() {

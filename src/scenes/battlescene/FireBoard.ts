@@ -29,7 +29,7 @@ class FireBoard extends egret.DisplayObjectContainer {
 			this.particles[this.fireNum].start();
 			this.fireNum += 1;
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			let fireNumLabel = scene.battleUI.fireNumLabel;
+			let fireNumLabel = scene.mBattleUI.fireNumLabel;
 			fireNumLabel.text = `${this.fireNum}/${FireBoard.maxFireNum}`
 			if (this.fireNum == FireBoard.maxFireNum) {
 				fireNumLabel.textColor = 0xFF0000;
@@ -65,7 +65,7 @@ class FireBoard extends egret.DisplayObjectContainer {
 			this.particles[this.fireNum - 1].stop();
 			this.fireNum -= 1;
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			let fireNumLabel = scene.battleUI.fireNumLabel;
+			let fireNumLabel = scene.mBattleUI.fireNumLabel;
 			fireNumLabel.text = `${this.fireNum}/${FireBoard.maxFireNum}`
 			fireNumLabel.textColor = 0xADFF2F;
 		}

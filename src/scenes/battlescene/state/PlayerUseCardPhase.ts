@@ -5,7 +5,7 @@ class PlayerUseCardPhase extends ISceneState {
 		super.initial();
 		ToastInfoManager.Ins.newToast("我方出牌阶段");
 		// 显示下一个回合的按键
-		this.scene.battleUI.roundEndButton.visible = true;
+		this.scene.mBattleUI.roundEndButton.visible = true;
 		// 绑定卡牌tap使用事件
 		MessageManager.Ins.addEventListener(
 			MessageType.CardTouchTap,
@@ -26,13 +26,13 @@ class PlayerUseCardPhase extends ISceneState {
 			this.onCardTouchTap,
 			this
 		);
-		this.scene.phaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
+		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
 	}
 
 	private onCardTouchTap(e: Message): void {
 		let card: Card = e.messageContent;
 		let scene = this.scene;
-		if (scene.winnerCamp) {
+		if (scene.mWinnerCamp) {
 			ToastInfoManager.Ins.newToast("胜负已分");
 			return;
 		}
@@ -41,7 +41,7 @@ class PlayerUseCardPhase extends ISceneState {
 			ToastInfoManager.Ins.newToast("释放者处于无法释放的状态中");
 			return;
 		}
-		let fireboard = scene.playerFireBoard;
+		let fireboard = scene.mPlayerFireBoard;
 		let fireNeed = card.skill.fireNeed;
 		if (fireNeed > fireboard.fireNum) {
 			ToastInfoManager.Ins.newToast("能量不足");
@@ -71,7 +71,7 @@ class PlayerUseCardPhase extends ISceneState {
 		}
 
 		// 移除卡牌
-		scene.cardBoard.removeCard(card);
+		scene.mCardBoard.removeCard(card);
 
 	}
 

@@ -35,13 +35,13 @@ var Hurt = (function () {
             change.isInBattleNew = false;
         }
         var scene = SceneManager.Ins.curScene;
-        scene.performQue.push([
+        scene.mPerformQueue.push([
             { performance: Hurt.statePerformance },
             change
         ]);
         // 移除buff
         if (!target.alive) {
-            for (var _i = 0, _a = target.buffs.concat(target.hideBuffs).concat(target.passiveSkills); _i < _a.length; _i++) {
+            for (var _i = 0, _a = target.mBuffs.concat(target.mHideBuffs).concat(target.mPassiveSkills); _i < _a.length; _i++) {
                 var buff = _a[_i];
                 if (buff.isDeadRemove) {
                     buff.removeFromChar();
@@ -49,7 +49,7 @@ var Hurt = (function () {
             }
         }
         if (!target.isInBattle) {
-            for (var _b = 0, _c = target.buffs.concat(target.hideBuffs).concat(target.passiveSkills); _b < _c.length; _b++) {
+            for (var _b = 0, _c = target.mBuffs.concat(target.mHideBuffs).concat(target.mPassiveSkills); _b < _c.length; _b++) {
                 var buff = _c[_b];
                 buff.removeFromChar();
             }
@@ -183,7 +183,7 @@ var Hurt = (function () {
      */
     Hurt.statePerformance = function (change) {
         SceneManager.Ins.curScene.onePerformEnd();
-        var damageFloatManage = SceneManager.Ins.curScene.damageFloatManager;
+        var damageFloatManage = SceneManager.Ins.curScene.mDamageFloatManager;
         var target = change.char;
         if (change.shieldNew != change.shieldOld) {
             target.lifeBarShieldAnim(change.shieldNew);
@@ -195,7 +195,7 @@ var Hurt = (function () {
             function () {
                 if (change.aliveNew != change.aliveOld && !change.aliveNew) {
                     target.stopDBAnim();
-                    SceneManager.Ins.curScene.filterManager.addGreyFilter(target.armatureDisplay);
+                    SceneManager.Ins.curScene.mFilterManager.addGreyFilter(target.mArmatureDisplay);
                 }
                 if (change.isInBattleNew == false) {
                     // 如果扣血后移除
@@ -211,7 +211,7 @@ var Hurt = (function () {
         }
     };
     Hurt.removeFromGamePerform = function (target) {
-        egret.Tween.get(target.armatureDisplay).to({
+        egret.Tween.get(target.mArmatureDisplay).to({
             alpha: 0
         }, 1000).call(function () {
             target.parent.removeChild(target);

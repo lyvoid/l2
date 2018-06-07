@@ -34,7 +34,7 @@ var FireBoard = (function (_super) {
             this.particles[this.fireNum].start();
             this.fireNum += 1;
             var scene = SceneManager.Ins.curScene;
-            var fireNumLabel = scene.battleUI.fireNumLabel;
+            var fireNumLabel = scene.mBattleUI.fireNumLabel;
             fireNumLabel.text = this.fireNum + "/" + FireBoard.maxFireNum;
             if (this.fireNum == FireBoard.maxFireNum) {
                 fireNumLabel.textColor = 0xFF0000;
@@ -49,7 +49,7 @@ var FireBoard = (function (_super) {
             this.overflowFireNum += 1;
             var to_1 = egret.setTimeout(function () {
                 _this.particles[index_1].stop();
-                Util.deleteObjFromList(_this.timeOutHandles, to_1);
+                Util.removeObjFromArray(_this.timeOutHandles, to_1);
                 egret.clearTimeout(to_1);
                 _this.overflowFireNum -= 1;
             }, this, 300);
@@ -66,7 +66,7 @@ var FireBoard = (function (_super) {
             this.particles[this.fireNum - 1].stop();
             this.fireNum -= 1;
             var scene = SceneManager.Ins.curScene;
-            var fireNumLabel = scene.battleUI.fireNumLabel;
+            var fireNumLabel = scene.mBattleUI.fireNumLabel;
             fireNumLabel.text = this.fireNum + "/" + FireBoard.maxFireNum;
             fireNumLabel.textColor = 0xADFF2F;
         }

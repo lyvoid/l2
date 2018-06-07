@@ -41,7 +41,7 @@ var CardBoard = (function (_super) {
     CardBoard.prototype.removeCards = function (cards) {
         for (var index in cards) {
             var card = cards[index];
-            Util.deleteObjFromList(this.cards, card);
+            Util.removeObjFromArray(this.cards, card);
             card.unInitial();
             if (parseInt(index) == cards.length - 1) {
                 // 如果是最后一张，对全体调整
@@ -53,7 +53,7 @@ var CardBoard = (function (_super) {
         }
     };
     CardBoard.prototype.distCardNormal = function () {
-        var skills = SceneManager.Ins.curScene.skillManualPool;
+        var skills = SceneManager.Ins.curScene.mManualSkillIdPool;
         var index = Math.floor(Math.random() * skills.length);
         var card;
         if (this.cardPool.length > 0) {
@@ -72,7 +72,7 @@ var CardBoard = (function (_super) {
             this.cards.push(card);
             this.addCardToBoard(card, this.cards.length - 1);
             var scene = SceneManager.Ins.curScene;
-            var cardNumLabel = scene.battleUI.cardNumLabel;
+            var cardNumLabel = scene.mBattleUI.cardNumLabel;
             cardNumLabel.text = this.cards.length + "/" + CardBoard.maxCardNum;
             if (this.cards.length == CardBoard.maxCardNum) {
                 cardNumLabel.textColor = 0xFF0000;
@@ -137,7 +137,7 @@ var CardBoard = (function (_super) {
         cards.splice(index, 1);
         this.removeCardFromBoard(card, index);
         var scene = SceneManager.Ins.curScene;
-        var cardNumLabel = scene.battleUI.cardNumLabel;
+        var cardNumLabel = scene.mBattleUI.cardNumLabel;
         cardNumLabel.text = this.cards.length + "/" + CardBoard.maxCardNum;
         cardNumLabel.textColor = 0xADFF2F;
     };

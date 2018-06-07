@@ -45,14 +45,14 @@ class Hurt {
 			change.isInBattleNew = false;
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.performQue.push([
+		scene.mPerformQueue.push([
 			{ performance: Hurt.statePerformance },
 			change
 		]);
 		// 移除buff
 		if (!target.alive) {
-			for (let buff of target.buffs.concat(target.hideBuffs
-			).concat(target.passiveSkills)) {
+			for (let buff of target.mBuffs.concat(target.mHideBuffs
+			).concat(target.mPassiveSkills)) {
 				if (buff.isDeadRemove) {
 					buff.removeFromChar();
 				}
@@ -60,8 +60,8 @@ class Hurt {
 		}
 
 		if (!target.isInBattle) {
-			for (let buff of target.buffs.concat(target.hideBuffs
-			).concat(target.passiveSkills)) {
+			for (let buff of target.mBuffs.concat(target.mHideBuffs
+			).concat(target.mPassiveSkills)) {
 				buff.removeFromChar();
 			}
 		}
@@ -236,7 +236,7 @@ class Hurt {
 	 */
 	public static statePerformance(change: IAttrChange) {
 		(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
-		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).damageFloatManager;
+		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		let target = change.char;
 		if (change.shieldNew != change.shieldOld) {
 			target.lifeBarShieldAnim(change.shieldNew);
@@ -249,7 +249,7 @@ class Hurt {
 				() => {
 					if (change.aliveNew != change.aliveOld && !change.aliveNew) {
 						target.stopDBAnim();
-						(SceneManager.Ins.curScene as BattleScene).filterManager.addGreyFilter(target.armatureDisplay);
+						(SceneManager.Ins.curScene as BattleScene).mFilterManager.addGreyFilter(target.mArmatureDisplay);
 					}
 					if (change.isInBattleNew == false) {
 						// 如果扣血后移除
@@ -266,7 +266,7 @@ class Hurt {
 	}
 
 	private static removeFromGamePerform(target: Character) {
-		egret.Tween.get(target.armatureDisplay).to({
+		egret.Tween.get(target.mArmatureDisplay).to({
 			alpha: 0
 		}, 1000).call(
 			() => {

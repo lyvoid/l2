@@ -14,6 +14,8 @@ var Buff = (function () {
         this.remainRound = -1; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
         // 状态
         this.isDiz = false; // 是否眩晕
+        this.isSlience = false;
+        this.isUnarm = false;
         // 结算时机
         this.isAffect = false; // 是否具有结算效果
         this.remainAffectTime = -1; // 剩余结算次数，-1为无限
@@ -33,7 +35,7 @@ var Buff = (function () {
     Buff.prototype.attachToChar = function (target) {
         // 如果叠加层数到上限，且没有相同id的buff就return
         // 如果存在相同id，该buff刷新一下时间
-        var allBuff = target.passiveSkills.concat(target.buffs).concat(target.hideBuffs);
+        var allBuff = target.mPassiveSkills.concat(target.mBuffs).concat(target.mHideBuffs);
         var sameBuff;
         var buffLayNum = 0;
         for (var _i = 0, allBuff_1 = allBuff; _i < allBuff_1.length; _i++) {
@@ -77,16 +79,16 @@ var Buff = (function () {
         // if not have same id
         this.char = target;
         if (this.isHide) {
-            target.hideBuffs.push(this);
+            target.mHideBuffs.push(this);
         }
         if (this.isPassive) {
-            target.passiveSkills.push(this);
+            target.mPassiveSkills.push(this);
         }
         if (this.isNormal) {
-            target.buffs.push(this);
+            target.mBuffs.push(this);
             this.buffIcon = new egret.Bitmap(RES.getRes("bufficontest_png"));
-            var index = target.buffs.indexOf(this);
-            target.buffLine.addChild(this.buffIcon);
+            var index = target.mBuffs.indexOf(this);
+            target.mBuffLine.addChild(this.buffIcon);
             this.adjustIconPosition();
         }
         // TODO: if have effect, listen affect affectPhase
@@ -141,19 +143,19 @@ var Buff = (function () {
             }
         }
         if (this.isNormal == true) {
-            var buffs = this.char.buffs;
-            target.buffLine.removeChild(this.buffIcon);
-            Util.deleteObjFromList(buffs, this);
+            var buffs = this.char.mBuffs;
+            target.mBuffLine.removeChild(this.buffIcon);
+            Util.removeObjFromArray(buffs, this);
             for (var _i = 0, buffs_1 = buffs; _i < buffs_1.length; _i++) {
                 var buff = buffs_1[_i];
                 buff.adjustIconPosition();
             }
         }
         else if (this.isPassive == true) {
-            Util.deleteObjFromList(target.passiveSkills, this);
+            Util.removeObjFromArray(target.mPassiveSkills, this);
         }
         else if (this.isHide == true) {
-            Util.deleteObjFromList(target.hideBuffs, this);
+            Util.removeObjFromArray(target.mHideBuffs, this);
         }
         // TODO: remove listen
         if (this.isAffect) {
@@ -182,7 +184,7 @@ var Buff = (function () {
         }
     };
     Buff.prototype.adjustIconPosition = function () {
-        var buffs = this.char.buffs;
+        var buffs = this.char.mBuffs;
         var index = buffs.indexOf(this);
         this.buffIcon.x = index * 12;
     };
