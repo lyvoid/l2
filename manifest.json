@@ -12,9 +12,9 @@
 		"libs/modules/particle/particle.js"
 	],
 	"game": [
-		"bin-debug/scenes/battlescene/skill/IManualSkill.js",
 		"bin-debug/scenesystem/IScene.js",
 		"bin-debug/scenes/battlescene/FireBoard.js",
+		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/common/FiltersManager.js",
 		"bin-debug/common/Queue.js",
@@ -35,9 +35,10 @@
 		"bin-debug/Main.js",
 		"bin-debug/scenes/battlescene/Hurt.js",
 		"bin-debug/scenes/battlescene/buff/Buff.js",
-		"bin-debug/AssetAdapter.js",
-		"bin-debug/scenes/battlescene/skill/RemoveCharFromGameSkill.js",
-		"bin-debug/scenes/battlescene/skill/Skill.js",
+		"bin-debug/scenes/battlescene/skill/ManualSkill.js",
+		"bin-debug/scenes/battlescene/skill/ManualSkillManager.js",
+		"bin-debug/scenes/battlescene/skill/TargetSelect.js",
+		"bin-debug/scenes/battlescene/skill/TargetSelectManager.js",
 		"bin-debug/scenes/battlescene/state/EnemyRoundEndPhase.js",
 		"bin-debug/scenes/battlescene/state/EnemyRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/EnemyUseCardPhase.js",
@@ -49,7 +50,7 @@
 		"bin-debug/scenes/battlescene/UI/CardInfoPopupUI.js",
 		"bin-debug/scenes/battlescene/UI/CharacterInfoPopupUI.js",
 		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
-		"bin-debug/Platform.js",
+		"bin-debug/AssetAdapter.js",
 		"bin-debug/scenesystem/SceneManager.js",
 		"bin-debug/UI/LoadingUI.js"
 	]

@@ -85,6 +85,10 @@ var ManualSkill = (function () {
         scene.performStart();
     };
     ManualSkill.prototype.affect = function () {
+        // TODO:add affect logic
+    };
+    ManualSkill.prototype.preSelectTarget = function () {
+        return this.mTargetSelect.selectAll(this._camp, this._caster);
     };
     ManualSkill.prototype.preparePerformance = function () {
         var _this = this;

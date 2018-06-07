@@ -299,16 +299,10 @@ class BattleScene extends IScene {
 		}
 	}
 
-	public startTodoSkill():void{
-		if (this.mCastQueue.length > 0){
-			this.mCastQueue.pop().cast();
-		}
-	}
-
 	/**
 	 * 是否正在演出skill的演出内容
 	 */
-	private _isPerforming: boolean = false;
+	public mIsPerforming: boolean = false;
 	
 	/**
 	 * 一个技能演出结束的时候自行调用
@@ -317,7 +311,7 @@ class BattleScene extends IScene {
 	 * 如果胜负未分发送演出全部结束消息
 	 */
 	public onePerformEnd(): void{
-		this._isPerforming = false;
+		this.mIsPerforming = false;
 		if (this.mPerformQueue.length == 0){
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
 			if (this.mWinnerCamp != CharCamp.Neut){
@@ -350,11 +344,11 @@ class BattleScene extends IScene {
 	 * 如果当前正在演出会直接返回，防止两件事同时被演出
 	 */
 	public performStart(): void{
-		if(this._isPerforming){
+		if(this.mIsPerforming){
 			// 如果正在演出，那就不管这个消息
 			return;
 		}
-		this._isPerforming = true;
+		this.mIsPerforming = true;
 		let performanceObj = this.mPerformQueue.pop();
 		performanceObj.performance();
 	}

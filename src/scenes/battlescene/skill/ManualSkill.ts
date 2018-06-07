@@ -99,7 +99,11 @@ class ManualSkill {
 	}
 
 	private affect(): void {
+		// TODO:add affect logic
+	}
 
+	public preSelectTarget(): Character[]{
+		return this.mTargetSelect.selectAll(this._camp, this._caster);
 	}
 
 	private preparePerformance(): void {
@@ -187,7 +191,7 @@ class ManualSkill {
 	}
 
 	// canCast
-	private canCast(): [boolean, string] {
+	public canCast(): [boolean, string] {
 		let selectedChar = (SceneManager.Ins.curScene as BattleScene).mSelectedChar;
 		if (this._isSelectTargetCondition) {
 			if (!selectedChar.isInBattle) {

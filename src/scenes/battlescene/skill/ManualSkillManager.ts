@@ -5,7 +5,7 @@ class ManualSkillManager {
         this._skillPool = [];
     }
 
-    public newSkill(id: number, cast: Character = null, camp: CharCamp.Neut): ManualSkill {
+    public newSkill(id: number, cast: Character = null, camp: CharCamp=CharCamp.Neut): ManualSkill {
         let skillPool = this._skillPool;
         let skill: ManualSkill;
         if (skillPool.length > 0) {

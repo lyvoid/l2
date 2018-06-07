@@ -7,7 +7,7 @@ class Card extends egret.DisplayObjectContainer {
 		return `<font color="#EE7942"><b>${this.skill.skillName}</b></font>
 <b>释放单位:</b> ${casterName}
 <b>消耗能量:</b> ${this.skill.fireNeed}
-<b>作用效果:</b> ${this.skill.desc}`;
+<b>作用效果:</b> ${this.skill.description}`;
 	}
 
 	public constructor(skill: ManualSkill) {
@@ -25,8 +25,7 @@ class Card extends egret.DisplayObjectContainer {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		LayerManager.Ins.popUpLayer.removeChild(scene.mCardInfoPopupUI);
 		// 显示选择圈
-		scene.selfSelectImg.visible = true;
-		scene.enemySlectImg.visible = true;
+		scene.mSelectImg.visible = true;
 		let caster = this.skill.caster
 		if (caster) {
 			caster.armatureUnBlink();
@@ -37,35 +36,33 @@ class Card extends egret.DisplayObjectContainer {
 		}
 
 		this.skill.caster.mArmatureDisplay.alpha = 1;
-		for (let target of this.skill.targets) {
+		for (let target of this._targetsTmp) {
 			target.lifeBarUnBlink();
 		}
-
+		this._targetsTmp = null;
 	}
+	private _targetsTmp: Character[];
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mCardInfoPopupUI.setDescFlowText(this.desc);
 		LayerManager.Ins.popUpLayer.addChild(scene.mCardInfoPopupUI);
 		// 隐藏选择圈
-		scene.selfSelectImg.visible = false;
-		scene.enemySlectImg.visible = false;
+		scene.mSelectImg.visible = false;
 		// 释放者闪烁
 		let caster = this.skill.caster;
 		if (caster) {
 			caster.armatureBlink();
 		}
 
-		this.skill.manualChooseTarget();
+		this._targetsTmp = this.skill.preSelectTarget();
 		// 隐藏目标以外的血条
 		for (let char of scene.mEnemies.concat(scene.mFriends)) {
-			if (this.skill.targets.indexOf(char) < 0) {
+			if (this._targetsTmp.indexOf(char) < 0) {
 				char.lifeBarHide();
 			}
 		}
 
-		// 目标血条闪烁
-		this.skill.manualChooseTarget();
-		for (let target of this.skill.targets) {
+		for (let target of this._targetsTmp) {
 			target.lifeBarBlink();
 		}
 	}
@@ -121,6 +118,7 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		this.skill = null;
+		this._targetsTmp = null;
 	}
 
 	/**

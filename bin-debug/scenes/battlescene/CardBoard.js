@@ -53,15 +53,17 @@ var CardBoard = (function (_super) {
         }
     };
     CardBoard.prototype.distCardNormal = function () {
-        var skills = SceneManager.Ins.curScene.mManualSkillIdPool;
+        var scene = SceneManager.Ins.curScene;
+        var skills = scene.mManualSkillIdPool;
         var index = Math.floor(Math.random() * skills.length);
+        var skill = scene.mManualSkillManager.newSkill(skills[index][0], skills[index][1]);
         var card;
         if (this.cardPool.length > 0) {
             card = this.cardPool.pop();
-            card.setSkill(skills[index]);
+            card.setSkill(skill);
         }
         else {
-            card = new Card(skills[index]);
+            card = new Card(skill);
         }
         this.addCard(card);
     };

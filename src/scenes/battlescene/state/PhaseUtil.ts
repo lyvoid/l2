@@ -11,7 +11,7 @@ class PhaseUtil {
     public changePhase(phase:BattleSSEnum){
         this.nextPhase = phase;
         let scene = SceneManager.Ins.curScene as BattleScene;
-		if (!scene.isPerforming) {
+		if (!scene.mIsPerforming) {
             // 如果不再演出中，直接跳到下一个状态
 			scene.setState(phase);
 		} else {

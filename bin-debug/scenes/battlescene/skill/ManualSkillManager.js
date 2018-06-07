@@ -7,6 +7,7 @@ var ManualSkillManager = (function () {
     }
     ManualSkillManager.prototype.newSkill = function (id, cast, camp) {
         if (cast === void 0) { cast = null; }
+        if (camp === void 0) { camp = CharCamp.Neut; }
         var skillPool = this._skillPool;
         var skill;
         if (skillPool.length > 0) {

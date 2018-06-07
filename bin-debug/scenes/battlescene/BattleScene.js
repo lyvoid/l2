@@ -51,7 +51,7 @@ var BattleScene = (function (_super) {
         /**
          * 是否正在演出skill的演出内容
          */
-        _this._isPerforming = false;
+        _this.mIsPerforming = false;
         return _this;
     }
     BattleScene.prototype.initial = function () {
@@ -285,11 +285,6 @@ var BattleScene = (function (_super) {
             this.mWinnerCamp = CharCamp.Enemy;
         }
     };
-    BattleScene.prototype.startTodoSkill = function () {
-        if (this.mCastQueue.length > 0) {
-            this.mCastQueue.pop().cast();
-        }
-    };
     /**
      * 一个技能演出结束的时候自行调用
      * 从perfrom队列中获取下一个开始演出
@@ -297,7 +292,7 @@ var BattleScene = (function (_super) {
      * 如果胜负未分发送演出全部结束消息
      */
     BattleScene.prototype.onePerformEnd = function () {
-        this._isPerforming = false;
+        this.mIsPerforming = false;
         if (this.mPerformQueue.length == 0) {
             // 如果演出结束同时游戏结束时，播放游戏结束演出
             if (this.mWinnerCamp != CharCamp.Neut) {
@@ -330,11 +325,11 @@ var BattleScene = (function (_super) {
      * 如果当前正在演出会直接返回，防止两件事同时被演出
      */
     BattleScene.prototype.performStart = function () {
-        if (this._isPerforming) {
+        if (this.mIsPerforming) {
             // 如果正在演出，那就不管这个消息
             return;
         }
-        this._isPerforming = true;
+        this.mIsPerforming = true;
         var performanceObj = this.mPerformQueue.pop();
         performanceObj.performance();
     };

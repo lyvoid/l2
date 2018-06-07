@@ -45,10 +45,7 @@ class Hurt {
 			change.isInBattleNew = false;
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mPerformQueue.push([
-			{ performance: Hurt.statePerformance },
-			change
-		]);
+		scene.mPerformQueue.push({ performance: () => Hurt.statePerformance(change) });
 		// 移除buff
 		if (!target.alive) {
 			for (let buff of target.mBuffs.concat(target.mHideBuffs

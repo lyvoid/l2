@@ -35,10 +35,7 @@ var Hurt = (function () {
             change.isInBattleNew = false;
         }
         var scene = SceneManager.Ins.curScene;
-        scene.mPerformQueue.push([
-            { performance: Hurt.statePerformance },
-            change
-        ]);
+        scene.mPerformQueue.push({ performance: function () { return Hurt.statePerformance(change); } });
         // 移除buff
         if (!target.alive) {
             for (var _i = 0, _a = target.mBuffs.concat(target.mHideBuffs).concat(target.mPassiveSkills); _i < _a.length; _i++) {

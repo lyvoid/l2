@@ -13,7 +13,7 @@ var PhaseUtil = (function () {
     PhaseUtil.prototype.changePhase = function (phase) {
         this.nextPhase = phase;
         var scene = SceneManager.Ins.curScene;
-        if (!scene.isPerforming) {
+        if (!scene.mIsPerforming) {
             // 如果不再演出中，直接跳到下一个状态
             scene.setState(phase);
         }
