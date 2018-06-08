@@ -19,8 +19,8 @@ class EnemyRoundEndPhase extends ISceneState{
 		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);
 	}
 
-	public unInitial(){
-		super.unInitial();
+	public uninitial(){
+		super.uninitial();
 	}
 
 }

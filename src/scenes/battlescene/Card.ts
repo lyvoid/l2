@@ -100,7 +100,7 @@ class Card extends egret.DisplayObjectContainer {
 	 * 使用后准备放入对象池前调用
 	 * 解除事件侦听
 	 */
-	public unInitial(): void {
+	public uninitial(): void {
 		// 如果当前单位被长按功能选中且处于长按，手动发送一个out的消息来解除长按
 		if (LongTouchUtil.holderObj === this && LongTouchUtil.isInLongTouch){
 			this.dispatchEvent(new egret.Event(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE));
@@ -140,10 +140,8 @@ class Card extends egret.DisplayObjectContainer {
 		);
 	}
 
-	/**
-	 * release 不会调用unInitial，释放前需要自行调用
-	 */
 	public release(): void {
+		this.uninitial();
 		this.skill = null;
 	}
 }

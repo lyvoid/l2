@@ -13,7 +13,7 @@ class Hurt {
 	public isRemoveFromGameWhenDie: boolean;// 是否死亡移除游戏
 	public isRemoveFromGame: boolean; //是否直接移除游戏
 
-	public constructor(
+	public initial(
 		hurtType: HurtType,
 		fromChar: Character = null,
 		rate: number = 1,
@@ -31,6 +31,14 @@ class Hurt {
 		this.isPericeShield = isPericeShield;
 		this.isDoubleShield = isDoubleShield;
 		this.isResurgence = isResurgence;
+	}
+
+	public uninitial(): void {
+		this.fromChar = null;
+	}
+
+	public release(): void {
+		this.uninitial();
 	}
 
 	public affect(target: Character) {
@@ -65,6 +73,12 @@ class Hurt {
 
 		scene.judge();
 		scene.performStart();
+	}
+
+	public affectWithRecycle(target: Character): void {
+		this.affect(target);
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mHurtManager.recycle(this);
 	}
 
 	/**

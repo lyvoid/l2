@@ -27,7 +27,7 @@ abstract class IScene{
      */
     public release(){
         if (this.state){
-            this.state.unInitial();
+            this.state.uninitial();
         }
         // 解除与所有state的关系
         this.state = null;
@@ -63,7 +63,7 @@ abstract class IScene{
      */
 	public setState(stateName:number){
 		if (this.state != null){
-			this.state.unInitial();
+			this.state.uninitial();
 		}
 		this.state = this.statePool[stateName];
 		this.state.initial();
@@ -98,13 +98,14 @@ abstract class ISceneState{
     /**
      * 更换状态前需要reset之前的状态（每一次更换为其他状态时调用一遍）
      */
-	public unInitial(): void{}
+	public uninitial(): void{}
 
     /**
      * 将this.scene置为null
      * 场景销毁时调用一遍
      */
 	public release(): void{
+        this.uninitial();
 		this.scene = null;
 	}
 

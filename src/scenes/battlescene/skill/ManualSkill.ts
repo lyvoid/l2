@@ -8,6 +8,9 @@ class ManualSkill {
 	private _buffsIdToTarget: number[];
 	private _targetSelectId: number;
 	private _needPerformance: boolean;
+	private _isPreSetTargets: boolean;
+	// affect info
+	private _hurtId: number;
 	// can cast judge
 	private _isSelectTargetCondition: boolean;
 	private _targetNeedBelong: number;//0:noneed,1:self,2:enemy
@@ -18,7 +21,6 @@ class ManualSkill {
 	// real time
 	private _caster: Character;
 	private _camp: CharCamp;
-	public mTargetSelect: TargetSelect;
 	public mTargets: Character[];
 
 	public get skillName(): string { return this._skillName }
@@ -40,6 +42,7 @@ class ManualSkill {
 		targetNeedStat: number = 0,
 		isSelfCondition: boolean = false,
 		selfNeedStat: number = 0,
+		isPreSelect: boolean = false,
 		caster: Character = null,
 		camp: CharCamp = CharCamp.Neut
 	) {
@@ -57,6 +60,7 @@ class ManualSkill {
 		this._targetNeedBelong = targetNeedBelong;
 		this._isSelfCondition = isSelfCondition;
 		this._selfNeedStat = selfNeedStat;
+		this._isPreSetTargets = isPreSelect;
 
 		// set camp
 		if (caster) {
@@ -64,11 +68,12 @@ class ManualSkill {
 		} else {
 			this._camp = camp;
 		}
-
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		this.mTargetSelect = scene.mTargetSelectManager.getTargetSelect(targetSelectId);
 	}
 
+	public uninitial(): void{
+		this._caster = null;
+		this.mTargets = null;
+	}
 
 	public cast(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
@@ -80,7 +85,8 @@ class ManualSkill {
 		if (!this.canCast()[0]) {
 			return;
 		}
-		this.mTargetSelect.select(this._camp, this._caster);
+		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
+		targetSelect.select(this._camp, this._caster);
 		if (this.mTargets.length == 0) {
 			// if no proper target
 			return;
@@ -89,6 +95,19 @@ class ManualSkill {
 		this.affect();
 		// add performance to performanceQue of battlescene
 		this.preparePerformance();
+
+		// 
+		for (let id of this._skillsAfterId){
+			let skill = scene.mManualSkillManager.newSkill(
+					id, 
+					this._caster,
+					this._camp
+			);
+			skill.mTargets = this.mTargets;
+			scene.mCastQueue.push(
+				skill
+			);
+		}
 
 		// cast skill in castQue of BattleScene
 		if (scene.mCastQueue.length > 0) {
@@ -100,10 +119,26 @@ class ManualSkill {
 
 	private affect(): void {
 		// TODO:add affect logic
+		this.selectTarget();
+	}
+
+	private castWithRecycle(): void{
+		this.cast();
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mManualSkillManager.recycle(this);
 	}
 
 	public preSelectTarget(): Character[]{
-		return this.mTargetSelect.selectAll(this._camp, this._caster);
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
+		return targetSelect.selectAll(this._camp, this._caster);
+	}
+
+	private selectTarget(){
+		if (this._isPreSetTargets) return;
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
+		this.mTargets = targetSelect.selectAll(this._camp, this._caster);
 	}
 
 	private preparePerformance(): void {
@@ -225,7 +260,6 @@ class ManualSkill {
 	}
 
 	public release(): void {
-		this._caster = null;
-		this.mTargets = null;
+		this.uninitial();
 	}
 }

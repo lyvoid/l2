@@ -1,29 +1,30 @@
 class ToastInfoManager{
 
-	private labelPools: eui.Label[] = [];
+	private _labelPools: eui.Label[] = [];
 
-	private static instance: ToastInfoManager;
+	private static _instance: ToastInfoManager;
 
 	public static get Ins(): ToastInfoManager{
-		let ins = ToastInfoManager.instance
+		let ins = ToastInfoManager._instance
 		if (ins != null){
 			return ins;
 		}
 		ins = new ToastInfoManager();
-		ToastInfoManager.instance = ins;
+		ToastInfoManager._instance = ins;
 		return ins;
 	}
 
-	private constructor() {
+	public initial(): void{
 	}
 
-	public initial(){
+	public release(): void{
+		this._labelPools = null;
 	}
 
 	public newToast(info: string): void{
 		let label: eui.Label;
-		if (this.labelPools.length > 0){
-			label = this.labelPools.pop()
+		if (this._labelPools.length > 0){
+			label = this._labelPools.pop()
 		}else{
 			label = new eui.Label();
 			label.horizontalCenter = 0;
@@ -37,7 +38,7 @@ class ToastInfoManager{
 		).call(
 			()=>{
 				LayerManager.Ins.popUpLayer.removeChild(label);
-				this.labelPools.push(label);
+				this._labelPools.push(label);
 			}
 		)
 	}

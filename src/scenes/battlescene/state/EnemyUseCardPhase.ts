@@ -14,7 +14,7 @@ class EnemyUseCardPhase extends ISceneState{
 
 	}
 
-	public unInitial(){
-		super.unInitial();
+	public uninitial(){
+		super.uninitial();
 	}
 }

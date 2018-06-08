@@ -18,7 +18,18 @@ class ManualSkillManager {
         return skill;
     }
 
+	public recycle(skill: ManualSkill): void{
+		skill.uninitial();
+		this._skillPool.push(skill);
+	}
+
     public release() {
+        let pool = this._skillPool;
+        if(pool){
+            for(let skill of pool){
+                skill.release();
+            }
+        }
         this._skillPool = null;
     }
 

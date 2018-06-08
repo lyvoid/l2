@@ -31,7 +31,7 @@ class PlayerRoundStartPhase extends ISceneState {
 		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
 	}
 
-	public unInitial() {
-		super.unInitial();
+	public uninitial() {
+		super.uninitial();
 	}
 }

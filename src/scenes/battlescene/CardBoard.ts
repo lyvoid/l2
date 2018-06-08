@@ -41,7 +41,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		for(let index in cards){
 			let card = cards[index]
 			Util.removeObjFromArray(this.cards, card);
-			card.unInitial();
+			card.uninitial();
 			if (parseInt(index) == cards.length-1){
 				// 如果是最后一张，对全体调整
 				this.removeCardFromBoard(card, 0);
@@ -136,7 +136,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public removeCard(card:Card){
 		// 逻辑上去除
 		let cards: Card[] = this.cards;
-		card.unInitial();
+		card.uninitial();
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
@@ -179,7 +179,6 @@ class CardBoard extends egret.DisplayObjectContainer {
 	 */
 	public release(): void {
 		for (let card of this.cards){
-			card.unInitial();
 			card.release();
 		}
 		for(let card of this.cardPool){

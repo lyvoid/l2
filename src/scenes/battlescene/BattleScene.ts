@@ -10,6 +10,8 @@ class BattleScene extends IScene {
 	public mManualSkillIdPool: [number, Character][];
 	public mManualSkillManager: ManualSkillManager;
 	public mTargetSelectManager: TargetSelectManager;
+	public mHurtManager: HurtManager;
+	public mBuffManager: BuffManager = new BuffManager();
 
 	// ui
 	public mBattleUI: UIBattleScene;
@@ -158,6 +160,7 @@ class BattleScene extends IScene {
 		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
 		this.mTargetSelectManager = new TargetSelectManager();
+		this.mHurtManager = new HurtManager();
 
 		// TODO: 初始化游戏角色
 		let chars: Character[] = [];

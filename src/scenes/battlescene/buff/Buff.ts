@@ -10,7 +10,7 @@ class Buff {
 		this.isAffect = true;
 		this.remainAffectTime = 2;
 		this.affectPhase = BuffAffectPhase.TargetRoundStart;
-		this.affectHurt = new Hurt(HurtType.HealShield, this.char, 1, true, 5);
+		// this.affectHurt
 		this.remainRound = -1;
 	}
 
@@ -133,6 +133,12 @@ class Buff {
 		}
 	}
 
+	public release(): void{
+		this.uninitial();
+	}
+
+	public uninitial(): void{}
+
 
 	public affect() {
 		if (this.char == null){
@@ -205,6 +211,7 @@ class Buff {
 		}
 		this.char = null;
 		this.buffIcon = null;
+		(SceneManager.Ins.curScene as BattleScene).mBuffManager.recycle(this);
 	}
 
 	public onCharStartPhase() {

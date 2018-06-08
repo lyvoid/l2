@@ -68,8 +68,8 @@ class PlayerUseCardPhase extends ISceneState {
 
 	}
 
-	public unInitial() {
-		super.unInitial();
+	public uninitial() {
+		super.uninitial();
 		// 隐藏回合结束按键，已经在按键的tap事件中隐藏了，这里不额外隐藏
 		// this.scene.battleUI.roundEndButton.visible = false;
 
