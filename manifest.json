@@ -33,6 +33,7 @@
 		"bin-debug/scenes/battlescene/DBManager.js",
 		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/Main.js",
+		"bin-debug/scenes/battlescene/buff/BuffManager.js",
 		"bin-debug/scenes/battlescene/hurt/Hurt.js",
 		"bin-debug/scenes/battlescene/hurt/HurtManager.js",
 		"bin-debug/scenes/battlescene/skill/ManualSkill.js",

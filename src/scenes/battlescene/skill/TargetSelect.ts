@@ -149,6 +149,10 @@ class TargetSelect {
             return 0;
         }
     }
+
+    public release(): void {
+
+    }
 }
 
 /**

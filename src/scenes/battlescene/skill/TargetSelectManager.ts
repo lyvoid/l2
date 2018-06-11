@@ -1,7 +1,7 @@
 class TargetSelectManager{
-	private _targetSelectPool: {[id:number]: TargetSelect};
+	private _targetSelectPool: {[id:number]: TargetSelect} = {};
 
-    public constructor(){
+	public initial(): void{
 		this._targetSelectPool = {};
 	}
 
@@ -18,6 +18,10 @@ class TargetSelectManager{
     }
 
     public release(){
+		let pool = this._targetSelectPool;
+		for(let i in pool){
+			pool[i].release();
+		}
         this._targetSelectPool = null;
     }
 

@@ -22,6 +22,7 @@ class ManualSkill {
 	private _caster: Character;
 	private _camp: CharCamp;
 	public mTargets: Character[];
+	private _castQueue: Queue<{cast:()=>void}> = new Queue<{cast:()=>void}>();
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }
@@ -97,6 +98,7 @@ class ManualSkill {
 		this.preparePerformance();
 
 		// 
+		let skillCastQue = this._castQueue;
 		for (let id of this._skillsAfterId){
 			let skill = scene.mManualSkillManager.newSkill(
 					id, 
@@ -104,15 +106,18 @@ class ManualSkill {
 					this._camp
 			);
 			skill.mTargets = this.mTargets;
-			scene.mCastQueue.push(
+			skillCastQue.push(
 				skill
 			);
 		}
 
 		// cast skill in castQue of BattleScene
-		if (scene.mCastQueue.length > 0) {
-			scene.mCastQueue.pop().cast();
+		if (skillCastQue.length > 0) {
+			let skill = skillCastQue.pop();
+			skill.cast();
+			scene.mManualSkillManager.recycle(skill as ManualSkill);
 		}
+		
 		// start performance
 		scene.performStart();
 	}
@@ -261,5 +266,6 @@ class ManualSkill {
 
 	public release(): void {
 		this.uninitial();
+		this._castQueue = null;
 	}
 }

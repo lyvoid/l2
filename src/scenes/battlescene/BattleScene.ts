@@ -20,7 +20,6 @@ class BattleScene extends IScene {
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
 
 	public mPerformQueue: Queue<{performance:()=>void}>;
-	public mCastQueue: Queue<{cast:()=>void}>;
 
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp = CharCamp.Neut;
@@ -155,7 +154,6 @@ class BattleScene extends IScene {
 		this.mDbManager = new DBManager();
 		this.mCardBoard = new CardBoard();
 		this.mPerformQueue = new Queue<{performance: ()=>void}>();
-		this.mCastQueue = new Queue<{cast: ()=>void}>();
 		this.mDamageFloatManager = new DamageFloatManager();
 		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
