@@ -38,15 +38,15 @@ class Character extends egret.DisplayObjectContainer {
 		let skillsDesc = "";
 		for (let buff of this.mPassiveSkills){
 			passiveSkillsDesc = `${passiveSkillsDesc}<font color="#7FFF00"><b>` + 
-				`${buff.buffName}:</b></font>${buff.desc}\n`
+				`${buff.buffName}:</b></font>${buff.description}\n`
 		}
 		for (let buff of this.mBuffs){
-			let remainRound:string = buff.remainRound + "";
+			let remainRound:string = buff.mRemainRound + "";
 			remainRound = remainRound == "-1" ? "" : `(${remainRound}回合)`;
-			let remainAffect:string = buff.remainAffectTime + "";
+			let remainAffect:string = buff.mRemainAffectTime + "";
 			remainAffect = remainAffect == "-1" ? "" : `(${remainAffect}次)`;
 			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` + 
-				`${buff.buffName}${remainRound}${remainAffect}(${buff.layer}层):</b></font>${buff.desc}\n`
+				`${buff.buffName}${remainRound}${remainAffect}(${buff.mL'ayer}层):</b></font>${buff.description}\n`
 		}
 		return `<font color="#EE7942"><b>被动技能</b></font>
 ${passiveSkillsDesc}
