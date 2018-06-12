@@ -41,7 +41,7 @@ class Hurt {
 		this.uninitial();
 	}
 
-	public affect(target: Character) {
+	private affectNoReCycle(target: Character) {
 		let aliveBefore = target.alive;
 		let change = this.affectWithoutPerm(target);;
 		if (!change.aliveNew && this.isRemoveFromGameWhenDie) {
@@ -75,8 +75,8 @@ class Hurt {
 		scene.performStart();
 	}
 
-	public affectWithRecycle(target: Character): void {
-		this.affect(target);
+	public affect(target: Character): void {
+		this.affectNoReCycle(target);
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mHurtManager.recycle(this);
 	}

@@ -40,13 +40,16 @@ class Character extends egret.DisplayObjectContainer {
 			passiveSkillsDesc = `${passiveSkillsDesc}<font color="#7FFF00"><b>` + 
 				`${buff.buffName}:</b></font>${buff.description}\n`
 		}
+		
+		let buffLayer:{[buffId:number]:number} = {};
+
 		for (let buff of this.mBuffs){
 			let remainRound:string = buff.mRemainRound + "";
 			remainRound = remainRound == "-1" ? "" : `(${remainRound}回合)`;
 			let remainAffect:string = buff.mRemainAffectTime + "";
 			remainAffect = remainAffect == "-1" ? "" : `(${remainAffect}次)`;
 			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` + 
-				`${buff.buffName}${remainRound}${remainAffect}(${buff.mL'ayer}层):</b></font>${buff.description}\n`
+				`${buff.buffName}${remainRound}${remainAffect}(${buff.mLayer}层):</b></font>${buff.description}\n`
 		}
 		return `<font color="#EE7942"><b>被动技能</b></font>
 ${passiveSkillsDesc}
@@ -344,6 +347,23 @@ ${buffsDesc}`;
 	 */
 	public armatureUnBlink(): void {
 		egret.Tween.removeTweens(this.mArmatureDisplay);
+	}
+
+	public adjustBuffIconPos(): void{
+		let buffLine = this.mBuffLine;
+		let addedBuffsId: number[] = [];
+		let buffLineIndex = 0;
+		for (let buff of this.mBuffs){
+			let id = buff.id;
+			// 如果此前没有在buffline中加过这个id才重复加一次
+			if (addedBuffsId.indexOf(id) >= 0){
+				let icon = buff.mIconBitMap;
+				icon.x = buffLineIndex * 12;
+				buffLine.addChild(icon);
+				buffLineIndex++;
+				addedBuffsId.push(id);
+			}
+		}
 	}
 
 	public release(): void {

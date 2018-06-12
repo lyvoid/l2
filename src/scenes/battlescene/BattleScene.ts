@@ -12,6 +12,7 @@ class BattleScene extends IScene {
 	public mTargetSelectManager: TargetSelectManager;
 	public mHurtManager: HurtManager;
 	public mBuffManager: BuffManager = new BuffManager();
+	public mRound: number;
 
 	// ui
 	public mBattleUI: UIBattleScene;
@@ -91,6 +92,7 @@ class BattleScene extends IScene {
 		selectImg.y = -selectImg.height / 2;
 		this.mSelectImg = selectImg;
 		this.mFilterManager = new FilterManager();
+		this.mRound = 1;
 
 		// 载入龙骨资源
 		for (let charactorName of ["Dragon", "Swordsman"]) {

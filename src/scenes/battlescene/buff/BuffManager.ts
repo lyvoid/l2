@@ -15,14 +15,11 @@ class BuffManager {
 	}
 
 	public recycle(buff: Buff): void{
-		buff.uninitial();
+		buff.release();
 		this._buffPool.push(buff);
 	}
 
 	public release(): void{
-		for (let buff of this._buffPool){
-			buff.release();
-		}
 		this._buffPool = null;
 	}
 }

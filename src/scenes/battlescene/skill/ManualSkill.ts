@@ -21,8 +21,9 @@ class ManualSkill {
 	// real time
 	private _caster: Character;
 	private _camp: CharCamp;
-	public mTargets: Character[];
+	private _targets: Character[];
 	private _castQueue: Queue<{cast:()=>void}> = new Queue<{cast:()=>void}>();
+	private _scene: BattleScene;
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }
@@ -69,15 +70,18 @@ class ManualSkill {
 		} else {
 			this._camp = camp;
 		}
+
+		// set scene
+		this._scene = SceneManager.Ins.curScene as BattleScene;
 	}
 
 	public uninitial(): void{
 		this._caster = null;
-		this.mTargets = null;
+		this._targets = null;
 	}
 
 	public cast(): void {
-		let scene = SceneManager.Ins.curScene as BattleScene;
+		let scene = this._scene;
 		// if gameover, return
 		if (scene.mWinnerCamp) {
 			return;
@@ -88,7 +92,7 @@ class ManualSkill {
 		}
 		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
 		targetSelect.select(this._camp, this._caster);
-		if (this.mTargets.length == 0) {
+		if (this._targets.length == 0) {
 			// if no proper target
 			return;
 		}
@@ -105,7 +109,7 @@ class ManualSkill {
 					this._caster,
 					this._camp
 			);
-			skill.mTargets = this.mTargets;
+			skill._targets = this._targets;
 			skillCastQue.push(
 				skill
 			);
@@ -123,27 +127,34 @@ class ManualSkill {
 	}
 
 	private affect(): void {
-		// TODO:add affect logic
 		this.selectTarget();
+		let hurt = this._scene.mHurtManager.newHurt(this._hurtId);
+		for(let target of this._targets){
+			hurt.affect(target);
+			for(let buffid of this._buffsIdToTarget){
+				let buff = this._scene.mBuffManager.newBuff(buffid);
+				buff.attachToChar(target);
+			}
+		}
 	}
 
 	private castWithRecycle(): void{
 		this.cast();
-		let scene = SceneManager.Ins.curScene as BattleScene;
+		let scene = this._scene;
 		scene.mManualSkillManager.recycle(this);
 	}
 
 	public preSelectTarget(): Character[]{
-		let scene = SceneManager.Ins.curScene as BattleScene;
+		let scene = this._scene;
 		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
 		return targetSelect.selectAll(this._camp, this._caster);
 	}
 
 	private selectTarget(){
 		if (this._isPreSetTargets) return;
-		let scene = SceneManager.Ins.curScene as BattleScene;
+		let scene = this._scene;
 		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
-		this.mTargets = targetSelect.selectAll(this._camp, this._caster);
+		this._targets = targetSelect.selectAll(this._camp, this._caster);
 	}
 
 	private preparePerformance(): void {
@@ -156,8 +167,8 @@ class ManualSkill {
 			// if no caster, return (will be extended in the future)
 			return;
 		}
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		let targets = this.mTargets;
+		let scene = this._scene;
+		let targets = this._targets;
 		let casterCamp = caster.camp;
 		let enemiesNum = 0;
 		let minX = 1000;
@@ -232,7 +243,7 @@ class ManualSkill {
 
 	// canCast
 	public canCast(): [boolean, string] {
-		let selectedChar = (SceneManager.Ins.curScene as BattleScene).mSelectedChar;
+		let selectedChar = this._scene.mSelectedChar;
 		if (this._isSelectTargetCondition) {
 			if (!selectedChar.isInBattle) {
 				return [false, "选中目标已从游戏中排除"];

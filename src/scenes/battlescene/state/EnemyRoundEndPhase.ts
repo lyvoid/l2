@@ -15,7 +15,7 @@ class EnemyRoundEndPhase extends ISceneState{
 		}
 
 		// 回合结束阶段技能效果
-
+		this.scene.mRound++; //回合数加一
 		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);
 	}
 
