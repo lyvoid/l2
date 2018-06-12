@@ -33,6 +33,7 @@ class Buff {
 	private _maxAffectTime: number; // 最大生效次数
 	private _affectPhase: BuffAffectPhase; // 结算时机（条件）
 	private _affectHurtId: number; // affect使用hurt来结算
+	private _affectSkillId: number; // 触发一个技能
 	// affect condition
 	// 如果结算条件是某buff叠加至xx生效时有效，代表该角色
 	public _affectCaseBuffTargetType: AffectCaseBuffTargetType;
@@ -40,7 +41,7 @@ class Buff {
 	public _affectCaseBuffLayer: number; // 层数
 
 	// realtime
-	public mChar: Character;// belong to 
+	public mChar: Character;// buff归属单位
 	public mRemainRound: number; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
 	public mRemainAffectTime: number; // 剩余结算次数，-1为无限
 	public mAttachRound: number;// 上buff的回合，如果buff达到最大上限，挤掉最早加的那个
@@ -191,6 +192,20 @@ class Buff {
 	}
 
 	public release(): void {
+		// TODO: remove listen
+		if (this._isAffect) {
+			if (this._affectPhase == BuffAffectPhase.TargetRoundStart) {
+				let eType = MessageType.PlayerRoundStart;
+				if (this.mChar.camp == CharCamp.Enemy) {
+					eType = MessageType.EnemyRoundStart;
+				}
+				MessageManager.Ins.removeEventListener(
+					eType,
+					this.affect,
+					this
+				);
+			}
+		}
 		this.mChar = null;
 		this._scene = null;
 		this.mIconBitMap = null;
@@ -201,8 +216,17 @@ class Buff {
 		if (this.mRemainAffectTime > 0) {
 			this.mRemainAffectTime = this.mRemainAffectTime - 1;
 		}
+		if (this._affectHurtId != 0){
 		let hurt = this._scene.mHurtManager.newHurt(this._affectHurtId);
 		hurt.affect(this.mChar);
+		}
+		if (this._affectSkillId != 0) {
+			let skill = this._scene.mManualSkillManager.newSkill(
+				this._affectSkillId, 
+				this.mChar
+			);
+			skill.cast();
+		}
 		// if affect times is 0
 		if (this.mRemainAffectTime == 0) {
 			this.removeFromChar();
@@ -237,6 +261,7 @@ class Buff {
 			}
 		}
 
+		// remove from target
 		switch (this._exType) {
 			case BuffExTy.HideBuff:
 				Util.removeObjFromArray(target.mHideBuffs, this);
@@ -249,21 +274,6 @@ class Buff {
 			case BuffExTy.PassvieSkill:
 				Util.removeObjFromArray(target.mPassiveSkills, this);
 				break;
-		}
-
-		// TODO: remove listen
-		if (this._isAffect) {
-			if (this._affectPhase == BuffAffectPhase.TargetRoundStart) {
-				let eType = MessageType.PlayerRoundStart;
-				if (target.camp == CharCamp.Enemy) {
-					eType = MessageType.EnemyRoundStart;
-				}
-				MessageManager.Ins.removeEventListener(
-					eType,
-					this.affect,
-					this
-				);
-			}
 		}
 		this._scene.mBuffManager.recycle(this);
 	}

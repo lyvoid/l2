@@ -32,13 +32,9 @@ class Hurt {
 		this.isDoubleShield = isDoubleShield;
 		this.isResurgence = isResurgence;
 	}
-
-	public uninitial(): void {
-		this.fromChar = null;
-	}
-
+	
 	public release(): void {
-		this.uninitial();
+		this.fromChar = null;
 	}
 
 	private affectNoReCycle(target: Character) {

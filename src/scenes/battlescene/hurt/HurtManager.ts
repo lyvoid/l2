@@ -19,7 +19,7 @@ class HurtManager {
 	}
 
 	public recycle(hurt: Hurt): void{
-		hurt.uninitial();
+		hurt.release();
 		this._hurtPool.push(hurt);
 	}
 

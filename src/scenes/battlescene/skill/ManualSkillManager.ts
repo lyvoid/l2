@@ -19,7 +19,7 @@ class ManualSkillManager {
     }
 
 	public recycle(skill: ManualSkill): void{
-		skill.uninitial();
+		skill.release();
 		this._skillPool.push(skill);
 	}
 
