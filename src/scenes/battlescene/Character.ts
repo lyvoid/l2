@@ -1,6 +1,3 @@
-/**
- * 场景中的一个角色，该类的实例应该只会出现在BattleScene中
- */
 class Character extends egret.DisplayObjectContainer {
 	public mArmatureDisplay: dragonBones.EgretArmatureDisplay;
 	public mCharName: string = "还没有名字";
@@ -41,15 +38,28 @@ class Character extends egret.DisplayObjectContainer {
 				`${buff.buffName}:</b></font>${buff.description}\n`
 		}
 		
+		// 统计buff层数
 		let buffLayer:{[buffId:number]:number} = {};
-
 		for (let buff of this.mBuffs){
+			if (buffLayer[buff.id]){
+				buffLayer[buff.id] += 1;
+			} else {
+				buffLayer[buff.id] = 1;
+			}
+		}
+		
+		let buffAdded:number[] = [];
+		for (let buff of this.mBuffs){
+			if (buffAdded.indexOf(buff.id)){
+				continue;
+			}
+			buffAdded.push(buff.id);
 			let remainRound:string = buff.mRemainRound + "";
 			remainRound = remainRound == "-1" ? "" : `(${remainRound}回合)`;
 			let remainAffect:string = buff.mRemainAffectTime + "";
 			remainAffect = remainAffect == "-1" ? "" : `(${remainAffect}次)`;
 			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` + 
-				`${buff.buffName}${remainRound}${remainAffect}(${buff.mLayer}层):</b></font>${buff.description}\n`
+				`${buff.buffName}${remainRound}${remainAffect}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
 		}
 		return `<font color="#EE7942"><b>被动技能</b></font>
 ${passiveSkillsDesc}
@@ -86,9 +96,6 @@ ${buffsDesc}`;
 			this._isInBattle = value;
 		}
 	}
-
-
-
 
 	public constructor(charactorName: string) {
 		super();

@@ -22,7 +22,7 @@ class ManualSkill {
 	private _caster: Character;
 	private _camp: CharCamp;
 	private _targets: Character[];
-	private _castQueue: Queue<{cast:()=>void}>;
+	private _castQueue: Queue<{ cast: () => void }>;
 	private _scene: BattleScene;
 
 	public get skillName(): string { return this._skillName }
@@ -73,10 +73,10 @@ class ManualSkill {
 
 		// set scene
 		this._scene = SceneManager.Ins.curScene as BattleScene;
-		this._castQueue = new Queue<{cast:()=>void}>();
+		this._castQueue = new Queue<{ cast: () => void }>();
 	}
 
-	public cast(): void {
+	private castWithoutRecycle(): void {
 		let scene = this._scene;
 		// if gameover, return
 		if (scene.mWinnerCamp) {
@@ -86,8 +86,7 @@ class ManualSkill {
 		if (!this.canCast()[0]) {
 			return;
 		}
-		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
-		targetSelect.select(this._camp, this._caster);
+		this.selectTarget();
 		if (this._targets.length == 0) {
 			// if no proper target
 			return;
@@ -99,11 +98,11 @@ class ManualSkill {
 
 		// 
 		let skillCastQue = this._castQueue;
-		for (let id of this._skillsAfterId){
+		for (let id of this._skillsAfterId) {
 			let skill = scene.mManualSkillManager.newSkill(
-					id, 
-					this._caster,
-					this._camp
+				id,
+				this._caster,
+				this._camp
 			);
 			skill._targets = this._targets;
 			skillCastQue.push(
@@ -116,7 +115,7 @@ class ManualSkill {
 			let skill = skillCastQue.pop();
 			skill.cast();
 		}
-		
+
 		scene.mManualSkillManager.recycle(this);
 
 		// start performance
@@ -126,32 +125,34 @@ class ManualSkill {
 	private affect(): void {
 		this.selectTarget();
 		let hurt = this._scene.mHurtManager.newHurt(this._hurtId);
-		for(let target of this._targets){
+		for (let target of this._targets) {
 			hurt.affect(target);
-			for(let buffid of this._buffsIdToTarget){
+			for (let buffid of this._buffsIdToTarget) {
 				let buff = this._scene.mBuffManager.newBuff(buffid);
 				buff.attachToChar(target);
 			}
 		}
 	}
 
-	private castWithRecycle(): void{
-		this.cast();
+	public cast(): void {
+		this.castWithoutRecycle();
 		let scene = this._scene;
 		scene.mManualSkillManager.recycle(this);
 	}
 
-	public preSelectTarget(): Character[]{
+	public preSelectTarget(): Character[] {
 		let scene = this._scene;
 		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
 		return targetSelect.selectAll(this._camp, this._caster);
 	}
 
-	private selectTarget(){
-		if (this._isPreSetTargets) return;
+	private selectTarget() {
+		if (this._isPreSetTargets) {
+			return;
+		}
 		let scene = this._scene;
 		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
-		this._targets = targetSelect.selectAll(this._camp, this._caster);
+		this._targets = targetSelect.select(this._camp, this._caster);
 	}
 
 	private preparePerformance(): void {

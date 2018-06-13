@@ -1,7 +1,7 @@
 class Card extends egret.DisplayObjectContainer {
 
 	public skill: ManualSkill;
-	public get desc(): string {
+	public get description(): string {
 		let caster = this.skill.caster;
 		let casterName = caster ? caster.mCharName : "无";
 		return `<font color="#EE7942"><b>${this.skill.skillName}</b></font>
@@ -44,7 +44,7 @@ class Card extends egret.DisplayObjectContainer {
 	private _targetsTmp: Character[];
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mCardInfoPopupUI.setDescFlowText(this.desc);
+		scene.mCardInfoPopupUI.setDescFlowText(this.description);
 		LayerManager.Ins.popUpLayer.addChild(scene.mCardInfoPopupUI);
 		// 隐藏选择圈
 		scene.mSelectImg.visible = false;

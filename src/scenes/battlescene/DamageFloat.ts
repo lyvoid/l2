@@ -4,7 +4,7 @@ class DamageFloatManager {
 		this.numberFloatPool = [];
 	}
 
-	public newFloat(char: Character, oldNum: number, newNum: number, prefix: string="hp"): egret.Tween {
+	public newFloat(char: Character, oldNum: number, newNum: number, prefix: string="hp") {
 		if (oldNum == newNum){
 			return;
 		}
@@ -23,7 +23,7 @@ class DamageFloatManager {
 		floatLabel.y = -200;
 		floatLabel.x = -30;
 		floatLabel.alpha = 1;
-		return egret.Tween.get(floatLabel).to({
+		egret.Tween.get(floatLabel).to({
 			y: floatLabel.y - 100,
 			alpha: 0
 		}, 3000, egret.Ease.quadInOut).call(

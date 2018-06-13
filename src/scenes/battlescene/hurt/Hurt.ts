@@ -1,17 +1,17 @@
-/**
- * 表示一个伤害或治疗效果
- */
 class Hurt {
-	private hurtType: HurtType; // 伤害类型（物理/魔法/治疗生命/增加护盾）
-	private fromChar: Character; // 伤害来源
-	public rate: number; // 伤害倍率
-	private isAbs: boolean; // 是否绝对伤害（不考虑护甲）
-	private absValue: number;// 绝对伤害对应的值是多少
-	private isPericeShield: boolean;// 是否穿透护盾（无视护盾，直接伤血）  治疗效果时无效
-	private isDoubleShield: boolean;// 是否破盾（对有护盾的单位造成双倍伤害） 治疗效果时无效
-	private isResurgence: boolean;// 是否复活 （仅治愈生命类型有效）
-	public isRemoveFromGameWhenDie: boolean;// 是否死亡移除游戏
-	public isRemoveFromGame: boolean; //是否直接移除游戏
+	// info
+	private _hurtType: HurtType; // 伤害类型（物理/魔法/治疗生命/增加护盾）
+	private _rate: number; // 伤害倍率
+	private _isAbs: boolean; // 是否绝对伤害（不考虑护甲）
+	private _absValue: number;// 绝对伤害对应的值是多少
+	private _isPericeShield: boolean;// 是否穿透护盾（无视护盾，直接伤血）  治疗效果时无效
+	private _isDoubleShield: boolean;// 是否破盾（对有护盾的单位造成双倍伤害） 治疗效果时无效
+	private _isResurgence: boolean;// 是否复活 （仅治愈生命类型有效）
+	private _isRemoveFromGameWhenDie: boolean;// 是否死亡移除游戏
+	private _isRemoveFromGame: boolean; //是否直接移除游戏
+
+	// real time
+	private _fromChar: Character; // 伤害来源
 
 	public initial(
 		hurtType: HurtType,
@@ -21,49 +21,51 @@ class Hurt {
 		absValue: number = 10,
 		isPericeShield: boolean = false,
 		isDoubleShield: boolean = false,
-		isResurgence: boolean = false
+		isResurgence: boolean = false,
+		isRemoveFromGame: boolean = false,
+		isRemoveFromGameWhenDie: boolean = false
 	) {
-		this.fromChar = fromChar;
-		this.hurtType = hurtType;
-		this.rate = rate;
-		this.isAbs = isAbs;
-		this.absValue = absValue;
-		this.isPericeShield = isPericeShield;
-		this.isDoubleShield = isDoubleShield;
-		this.isResurgence = isResurgence;
+		this._fromChar = fromChar;
+		this._hurtType = hurtType;
+		this._rate = rate;
+		this._isAbs = isAbs;
+		this._absValue = absValue;
+		this._isPericeShield = isPericeShield;
+		this._isDoubleShield = isDoubleShield;
+		this._isResurgence = isResurgence;
+		this._isRemoveFromGame = isRemoveFromGame;
+		this._isRemoveFromGameWhenDie = isRemoveFromGameWhenDie;
 	}
-	
+
 	public release(): void {
-		this.fromChar = null;
+		this._fromChar = null;
 	}
 
 	private affectNoReCycle(target: Character) {
 		let aliveBefore = target.alive;
-		let change = this.affectWithoutPerm(target);;
-		if (!change.aliveNew && this.isRemoveFromGameWhenDie) {
+		let change = this.affectWithoutPerfrom(target);;
+		if (!change.aliveNew && this._isRemoveFromGameWhenDie) {
 			target.isInBattle = false;
 			change.isInBattleNew = false;
 		}
-		if (this.isRemoveFromGame) {
+		if (this._isRemoveFromGame) {
 			target.isInBattle = false;
 			change.isInBattleNew = false;
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mPerformQueue.push({ performance: () => Hurt.statePerformance(change) });
 		// 移除buff
-		if (!target.alive) {
+		if (!target.isInBattle) {
+			for (let buff of target.mBuffs.concat(target.mHideBuffs
+			).concat(target.mPassiveSkills)) {
+				buff.removeFromChar();
+			}
+		} else if (!target.alive) {
 			for (let buff of target.mBuffs.concat(target.mHideBuffs
 			).concat(target.mPassiveSkills)) {
 				if (buff.isDeadRemove) {
 					buff.removeFromChar();
 				}
-			}
-		}
-
-		if (!target.isInBattle) {
-			for (let buff of target.mBuffs.concat(target.mHideBuffs
-			).concat(target.mPassiveSkills)) {
-				buff.removeFromChar();
 			}
 		}
 
@@ -80,7 +82,7 @@ class Hurt {
 	/**
 	 * 施加伤害，返回收到影响的属性列表
 	 */
-	public affectWithoutPerm(target: Character): IAttrChange {
+	public affectWithoutPerfrom(target: Character): IAttrChange {
 
 		let mm = MessageManager.Ins;
 
@@ -100,29 +102,29 @@ class Hurt {
 		};
 
 		// 处理护甲
-		if (this.isAbs) {
-			harm = this.absValue;
+		if (this._isAbs) {
+			harm = this._absValue;
 		} else {
-			let fromAttr = this.fromChar.attr;
-			if (this.hurtType == HurtType.Pysic || this.hurtType == HurtType.Magic) {
-				let ar = this.hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
+			let fromAttr = this._fromChar.attr;
+			if (this._hurtType == HurtType.Pysic || this._hurtType == HurtType.Magic) {
+				let ar = this._hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
 				ar -= fromAttr.pierceAr;
 				ar = ar > 0 ? ar : 0;
 				harm = fromAttr.ap - ar;
 				harm = harm > 0 ? harm : (fromAttr.ap / 10);
 			}
-			else if (this.hurtType == HurtType.HealHp || this.hurtType == HurtType.HealShield) {
+			else if (this._hurtType == HurtType.HealHp || this._hurtType == HurtType.HealShield) {
 				harm = fromAttr.ap;
 			}
 		}
 
 		// 处理倍率
-		harm *= this.rate;
+		harm *= this._rate;
 		harm = Math.floor(harm);
 
 		let isAliveChange = false;
 		// 处理治疗生命
-		if (this.hurtType == HurtType.HealHp && (target.alive || this.isResurgence)) {
+		if (this._hurtType == HurtType.HealHp && (target.alive || this._isResurgence)) {
 			isAliveChange = !target.alive;
 			let newHp = targetAttr.hp + harm;
 			newHp = newHp > targetAttr.maxHp ? targetAttr.maxHp : newHp;
@@ -130,7 +132,7 @@ class Hurt {
 			targetAttr.hp = newHp;
 			mm.sendMessage(
 				MessageType.HealHp,
-				[this.fromChar, target, healValue]
+				[this._fromChar, target, healValue]
 			);
 
 			// 发送复活信息
@@ -150,30 +152,30 @@ class Hurt {
 		}
 
 		// 处理增加护盾
-		if (this.hurtType == HurtType.HealShield) {
+		if (this._hurtType == HurtType.HealShield) {
 			let newShield = targetAttr.shield + harm;
 			newShield = newShield > targetAttr.maxShield ? targetAttr.maxShield : newShield;
 			let healValue = newShield - targetAttr.shield;
 			targetAttr.shield = newShield;
 			mm.sendMessage(
 				MessageType.HealShield,
-				[this.fromChar, target, healValue]
+				[this._fromChar, target, healValue]
 			);
 			return Hurt.fullNewAttrToChange(changeInfo, target);
 		}
 
 		// 处理破盾
-		if (targetAttr.shield > 0 && this.isDoubleShield) {
+		if (targetAttr.shield > 0 && this._isDoubleShield) {
 			harm *= 2;
 		}
 
 		// 处理最终增伤
-		if (this.hurtType == HurtType.Magic) {
+		if (this._hurtType == HurtType.Magic) {
 			harm = harm - targetAttr.magicDamageReduceAbs;
 			harm = harm > 0 ? harm : 0;
 			harm = harm * (1 - targetAttr.magicDamageReducePerc)
 			harm = harm > 0 ? Math.ceil(harm) : 0;
-		} else if (this.hurtType == HurtType.Pysic) {
+		} else if (this._hurtType == HurtType.Pysic) {
 			harm = harm - targetAttr.pysDamageReduceAbs;
 			harm = harm > 0 ? harm : 0;
 			harm = harm * (1 - targetAttr.pysDamageReducePerc)
@@ -182,19 +184,19 @@ class Hurt {
 
 		// 处理非穿盾
 		let harmRemain = harm;
-		if (!this.isPericeShield) {
+		if (!this._isPericeShield) {
 			harmRemain = harm - targetAttr.shield;
 			if (harmRemain <= 0) {
 				targetAttr.shield = -harmRemain;
 				mm.sendMessage(
 					MessageType.HarmShield,
-					[this.fromChar, target, harm]
+					[this._fromChar, target, harm]
 				);
 				return Hurt.fullNewAttrToChange(changeInfo, target);
 			}
 			mm.sendMessage(
 				MessageType.HarmShield,
-				[this.fromChar, target, targetAttr.shield]
+				[this._fromChar, target, targetAttr.shield]
 			);
 			targetAttr.shield = 0;
 
@@ -216,7 +218,7 @@ class Hurt {
 		}
 		mm.sendMessage(
 			MessageType.HarmHp,
-			[this.fromChar, target, targetAttr.hp - newTargetHp]
+			[this._fromChar, target, targetAttr.hp - newTargetHp]
 		);
 		targetAttr.hp = newTargetHp;
 		return Hurt.fullNewAttrToChange(changeInfo, target);
@@ -241,7 +243,7 @@ class Hurt {
 	 * 状态表现
 	 * 对血量护盾复活死亡排除出游戏进行表现
 	 */
-	public static statePerformance(change: IAttrChange) {
+	private static statePerformance(change: IAttrChange) {
 		(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		let target = change.char;

@@ -20,7 +20,7 @@ class BattleScene extends IScene {
 	public mCardInfoPopupUI: CardInfoPopupUI;
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
 
-	public mPerformQueue: Queue<{performance:()=>void}>;
+	public mPerformQueue: Queue<{ performance: () => void }>;
 
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp = CharCamp.Neut;
@@ -74,7 +74,7 @@ class BattleScene extends IScene {
 		battleEndPopUp.height = LayerManager.Ins.stageHeight;
 		battleEndPopUp.width = LayerManager.Ins.stageWidth;
 		this.mBattleEndPopUp = battleEndPopUp;
-		
+
 		let charInfoPopupUI = new CharacterInfoPopupUI();
 		charInfoPopupUI.width = LayerManager.Ins.stageWidth;
 		charInfoPopupUI.height = LayerManager.Ins.stageHeight;
@@ -155,7 +155,7 @@ class BattleScene extends IScene {
 		this.mManualSkillIdPool = [];
 		this.mDbManager = new DBManager();
 		this.mCardBoard = new CardBoard();
-		this.mPerformQueue = new Queue<{performance: ()=>void}>();
+		this.mPerformQueue = new Queue<{ performance: () => void }>();
 		this.mDamageFloatManager = new DamageFloatManager();
 		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
@@ -232,28 +232,13 @@ class BattleScene extends IScene {
 				LayerManager.Ins.gameLayer,
 				BattleSLEnum.CharLayer
 			);
-			// TODO: 测试 加buff
-			let buff = new Buff();
-			buff.id = 12345;
-			buff.layId = 12345;
-			buff.maxLayer = 2;
-			buff.attachToChar(char);
-			buff = new Buff();
-			buff.id = 12345;
-			buff.layId = 12345;
-			buff.maxLayer = 2;
-			buff.attachToChar(char);			
-			buff = new Buff();
-			buff.id = 12344;
-			buff.layId = 12344;
-			buff.mRemainAffectTime = 5;
-			buff.mRemainRound = 4;
-			buff.attachToChar(char);
 
 			charLayer.addChildAt(char, char.row * 1000);
 			this.mFriends.push(char);
 			// TODO: 填充技能池子
-			this.mManualSkillIdPool = this.mManualSkillIdPool.concat();
+			for (let skillid of char.mManualSkillsId) {
+				this.mManualSkillIdPool.push([skillid, char]);
+			}
 		}
 
 
@@ -279,25 +264,25 @@ class BattleScene extends IScene {
 	/**
 	 * 判断胜负，并吧胜负信息存储在this.winnerCamp中
 	 */
-	public judge(){
-		let isEnemyAlive: boolean=false;
-		let isPlayerAlive: boolean=false;
-		for (let char of this.mEnemies){
-			if (char.alive && char.isInBattle){
+	public judge() {
+		let isEnemyAlive: boolean = false;
+		let isPlayerAlive: boolean = false;
+		for (let char of this.mEnemies) {
+			if (char.alive && char.isInBattle) {
 				isEnemyAlive = true;
 				break;
 			}
 		}
-		for (let char of this.mFriends){
-			if (char.alive && char.isInBattle){
+		for (let char of this.mFriends) {
+			if (char.alive && char.isInBattle) {
 				isPlayerAlive = true;
 				break;
 			}
 		}
 
-		if (!isEnemyAlive){
+		if (!isEnemyAlive) {
 			this.mWinnerCamp = CharCamp.Player;
-		}else if (!isPlayerAlive){
+		} else if (!isPlayerAlive) {
 			this.mWinnerCamp = CharCamp.Enemy;
 		}
 	}
@@ -306,20 +291,20 @@ class BattleScene extends IScene {
 	 * 是否正在演出skill的演出内容
 	 */
 	public mIsPerforming: boolean = false;
-	
+
 	/**
 	 * 一个技能演出结束的时候自行调用
 	 * 从perfrom队列中获取下一个开始演出
 	 * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
 	 * 如果胜负未分发送演出全部结束消息
 	 */
-	public onePerformEnd(): void{
+	public onePerformEnd(): void {
 		this.mIsPerforming = false;
-		if (this.mPerformQueue.length == 0){
+		if (this.mPerformQueue.length == 0) {
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
-			if (this.mWinnerCamp != CharCamp.Neut){
+			if (this.mWinnerCamp != CharCamp.Neut) {
 				this.onBattleEnd();
-			}else{
+			} else {
 				// 如果游戏没有结束，发送演出全部结束消息
 				MessageManager.Ins.sendMessage(MessageType.PerformAllEnd);
 			}
@@ -331,12 +316,12 @@ class BattleScene extends IScene {
 	/**
 	 * 战斗结束
 	 */
-	private onBattleEnd(): void{
+	private onBattleEnd(): void {
 		let lm = LayerManager.Ins
 		lm.maskLayer.addChild(lm.maskBg);
-		if (this.mWinnerCamp == CharCamp.Player){
+		if (this.mWinnerCamp == CharCamp.Player) {
 			this.mBattleEndPopUp.winUIAdjust();
-		}else{
+		} else {
 			this.mBattleEndPopUp.lostUIAdjust();
 		}
 		LayerManager.Ins.popUpLayer.addChild(this.mBattleEndPopUp);
@@ -346,8 +331,8 @@ class BattleScene extends IScene {
 	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
 	 * 如果当前正在演出会直接返回，防止两件事同时被演出
 	 */
-	public performStart(): void{
-		if(this.mIsPerforming){
+	public performStart(): void {
+		if (this.mIsPerforming) {
 			// 如果正在演出，那就不管这个消息
 			return;
 		}
@@ -382,11 +367,11 @@ class BattleScene extends IScene {
 
 		this.mDamageFloatManager.release();
 		this.mDamageFloatManager = null;
-		
+
 		this.mPlayerFireBoard.release();
 		this.mPlayerFireBoard = null;
 
-		this.mPhaseUtil.clear();
+		this.mPhaseUtil.release();
 		this.mPhaseUtil = null;
 		LongTouchUtil.clear();
 
@@ -396,12 +381,12 @@ class BattleScene extends IScene {
 		this.mFilterManager = null;
 
 		// 释放载入的美术资源
-		this.releaseResource().then(()=>{
+		this.releaseResource().then(() => {
 			SceneManager.Ins.onSceneReleaseCompelete();
 		});
 	}
 
-	private async releaseResource(){
+	private async releaseResource() {
 		await RES.destroyRes("battlecommon");
 		for (let charactorName of ["Dragon", "Swordsman"]) {
 			await RES.destroyRes(`${charactorName}_db_ske_json`);

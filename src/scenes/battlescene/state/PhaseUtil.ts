@@ -35,7 +35,7 @@ class PhaseUtil {
             this.nextPhase);
 	}
 
-	public clear(): void{
+	public release(): void{
 		MessageManager.Ins.removeEventListener(
 			MessageType.PerformAllEnd,
 			this.onSkillPerformAllEnd,
