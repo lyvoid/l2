@@ -1,6 +1,6 @@
 import util.file_operate as fo
 import re
-import glob
+import os
 import sys
 from data_process import ExcelData
 
@@ -11,10 +11,10 @@ else:
     excel_path = '../xlsx'
     json_path = '../../resource/json_config/'
 root = fo.get_child_path(excel_path)
-excel_paths_raw = glob.glob(root + '\*.xlsx')
+excel_names_raw = os.listdir(root)
 excel_paths = list()
-for path in excel_paths_raw:
-    if re.match(r'^\w+\.xlsx$', path.split('\\')[-1]):
-        excel_paths.append(path)
+for name in excel_names_raw:
+    if re.match(r'^\w+\.xlsx$', name):
+        excel_paths.append(root + '/' + name)
 for path in excel_paths:
     data_dict = ExcelData(path).data_process(json_path)

@@ -10,7 +10,7 @@ def data_load(excel_path):
     :param excel_path:excel表的路径
     :return: (table_name, table_data)
     """
-    table_name = excel_path.split("\\")[-1].split(".")[0]
+    table_name = excel_path.split("/")[-1].split(".")[0]
     table = xlrd.open_workbook(excel_path).sheets()[0]
 
     # 根据第一行与第一列判断表格长度
