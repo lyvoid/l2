@@ -11,54 +11,72 @@ class Character extends egret.DisplayObjectContainer {
 	private _lifeBarFg: egret.Bitmap;
 	private _shieldBar: egret.Bitmap; // 护盾条（属于血条的一部分）
 	public mBuffLine: egret.DisplayObjectContainer;
-	public get alive(): boolean {return this.attr.hp != 0;}
 	public attr: Attribute;
 	public bgLayer: egret.DisplayObjectContainer;// 背景层，用来放选中圈，影子等
 	public camp: CharCamp = CharCamp.Player;
 	public col: CharColType = CharColType.frontRow;//前中后三排 站位
 	public row: CharRowType = CharRowType.mid;//位置 上中下三行
 
+	private _alive: boolean = true;
+	public get alive(): boolean { return this._alive; }
+	public set alive(inputAlive: boolean) {
+		// if alive -> die
+		if (!inputAlive && this._alive) {
+			this._alive = false;
+			// remove buff need remove
+			for (let buff of this.mBuffs.concat(this.mHideBuffs
+			).concat(this.mPassiveSkills)) {
+				if (buff.isDeadRemove) {
+					buff.removeFromChar();
+				}
+			}
+			this.attr.shield = 0;
+			this.attr.hp = 0;
+		}
+		this._alive = inputAlive;
+	}
+
 	public get description(): string {
 		let color = "#000000";
-		if (this.camp === CharCamp.Enemy){
+		if (this.camp === CharCamp.Enemy) {
 			color = "#EE2C2C";
-		} else if (this.camp === CharCamp.Player){
+		} else if (this.camp === CharCamp.Player) {
 			color = "#7FFF00";
 		}
-		return  `<b><font color="${color}">${this.mCharName}</font></b>` + 
+		return `<b><font color="${color}">${this.mCharName}</font></b>` +
 			`\n<font color="#3D3D3D" size="15">${this.mFeature}</font>\n\n${this.attr.toString()}`;
 	}
 
-	public get statDescription(): string{
+	public get statDescription(): string {
 		let passiveSkillsDesc = "";
 		let buffsDesc = "";
 		let skillsDesc = "";
-		for (let buff of this.mPassiveSkills){
-			passiveSkillsDesc = `${passiveSkillsDesc}<font color="#7FFF00"><b>` + 
+		for (let buff of this.mPassiveSkills) {
+			passiveSkillsDesc = `${passiveSkillsDesc}<font color="#7FFF00"><b>` +
 				`${buff.buffName}:</b></font>${buff.description}\n`
 		}
-		
+
 		// 统计buff层数
-		let buffLayer:{[buffId:number]:number} = {};
-		for (let buff of this.mBuffs){
-			if (buffLayer[buff.id]){
+		let buffLayer: { [buffId: number]: number } = {};
+		for (let buff of this.mBuffs) {
+			if (buffLayer[buff.id]) {
 				buffLayer[buff.id] += 1;
 			} else {
 				buffLayer[buff.id] = 1;
 			}
 		}
-		
-		let buffAdded:number[] = [];
-		for (let buff of this.mBuffs){
-			if (buffAdded.indexOf(buff.id)){
+
+		let buffAdded: number[] = [];
+		for (let buff of this.mBuffs) {
+			if (buffAdded.indexOf(buff.id)) {
 				continue;
 			}
 			buffAdded.push(buff.id);
-			let remainRound:string = buff.mRemainRound + "";
+			let remainRound: string = buff.mRemainRound + "";
 			remainRound = remainRound == "-1" ? "" : `(${remainRound}回合)`;
-			let remainAffect:string = buff.mRemainAffectTime + "";
+			let remainAffect: string = buff.mRemainAffectTime + "";
 			remainAffect = remainAffect == "-1" ? "" : `(${remainAffect}次)`;
-			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` + 
+			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` +
 				`${buff.buffName}${remainRound}${remainAffect}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
 		}
 		return `<font color="#EE7942"><b>被动技能</b></font>
@@ -92,9 +110,13 @@ ${buffsDesc}`;
 					Util.removeObjFromArray(skillPools, skill);
 				}
 			}
-			// 更新排除出游戏状态
-			this._isInBattle = value;
+			// remove all buff
+			for (let buff of this.mBuffs.concat(this.mHideBuffs).concat(this.mPassiveSkills)) {
+				buff.removeFromChar();
+			}
 		}
+		// 更新排除出游戏状态
+		this._isInBattle = value;
 	}
 
 	public constructor(charactorName: string) {
@@ -149,7 +171,7 @@ ${buffsDesc}`;
 		// for (let id of [1,2]){
 		// 	this.mManualSkillsId.push(id);
 		// }
-		
+
 		this.mPassiveSkills = [];
 		this.mBuffs = [];
 		this.mHideBuffs = [];
@@ -342,7 +364,7 @@ ${buffsDesc}`;
 			).to({ alpha: 1 }, 300);
 	}
 
-	public setAsSelect(){
+	public setAsSelect() {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		this.bgLayer.addChild(scene.mSelectImg);
 		scene.mSelectedChar = this;
@@ -356,14 +378,14 @@ ${buffsDesc}`;
 		egret.Tween.removeTweens(this.mArmatureDisplay);
 	}
 
-	public adjustBuffIconPos(): void{
+	public adjustBuffIconPos(): void {
 		let buffLine = this.mBuffLine;
 		let addedBuffsId: number[] = [];
 		let buffLineIndex = 0;
-		for (let buff of this.mBuffs){
+		for (let buff of this.mBuffs) {
 			let id = buff.id;
 			// 如果此前没有在buffline中加过这个id才重复加一次
-			if (addedBuffsId.indexOf(id) >= 0){
+			if (addedBuffsId.indexOf(id) >= 0) {
 				let icon = buff.mIconBitMap;
 				icon.x = buffLineIndex * 12;
 				buffLine.addChild(icon);

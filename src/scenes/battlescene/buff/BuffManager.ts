@@ -15,7 +15,6 @@ class BuffManager {
 	}
 
 	public recycle(buff: Buff): void{
-		buff.release();
 		this._buffPool.push(buff);
 	}
 

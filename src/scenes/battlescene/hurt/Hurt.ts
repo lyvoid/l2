@@ -38,70 +38,52 @@ class Hurt {
 	}
 
 	public release(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		this._fromChar = null;
-	}
-
-	private affectNoReCycle(target: Character) {
-		let aliveBefore = target.alive;
-		let change = this.affectWithoutPerfrom(target);;
-		if (!change.aliveNew && this._isRemoveFromGameWhenDie) {
-			target.isInBattle = false;
-			change.isInBattleNew = false;
-		}
-		if (this._isRemoveFromGame) {
-			target.isInBattle = false;
-			change.isInBattleNew = false;
-		}
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mPerformQueue.push({ performance: () => Hurt.statePerformance(change) });
-		// 移除buff
-		if (!target.isInBattle) {
-			for (let buff of target.mBuffs.concat(target.mHideBuffs
-			).concat(target.mPassiveSkills)) {
-				buff.removeFromChar();
-			}
-		} else if (!target.alive) {
-			for (let buff of target.mBuffs.concat(target.mHideBuffs
-			).concat(target.mPassiveSkills)) {
-				if (buff.isDeadRemove) {
-					buff.removeFromChar();
-				}
-			}
-		}
-
-		scene.judge();
-		scene.performStart();
-	}
-
-	public affect(target: Character): void {
-		this.affectNoReCycle(target);
-		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mHurtManager.recycle(this);
 	}
 
-	/**
-	 * 施加伤害，返回收到影响的属性列表
-	 */
-	public affectWithoutPerfrom(target: Character): IAttrChange {
+	public affect(target: Character) {
+		let aliveBefore = target.alive;
+		let hurtResult = this.affectWithoutPerfrom(target);;
+		if (!hurtResult.aliveNew && this._isRemoveFromGameWhenDie) {
+			target.isInBattle = false;
+			hurtResult.isInBattleNew = false;
+		}
+		if (this._isRemoveFromGame) {
+			target.isInBattle = false;
+			hurtResult.isInBattleNew = false;
+		}
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.addToPerformQueue({ performance: () => Hurt.statePerformance(hurtResult) });
+		// judge after every hurt affect
+		scene.judge();
+		// release hurt after affect
+		this.release();
+		// send hurt affect message
+		MessageManager.Ins.sendMessage(
+			MessageType.HurtAffect,
+			hurtResult
+		);
+	}
 
-		let mm = MessageManager.Ins;
-
+	private affectWithoutPerfrom(target: Character): IHurtResult {
 		let targetAttr = target.attr;
 		let harm = 0;
-
-		let changeInfo: IAttrChange = {
-			char: target,
+		let hurtResult: IHurtResult = {
+			targetChar: target,
+			fromChar: this._fromChar,
 			shieldOld: targetAttr.shield,
 			shieldNew: 0,
 			hpOld: targetAttr.hp,
 			hpNew: 0,
 			aliveOld: target.alive,
-			aliveNew: false,
+			aliveNew: target.alive,
 			isInBattleOld: target.isInBattle,
 			isInBattleNew: target.isInBattle
 		};
 
-		// 处理护甲
+		// armor
 		if (this._isAbs) {
 			harm = this._absValue;
 		} else {
@@ -118,58 +100,37 @@ class Hurt {
 			}
 		}
 
-		// 处理倍率
+		// rate
 		harm *= this._rate;
 		harm = Math.floor(harm);
 
-		let isAliveChange = false;
-		// 处理治疗生命
+		// HealHp
 		if (this._hurtType == HurtType.HealHp && (target.alive || this._isResurgence)) {
-			isAliveChange = !target.alive;
 			let newHp = targetAttr.hp + harm;
-			newHp = newHp > targetAttr.maxHp ? targetAttr.maxHp : newHp;
-			let healValue = newHp - targetAttr.hp;
 			targetAttr.hp = newHp;
-			mm.sendMessage(
-				MessageType.HealHp,
-				[this._fromChar, target, healValue]
-			);
-
-			// 发送复活信息
-			if (isAliveChange) {
-				mm.sendMessage(
-					MessageType.Resurgence,
-					target
-				);
-			}
-
-			return Hurt.fullNewAttrToChange(changeInfo, target);
+			return Hurt.CompleteNewAttrToResult(hurtResult, target);
 		}
 
-		// 非治疗状态下，对已死亡单位无效
+		// if target is dead, no affect beside heal hp
 		if (!target.alive) {
-			return Hurt.fullNewAttrToChange(changeInfo, target);
+			return Hurt.CompleteNewAttrToResult(hurtResult, target);
 		}
 
-		// 处理增加护盾
+		// HealShield
 		if (this._hurtType == HurtType.HealShield) {
 			let newShield = targetAttr.shield + harm;
 			newShield = newShield > targetAttr.maxShield ? targetAttr.maxShield : newShield;
 			let healValue = newShield - targetAttr.shield;
 			targetAttr.shield = newShield;
-			mm.sendMessage(
-				MessageType.HealShield,
-				[this._fromChar, target, healValue]
-			);
-			return Hurt.fullNewAttrToChange(changeInfo, target);
+			return Hurt.CompleteNewAttrToResult(hurtResult, target);
 		}
 
-		// 处理破盾
+		// double shield
 		if (targetAttr.shield > 0 && this._isDoubleShield) {
 			harm *= 2;
 		}
 
-		// 处理最终增伤
+		// damage reduce
 		if (this._hurtType == HurtType.Magic) {
 			harm = harm - targetAttr.magicDamageReduceAbs;
 			harm = harm > 0 ? harm : 0;
@@ -182,71 +143,45 @@ class Hurt {
 			harm = harm > 0 ? Math.ceil(harm) : 0;
 		}
 
-		// 处理非穿盾
 		let harmRemain = harm;
+		// if not perice shield, need take out shield first
 		if (!this._isPericeShield) {
 			harmRemain = harm - targetAttr.shield;
+			// if shield can counteract all harm
 			if (harmRemain <= 0) {
 				targetAttr.shield = -harmRemain;
-				mm.sendMessage(
-					MessageType.HarmShield,
-					[this._fromChar, target, harm]
-				);
-				return Hurt.fullNewAttrToChange(changeInfo, target);
+				return Hurt.CompleteNewAttrToResult(hurtResult, target);
 			}
-			mm.sendMessage(
-				MessageType.HarmShield,
-				[this._fromChar, target, targetAttr.shield]
-			);
+			// if shield can not counteract all harm
 			targetAttr.shield = 0;
-
 		}
 
-		// 伤害到hp
+		// harm to hp
 		let newTargetHp = targetAttr.hp - harmRemain;
-		// 生命归零，角色死亡
-		if (newTargetHp <= 0) {
-			newTargetHp = 0;
-			isAliveChange = true;
-			// 如果死亡那么shield也要归0
-			targetAttr.shield = 0;
-			// 发送角色死亡消息
-			mm.sendMessage(
-				MessageType.CharDie,
-				target
-			);
-		}
-		mm.sendMessage(
-			MessageType.HarmHp,
-			[this._fromChar, target, targetAttr.hp - newTargetHp]
-		);
 		targetAttr.hp = newTargetHp;
-		return Hurt.fullNewAttrToChange(changeInfo, target);
 
+		return Hurt.CompleteNewAttrToResult(hurtResult, target);
 	}
 
-	/**
-	 * 辅助函数，把char中的属性填充到attrChange中
-	 */
-	private static fullNewAttrToChange(
-		attrChange: IAttrChange,
+	// 辅助函数，把char中的属性填充到hurt result中
+	private static CompleteNewAttrToResult(
+		hurtResult: IHurtResult,
 		char: Character
-	): IAttrChange {
+	): IHurtResult {
 		let newAttr = char.attr;
-		attrChange.hpNew = newAttr.hp;
-		attrChange.aliveNew = char.alive;
-		attrChange.shieldNew = newAttr.shield;
-		return attrChange;
+		hurtResult.hpNew = newAttr.hp;
+		hurtResult.aliveNew = char.alive;
+		hurtResult.shieldNew = newAttr.shield;
+		hurtResult.isInBattleNew = char.isInBattle;
+		return hurtResult;
 	}
 
-	/**
-	 * 状态表现
-	 * 对血量护盾复活死亡排除出游戏进行表现
-	 */
-	private static statePerformance(change: IAttrChange) {
+
+	// 对血量护盾复活死亡排除出游戏进行表现
+	private static statePerformance(change: IHurtResult) {
 		(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
-		let target = change.char;
+		let target = change.targetChar;
 		if (change.shieldNew != change.shieldOld) {
 			target.lifeBarShieldAnim(change.shieldNew);
 			damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
@@ -294,4 +229,17 @@ enum HurtType {
 	Magic, // 魔法伤害
 	HealHp, // 治疗生命
 	HealShield // 增加护盾
+}
+
+interface IHurtResult {
+	targetChar: Character;
+	fromChar: Character;
+	shieldOld: number;
+	shieldNew: number;
+	hpOld: number;
+	hpNew: number;
+	aliveNew: boolean;
+	aliveOld: boolean;
+	isInBattleNew: boolean;
+	isInBattleOld: boolean;
 }

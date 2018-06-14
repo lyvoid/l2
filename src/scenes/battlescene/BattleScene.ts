@@ -1,5 +1,7 @@
 class BattleScene extends IScene {
-	public mDbManager: DBManager;
+	public mDbManager: DBManager = new DBManager();
+	public mBuffManager: BuffManager = new BuffManager();
+	public mHurtManager: HurtManager = new HurtManager();
 	public mCardBoard: CardBoard;
 	public mSelectImg: egret.Bitmap;
 	public mFilterManager: FilterManager;
@@ -10,8 +12,6 @@ class BattleScene extends IScene {
 	public mManualSkillIdPool: [number, Character][];
 	public mManualSkillManager: ManualSkillManager;
 	public mTargetSelectManager: TargetSelectManager;
-	public mHurtManager: HurtManager;
-	public mBuffManager: BuffManager = new BuffManager();
 	public mRound: number;
 
 	// ui
@@ -20,7 +20,8 @@ class BattleScene extends IScene {
 	public mCardInfoPopupUI: CardInfoPopupUI;
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
 
-	public mPerformQueue: Queue<{ performance: () => void }>;
+	private _performQueue: Queue<{ performance: () => void }> = new Queue<{ performance: () => void }>();
+	private _castQueue: Queue<{ cast: () => void }> = new Queue<{ cast: () => void }>();
 
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp = CharCamp.Neut;
@@ -153,14 +154,12 @@ class BattleScene extends IScene {
 		this.mEnemies = [];
 		this.mFriends = [];
 		this.mManualSkillIdPool = [];
-		this.mDbManager = new DBManager();
 		this.mCardBoard = new CardBoard();
-		this.mPerformQueue = new Queue<{ performance: () => void }>();
+		this._performQueue = new Queue<{ performance: () => void }>();
 		this.mDamageFloatManager = new DamageFloatManager();
 		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
 		this.mTargetSelectManager = new TargetSelectManager();
-		this.mHurtManager = new HurtManager();
 
 		// TODO: 初始化游戏角色
 		let chars: Character[] = [];
@@ -291,6 +290,22 @@ class BattleScene extends IScene {
 	 * 是否正在演出skill的演出内容
 	 */
 	public mIsPerforming: boolean = false;
+	/**
+	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
+	 * 如果当前正在演出会直接返回，防止两件事同时被演出
+	 */
+	public addToPerformQueue(input: { performance: () => void } = null): void {
+		if (input) {
+			this._performQueue.push(input);
+		}
+		if (this.mIsPerforming) {
+			// 如果正在演出，那就不管这个消息
+			return;
+		}
+		this.mIsPerforming = true;
+		let performanceObj = this._performQueue.pop();
+		performanceObj.performance();
+	}
 
 	/**
 	 * 一个技能演出结束的时候自行调用
@@ -300,7 +315,7 @@ class BattleScene extends IScene {
 	 */
 	public onePerformEnd(): void {
 		this.mIsPerforming = false;
-		if (this.mPerformQueue.length == 0) {
+		if (this._performQueue.length == 0) {
 			// 如果演出结束同时游戏结束时，播放游戏结束演出
 			if (this.mWinnerCamp != CharCamp.Neut) {
 				this.onBattleEnd();
@@ -310,7 +325,7 @@ class BattleScene extends IScene {
 			}
 			return;
 		}
-		this.performStart();
+		this.addToPerformQueue();
 	}
 
 	/**
@@ -327,18 +342,21 @@ class BattleScene extends IScene {
 		LayerManager.Ins.popUpLayer.addChild(this.mBattleEndPopUp);
 	}
 
-	/**
-	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
-	 * 如果当前正在演出会直接返回，防止两件事同时被演出
-	 */
-	public performStart(): void {
-		if (this.mIsPerforming) {
-			// 如果正在演出，那就不管这个消息
+	// 用来锁住，一次只能有一个skill在cast，保证cast顺序正确
+	private _isInCast: boolean = false;
+	public addToCastQueue(input: { cast: () => void } = null): void {
+		if (input) {
+			this._castQueue.push(input);
+		}
+		if (this._isInCast) {
 			return;
 		}
-		this.mIsPerforming = true;
-		let performanceObj = this.mPerformQueue.pop();
-		performanceObj.performance();
+		this._isInCast = true;
+		let q = this._castQueue;
+		while (q.length > 0) {
+			q.pop().cast();
+		}
+		this._isInCast = false;
 	}
 
 	private readConfig(): void {

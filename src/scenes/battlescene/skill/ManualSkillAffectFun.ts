@@ -5,6 +5,6 @@ function normalSkillAffect():void{
 /**
  * 所有效果列表
  */
-const SKAFLS:{[key:string]:()=>void} = {
+const SKAFFLS:{[key:string]:()=>void} = {
     normal: normalSkillAffect
 }

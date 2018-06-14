@@ -6,13 +6,6 @@ class MessageType{
 
 
 	// BattleScene
-	// 伤害或治疗消息
-	public static HealHp = "HealHp";
-	public static HealShield = "HealShield";
-	public static HarmHp = "HarmHp";
-	public static HarmShield = "HarmShield";
-	public static CharDie = "CharDie";
-	public static Resurgence = "Resurgence";
 	// 开始回合
 	public static EnemyRoundStart = "EnemyRoundStart";
 	public static PlayerRoundStart = "PlayerRoundStart";
@@ -21,7 +14,10 @@ class MessageType{
 	public static PerformAllEnd = "PerformAllEnd";
 	// 卡牌被点击事件
 	public static CardTouchTap = "CardTouchTap";
-
+	// hurt生效消息
+	public static HurtAffect = "HurtAffect";
+	// buff attach
+	public static BuffAttach = "BuffAttach";
 
 
 

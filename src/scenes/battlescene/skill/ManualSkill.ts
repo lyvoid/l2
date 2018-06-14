@@ -1,23 +1,21 @@
 class ManualSkill {
-	// 从外部传入这个参数用来做其他用
+	// from external for custom affect function
 	private _param: any;
 	public setParam(input: any) { this._param = input; }
-	// skill info
+	// skill basic info
 	private _skillName: string;
 	private _fireNeed: number;
 	private _description: string;
 	private _skillId: number;
-	private _skillsAfterId: number[];
-	private _buffsIdToTarget: number[];
-	private _targetSelectId: number; // 0时不启用
-	private _needPerformance: boolean;
-	// affect info
+	// affect info // enable when targetselect not 0
+	private _targetSelectId: number;
 	private _hurtId: number;
-	// can cast judge
+	private _buffsIdToTarget: number[];
+	private _needPerformance: boolean;
+	// can cast judge 
 	private _isSelectTargetCondition: boolean;
 	private _targetNeedBelong: number;//0:noneed,1:self,2:enemy
 	private _targetNeedStat: number;//0:noneed,1:alive,2:dead
-	private _isSelfCondition: boolean;
 	private _selfNeedStat: number;//0:noneed,1:alive,2:dead
 	// affect
 	private _affectFunStrId: string;
@@ -26,8 +24,7 @@ class ManualSkill {
 	private _caster: Character;
 	private _camp: CharCamp;
 	private _targets: Character[];
-	private _castQueue: Queue<{ cast: () => void }>;
-	private _affectFunction: () => void;
+	private _cusAffFc: () => void;
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }
@@ -46,7 +43,6 @@ class ManualSkill {
 		isSelectTargetCondition: boolean = false,
 		targetNeedBelong: number = 0,
 		targetNeedStat: number = 0,
-		isSelfCondition: boolean = false,
 		selfNeedStat: number = 0,
 		caster: Character = null,
 		camp: CharCamp = CharCamp.Neut
@@ -56,14 +52,12 @@ class ManualSkill {
 		this._description = description;
 		this._fireNeed = fireNeed;
 		this._caster = caster;
-		this._skillsAfterId = skillsAfterId;
 		this._needPerformance = needPerformance;
 		this._buffsIdToTarget = buffsIdToTarget;
 		this._targetSelectId = targetSelectId;
 		this._isSelectTargetCondition = isSelectTargetCondition;
 		this._targetNeedStat = targetNeedStat;
 		this._targetNeedBelong = targetNeedBelong;
-		this._isSelfCondition = isSelfCondition;
 		this._selfNeedStat = selfNeedStat;
 
 		// set camp
@@ -72,14 +66,11 @@ class ManualSkill {
 		} else {
 			this._camp = camp;
 		}
-
-		// set scene
-		this._castQueue = new Queue<{ cast: () => void }>();
-
-		this._affectFunction = SKAFLS[this._affectFunStrId];
+		// initial custom affect function 
+		this._cusAffFc = SKAFFLS[this._affectFunStrId];
 	}
 
-	private cast(): void {
+	public cast(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		// if gameover, return
 		if (scene.mWinnerCamp) {
@@ -89,56 +80,39 @@ class ManualSkill {
 		if (!this.canCast()[0]) {
 			return;
 		}
-		// 如果选择目标ID非0，采用默认选择目标方式进行选择
+		// if targetselectid not 0, use default selecttarget()
+		// and then cast hurt and buffs to targets
 		if (this._targetSelectId != 0) {
 			this.selectTarget();
 			if (this._targets.length == 0) {
 				// if no proper target
 				return;
 			}
+			let hurt = scene.mHurtManager.newHurt(this._hurtId);
+			for (let target of this._targets) {
+				hurt.affect(target);
+				for (let buffid of this._buffsIdToTarget) {
+					let buff = scene.mBuffManager.newBuff(buffid);
+					buff.attachToChar(target);
+				}
+			}
 		}
-		// 如果没有处理方法则采用默认处理
-		if (!this._affectFunction){
-			this.defaultAffectFunc();
+
+		// if no affectfunction, then use default function
+		if (!this._cusAffFc) {
+			this.dftAffFc();
 		} else {
-			this._affectFunction();
+			this._cusAffFc();
 		}
-		let skillCastQue = this._castQueue;
-		for (let id of this._skillsAfterId) {
-			let skill = scene.mManualSkillManager.newSkill(
-				id,
-				this._caster,
-				this._camp
-			);
-			skill._targets = this._targets;
-			skillCastQue.push(
-				skill
-			);
-		}
-
-		// cast skill in castQue of BattleScene
-		if (skillCastQue.length > 0) {
-			let skill = skillCastQue.pop();
-			skill.cast();
-		}
-
 		// start performance
-		scene.performStart();
+		scene.addToPerformQueue();
+		// if cast end, release this skill
 		this.release();
 	}
 
 	// 采用默认处理方法时，必须拥有合法的targetselectid
-	private defaultAffectFunc(): void{
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		let hurt = scene.mHurtManager.newHurt(this._hurtId);
-		for (let target of this._targets) {
-			hurt.affect(target);
-			for (let buffid of this._buffsIdToTarget) {
-				let buff = scene.mBuffManager.newBuff(buffid);
-				buff.attachToChar(target);
-			}
-		}
-		this.deftPrePerf();
+	private dftAffFc(): void {
+		this.dftPrPerf();
 	}
 
 	private selectTarget(): void {
@@ -148,7 +122,7 @@ class ManualSkill {
 	}
 
 	// 默认演出
-	private deftPrePerf(): void {
+	private dftPrPerf(): void {
 		if (!this._needPerformance) {
 			// if this skill don't need performance
 			return;
@@ -194,7 +168,7 @@ class ManualSkill {
 
 		if (isMove) {
 			// if need move, push moving to nearestEnemy to queue
-			scene.mPerformQueue.push({
+			scene.addToPerformQueue({
 				performance: () => {
 					egret.Tween.get(caster).to({
 						x: nearestEnemy.x + 100 * nearestEnemy.camp,
@@ -204,7 +178,7 @@ class ManualSkill {
 			})
 		}
 
-		scene.mPerformQueue.push({
+		scene.addToPerformQueue({
 			// push skill anim to queue
 			// TODO: replace the name of skill anim
 			performance: () => {
@@ -219,7 +193,7 @@ class ManualSkill {
 
 		if (isMove) {
 			// if need move, push move back to queue
-			scene.mPerformQueue.push({
+			scene.addToPerformQueue({
 				performance: () => {
 					let newP: { x: number, y: number } = caster.getPositon();
 					caster.playDBAnim("idle", 0);
@@ -253,7 +227,7 @@ class ManualSkill {
 				return [false, "选中单位未死亡"]
 			}
 		}
-		if (this._isSelfCondition && this._caster) {
+		if (this._caster) {
 			if (!this._caster.isInBattle) {
 				return [false, "释放者已被排除出游戏外"];
 			}
@@ -270,7 +244,6 @@ class ManualSkill {
 	public release(): void {
 		this._caster = null;
 		this._targets = null;
-		this._castQueue = null;
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mManualSkillManager.recycle(this);
 	}

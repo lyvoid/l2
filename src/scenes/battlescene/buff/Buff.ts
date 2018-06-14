@@ -12,12 +12,10 @@ class Buff {
 	public get isPositive(): boolean { return this._isPositive; }
 	private _maxLayer: number;  // 最大叠加层数
 	private _layId: number; // 叠加id，相同的叠加id在一起计算maxLayer
-	public get layId(): number { return this._layId; }
 	private _isDeadRemove: boolean; // 是否对象死亡时移除
 	public get isDeadRemove(): boolean { return this._isDeadRemove; }
 	private _initialRemainRound: number; // 初始剩余回合, -1为无限
 	private _exType: BuffExTy; // buff外在类型，隐藏buff/普通buff/被动技能
-	public get exType(): BuffExTy { return this._exType; }
 	// attr benifit
 	private _attrsAdd: number[];	// 属性加成
 	private _attrsMul: number[];	// 属性加成
@@ -34,18 +32,13 @@ class Buff {
 	private _affectPhase: BuffAffectPhase; // 结算时机（条件）
 	private _affectHurtId: number; // affect使用hurt来结算
 	private _affectSkillId: number; // 触发一个技能
-	// affect condition
-	// 如果结算条件是某buff叠加至xx生效时有效，代表该角色
-	public _affectCaseBuffTargetType: AffectCaseBuffTargetType;
-	public _affectCaseBuffId: number;// 如果结算条件是某buff叠加至xx生效时有效，代表该buff
-	public _affectCaseBuffLayer: number; // 层数
+	private _affectBuffIds: number[];
 
 	// realtime
 	public mChar: Character;// buff归属单位
 	public mRemainRound: number; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
 	public mRemainAffectTime: number; // 剩余结算次数，-1为无限
 	public mAttachRound: number;// 上buff的回合，如果buff达到最大上限，挤掉最早加的那个
-	private _scene: BattleScene;
 	public mIconBitMap: egret.Bitmap;
 
 	public constructor() {
@@ -82,10 +75,7 @@ class Buff {
 		isAffect: boolean,
 		maxAffectTime: number,
 		affectPhase: BuffAffectPhase,
-		affectHurtId: number,
-		affCasBufTargTy: AffectCaseBuffTargetType,
-		affCasBufId: number,
-		affCasBufLay: number
+		affectHurtId: number
 	): void {
 		// buff info
 		this._id = id;
@@ -107,21 +97,18 @@ class Buff {
 		this._maxAffectTime = maxAffectTime;
 		this._affectPhase = affectPhase;
 		this._affectHurtId = affectHurtId;
-		this._affectCaseBuffId = affCasBufId;
-		this._affectCaseBuffTargetType = affCasBufTargTy;
-		this._affectCaseBuffLayer = affCasBufLay;
 		// realtime
 		this.mRemainRound = initRemRound;
 		this.mRemainAffectTime = maxAffectTime;
-		this._scene = SceneManager.Ins.curScene as BattleScene;
 	}
 
 
 	public attachToChar(target: Character): void {
-		// 如果叠加层数到上限，删除最早的那个buff
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		this.mAttachRound = scene.mRound;
 		let allBuff = target.mPassiveSkills.concat(target.mBuffs).concat(target.mHideBuffs);
 		let sameLayBuffs: Buff[] = [];
-		let earliestSameBuf: Buff;
+		let earliestSameLayIdBuf: Buff;
 		let buffLayNum = 0;
 		let earliestRound = 0;
 		for (let buff of allBuff) {
@@ -130,14 +117,14 @@ class Buff {
 				sameLayBuffs.push(buff);
 				if (buff.mAttachRound > earliestRound) {
 					earliestRound = buff.mAttachRound;
-					earliestSameBuf = buff;
+					earliestSameLayIdBuf = buff;
 				}
 			}
 		}
 
-		// 如果到了上限，删除最早的buff
+		// 如果到了上限，删除最早的同layidbuff
 		if (buffLayNum >= this._maxLayer) {
-			earliestSameBuf.removeFromChar();
+			earliestSameLayIdBuf.removeFromChar();
 		}
 
 		// add buff to target
@@ -175,7 +162,7 @@ class Buff {
 			}
 		}
 
-		// TODO: if have effect, listen affect affectPhase
+		// if have effect, listen affect affectPhase
 		if (this._isAffect) {
 			if (this._affectPhase == BuffAffectPhase.TargetRoundStart) {
 				let eType = MessageType.PlayerRoundStart;
@@ -188,44 +175,64 @@ class Buff {
 					this
 				);
 			}
-		}
-	}
-
-	public release(): void {
-		// TODO: remove listen
-		if (this._isAffect) {
-			if (this._affectPhase == BuffAffectPhase.TargetRoundStart) {
-				let eType = MessageType.PlayerRoundStart;
-				if (this.mChar.camp == CharCamp.Enemy) {
-					eType = MessageType.EnemyRoundStart;
-				}
-				MessageManager.Ins.removeEventListener(
-					eType,
+			if (this._affectPhase == BuffAffectPhase.HurtAffect) {
+				MessageManager.Ins.addEventListener(
+					MessageType.HurtAffect,
+					this.affect,
+					this
+				);
+			}
+			if (this._affectPhase == BuffAffectPhase.BuffAttach) {
+				MessageManager.Ins.addEventListener(
+					MessageType.BuffAttach,
 					this.affect,
 					this
 				);
 			}
 		}
-		this.mChar = null;
-		this._scene = null;
-		this.mIconBitMap = null;
 	}
 
+	public release(): void {
+		// remove all listener
+		for (let eType of [
+			MessageType.EnemyRoundStart,
+			MessageType.PlayerRoundStart,
+			MessageType.BuffAttach,
+			MessageType.HurtAffect
+		]) {
+			MessageManager.Ins.removeEventListener(
+				eType,
+				this.affect,
+				this
+			);
+		}
+		this.mChar = null;
+		this.mIconBitMap = null;
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mBuffManager.recycle(this);
+	}
 
-	public affect() {
+	// call by send message
+	private affect(e: Message) {
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (this.mRemainAffectTime > 0) {
 			this.mRemainAffectTime = this.mRemainAffectTime - 1;
 		}
-		if (this._affectHurtId != 0){
-		let hurt = this._scene.mHurtManager.newHurt(this._affectHurtId);
-		hurt.affect(this.mChar);
+		if (this._affectHurtId != 0) {
+			let hurt = scene.mHurtManager.newHurt(this._affectHurtId);
+			hurt.affect(this.mChar);
+		}
+		for (let id of this._affectBuffIds) {
+			let buff = scene.mBuffManager.newBuff(id);
+			buff.attachToChar(this.mChar);
 		}
 		if (this._affectSkillId != 0) {
-			let skill = this._scene.mManualSkillManager.newSkill(
-				this._affectSkillId, 
+			let skill = scene.mManualSkillManager.newSkill(
+				this._affectSkillId,
 				this.mChar
 			);
-			skill.cast();
+			skill.setParam(e.messageContent);
+			scene.addToCastQueue(skill);
 		}
 		// if affect times is 0
 		if (this.mRemainAffectTime == 0) {
@@ -237,9 +244,10 @@ class Buff {
 	 * 场景清空的时候也要调用该方法来保证资源释放
 	 */
 	public removeFromChar() {
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (this.mChar == null) {
 			// 如果附加到的对象为空，说明已经被移除过了
-			console.log(`buff已经被移除过了,buffid: ${this.id}`);
+			console.log(`buff已经被移除过了,buffid: ${this._id}`);
 			return;
 		}
 		// 去除属性
@@ -275,13 +283,7 @@ class Buff {
 				Util.removeObjFromArray(target.mPassiveSkills, this);
 				break;
 		}
-		this._scene.mBuffManager.recycle(this);
-	}
-
-	public onCharStartPhase() {
-		if (this._isAffect && this._affectPhase == BuffAffectPhase.TargetRoundStart) {
-			this.affect();
-		}
+		this.release();
 	}
 
 	public onCharEndPhase() {
@@ -296,11 +298,9 @@ class Buff {
 }
 
 enum BuffAffectPhase {
-	TargetRoundStart,// 目标开始时自动发生效果，最常规的发出时机
-	BuffLayer, // 特定目标的buff层数
-	EnemyHarm, // 敌方受伤时
-	SelfHarm, // 自己受伤
-	FriendHarm // 队友受伤
+	TargetRoundStart, // 目标开始时自动发生效果，最常规的发出时机
+	BuffAttach,
+	HurtAffect
 }
 
 enum AffectCaseBuffTargetType {

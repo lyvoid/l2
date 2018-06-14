@@ -30,10 +30,10 @@ class TargetSelect {
     }
 
     /**
-     * 选择所有备选目标，在玩家长按卡牌时，用该方法选中需要闪烁的目标
+     * 选择所有备选目标
      * 
      */
-    public selectAll(camp: CharCamp, caster: Character = null): Character[] {
+    private selectAll(camp: CharCamp, caster: Character = null): Character[] {
         let allTargetsTmp1: Character[] = [];
         let scene = SceneManager.Ins.curScene as BattleScene;
         let enemies: Character[];

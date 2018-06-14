@@ -1,9 +1,6 @@
 class DBManager {
-	private egretFactory: dragonBones.EgretFactory;
+	private egretFactory: dragonBones.EgretFactory = new dragonBones.EgretFactory();
 	private addedCharNames: string[] = [];
-	public constructor() {
-		this.egretFactory = new dragonBones.EgretFactory();
-	}
 
 	public getArmatureDisplay(charName:string, armatureName?:string): dragonBones.EgretArmatureDisplay{
 		let egretFactory = this.egretFactory;
