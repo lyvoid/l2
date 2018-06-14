@@ -1,4 +1,7 @@
 class ManualSkill {
+	// 从外部传入这个参数用来做其他用
+	private _param: any;
+	public setParam(input: any) { this._param = input; }
 	// skill info
 	private _skillName: string;
 	private _fireNeed: number;
@@ -6,9 +9,8 @@ class ManualSkill {
 	private _skillId: number;
 	private _skillsAfterId: number[];
 	private _buffsIdToTarget: number[];
-	private _targetSelectId: number;
+	private _targetSelectId: number; // 0时不启用
 	private _needPerformance: boolean;
-	private _isPreSetTargets: boolean;
 	// affect info
 	private _hurtId: number;
 	// can cast judge
@@ -17,13 +19,15 @@ class ManualSkill {
 	private _targetNeedStat: number;//0:noneed,1:alive,2:dead
 	private _isSelfCondition: boolean;
 	private _selfNeedStat: number;//0:noneed,1:alive,2:dead
+	// affect
+	private _affectFunStrId: string;
 
 	// real time
 	private _caster: Character;
 	private _camp: CharCamp;
 	private _targets: Character[];
 	private _castQueue: Queue<{ cast: () => void }>;
-	private _scene: BattleScene;
+	private _affectFunction: () => void;
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }
@@ -44,7 +48,6 @@ class ManualSkill {
 		targetNeedStat: number = 0,
 		isSelfCondition: boolean = false,
 		selfNeedStat: number = 0,
-		isPreSelect: boolean = false,
 		caster: Character = null,
 		camp: CharCamp = CharCamp.Neut
 	) {
@@ -62,7 +65,6 @@ class ManualSkill {
 		this._targetNeedBelong = targetNeedBelong;
 		this._isSelfCondition = isSelfCondition;
 		this._selfNeedStat = selfNeedStat;
-		this._isPreSetTargets = isPreSelect;
 
 		// set camp
 		if (caster) {
@@ -72,12 +74,13 @@ class ManualSkill {
 		}
 
 		// set scene
-		this._scene = SceneManager.Ins.curScene as BattleScene;
 		this._castQueue = new Queue<{ cast: () => void }>();
+
+		this._affectFunction = SKAFLS[this._affectFunStrId];
 	}
 
-	private castWithoutRecycle(): void {
-		let scene = this._scene;
+	private cast(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		// if gameover, return
 		if (scene.mWinnerCamp) {
 			return;
@@ -86,17 +89,20 @@ class ManualSkill {
 		if (!this.canCast()[0]) {
 			return;
 		}
-		this.selectTarget();
-		if (this._targets.length == 0) {
-			// if no proper target
-			return;
+		// 如果选择目标ID非0，采用默认选择目标方式进行选择
+		if (this._targetSelectId != 0) {
+			this.selectTarget();
+			if (this._targets.length == 0) {
+				// if no proper target
+				return;
+			}
 		}
-		// real affect of skill
-		this.affect();
-		// add performance to performanceQue of battlescene
-		this.preparePerformance();
-
-		// 
+		// 如果没有处理方法则采用默认处理
+		if (!this._affectFunction){
+			this.defaultAffectFunc();
+		} else {
+			this._affectFunction();
+		}
 		let skillCastQue = this._castQueue;
 		for (let id of this._skillsAfterId) {
 			let skill = scene.mManualSkillManager.newSkill(
@@ -116,46 +122,33 @@ class ManualSkill {
 			skill.cast();
 		}
 
-		scene.mManualSkillManager.recycle(this);
-
 		// start performance
 		scene.performStart();
+		this.release();
 	}
 
-	private affect(): void {
-		this.selectTarget();
-		let hurt = this._scene.mHurtManager.newHurt(this._hurtId);
+	// 采用默认处理方法时，必须拥有合法的targetselectid
+	private defaultAffectFunc(): void{
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let hurt = scene.mHurtManager.newHurt(this._hurtId);
 		for (let target of this._targets) {
 			hurt.affect(target);
 			for (let buffid of this._buffsIdToTarget) {
-				let buff = this._scene.mBuffManager.newBuff(buffid);
+				let buff = scene.mBuffManager.newBuff(buffid);
 				buff.attachToChar(target);
 			}
 		}
+		this.deftPrePerf();
 	}
 
-	public cast(): void {
-		this.castWithoutRecycle();
-		let scene = this._scene;
-		scene.mManualSkillManager.recycle(this);
-	}
-
-	public preSelectTarget(): Character[] {
-		let scene = this._scene;
-		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
-		return targetSelect.selectAll(this._camp, this._caster);
-	}
-
-	private selectTarget() {
-		if (this._isPreSetTargets) {
-			return;
-		}
-		let scene = this._scene;
+	private selectTarget(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;;
 		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
 		this._targets = targetSelect.select(this._camp, this._caster);
 	}
 
-	private preparePerformance(): void {
+	// 默认演出
+	private deftPrePerf(): void {
 		if (!this._needPerformance) {
 			// if this skill don't need performance
 			return;
@@ -165,7 +158,7 @@ class ManualSkill {
 			// if no caster, return (will be extended in the future)
 			return;
 		}
-		let scene = this._scene;
+		let scene = SceneManager.Ins.curScene as BattleScene;;
 		let targets = this._targets;
 		let casterCamp = caster.camp;
 		let enemiesNum = 0;
@@ -241,7 +234,8 @@ class ManualSkill {
 
 	// canCast
 	public canCast(): [boolean, string] {
-		let selectedChar = this._scene.mSelectedChar;
+		let scene = SceneManager.Ins.curScene as BattleScene;;
+		let selectedChar = scene.mSelectedChar;
 		if (this._isSelectTargetCondition) {
 			if (!selectedChar.isInBattle) {
 				return [false, "选中目标已从游戏中排除"];
@@ -277,5 +271,7 @@ class ManualSkill {
 		this._caster = null;
 		this._targets = null;
 		this._castQueue = null;
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mManualSkillManager.recycle(this);
 	}
 }
