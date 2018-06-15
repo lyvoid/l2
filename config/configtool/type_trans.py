@@ -14,6 +14,7 @@ def _add_to_trans_funcs(name):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
+
         _type_trans_funcs[name] = wrapper
         return wrapper
 
@@ -30,6 +31,8 @@ def _trans_str(data):
 
 @_add_to_trans_funcs('num')
 def _trans_num(data):
+    if data == '':
+        return 0.0
     data = float(data)
     return data
 

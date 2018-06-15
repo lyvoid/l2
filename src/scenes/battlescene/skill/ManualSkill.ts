@@ -1,30 +1,30 @@
 class ManualSkill {
-	// from external for custom affect function
-	private _param: any;
-	public setParam(input: any) { this._param = input; }
 	// skill basic info
 	private _skillName: string;
 	private _fireNeed: number;
 	private _description: string;
-	private _skillId: number;
 	// affect info // enable when targetselect not 0
 	private _targetSelectId: number;
 	private _hurtId: number;
 	private _buffsIdToTarget: number[];
-	private _needPerformance: boolean;
+	private _isNoPerformance: boolean;
 	// can cast judge 
-	private _isSelectTargetCondition: boolean;
-	private _targetNeedBelong: number;//0:noneed,1:self,2:enemy
-	private _targetNeedStat: number;//0:noneed,1:alive,2:dead
+	private _isSelectInBattle: boolean;
+	private _selectNeedBelong: number;//0:noneed,1:self,2:enemy
+	private _selectNeedStat: number;//0:noneed,1:alive,2:dead
 	private _selfNeedStat: number;//0:noneed,1:alive,2:dead
 	// affect
 	private _affectFunStrId: string;
+
 
 	// real time
 	private _caster: Character;
 	private _camp: CharCamp;
 	private _targets: Character[];
 	private _cusAffFc: () => void;
+	// from external for custom affect function
+	private _param: any;
+	public setParam(input: any) { this._param = input; }
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }
@@ -33,39 +33,34 @@ class ManualSkill {
 
 	public initial(
 		skillName: string,
-		description: string,
-		skillId: number,
-		skillsAfterId: number[],
-		buffsIdToTarget: number[],
-		targetSelectId: number,
 		fireNeed: number = 0,
-		needPerformance: boolean = false,
-		isSelectTargetCondition: boolean = false,
+		description: string,
+		buffsIdToTarget: number[],
+		hurtId: number,
+		targetSelectId: number = 0,
+		isNoPerformance: boolean = false,
+		isSelectInBattle: boolean,
 		targetNeedBelong: number = 0,
 		targetNeedStat: number = 0,
 		selfNeedStat: number = 0,
-		caster: Character = null,
-		camp: CharCamp = CharCamp.Neut
+		affectFunStrId: string,
+		caster: Character,
+		camp: CharCamp
 	) {
-		this._skillId = skillId;
+		this._isSelectInBattle = isSelectInBattle;
 		this._skillName = skillName;
 		this._description = description;
 		this._fireNeed = fireNeed;
 		this._caster = caster;
-		this._needPerformance = needPerformance;
+		this._isNoPerformance = isNoPerformance;
 		this._buffsIdToTarget = buffsIdToTarget;
 		this._targetSelectId = targetSelectId;
-		this._isSelectTargetCondition = isSelectTargetCondition;
-		this._targetNeedStat = targetNeedStat;
-		this._targetNeedBelong = targetNeedBelong;
+		this._selectNeedStat = targetNeedStat;
+		this._selectNeedBelong = targetNeedBelong;
 		this._selfNeedStat = selfNeedStat;
-
-		// set camp
-		if (caster) {
-			this._camp = caster.camp;
-		} else {
-			this._camp = camp;
-		}
+		this._hurtId = hurtId;
+		this._affectFunStrId = affectFunStrId;
+		this._camp = camp;
 		// initial custom affect function 
 		this._cusAffFc = SKAFFLS[this._affectFunStrId];
 	}
@@ -123,7 +118,7 @@ class ManualSkill {
 
 	// 默认演出
 	private dftPrPerf(): void {
-		if (!this._needPerformance) {
+		if (this._isNoPerformance) {
 			// if this skill don't need performance
 			return;
 		}
@@ -210,23 +205,22 @@ class ManualSkill {
 	public canCast(): [boolean, string] {
 		let scene = SceneManager.Ins.curScene as BattleScene;;
 		let selectedChar = scene.mSelectedChar;
-		if (this._isSelectTargetCondition) {
-			if (!selectedChar.isInBattle) {
-				return [false, "选中目标已从游戏中排除"];
-			}
-			if (this._targetNeedBelong == 1 && selectedChar.camp == CharCamp.Enemy) {
-				return [false, "需要对我方单位释放"];
-			}
-			if (this._targetNeedBelong == 2 && selectedChar.camp == CharCamp.Player) {
-				return [false, "需要对敌方单位释放"]
-			}
-			if (this._targetNeedStat == 1 && !selectedChar.alive) {
-				return [false, "选中单位已死亡"];
-			}
-			if (this._targetNeedStat == 2 && selectedChar.alive) {
-				return [false, "选中单位未死亡"]
-			}
+		if (this._isSelectInBattle && !selectedChar.isInBattle) {
+			return [false, "选中目标已从游戏中排除"];
 		}
+		if (this._selectNeedBelong == 1 && selectedChar.camp == CharCamp.Enemy) {
+			return [false, "需要对我方单位释放"];
+		}
+		if (this._selectNeedBelong == 2 && selectedChar.camp == CharCamp.Player) {
+			return [false, "需要对敌方单位释放"]
+		}
+		if (this._selectNeedStat == 1 && !selectedChar.alive) {
+			return [false, "选中单位已死亡"];
+		}
+		if (this._selectNeedStat == 2 && selectedChar.alive) {
+			return [false, "选中单位未死亡"]
+		}
+
 		if (this._caster) {
 			if (!this._caster.isInBattle) {
 				return [false, "释放者已被排除出游戏外"];

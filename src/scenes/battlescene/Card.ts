@@ -30,18 +30,8 @@ class Card extends egret.DisplayObjectContainer {
 		if (caster) {
 			caster.armatureUnBlink();
 		}
-
-		for (let char of scene.mEnemies.concat(scene.mFriends)) {
-			char.lifeBarShow();
-		}
-
 		this.skill.caster.mArmatureDisplay.alpha = 1;
-		for (let target of this._targetsTmp) {
-			target.lifeBarUnBlink();
-		}
-		this._targetsTmp = null;
 	}
-	private _targetsTmp: Character[];
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mCardInfoPopupUI.setDescFlowText(this.description);
@@ -52,18 +42,6 @@ class Card extends egret.DisplayObjectContainer {
 		let caster = this.skill.caster;
 		if (caster) {
 			caster.armatureBlink();
-		}
-
-		this._targetsTmp = this.skill.preSelectTarget();
-		// 隐藏目标以外的血条
-		for (let char of scene.mEnemies.concat(scene.mFriends)) {
-			if (this._targetsTmp.indexOf(char) < 0) {
-				char.lifeBarHide();
-			}
-		}
-
-		for (let target of this._targetsTmp) {
-			target.lifeBarBlink();
 		}
 	}
 
@@ -118,7 +96,6 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		this.skill = null;
-		this._targetsTmp = null;
 	}
 
 	/**

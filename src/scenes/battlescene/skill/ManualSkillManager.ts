@@ -5,7 +5,7 @@ class ManualSkillManager {
         this._skillPool = [];
     }
 
-    public newSkill(id: number, cast: Character = null, camp: CharCamp=CharCamp.Neut): ManualSkill {
+    public newSkill(id: number, cast: Character = null, camp: CharCamp=null): ManualSkill {
         let skillPool = this._skillPool;
         let skill: ManualSkill;
         if (skillPool.length > 0) {
@@ -13,19 +13,39 @@ class ManualSkillManager {
         } else {
             skill = new ManualSkill();
         }
-        // TODO: initial skill by skill id
-        // skill.initial();
+        if (camp == null){
+            camp = cast ? cast.camp : CharCamp.Neut;
+        }
+        let skillConfig = ConfigManager.Ins.mSkillConfig;
+        console.log(skillConfig[id]);
+        let skillInfo = skillConfig[id];
+        skill.initial(
+            skillInfo['skillName'],
+            skillInfo['fireNeed'],
+            skillInfo['description'],
+            skillInfo['buffsIdToTarget'],
+            skillInfo['hurtId'],
+            skillInfo['targetSelectId'],
+            skillInfo['isNoPerformance'],
+            skillInfo['isSelectInBattle'],
+            skillInfo['targetNeedBelong'],
+            skillInfo['targetNeedStat'],
+            skillInfo['selfNeedStat'],
+            skillInfo['affectFunStrId'],
+            cast,
+            camp
+        )
         return skill;
     }
 
-	public recycle(skill: ManualSkill): void{
-		this._skillPool.push(skill);
-	}
+    public recycle(skill: ManualSkill): void {
+        this._skillPool.push(skill);
+    }
 
     public release() {
         let pool = this._skillPool;
-        if(pool){
-            for(let skill of pool){
+        if (pool) {
+            for (let skill of pool) {
                 skill.release();
             }
         }

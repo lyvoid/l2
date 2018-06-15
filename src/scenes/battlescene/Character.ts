@@ -166,12 +166,9 @@ ${buffsDesc}`;
 
 
 		// 加技能
-		this.mManualSkillsId = [];
-		// TODO: push skill id to mManualSkillsId
-		// for (let id of [1,2]){
-		// 	this.mManualSkillsId.push(id);
-		// }
+		this.mManualSkillsId = [1];
 
+		// 初始化buff
 		this.mPassiveSkills = [];
 		this.mBuffs = [];
 		this.mHideBuffs = [];
@@ -292,39 +289,39 @@ ${buffsDesc}`;
 		this.setAsSelect();
 	}
 
-	/**
-	 * 隐藏生命条
-	 */
-	public lifeBarHide(): void {
-		this._headBar.visible = false;
-	}
+	// /**
+	//  * 隐藏生命条
+	//  */
+	// public lifeBarHide(): void {
+	// 	this._headBar.visible = false;
+	// }
 
-	/**
-	 * 显示生命条
-	 */
-	public lifeBarShow(): void {
-		this._headBar.visible = true;
-	}
+	// /**
+	//  * 显示生命条
+	//  */
+	// public lifeBarShow(): void {
+	// 	this._headBar.visible = true;
+	// }
 
-	/**
-	 * 生命条开始闪烁
-	 */
-	public lifeBarBlink(): void {
-		egret.Tween.get(
-			this._headBar,
-			{ loop: true }
-		).to(
-			{ alpha: 0 }, 300
-			).to({ alpha: 1 }, 300);
-	}
+	// /**
+	//  * 生命条开始闪烁
+	//  */
+	// public lifeBarBlink(): void {
+	// 	egret.Tween.get(
+	// 		this._headBar,
+	// 		{ loop: true }
+	// 	).to(
+	// 		{ alpha: 0 }, 300
+	// 		).to({ alpha: 1 }, 300);
+	// }
 
-	/**
-	 * 停止生命条闪烁
-	 */
-	public lifeBarUnBlink(): void {
-		egret.Tween.removeTweens(this._headBar);
-		this._headBar.alpha = 1;
-	}
+	// /**
+	//  * 停止生命条闪烁
+	//  */
+	// public lifeBarUnBlink(): void {
+	// 	egret.Tween.removeTweens(this._headBar);
+	// 	this._headBar.alpha = 1;
+	// }
 
 
 	/**

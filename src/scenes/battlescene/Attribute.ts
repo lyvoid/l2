@@ -2,6 +2,7 @@ class Attribute {
 	public static AttrsTemplate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	
 	private _char: Character;
+	public set char(char:Character){this._char = char;}
 	private _attrs: number[];
 	private _attrsRaw: number[];
 	private _attrsAdd: number[];

@@ -2,6 +2,7 @@ class BuffManager {
 	private _buffPool:Buff[] = [];
 
 	public newBuff(id: number): Buff{
+		let buffConfig = ConfigManager.Ins.mBuffConfig;
 		let buff: Buff;
 		let pool = this._buffPool;
 		if (pool.length > 0){
@@ -10,6 +11,7 @@ class BuffManager {
 			buff = new Buff();
 		}
 		// TODO: initial
+		let buffInfo = buffConfig[id];
 		// buff.initial();
 		return buff;
 	}

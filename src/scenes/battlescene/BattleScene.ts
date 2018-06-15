@@ -359,10 +359,6 @@ class BattleScene extends IScene {
 		this._isInCast = false;
 	}
 
-	private readConfig(): void {
-
-	}
-
 	private async loadResource() {
 
 	}
