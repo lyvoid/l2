@@ -219,7 +219,10 @@ class Buff {
 			this.mRemainAffectTime = this.mRemainAffectTime - 1;
 		}
 		if (this._affectHurtId != 0) {
-			let hurt = scene.mHurtManager.newHurt(this._affectHurtId);
+			let hurt = scene.mHurtManager.newHurt(
+				this._affectHurtId,
+				this.mChar
+			);
 			hurt.affect(this.mChar);
 		}
 		for (let id of this._affectBuffIds) {

@@ -1,8 +1,8 @@
 class EnemyRoundEndPhase extends ISceneState{
 	protected scene: BattleScene;
 
-	public initial(){
-		super.initial();
+	public initial(scene: IScene){
+		super.initial(scene);
 		// TODO 删除模拟延迟
 
 		ToastInfoManager.Ins.newToast("敌方回合结束阶段");
@@ -17,10 +17,6 @@ class EnemyRoundEndPhase extends ISceneState{
 		// 回合结束阶段技能效果
 		this.scene.mRound++; //回合数加一
 		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);
-	}
-
-	public uninitial(){
-		super.uninitial();
 	}
 
 }

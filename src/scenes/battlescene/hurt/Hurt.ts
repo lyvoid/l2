@@ -15,15 +15,15 @@ class Hurt {
 
 	public initial(
 		hurtType: HurtType,
-		fromChar: Character = null,
-		rate: number = 1,
-		isAbs: boolean = false,
-		absValue: number = 10,
-		isPericeShield: boolean = false,
-		isDoubleShield: boolean = false,
-		isResurgence: boolean = false,
-		isRemoveFromGame: boolean = false,
-		isRemoveFromGameWhenDie: boolean = false
+		rate: number,
+		isAbs: boolean,
+		absValue: number,
+		isPericeShield: boolean,
+		isDoubleShield: boolean,
+		isResurgence: boolean,
+		isRemoveFromGame: boolean,
+		isRemoveFromGameWhenDie: boolean,
+		fromChar: Character
 	) {
 		this._fromChar = fromChar;
 		this._hurtType = hurtType;
@@ -214,7 +214,7 @@ class Hurt {
 			alpha: 0
 		}, 1000).call(
 			() => {
-				target.parent.removeChild(target);
+				target.visible = false;
 			}
 			);
 	}

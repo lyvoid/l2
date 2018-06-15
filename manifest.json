@@ -54,6 +54,6 @@
 		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
 		"bin-debug/AssetAdapter.js",
 		"bin-debug/scenesystem/SceneManager.js",
-		"bin-debug/ui/LoadingUI.js"
+		"bin-debug/UI/LoadingUI.js"
 	]
 }

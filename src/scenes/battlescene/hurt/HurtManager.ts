@@ -5,7 +5,7 @@ class HurtManager {
 		this._hurtPool = [];
 	}
 
-	public newHurt(id: number): Hurt{
+	public newHurt(id: number, fromChar: Character=null): Hurt{
 		let hurtPool = this._hurtPool;
 		let hurt: Hurt;
 		if (hurtPool.length > 0){
@@ -13,13 +13,23 @@ class HurtManager {
 		}else{
 			hurt = new Hurt();
 		}
-		// TODO: hurt initial by id
-		// hurt.initial();
+		let info = ConfigManager.Ins.mHurtConfig[id];
+		hurt.initial(
+			info['hurtType'],
+			info['rate'],
+			info['isAbs'],
+			info['absValue'],
+			info['isPericeShield'],
+			info['idDoubleShield'],
+			info['isResurgence'],
+			info['isRemoveFromGame'],
+			info['isRemoveFromGameWhenDie'],
+			fromChar
+		);
 		return hurt;
 	}
 
 	public recycle(hurt: Hurt): void{
-		hurt.release();
 		this._hurtPool.push(hurt);
 	}
 

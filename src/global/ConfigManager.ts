@@ -13,11 +13,13 @@ class ConfigManager{
     public mSkillConfig;
     public mHurtConfig;
     public mBuffConfig;
+	public mTargetSelectConfig;
 
     public initial(): void{
 		this.mSkillConfig = RES.getRes("skill_json");
 		this.mBuffConfig = RES.getRes("buff_json");
 		this.mHurtConfig = RES.getRes("hurt_json");
+		this.mTargetSelectConfig = RES.getRes("target_select_json");
     }
     
 }

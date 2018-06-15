@@ -252,12 +252,12 @@ class BattleScene extends IScene {
 		this.mCardBoard.distCardNormal();
 
 		// 初始化场景中的StatePool
-		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase(this);
-		this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase(this);
-		this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase(this);
-		this.statePool[BattleSSEnum.PlayerRoundEndPhase] = new PlayerRoundEndPhase(this);
-		this.statePool[BattleSSEnum.PlayerRoundStartPhase] = new PlayerRoundStartPhase(this);
-		this.statePool[BattleSSEnum.PlayerUseCardPhase] = new PlayerUseCardPhase(this);
+		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase();
+		this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase();
+		this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase();
+		this.statePool[BattleSSEnum.PlayerRoundEndPhase] = new PlayerRoundEndPhase();
+		this.statePool[BattleSSEnum.PlayerRoundStartPhase] = new PlayerRoundStartPhase();
+		this.statePool[BattleSSEnum.PlayerUseCardPhase] = new PlayerUseCardPhase();
 	}
 
 	/**

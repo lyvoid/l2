@@ -1,8 +1,8 @@
 class PlayerUseCardPhase extends ISceneState {
 	protected scene: BattleScene;
 
-	public initial() {
-		super.initial();
+	public initial(scene: IScene){
+		super.initial(scene);
 		ToastInfoManager.Ins.newToast("我方出牌阶段");
 		// 显示下一个回合的按键
 		this.scene.mBattleUI.roundEndButton.visible = true;
@@ -32,34 +32,34 @@ class PlayerUseCardPhase extends ISceneState {
 	private onCardTouchTap(e: Message): void {
 		let card: Card = e.messageContent;
 		let scene = this.scene;
-		if (scene.mWinnerCamp) {
+		if (scene.mWinnerCamp != CharCamp.Neut) {
 			ToastInfoManager.Ins.newToast("胜负已分");
 			return;
 		}
 
-		if (!(card.skill.caster && card.skill.caster.alive && card.skill.caster.isInBattle)) {
+		if (!(card.mSkill.caster && card.mSkill.caster.alive && card.mSkill.caster.isInBattle)) {
 			ToastInfoManager.Ins.newToast("释放者处于无法释放的状态中");
 			return;
 		}
 		let fireboard = scene.mPlayerFireBoard;
-		let fireNeed = card.skill.fireNeed;
+		let fireNeed = card.mSkill.fireNeed;
 		if (fireNeed > fireboard.fireNum) {
 			ToastInfoManager.Ins.newToast("能量不足");
 			return;
 		}
 
 		// if can't cast, return
-		let canCastInfo = card.skill.canCast();
-		if (canCastInfo[0]) {
+		let canCastInfo = card.mSkill.canCast();
+		if (!canCastInfo[0]) {
 			ToastInfoManager.Ins.newToast(canCastInfo[1]);
 			return;
 		}
 
 		// 使用技能
-		card.skill.cast();
+		card.mSkill.cast();
 
 		// 移除所需要的点数
-		for (let i = 0; i < card.skill.fireNeed; i++) {
+		for (let i = 0; i < card.mSkill.fireNeed; i++) {
 			fireboard.removeFire();
 		}
 
@@ -68,12 +68,8 @@ class PlayerUseCardPhase extends ISceneState {
 
 	}
 
-	public uninitial() {
-		super.uninitial();
-		// 隐藏回合结束按键，已经在按键的tap事件中隐藏了，这里不额外隐藏
-		// this.scene.battleUI.roundEndButton.visible = false;
-
-		// 结束的时候也要去掉侦听
+	public release(): void{
+		super.release();
 		MessageManager.Ins.removeEventListener(
 			MessageType.CardTouchTap,
 			this.onCardTouchTap,

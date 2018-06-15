@@ -2,8 +2,8 @@ class EnemyUseCardPhase extends ISceneState{
 
 	protected scene: BattleScene;
 
-	public initial(){
-		super.initial();
+	public initial(scene: IScene){
+		super.initial(scene);
 		ToastInfoManager.Ins.newToast("敌方出牌阶段");
 		// TODO 回合结束阶段buff结算
 
@@ -14,7 +14,4 @@ class EnemyUseCardPhase extends ISceneState{
 
 	}
 
-	public uninitial(){
-		super.uninitial();
-	}
 }

@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json",
+			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json,target_select_json",
 			"name": "preload"
 		},
 		{
@@ -240,6 +240,11 @@
 			"name": "skill_json",
 			"type": "json",
 			"url": "json_config/skill.json"
+		},
+		{
+			"name": "target_select_json",
+			"type": "json",
+			"url": "json_config/target_select.json"
 		}
 	]
 }

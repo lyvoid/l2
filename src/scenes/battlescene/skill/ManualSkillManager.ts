@@ -17,19 +17,20 @@ class ManualSkillManager {
             camp = cast ? cast.camp : CharCamp.Neut;
         }
         let skillConfig = ConfigManager.Ins.mSkillConfig;
-        console.log(skillConfig[id]);
         let skillInfo = skillConfig[id];
         skill.initial(
             skillInfo['skillName'],
             skillInfo['fireNeed'],
             skillInfo['description'],
             skillInfo['buffsIdToTarget'],
-            skillInfo['hurtId'],
+            skillInfo['buffsIdToSelf'],
+            skillInfo['hurtIdToTarget'],
+            skillInfo['hurtIdToSelf'],
             skillInfo['targetSelectId'],
             skillInfo['isNoPerformance'],
             skillInfo['isSelectInBattle'],
-            skillInfo['targetNeedBelong'],
-            skillInfo['targetNeedStat'],
+            skillInfo['selectNeedBelong'],
+            skillInfo['selectNeedStat'],
             skillInfo['selfNeedStat'],
             skillInfo['affectFunStrId'],
             cast,

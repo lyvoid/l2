@@ -80,7 +80,7 @@ class TargetSelect {
         if (this._isReverse) {
             allTargetsTmp2.reverse();
         }
-
+        if (this._allNum > 0) allTargetsTmp2 = allTargetsTmp2.slice(0, this._allNum);
         return allTargetsTmp2;
     }
 

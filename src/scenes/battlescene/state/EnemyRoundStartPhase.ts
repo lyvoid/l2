@@ -1,8 +1,8 @@
 class EnemyRoundStartPhase extends ISceneState{
 	protected scene: BattleScene;
 
-	public initial(){
-		super.initial();
+	public initial(scene: IScene){
+		super.initial(scene);
 		ToastInfoManager.Ins.newToast("敌方回合开始阶段");
 
 		MessageManager.Ins.sendMessage(MessageType.EnemyRoundStart);
@@ -15,7 +15,4 @@ class EnemyRoundStartPhase extends ISceneState{
 
 	}
 
-	public uninitial(){
-		super.uninitial();
-	}
 }

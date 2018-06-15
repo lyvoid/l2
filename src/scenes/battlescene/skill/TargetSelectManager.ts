@@ -11,8 +11,17 @@ class TargetSelectManager {
 			return targetSelectPool[id];
 		}
 		let targetSelect = new TargetSelect();
-		// TODO:initial target select by id
-		// targetSelect.initial();
+		let info = ConfigManager.Ins.mTargetSelectConfig[id];
+		targetSelect.initial(
+			info["targetNum"],
+			info["allNum"],
+			info["priorType"],
+			info["isContFriend"],
+			info["isContEnemy"],
+			info["isContDead"],
+			info["isContAlive"],
+			info["isReverse"]
+		);
 		targetSelectPool[id] = targetSelect;
 		return targetSelect;
 	}

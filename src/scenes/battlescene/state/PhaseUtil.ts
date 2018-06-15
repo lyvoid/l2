@@ -3,7 +3,7 @@ class PhaseUtil {
     private nextPhase: BattleSSEnum;
 
 	public changePhaseWithDelay(phase:BattleSSEnum, delay: number=1000){
-		if((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == null){
+		if((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == CharCamp.Neut){
 			egret.setTimeout(this.changePhase, this, delay, phase);
 		}
 	}

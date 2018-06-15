@@ -27,13 +27,10 @@ abstract class IScene{
      */
     public release(){
         if (this.state){
-            this.state.uninitial();
+            this.state.release();
         }
         // 解除与所有state的关系
         this.state = null;
-		for (let k in this.statePool){
-			this.statePool[k].release();
-		}
         this.statePool = null;
 
         // 删除除了载入界面以外其他的所有层
@@ -63,49 +60,27 @@ abstract class IScene{
      */
 	public setState(stateName:number){
 		if (this.state != null){
-			this.state.uninitial();
+			this.state.release();
 		}
 		this.state = this.statePool[stateName];
-		this.state.initial();
+		this.state.initial(this);
 	}
 
 
 }
 
-/**
- * 每一个子类表征scene的一个状态
- * 
- */
+
 abstract class ISceneState{
 
-    // 当前所在场景
     protected scene: IScene;
-
-	public constructor(scene: IScene){
-		this.scene = scene;
-	}
 	
-    /**
-     * 状态进入前会先initial（每一次进入initial一遍）
-     */
-	public initial(): void{}
+	public initial(scene: IScene): void{
+        this.scene = scene;
+    }
 
-    /**
-     * 每一帧调用一次
-     */
     public update(){}
 
-    /**
-     * 更换状态前需要reset之前的状态（每一次更换为其他状态时调用一遍）
-     */
-	public uninitial(): void{}
-
-    /**
-     * 将this.scene置为null
-     * 场景销毁时调用一遍
-     */
 	public release(): void{
-        this.uninitial();
 		this.scene = null;
 	}
 

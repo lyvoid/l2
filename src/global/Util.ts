@@ -33,8 +33,7 @@ class Util{
             if (index == len){
                 index -= 1;
             }
-            output.push(input[index]);
-            input.splice(index, 1);
+            output.push(input.splice(index, 1)[0]);
             len -= 1;
         }
         return output;

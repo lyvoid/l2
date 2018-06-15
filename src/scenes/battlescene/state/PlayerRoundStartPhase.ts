@@ -4,9 +4,8 @@
 class PlayerRoundStartPhase extends ISceneState {
 	protected scene: BattleScene;
 
-	public initial() {
-		super.initial();
-		// TODO 回合开始阶段需要做的事情在这里做完
+	public initial(scene: IScene){
+		super.initial(scene);
 
 		// 1.发牌 + 能量
 		// 2.buff结算
@@ -16,22 +15,17 @@ class PlayerRoundStartPhase extends ISceneState {
 		MessageManager.Ins.sendMessage(MessageType.PlayerRoundStart);
 
 		// 发牌
-		let scene = this.scene;
-		scene.mCardBoard.distCardNormal();
-		scene.mCardBoard.distCardNormal();
+		this.scene.mCardBoard.distCardNormal();
+		this.scene.mCardBoard.distCardNormal();
 
 		// 加能量
-		scene.mPlayerFireBoard.addFires(2);
+		this.scene.mPlayerFireBoard.addFires(2);
 
 		// buff结算(待增加
 
 		// 回合开始的技能及效果（待增加
-
 		// 切下一个阶段
 		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerUseCardPhase);
 	}
 
-	public uninitial() {
-		super.uninitial();
-	}
 }

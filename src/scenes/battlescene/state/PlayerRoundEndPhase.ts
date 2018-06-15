@@ -1,8 +1,8 @@
 class PlayerRoundEndPhase extends ISceneState{
 	protected scene: BattleScene;
 
-	public initial(){
-		super.initial();
+	public initial(scene: IScene){
+		super.initial(scene);
 		ToastInfoManager.Ins.newToast("我方回合结束阶段");
 		// TODO 回合结束阶段buff结算
 		for (let char of this.scene.mFriends){
@@ -17,7 +17,4 @@ class PlayerRoundEndPhase extends ISceneState{
 
 	}
 
-	public uninitial(){
-		super.uninitial();
-	}
 }

@@ -17,7 +17,6 @@ def _add_to_trans_funcs(name):
 
         _type_trans_funcs[name] = wrapper
         return wrapper
-
     return decorator
 
 
@@ -29,7 +28,15 @@ def _trans_str(data):
     return data
 
 
-@_add_to_trans_funcs('num')
+@_add_to_trans_funcs('int')
+def _trans_num(data):
+    if data == '':
+        return 0
+    data = int(data)
+    return data
+
+
+@_add_to_trans_funcs('float')
 def _trans_num(data):
     if data == '':
         return 0.0
@@ -45,7 +52,15 @@ def _trans_bool(data):
     return data
 
 
-@_add_to_trans_funcs('num_ls')
+@_add_to_trans_funcs('int_ls')
+def _trans_num_ls(data):
+    if data == '':
+        return []
+    data = [int(x) for x in data.split(',')]
+    return data
+
+
+@_add_to_trans_funcs('float_ls')
 def _trans_num_ls(data):
     if data == '':
         return []

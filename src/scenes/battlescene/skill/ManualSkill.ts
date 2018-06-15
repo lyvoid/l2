@@ -5,8 +5,10 @@ class ManualSkill {
 	private _description: string;
 	// affect info // enable when targetselect not 0
 	private _targetSelectId: number;
-	private _hurtId: number;
+	private _hurtIdToTarget: number;
+	private _hurtIdToSelf: number;
 	private _buffsIdToTarget: number[];
+	private _buffsIdToSelf: number[];
 	private _isNoPerformance: boolean;
 	// can cast judge 
 	private _isSelectInBattle: boolean;
@@ -36,12 +38,14 @@ class ManualSkill {
 		fireNeed: number = 0,
 		description: string,
 		buffsIdToTarget: number[],
-		hurtId: number,
+		buffsIdToSelf: number[],
+		hurtIdToTarget: number,
+		hurtIdToSelf: number,
 		targetSelectId: number = 0,
 		isNoPerformance: boolean = false,
 		isSelectInBattle: boolean,
-		targetNeedBelong: number = 0,
-		targetNeedStat: number = 0,
+		selectNeedBelong: number = 0,
+		selectNeedStat: number = 0,
 		selfNeedStat: number = 0,
 		affectFunStrId: string,
 		caster: Character,
@@ -55,10 +59,12 @@ class ManualSkill {
 		this._isNoPerformance = isNoPerformance;
 		this._buffsIdToTarget = buffsIdToTarget;
 		this._targetSelectId = targetSelectId;
-		this._selectNeedStat = targetNeedStat;
-		this._selectNeedBelong = targetNeedBelong;
+		this._selectNeedStat = selectNeedStat;
+		this._selectNeedBelong = selectNeedBelong;
 		this._selfNeedStat = selfNeedStat;
-		this._hurtId = hurtId;
+		this._hurtIdToSelf = hurtIdToSelf;
+		this._hurtIdToTarget = hurtIdToTarget;
+		this._buffsIdToSelf = buffsIdToSelf;
 		this._affectFunStrId = affectFunStrId;
 		this._camp = camp;
 		// initial custom affect function 
@@ -68,7 +74,7 @@ class ManualSkill {
 	public cast(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		// if gameover, return
-		if (scene.mWinnerCamp) {
+		if (scene.mWinnerCamp != CharCamp.Neut) {
 			return;
 		}
 		// if can't cast, return
@@ -83,9 +89,28 @@ class ManualSkill {
 				// if no proper target
 				return;
 			}
-			let hurt = scene.mHurtManager.newHurt(this._hurtId);
+			if (this._caster && this._hurtIdToSelf != 0) {
+				let hurt = scene.mHurtManager.newHurt(
+					this._hurtIdToSelf,
+					this.caster
+				);
+				hurt.affect(this._caster);
+			}
+			if (this._caster) {
+				for (let buffid of this._buffsIdToSelf) {
+					let buff = scene.mBuffManager.newBuff(buffid);
+					buff.attachToChar(this._caster);
+				}
+			}
+			let hurt = null;
+			if (this._hurtIdToTarget != 0) {
+				hurt = scene.mHurtManager.newHurt(
+					this._hurtIdToTarget,
+					this.caster
+				);
+			}
 			for (let target of this._targets) {
-				hurt.affect(target);
+				if (hurt != null) hurt.affect(target);
 				for (let buffid of this._buffsIdToTarget) {
 					let buff = scene.mBuffManager.newBuff(buffid);
 					buff.attachToChar(target);
@@ -168,7 +193,7 @@ class ManualSkill {
 					egret.Tween.get(caster).to({
 						x: nearestEnemy.x + 100 * nearestEnemy.camp,
 						y: nearestEnemy.y + 20
-					}, 200).call(scene.onePerformEnd)
+					}, 200).call(()=>scene.onePerformEnd())
 				}
 			})
 		}
@@ -195,7 +220,7 @@ class ManualSkill {
 					egret.Tween.get(caster).to({
 						x: newP.x,
 						y: newP.y
-					}, 200).call(scene.onePerformEnd)
+					}, 200).call(()=>scene.onePerformEnd())
 				}
 			});
 		}
