@@ -1,6 +1,5 @@
 /**
  * 每一个子类表征一个场景，子类需要复写initial，并在其中将statePool填满；
- * 最好采用一个enum来存储所有的scenestate
  */
 abstract class IScene{
     // 场景切换管理器

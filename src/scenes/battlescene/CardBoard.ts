@@ -1,25 +1,25 @@
 class CardBoard extends egret.DisplayObjectContainer {
 	private _cards: Card[] = [];
 	private _cardPool: Card[] = [];
-	public static maxCardNum = 10;
+	private static _maxCardNum = 10;
 
 	public constructor() {
 		super();
 		this.y = LayerManager.Ins.stageHeight - 140;
 		this.width = LayerManager.Ins.stageWidth;
 	}
-
+	
 	public removeCardOfChar(char: Character): void{
 		let cardsForDelete: Card[] = [];
 		for (let card of this._cards){
-			if (card.mSkill.caster === char){
+			if (card.mCaster == char){
 				cardsForDelete.push(card);
 			}
 		}
 		this.removeCards(cardsForDelete);
 	}
 
-	public removeCards(cards:Card[]): void{
+	private removeCards(cards:Card[]): void{
 		for(let index in cards){
 			let card = cards[index]
 			Util.removeObjFromArray(this._cards, card);
@@ -37,36 +37,37 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let scene = SceneManager.Ins.curScene as BattleScene
 		let skills = scene.mManualSkillIdPool;
 		let index = Math.floor(Math.random() * skills.length);
-		let skill:ManualSkill = scene.mManualSkillManager.newSkill(skills[index][0], skills[index][1]);
 		let card: Card;
 		if (this._cardPool.length > 0){
 			card = this._cardPool.pop();
 		} else{
 			card = new Card();
 		}
-		card.initial(skill);
+		card.initial(skills[index][0], skills[index][1]);
 		this.addCard(card);
 	}
 
-	private _overFlowNum: number = 0;
-	public addCard(card: Card): void{
-		if (this._cards.length < CardBoard.maxCardNum){
+	private _overFlowNum: number = 0;//记录当前场上溢出的卡牌总数，方便表现
+	private addCard(card: Card): void{
+		if (this._cards.length < CardBoard._maxCardNum){
 			this._cards.push(card);
 			this.addCardToBoard(card, this._cards.length - 1);
 			
 			let scene = SceneManager.Ins.curScene as BattleScene;
 			let cardNumLabel = scene.mBattleUI.cardNumLabel;
-			cardNumLabel.text = `${this._cards.length}/${CardBoard.maxCardNum}`
-			if (this._cards.length == CardBoard.maxCardNum){
+			cardNumLabel.text = `${this._cards.length}/${CardBoard._maxCardNum}`
+			if (this._cards.length == CardBoard._maxCardNum){
 				cardNumLabel.textColor = 0xFF0000;
 			} else {
 				cardNumLabel.textColor = 0xADFF2F;
 			}
 		} else {
 			this._overFlowNum += 1;
-			this.addCardToBoard(card, CardBoard.maxCardNum + this._overFlowNum -1).call(
+			// 如果是溢出的卡牌，需要立马关闭其touchEnable
+			card.touchEnabled = false;
+			this.addCardToBoard(card, CardBoard._maxCardNum + this._overFlowNum -1).call(
 				()=>{
-					this.removeCardFromBoard(card, CardBoard.maxCardNum);
+					this.removeCardFromBoard(card, CardBoard._maxCardNum);
 					this._overFlowNum -= 1;
 				}
 			);
@@ -94,7 +95,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		return 90 * index;
 	}
 
-	public addCardToBoard(newCard: Card, index:number): egret.Tween {
+	private addCardToBoard(newCard: Card, index:number): egret.Tween {
 		newCard.x = this.width + 100;
 		this.addChild(newCard);
 		return this.adjustCardPosition(newCard, index, 400)
@@ -109,11 +110,11 @@ class CardBoard extends egret.DisplayObjectContainer {
 		this.removeCardFromBoard(card, index);
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let cardNumLabel = scene.mBattleUI.cardNumLabel;
-		cardNumLabel.text = `${this._cards.length}/${CardBoard.maxCardNum}`
+		cardNumLabel.text = `${this._cards.length}/${CardBoard._maxCardNum}`
 		cardNumLabel.textColor = 0xADFF2F;
 	}
 
-	public removeCardFromBoard(card: Card, index:number): void{
+	private removeCardFromBoard(card: Card, index:number): void{
 		// 表现上去除
 		let tw = egret.Tween.get(card);
 		let cardx = card.x;

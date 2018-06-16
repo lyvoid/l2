@@ -17,7 +17,8 @@ class UIBattleScene extends eui.Component {
 				// 如果玩家点击了回合结束按键，进入到回合结束阶段
 				this.roundEndButton.visible = false;
 				// 回合结束
-				(SceneManager.Ins.curScene.state as PlayerUseCardPhase).phaseEnd();
+				let scene = SceneManager.Ins.curScene as BattleScene;
+				scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
 			},
 			this
 		);

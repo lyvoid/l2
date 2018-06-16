@@ -55,7 +55,7 @@ class Hurt {
 			hurtResult.isInBattleNew = false;
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.addToPerformQueue({ performance: () => Hurt.statePerformance(hurtResult) });
+		Hurt.statePerformance(hurtResult);
 		// judge after every hurt affect
 		scene.judge();
 		// release hurt after affect
@@ -179,7 +179,6 @@ class Hurt {
 
 	// 对血量护盾复活死亡排除出游戏进行表现
 	private static statePerformance(change: IHurtResult) {
-		(SceneManager.Ins.curScene as BattleScene).onePerformEnd();
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		let target = change.targetChar;
 		if (change.shieldNew != change.shieldOld) {

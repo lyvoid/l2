@@ -19,9 +19,7 @@ class BattleScene extends IScene {
 	public mBattleEndPopUp: BattleEndPopUp;
 	public mCardInfoPopupUI: CardInfoPopupUI;
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
-
-	private _performQueue: Queue<{ performance: () => void }> = new Queue<{ performance: () => void }>();
-	private _castQueue: Queue<{ cast: () => void }> = new Queue<{ cast: () => void }>();
+	private _castQueue: { cast: () => void }[] = [];
 
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp = CharCamp.Neut;
@@ -155,7 +153,6 @@ class BattleScene extends IScene {
 		this.mFriends = [];
 		this.mManualSkillIdPool = [];
 		this.mCardBoard = new CardBoard();
-		this._performQueue = new Queue<{ performance: () => void }>();
 		this.mDamageFloatManager = new DamageFloatManager();
 		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
@@ -284,48 +281,15 @@ class BattleScene extends IScene {
 		} else if (!isPlayerAlive) {
 			this.mWinnerCamp = CharCamp.Enemy;
 		}
-	}
 
-	/**
-	 * 是否正在演出skill的演出内容
-	 */
-	public mIsPerforming: boolean = false;
-	/**
-	 * 开始技能演出，收到开始演出消息时开始从列表中获取演出事项一个个演出
-	 * 如果当前正在演出会直接返回，防止两件事同时被演出
-	 */
-	public addToPerformQueue(input: { performance: () => void } = null): void {
-		if (input) {
-			this._performQueue.push(input);
+		if (this.mWinnerCamp != CharCamp.Neut){
+			// 延迟两秒跳战斗结果，方便演出
+			egret.setTimeout(
+				this.onBattleEnd,
+				this,
+				2000
+			);
 		}
-		if (this.mIsPerforming) {
-			// 如果正在演出，那就不管这个消息
-			return;
-		}
-		this.mIsPerforming = true;
-		let performanceObj = this._performQueue.pop();
-		performanceObj.performance();
-	}
-
-	/**
-	 * 一个技能演出结束的时候自行调用
-	 * 从perfrom队列中获取下一个开始演出
-	 * 如果演出已经结束了，会判定一下胜负，如果胜负已分调用相关的处理
-	 * 如果胜负未分发送演出全部结束消息
-	 */
-	public onePerformEnd(): void {
-		this.mIsPerforming = false;
-		if (this._performQueue.length == 0) {
-			// 如果演出结束同时游戏结束时，播放游戏结束演出
-			if (this.mWinnerCamp != CharCamp.Neut) {
-				this.onBattleEnd();
-			} else {
-				// 如果游戏没有结束，发送演出全部结束消息
-				MessageManager.Ins.sendMessage(MessageType.PerformAllEnd);
-			}
-			return;
-		}
-		this.addToPerformQueue();
 	}
 
 	/**
@@ -354,7 +318,7 @@ class BattleScene extends IScene {
 		this._isInCast = true;
 		let q = this._castQueue;
 		while (q.length > 0) {
-			q.pop().cast();
+			q.shift().cast();
 		}
 		this._isInCast = false;
 	}

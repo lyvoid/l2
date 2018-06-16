@@ -124,9 +124,8 @@ class ManualSkill {
 		} else {
 			this._cusAffFc();
 		}
-		// start performance
-		scene.addToPerformQueue();
-		// if cast end, release this skill
+
+		// auto release after cast
 		this.release();
 	}
 
@@ -176,32 +175,13 @@ class ManualSkill {
 			isMove = true;
 		}
 
-		// call when anim end event dispatched
-		let animEnd = () => {
-			caster.mArmatureDisplay.removeEventListener(
-				dragonBones.EventObject.COMPLETE,
-				animEnd,
-				this
-			);
-			scene.onePerformEnd();
-		}
+		let tw = egret.Tween.get(caster);
 
-		if (isMove) {
-			// if need move, push moving to nearestEnemy to queue
-			scene.addToPerformQueue({
-				performance: () => {
-					egret.Tween.get(caster).to({
-						x: nearestEnemy.x + 100 * nearestEnemy.camp,
-						y: nearestEnemy.y + 20
-					}, 200).call(()=>scene.onePerformEnd())
-				}
-			})
-		}
-
-		scene.addToPerformQueue({
-			// push skill anim to queue
-			// TODO: replace the name of skill anim
-			performance: () => {
+		if (isMove) tw.to(
+			{ x: nearestEnemy.x + 100 * nearestEnemy.camp, y: nearestEnemy.y + 20 }, 200);
+		
+		tw.call(
+			() => {
 				caster.playDBAnim("attack1_+1", 1, "idle");
 				caster.mArmatureDisplay.addEventListener(
 					dragonBones.EventObject.COMPLETE,
@@ -209,20 +189,22 @@ class ManualSkill {
 					this
 				);
 			}
-		});
+		);
 
-		if (isMove) {
-			// if need move, push move back to queue
-			scene.addToPerformQueue({
-				performance: () => {
-					let newP: { x: number, y: number } = caster.getPositon();
-					caster.playDBAnim("idle", 0);
-					egret.Tween.get(caster).to({
-						x: newP.x,
-						y: newP.y
-					}, 200).call(()=>scene.onePerformEnd())
-				}
-			});
+		// call when anim end event dispatched
+		let animEnd = () => {
+			caster.mArmatureDisplay.removeEventListener(
+				dragonBones.EventObject.COMPLETE,
+				animEnd,
+				this
+			);
+			caster.playDBAnim("idle", 0);
+			if (isMove) {
+				let newP: { x: number, y: number } = caster.getPositon();
+				egret.Tween.get(caster).to({ x: newP.x, y: newP.y }, 200).call(
+					()=>egret.Tween.removeTweens(caster)
+				);
+			}
 		}
 	}
 

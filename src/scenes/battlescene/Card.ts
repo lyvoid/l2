@@ -1,13 +1,15 @@
 class Card extends egret.DisplayObjectContainer {
 
-	public mSkill: ManualSkill;
+	public mSkillId: number;
+	public mCaster: Character;
 	public get description(): string {
-		let caster = this.mSkill.caster;
+		let caster = this.mCaster;
 		let casterName = caster ? caster.mCharName : "无";
-		return `<font color="#EE7942"><b>${this.mSkill.skillName}</b></font>
+		let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
+		return `<font color="#EE7942"><b>${skillInfo['skillName']}</b></font>
 <b>释放单位:</b> ${casterName}
-<b>消耗能量:</b> ${this.mSkill.fireNeed}
-<b>作用效果:</b> ${this.mSkill.description}`;
+<b>消耗能量:</b> ${skillInfo['fireNeed']}
+<b>作用效果:</b> ${skillInfo['description']}`;
 	}
 
 	public constructor() {
@@ -20,8 +22,9 @@ class Card extends egret.DisplayObjectContainer {
 		this.addChild(cardBg);
 	}
 
-	public initial(skill: ManualSkill): void {
-		this.mSkill = skill;
+	public initial(skillId: number, caster: Character): void {
+		this.mSkillId = skillId;
+		this.mCaster = caster;
 		this.alpha = 1;
 		this.scaleX = 1;
 		this.scaleY = 1;
@@ -45,11 +48,11 @@ class Card extends egret.DisplayObjectContainer {
 		LayerManager.Ins.popUpLayer.removeChild(scene.mCardInfoPopupUI);
 		// 显示选择圈
 		scene.mSelectImg.visible = true;
-		let caster = this.mSkill.caster
+		let caster = this.mCaster;
 		if (caster) {
 			caster.armatureUnBlink();
 		}
-		this.mSkill.caster.mArmatureDisplay.alpha = 1;
+		caster.mArmatureDisplay.alpha = 1;
 	}
 
 	private onLongTouchBegin(): void {
@@ -59,7 +62,7 @@ class Card extends egret.DisplayObjectContainer {
 		// 隐藏选择圈
 		scene.mSelectImg.visible = false;
 		// 释放者闪烁
-		let caster = this.mSkill.caster;
+		let caster = this.mCaster;
 		if (caster) {
 			caster.armatureBlink();
 		}
@@ -70,19 +73,54 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	private onTouchTap(): void {
-		MessageManager.Ins.sendMessage(
-			MessageType.CardTouchTap,
-			this
-		);
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		if (scene.state instanceof PlayerUseCardPhase) {
+			if (scene.mWinnerCamp != CharCamp.Neut) {
+				ToastInfoManager.Ins.newToast("胜负已分");
+				return;
+			}
+
+			if (!(this.mCaster && this.mCaster.alive)) {
+				// TODO: 如果释放者已死亡就是另外一个逻辑了（复活逻辑）
+				return;
+			}
+			let skill = scene.mManualSkillManager.newSkill(this.mSkillId, this.mCaster);
+			let fireboard = scene.mPlayerFireBoard;
+			let fireNeed = skill.fireNeed;
+			if (fireNeed > fireboard.fireNum) {
+				ToastInfoManager.Ins.newToast("能量不足");
+				skill.release();
+				return;
+			}
+
+			// if can't cast, return
+			let canCastInfo = skill.canCast();
+			if (!canCastInfo[0]) {
+				ToastInfoManager.Ins.newToast(canCastInfo[1]);
+				skill.release();
+				return;
+			}
+			// 移除所需要的点数
+			for (let i = 0; i < skill.fireNeed; i++) {
+				fireboard.removeFire();
+			}
+			let caster = this.mCaster;
+			// 使用技能
+			skill.cast();
+
+			// 如果还在游戏中，移除卡牌
+			if (caster.isInBattle) {
+				// 这里之所以加这个判断是为了防止一张卡牌的效果事将自己排除处游戏外
+				// 这个时候该卡牌会在释放技能的过程中就倍移除了，此时会造成重复删除的错误
+				scene.mCardBoard.removeCard(this);
+			}
+		}
+
 	}
 
 	public release(): void {
-		// 如果当前单位被长按功能选中且处于长按，手动发送一个out的消息来解除长按
-		if (LongTouchUtil.holderObj === this && LongTouchUtil.isInLongTouch) {
-			this.dispatchEvent(new egret.Event(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE));
-		}
-		this.touchEnabled = false;
 		LongTouchUtil.unbindLongTouch(this, this);
+		this.touchEnabled = false;
 		this.removeEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
@@ -93,6 +131,6 @@ class Card extends egret.DisplayObjectContainer {
 			this.onTouchBegin,
 			this
 		);
-		this.mSkill = null;
+		this.mCaster = null;
 	}
 }

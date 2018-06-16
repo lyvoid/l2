@@ -45,11 +45,6 @@ class ManualSkillManager {
 
     public release() {
         let pool = this._skillPool;
-        if (pool) {
-            for (let skill of pool) {
-                skill.release();
-            }
-        }
         this._skillPool = null;
     }
 

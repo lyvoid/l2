@@ -15,37 +15,41 @@ class LongTouchUtil {
 	 * 取消长按后调用 thisObj.onLongTouchEnd()
 	 * thisObj 需要实现onLongTouchBegin 与 onLongTouchEnd 方法
 	 */
-	public static bindLongTouch(obj: egret.EventDispatcher, thisObj: any): void {
+	public static bindLongTouch(bindObj: egret.EventDispatcher, thisObj: any): void {
 
-		obj.addEventListener(
+		bindObj.addEventListener(
 			egret.TouchEvent.TOUCH_BEGIN,
 			LongTouchUtil.onTouchBegin,
 			thisObj
 		);
-		obj.addEventListener(
+		bindObj.addEventListener(
 			egret.TouchEvent.TOUCH_END,
 			LongTouchUtil.onTouchEnd,
 			thisObj
 		);
-		obj.addEventListener(
+		bindObj.addEventListener(
 			egret.TouchEvent.TOUCH_RELEASE_OUTSIDE,
 			LongTouchUtil.onTouchOut,
 			thisObj
 		);
 	}
 
-	public static unbindLongTouch(obj: egret.EventDispatcher, thisObj: any): void {
-		obj.removeEventListener(
+	public static unbindLongTouch(bindObj: egret.EventDispatcher, thisObj: any): void {
+		// 如果当前单位被长按功能选中且处于长按，手动发送一个out的消息来解除长按
+		if (LongTouchUtil.holderObj == bindObj && LongTouchUtil.isInLongTouch) {
+			bindObj.dispatchEvent(new egret.Event(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE));
+		}
+		bindObj.removeEventListener(
 			egret.TouchEvent.TOUCH_BEGIN,
 			LongTouchUtil.onTouchBegin,
 			thisObj
 		);
-		obj.removeEventListener(
+		bindObj.removeEventListener(
 			egret.TouchEvent.TOUCH_END,
 			LongTouchUtil.onTouchEnd,
 			thisObj
 		);
-		obj.removeEventListener(
+		bindObj.removeEventListener(
 			egret.TouchEvent.TOUCH_RELEASE_OUTSIDE,
 			LongTouchUtil.onTouchOut,
 			thisObj
