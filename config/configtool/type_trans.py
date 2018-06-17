@@ -12,8 +12,10 @@ def type_trans(data, data_type):
 def _add_to_trans_funcs(name):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
+        def wrapper(data):
+            if ("ls" in name):
+                data = _trans_str(data)
+            return func(data)
 
         _type_trans_funcs[name] = wrapper
         return wrapper

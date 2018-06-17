@@ -68,16 +68,12 @@ class Character extends egret.DisplayObjectContainer {
 
 		let buffAdded: number[] = [];
 		for (let buff of this.mBuffs) {
-			if (buffAdded.indexOf(buff.id)) {
+			if (buffAdded.indexOf(buff.id) >= 0) {
 				continue;
 			}
 			buffAdded.push(buff.id);
-			let remainRound: string = buff.mRemainRound + "";
-			remainRound = remainRound == "-1" ? "" : `(${remainRound}回合)`;
-			let remainAffect: string = buff.mRemainAffectTime + "";
-			remainAffect = remainAffect == "-1" ? "" : `(${remainAffect}次)`;
 			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` +
-				`${buff.buffName}${remainRound}${remainAffect}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
+				`${buff.buffName}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
 		}
 		return `<font color="#EE7942"><b>被动技能</b></font>
 ${passiveSkillsDesc}
@@ -166,7 +162,7 @@ ${buffsDesc}`;
 
 
 		// 加技能
-		this.mManualSkillsId = [1];
+		this.mManualSkillsId = [3];
 
 		// 初始化buff
 		this.mPassiveSkills = [];
@@ -382,7 +378,7 @@ ${buffsDesc}`;
 		for (let buff of this.mBuffs) {
 			let id = buff.id;
 			// 如果此前没有在buffline中加过这个id才重复加一次
-			if (addedBuffsId.indexOf(id) >= 0) {
+			if (addedBuffsId.indexOf(id) < 0) {
 				let icon = buff.mIconBitMap;
 				icon.x = buffLineIndex * 12;
 				buffLine.addChild(icon);

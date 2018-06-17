@@ -1,8 +1,5 @@
 class DamageFloatManager {
-	private numberFloatPool: egret.TextField[];
-	public constructor() {
-		this.numberFloatPool = [];
-	}
+	private numberFloatPool: egret.TextField[] = [];
 
 	public newFloat(char: Character, oldNum: number, newNum: number, prefix: string="hp") {
 		if (oldNum == newNum){

@@ -32,29 +32,15 @@ class Buff {
 	private _affectPhase: BuffAffectPhase; // 结算时机（条件）
 	private _affectHurtId: number; // affect使用hurt来结算
 	private _affectSkillId: number; // 触发一个技能
+	private _isAffectSkillPreSetTarget: boolean;
 	private _affectBuffIds: number[];
 
 	// realtime
-	public mChar: Character;// buff归属单位
-	public mRemainRound: number; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
-	public mRemainAffectTime: number; // 剩余结算次数，-1为无限
-	public mAttachRound: number;// 上buff的回合，如果buff达到最大上限，挤掉最早加的那个
+	private _char: Character;// buff归属单位
+	private _remainRound: number; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
+	private _remainAffectTime: number; // 剩余结算次数，-1为无限
+	private _attachRound: number;// 上buff的回合，如果buff达到最大上限，挤掉最早加的那个
 	public mIconBitMap: egret.Bitmap;
-
-	public constructor() {
-		this._attrsAdd = Object.create(Attribute.AttrsTemplate);
-		this._attrsMul = Object.create(Attribute.AttrsTemplate);
-		// TODO: 待删除的测试数据
-		this._buffName = "狂暴";
-		this._description = "增加10点ap，每回合对自己造成5点治愈"
-		this._attrsAdd[AttrName.Ap] = 10;
-		this._attrsAdd[AttrName.PysDamageReduceAbs] = 4;
-		this._isAffect = true;
-		this.mRemainAffectTime = 2;
-		this._affectPhase = BuffAffectPhase.TargetRoundStart;
-		// this.affectHurt
-		this.mRemainRound = -1;
-	}
 
 	public initial(
 		id: number,
@@ -75,7 +61,10 @@ class Buff {
 		isAffect: boolean,
 		maxAffectTime: number,
 		affectPhase: BuffAffectPhase,
-		affectHurtId: number
+		affectHurtId: number,
+		affectSkillId: number,
+		isAffectSkillPreSetTarget: boolean,
+		affectBuffIds: number[]
 	): void {
 		// buff info
 		this._id = id;
@@ -97,15 +86,18 @@ class Buff {
 		this._maxAffectTime = maxAffectTime;
 		this._affectPhase = affectPhase;
 		this._affectHurtId = affectHurtId;
+		this._affectSkillId = affectSkillId;
+		this._affectBuffIds = affectBuffIds;
+		this._isAffectSkillPreSetTarget = isAffectSkillPreSetTarget;
 		// realtime
-		this.mRemainRound = initRemRound;
-		this.mRemainAffectTime = maxAffectTime;
+		this._remainRound = initRemRound;
+		this._remainAffectTime = maxAffectTime;
 	}
 
 
 	public attachToChar(target: Character): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		this.mAttachRound = scene.mRound;
+		this._attachRound = scene.mRound;
 		let allBuff = target.mPassiveSkills.concat(target.mBuffs).concat(target.mHideBuffs);
 		let sameLayBuffs: Buff[] = [];
 		let earliestSameLayIdBuf: Buff;
@@ -115,8 +107,8 @@ class Buff {
 			if (buff._layId == this._layId) {
 				buffLayNum++;
 				sameLayBuffs.push(buff);
-				if (buff.mAttachRound > earliestRound) {
-					earliestRound = buff.mAttachRound;
+				if (buff._attachRound > earliestRound) {
+					earliestRound = buff._attachRound;
 					earliestSameLayIdBuf = buff;
 				}
 			}
@@ -137,14 +129,13 @@ class Buff {
 				break;
 			case BuffExTy.NormalBuff:
 				target.mBuffs.push(this);
-				// this.mIconBitMap = new egret.Bitmap(RES.getRes("bufficontest_png"));
 				this.mIconBitMap = new egret.Bitmap(RES.getRes(this._iconName));
 				// 调整targetbuff栏的位置
 				target.adjustBuffIconPos();
 				break;
 		}
 
-		this.mChar = target;
+		this._char = target;
 		// add attr
 		let attrAdd = this._attrsAdd;
 		let attrMul = this._attrsMul;
@@ -165,10 +156,9 @@ class Buff {
 		// if have effect, listen affect affectPhase
 		if (this._isAffect) {
 			if (this._affectPhase == BuffAffectPhase.TargetRoundStart) {
-				let eType = MessageType.PlayerRoundStart;
-				if (target.camp == CharCamp.Enemy) {
-					eType = MessageType.EnemyRoundStart;
-				}
+				let eType = target.camp == CharCamp.Enemy ? 
+					MessageType.EnemyRoundStart : 
+					MessageType.PlayerRoundStart;
 				MessageManager.Ins.addEventListener(
 					eType,
 					this.affect,
@@ -206,7 +196,7 @@ class Buff {
 				this
 			);
 		}
-		this.mChar = null;
+		this._char = null;
 		this.mIconBitMap = null;
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mBuffManager.recycle(this);
@@ -215,30 +205,33 @@ class Buff {
 	// call by send message
 	private affect(e: Message) {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		if (this.mRemainAffectTime > 0) {
-			this.mRemainAffectTime = this.mRemainAffectTime - 1;
+		if (this._remainAffectTime > 0) {
+			this._remainAffectTime = this._remainAffectTime - 1;
 		}
 		if (this._affectHurtId != 0) {
 			let hurt = scene.mHurtManager.newHurt(
 				this._affectHurtId,
-				this.mChar
+				this._char
 			);
-			hurt.affect(this.mChar);
+			hurt.affect(this._char);
 		}
 		for (let id of this._affectBuffIds) {
 			let buff = scene.mBuffManager.newBuff(id);
-			buff.attachToChar(this.mChar);
+			buff.attachToChar(this._char);
 		}
 		if (this._affectSkillId != 0) {
 			let skill = scene.mManualSkillManager.newSkill(
 				this._affectSkillId,
-				this.mChar
+				this._char
 			);
 			skill.setParam(e.messageContent);
+			if (this._isAffectSkillPreSetTarget) {
+				skill.setPreSettargets(e.messageContent.targets);
+			}
 			scene.addToCastQueue(skill);
 		}
 		// if affect times is 0
-		if (this.mRemainAffectTime == 0) {
+		if (this._remainAffectTime == 0) {
 			this.removeFromChar();
 		}
 	}
@@ -248,7 +241,7 @@ class Buff {
 	 */
 	public removeFromChar() {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		if (this.mChar == null) {
+		if (this._char == null) {
 			// 如果附加到的对象为空，说明已经被移除过了
 			console.log(`buff已经被移除过了,buffid: ${this._id}`);
 			return;
@@ -256,7 +249,7 @@ class Buff {
 		// 去除属性
 		let attrAdd = this._attrsAdd;
 		let attrMul = this._attrsMul;
-		let target = this.mChar;
+		let target = this._char;
 		let targetAttr = target.attr;
 		for (let attrId in attrAdd) {
 			let index = parseInt(attrId);
@@ -278,7 +271,7 @@ class Buff {
 				Util.removeObjFromArray(target.mHideBuffs, this);
 				break;
 			case BuffExTy.NormalBuff:
-				let buffs = this.mChar.mBuffs;
+				let buffs = this._char.mBuffs;
 				Util.removeObjFromArray(buffs, this);
 				target.adjustBuffIconPos();
 				break;
@@ -290,10 +283,10 @@ class Buff {
 	}
 
 	public onCharEndPhase() {
-		if (this.mRemainRound > 0) {
-			this.mRemainRound--;
+		if (this._remainRound > 0) {
+			this._remainRound--;
 		}
-		if (this.mRemainRound == 0) {
+		if (this._remainRound == 0) {
 			this.removeFromChar();
 		}
 	}
@@ -315,7 +308,7 @@ enum AffectCaseBuffTargetType {
 }
 
 enum BuffExTy {
-	HideBuff,//隐藏buff，一般用来出发某些特定效果时用于计数（玩家看不到的
 	NormalBuff,//常规buff（玩家可以看到
+	HideBuff,//隐藏buff，一般用来出发某些特定效果时用于计数（玩家看不到的
 	PassvieSkill//被动buff（被动技能也通过buff机制来实现
 }

@@ -1,10 +1,11 @@
-function normalSkillAffect():void{
-    let char = this.char as Character;
+function testSkillFuncAffect():void{
+    let x = this as ManualSkill;
+    console.log(x.skillName);
 }
 
 /**
  * 所有效果列表
  */
 const SKAFFLS:{[key:string]:()=>void} = {
-    normal: normalSkillAffect
+    testskillfunc: testSkillFuncAffect
 }

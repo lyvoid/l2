@@ -27,6 +27,8 @@ class ManualSkill {
 	// from external for custom affect function
 	private _param: any;
 	public setParam(input: any) { this._param = input; }
+	private _preSetTargets: Character[];
+	public setPreSettargets(input: Character[]) { this._preSetTargets = input; }
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }
@@ -75,33 +77,27 @@ class ManualSkill {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		// if gameover, return
 		if (scene.mWinnerCamp != CharCamp.Neut) {
+			this.release();
 			return;
 		}
 		// if can't cast, return
 		if (!this.canCast()[0]) {
+			this.release();
 			return;
 		}
 		// if targetselectid not 0, use default selecttarget()
 		// and then cast hurt and buffs to targets
-		if (this._targetSelectId != 0) {
+		if (this._preSetTargets) {
+			this._targets = this._preSetTargets;
+		} else if (this._targetSelectId != 0) {
 			this.selectTarget();
 			if (this._targets.length == 0) {
 				// if no proper target
+				this.release();
 				return;
 			}
-			if (this._caster && this._hurtIdToSelf != 0) {
-				let hurt = scene.mHurtManager.newHurt(
-					this._hurtIdToSelf,
-					this.caster
-				);
-				hurt.affect(this._caster);
-			}
-			if (this._caster) {
-				for (let buffid of this._buffsIdToSelf) {
-					let buff = scene.mBuffManager.newBuff(buffid);
-					buff.attachToChar(this._caster);
-				}
-			}
+		}
+		if (this._targets) {
 			let hurt = null;
 			if (this._hurtIdToTarget != 0) {
 				hurt = scene.mHurtManager.newHurt(
@@ -115,6 +111,20 @@ class ManualSkill {
 					let buff = scene.mBuffManager.newBuff(buffid);
 					buff.attachToChar(target);
 				}
+			}
+		}
+		
+		if (this._caster && this._hurtIdToSelf != 0) {
+			let hurt = scene.mHurtManager.newHurt(
+				this._hurtIdToSelf,
+				this.caster
+			);
+			hurt.affect(this._caster);
+		}
+		if (this._caster) {
+			for (let buffid of this._buffsIdToSelf) {
+				let buff = scene.mBuffManager.newBuff(buffid);
+				buff.attachToChar(this._caster);
 			}
 		}
 
@@ -179,7 +189,7 @@ class ManualSkill {
 
 		if (isMove) tw.to(
 			{ x: nearestEnemy.x + 100 * nearestEnemy.camp, y: nearestEnemy.y + 20 }, 200);
-		
+
 		tw.call(
 			() => {
 				caster.playDBAnim("attack1_+1", 1, "idle");
@@ -202,7 +212,7 @@ class ManualSkill {
 			if (isMove) {
 				let newP: { x: number, y: number } = caster.getPositon();
 				egret.Tween.get(caster).to({ x: newP.x, y: newP.y }, 200).call(
-					()=>egret.Tween.removeTweens(caster)
+					() => egret.Tween.removeTweens(caster)
 				);
 			}
 		}
@@ -245,6 +255,7 @@ class ManualSkill {
 	public release(): void {
 		this._caster = null;
 		this._targets = null;
+		this._preSetTargets = null;
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		scene.mManualSkillManager.recycle(this);
 	}

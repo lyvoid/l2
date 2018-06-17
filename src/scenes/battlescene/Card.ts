@@ -87,7 +87,7 @@ class Card extends egret.DisplayObjectContainer {
 			let skill = scene.mManualSkillManager.newSkill(this.mSkillId, this.mCaster);
 			let fireboard = scene.mPlayerFireBoard;
 			let fireNeed = skill.fireNeed;
-			if (fireNeed > fireboard.fireNum) {
+			if (fireNeed > fireboard.mFireNum) {
 				ToastInfoManager.Ins.newToast("能量不足");
 				skill.release();
 				return;

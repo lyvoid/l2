@@ -1,56 +1,53 @@
 class FireBoard extends egret.DisplayObjectContainer {
 
-	public fireNum: number = 0;
-	public static maxFireNum: number = 10;
-	public static maxOverflowFireNum: number = 4;
-	private texture;
-	private config;
-	private particles: particle.ParticleSystem[] = [];
-	private overflowFireNum: number = 0;
-	private timeOutHandles: number[];
+	public mFireNum: number = 0;
+	private static _maxFireNum: number = 10;
+	private static _maxOverflowFireNum: number = 4;
+	private _particles: particle.ParticleSystem[] = [];
+	private _timeOutHandles: number[] = []; // 主要为了方便timeout的释放
 
 	public constructor() {
 		super();
 		this.y = LayerManager.Ins.stageHeight - 165;
 		this.width = LayerManager.Ins.stageWidth;
-		this.texture = RES.getRes("fireParticle_png");
-		this.config = RES.getRes("fireParticle_json");
-		for (let i = 0; i < FireBoard.maxFireNum + FireBoard.maxOverflowFireNum; i++) {
-			let sys = new particle.GravityParticleSystem(this.texture, this.config)
+		let texture = RES.getRes("fireParticle_png");
+		let config = RES.getRes("fireParticle_json");
+		for (let i = 0; i < FireBoard._maxFireNum + FireBoard._maxOverflowFireNum; i++) {
+			let sys = new particle.GravityParticleSystem(texture, config)
 			sys.x = (i + 1) * 40;
-			this.particles.push(sys);
+			this._particles.push(sys);
 			this.addChild(sys);
 		}
-		this.timeOutHandles = [];
 	}
 
+	private _overflowFireNum: number = 0; // 当前溢出的数量
 	public addFire() {
-		if (this.fireNum < FireBoard.maxFireNum) {
-			this.particles[this.fireNum].start();
-			this.fireNum += 1;
+		if (this.mFireNum < FireBoard._maxFireNum) {
+			this._particles[this.mFireNum].start();
+			this.mFireNum += 1;
 			let scene = SceneManager.Ins.curScene as BattleScene;
 			let fireNumLabel = scene.mBattleUI.fireNumLabel;
-			fireNumLabel.text = `${this.fireNum}/${FireBoard.maxFireNum}`
-			if (this.fireNum == FireBoard.maxFireNum) {
+			fireNumLabel.text = `${this.mFireNum}/${FireBoard._maxFireNum}`
+			if (this.mFireNum == FireBoard._maxFireNum) {
 				fireNumLabel.textColor = 0xFF0000;
 			} else {
 				fireNumLabel.textColor = 0xADFF2F;
 			}
-		} else if (this.overflowFireNum < FireBoard.maxOverflowFireNum) {
-			let index = FireBoard.maxFireNum + this.overflowFireNum;
-			this.particles[index].start();
-			this.overflowFireNum += 1;
+		} else if (this._overflowFireNum < FireBoard._maxOverflowFireNum) {
+			let index = FireBoard._maxFireNum + this._overflowFireNum;
+			this._particles[index].start();
+			this._overflowFireNum += 1;
 			let to = egret.setTimeout(
 				() => {
-					this.particles[index].stop();
-					Util.removeObjFromArray(this.timeOutHandles, to);
+					this._particles[index].stop();
+					Util.removeObjFromArray(this._timeOutHandles, to);
 					egret.clearTimeout(to);
-					this.overflowFireNum -= 1;
+					this._overflowFireNum -= 1;
 				},
 				this,
 				300
 			);
-			this.timeOutHandles.push(to);
+			this._timeOutHandles.push(to);
 		}
 	}
 
@@ -61,12 +58,12 @@ class FireBoard extends egret.DisplayObjectContainer {
 	}
 
 	public removeFire() {
-		if (this.fireNum > 0) {
-			this.particles[this.fireNum - 1].stop();
-			this.fireNum -= 1;
+		if (this.mFireNum > 0) {
+			this._particles[this.mFireNum - 1].stop();
+			this.mFireNum -= 1;
 			let scene = SceneManager.Ins.curScene as BattleScene;
 			let fireNumLabel = scene.mBattleUI.fireNumLabel;
-			fireNumLabel.text = `${this.fireNum}/${FireBoard.maxFireNum}`
+			fireNumLabel.text = `${this.mFireNum}/${FireBoard._maxFireNum}`
 			fireNumLabel.textColor = 0xADFF2F;
 		}
 	}
@@ -78,13 +75,11 @@ class FireBoard extends egret.DisplayObjectContainer {
 	}
 
 	public release(): void {
-		this.texture = null;
-		this.config = null;
-		for (let p of this.particles) {
+		for (let p of this._particles) {
 			p.stop();
 		}
-		this.particles = null;
-		for (let i of this.timeOutHandles) {
+		this._particles = null;
+		for (let i of this._timeOutHandles) {
 			egret.clearTimeout(i);
 		}
 	}
