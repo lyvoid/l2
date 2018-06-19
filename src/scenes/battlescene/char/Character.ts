@@ -1,22 +1,26 @@
 class Character extends egret.DisplayObjectContainer {
-	public mArmatureDisplay: dragonBones.EgretArmatureDisplay;
-	public mCharName: string = "还没有名字";
-	public mFeature: string = "特征是什么呢？";
+
+	public mCharName: string;
+	public mFeature: string;
 	public mManualSkillsId: number[];
 	public mPassiveSkills: Buff[];
 	public mBuffs: Buff[];
 	public mHideBuffs: Buff[];
-	private _isInBattle: boolean = true;
-	private _headBar: egret.DisplayObjectContainer; // 头顶条
+	private _isInBattle: boolean;
+	private _headBar: egret.DisplayObjectContainer;
 	private _lifeBarFg: egret.Bitmap;
-	private _shieldBar: egret.Bitmap; // 护盾条（属于血条的一部分）
+	private _shieldBar: egret.Bitmap;
 	public mBuffLine: egret.DisplayObjectContainer;
 	public attr: Attribute;
-	public bgLayer: egret.DisplayObjectContainer;// 背景层，用来放选中圈，影子等
+	public bgLayer: egret.DisplayObjectContainer;// background select img or shadow
 	public camp: CharCamp = CharCamp.Player;
-	public col: CharColType = CharColType.frontRow;//前中后三排 站位
-	public row: CharRowType = CharRowType.mid;//位置 上中下三行
+	public col: CharColType = CharColType.frontRow;
+	public row: CharRowType = CharRowType.mid;
 
+
+	// real time
+	private _perfQueue: { pType: PType, param?: any }[];
+	public mArmatureDisplay: dragonBones.EgretArmatureDisplay;
 	private _alive: boolean = true;
 	public get alive(): boolean { return this._alive; }
 	public set alive(inputAlive: boolean) {
@@ -388,6 +392,75 @@ ${buffsDesc}`;
 		}
 	}
 
+	public initial(): void {
+		this._isInPerf = false;
+	}
+
+	private _isInPerf: boolean;
+	public nextPerf(p: { pType: PType, param?: any } = null): void {
+		if (p) {
+			this._perfQueue.push(p);
+		} else if (this._perfQueue.length == 0) {
+			if (this._isInBattle) {
+				this.mArmatureDisplay.animation.play("idle", 0);
+			}
+			return;
+		}
+
+		if (this._isInPerf) {
+			return;
+		}
+
+		this._isInPerf = true;
+		let nextP = this._perfQueue.shift();
+		switch (nextP.pType) {
+			case PType.Die:
+				this.stopDBAnim();
+				(SceneManager.Ins.curScene as BattleScene).mFilterManager.addGreyFilter(this.mArmatureDisplay);
+				this._isInPerf = false;
+				this.nextPerf();
+				break;
+			case PType.DBAnim:
+
+				break;
+			case PType.Resurgence:
+				this.mArmatureDisplay.animation.play("idle", 0);
+				(SceneManager.Ins.curScene as BattleScene).mFilterManager.removeGreyFilter(this.mArmatureDisplay);
+				this._isInPerf = false;
+				this.nextPerf();
+				break;
+			case PType.Move:
+				break;
+			case PType.ShieldBar:
+				this.lifeBarShieldAnim(nextP.param.newShield).call(
+					() => {
+						this._isInPerf = false;
+						this.nextPerf();
+					}
+				);
+				break;
+			case PType.LifeBar:
+				this.lifeBarAnim(nextP.param.newHp).call(
+					() => {
+						this._isInPerf = false;
+						this.nextPerf();
+					}
+				);
+				break;
+			case PType.RemoveFromBattle:
+				egret.Tween.get(this.mArmatureDisplay).to({
+					alpha: 0
+				}, 1000).call(() => {
+					this.stopDBAnim();
+					this.touchEnabled = false;
+					this.visible = false;
+					this._isInPerf = false;
+					this.nextPerf();
+				});
+				break;
+		}
+	}
+
 	public release(): void {
 		LongTouchUtil.unbindLongTouch(this.mArmatureDisplay, this);
 		this.mArmatureDisplay.removeEventListener(
@@ -428,4 +501,14 @@ enum CharRowType {
 	up,
 	mid,
 	down
+}
+
+enum PType {
+	Move,
+	Die,
+	Resurgence,
+	RemoveFromBattle,
+	LifeBar,
+	ShieldBar,
+	DBAnim
 }
