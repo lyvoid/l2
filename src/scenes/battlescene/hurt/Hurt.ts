@@ -213,6 +213,7 @@ class Hurt {
 			alpha: 0
 		}, 1000).call(
 			() => {
+				target.touchEnabled = false;
 				target.visible = false;
 			}
 			);

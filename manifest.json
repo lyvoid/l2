@@ -32,7 +32,7 @@
 		"bin-debug/scenes/battlescene/DBManager.js",
 		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/scenes/battlescene/buff/Buff.js",
-		"bin-debug/ui/LoadingUI.js",
+		"bin-debug/Main.js",
 		"bin-debug/scenes/battlescene/hurt/Hurt.js",
 		"bin-debug/scenes/battlescene/hurt/HurtManager.js",
 		"bin-debug/scenes/battlescene/skill/ManualSkill.js",
@@ -53,6 +53,6 @@
 		"bin-debug/scenes/battlescene/ui/UIBattleScene.js",
 		"bin-debug/Platform.js",
 		"bin-debug/scenesystem/SceneManager.js",
-		"bin-debug/Main.js"
+		"bin-debug/ui/LoadingUI.js"
 	]
 }

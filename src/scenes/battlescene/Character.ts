@@ -162,7 +162,7 @@ ${buffsDesc}`;
 
 
 		// 加技能
-		this.mManualSkillsId = [3];
+		this.mManualSkillsId = [1];
 
 		// 初始化buff
 		this.mPassiveSkills = [];
