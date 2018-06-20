@@ -13,7 +13,7 @@ def _add_to_trans_funcs(name):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(data):
-            if ("ls" in name):
+            if "ls" in name:
                 data = _trans_str(data)
             return func(data)
 

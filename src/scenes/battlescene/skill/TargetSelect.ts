@@ -121,16 +121,16 @@ class TargetSelect {
             return 0;
         }
         if (priorType == TSPriorType.Ap) {
-            return char.attr.ap;
+            return char.mAttr.ap;
         }
         if (priorType == TSPriorType.Hp) {
-            return char.attr.hp;
+            return char.mAttr.hp;
         }
         if (priorType == TSPriorType.Dis) {
             return char.x * camp;
         }
         if (priorType == TSPriorType.MaxHp) {
-            return char.attr.maxHp;
+            return char.mAttr.maxHp;
         }
         if (priorType == TSPriorType.Select) {
             if (camp != CharCamp.Player) {

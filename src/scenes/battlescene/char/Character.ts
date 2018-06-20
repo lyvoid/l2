@@ -1,7 +1,7 @@
 class Character extends egret.DisplayObjectContainer {
 
-	public mCharName: string;
-	public mFeature: string;
+	public mCharName: string = "111";
+	public mFeature: string = "123123";
 	public mManualSkillsId: number[];
 	public mPassiveSkills: Buff[];
 	public mBuffs: Buff[];
@@ -10,9 +10,9 @@ class Character extends egret.DisplayObjectContainer {
 	private _headBar: egret.DisplayObjectContainer;
 	private _lifeBarFg: egret.Bitmap;
 	private _shieldBar: egret.Bitmap;
-	public mBuffLine: egret.DisplayObjectContainer;
-	public attr: Attribute;
-	public bgLayer: egret.DisplayObjectContainer;// background select img or shadow
+	public _buffLine: egret.DisplayObjectContainer;
+	public mAttr: Attribute;
+	public _bgLayer: egret.DisplayObjectContainer;// background select img or shadow
 	public camp: CharCamp = CharCamp.Player;
 	public col: CharColType = CharColType.frontRow;
 	public row: CharRowType = CharRowType.mid;
@@ -34,8 +34,8 @@ class Character extends egret.DisplayObjectContainer {
 					buff.removeFromChar();
 				}
 			}
-			this.attr.shield = 0;
-			this.attr.hp = 0;
+			this.mAttr.shield = 0;
+			this.mAttr.hp = 0;
 		}
 		this._alive = inputAlive;
 	}
@@ -48,7 +48,7 @@ class Character extends egret.DisplayObjectContainer {
 			color = "#7FFF00";
 		}
 		return `<b><font color="${color}">${this.mCharName}</font></b>` +
-			`\n<font color="#3D3D3D" size="15">${this.mFeature}</font>\n\n${this.attr.toString()}`;
+			`\n<font color="#3D3D3D" size="15">${this.mFeature}</font>\n\n${this.mAttr.toString()}`;
 	}
 
 	public get statDescription(): string {
@@ -124,15 +124,15 @@ ${buffsDesc}`;
 
 		// 背景层
 		let bg = new egret.DisplayObjectContainer();
-		this.bgLayer = bg;
+		this._bgLayer = bg;
 		this.addChild(bg);
 
 		// 载入龙骨动画
 		this.loadArmature(charactorName);
 
 		// 加属性
-		this.attr = new Attribute();
-		this.attr.char = this;
+		this.mAttr = new Attribute();
+		this.mAttr.char = this;
 
 		// 加血条
 		let lifeBar = new egret.DisplayObjectContainer();
@@ -153,14 +153,14 @@ ${buffsDesc}`;
 		// 加buff条
 		let buffLine = new egret.DisplayObjectContainer();
 		buffLine.y = -12;
-		this.mBuffLine = buffLine;
+		this._buffLine = buffLine;
 		this._headBar.addChild(buffLine)
 
 		// 加护盾条
 		let shieldBar = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
 		shieldBar.height = 8;
 		shieldBar.y = 13;
-		shieldBar.width = 80 * this.attr.shield / this.attr.maxShield;
+		shieldBar.width = 80 * this.mAttr.shield / this.mAttr.maxShield;
 		lifeBar.addChild(shieldBar);
 		this._shieldBar = shieldBar;
 
@@ -172,6 +172,10 @@ ${buffsDesc}`;
 		this.mPassiveSkills = [];
 		this.mBuffs = [];
 		this.mHideBuffs = [];
+
+		this._isInPerf = false;
+		this._isInBattle = true;
+		this._perfQueue = [];
 	}
 
 	/**
@@ -179,9 +183,9 @@ ${buffsDesc}`;
 	 */
 	public lifeBarAnim(newHp?: number): egret.Tween {
 		if (!newHp) {
-			newHp = this.attr.hp;
+			newHp = this.mAttr.hp;
 		}
-		let lifeBarNewLen = 100 * newHp / this.attr.maxHp;
+		let lifeBarNewLen = 100 * newHp / this.mAttr.maxHp;
 		return egret.Tween.get(this._lifeBarFg).to({
 			width: lifeBarNewLen,
 		}, 1000, egret.Ease.quintOut);
@@ -192,9 +196,9 @@ ${buffsDesc}`;
 	 */
 	public lifeBarShieldAnim(newShield?: number): egret.Tween {
 		if (!newShield) {
-			newShield = this.attr.shield;
+			newShield = this.mAttr.shield;
 		}
-		let lifeBarNewLen = 80 * newShield / this.attr.maxHp;
+		let lifeBarNewLen = 80 * newShield / this.mAttr.maxHp;
 		return egret.Tween.get(this._shieldBar).to({
 			width: lifeBarNewLen,
 		}, 1000, egret.Ease.quintOut);
@@ -363,7 +367,7 @@ ${buffsDesc}`;
 
 	public setAsSelect() {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		this.bgLayer.addChild(scene.mSelectImg);
+		this._bgLayer.addChild(scene.mSelectImg);
 		scene.mSelectedChar = this;
 	}
 
@@ -376,7 +380,7 @@ ${buffsDesc}`;
 	}
 
 	public adjustBuffIconPos(): void {
-		let buffLine = this.mBuffLine;
+		let buffLine = this._buffLine;
 		let addedBuffsId: number[] = [];
 		let buffLineIndex = 0;
 		for (let buff of this.mBuffs) {
@@ -421,7 +425,12 @@ ${buffsDesc}`;
 				this.nextPerf();
 				break;
 			case PType.DBAnim:
-
+				this.playDBAnim(nextP.param.animName, 1);
+				this.mArmatureDisplay.addEventListener(
+					dragonBones.EventObject.COMPLETE,
+					this.onAnimEnd,
+					this
+				);
 				break;
 			case PType.Resurgence:
 				this.mArmatureDisplay.animation.play("idle", 0);
@@ -430,16 +439,21 @@ ${buffsDesc}`;
 				this.nextPerf();
 				break;
 			case PType.Move:
-				break;
-			case PType.ShieldBar:
-				this.lifeBarShieldAnim(nextP.param.newShield).call(
+				egret.Tween.get(this).to(nextP.param.newP, 200).call(
 					() => {
 						this._isInPerf = false;
 						this.nextPerf();
 					}
 				);
 				break;
+			case PType.ShieldBar:
+				this._isInPerf = false;
+				this.nextPerf();
+				this.lifeBarShieldAnim(nextP.param.newShield)
+				break;
 			case PType.LifeBar:
+				this._isInPerf = false;
+				this.nextPerf();
 				this.lifeBarAnim(nextP.param.newHp).call(
 					() => {
 						this._isInPerf = false;
@@ -461,6 +475,16 @@ ${buffsDesc}`;
 		}
 	}
 
+	private onAnimEnd(): void {
+		this.mArmatureDisplay.removeEventListener(
+			dragonBones.EventObject.COMPLETE,
+			this.onAnimEnd,
+			this
+		);
+		this._isInPerf = false;
+		this.nextPerf();
+	}
+
 	public release(): void {
 		LongTouchUtil.unbindLongTouch(this.mArmatureDisplay, this);
 		this.mArmatureDisplay.removeEventListener(
@@ -473,12 +497,17 @@ ${buffsDesc}`;
 			this.onTouchBegin,
 			this
 		);
+		this.mArmatureDisplay.removeEventListener(
+			dragonBones.EventObject.COMPLETE,
+			this.onAnimEnd,
+			this
+		);
 		this.mArmatureDisplay = null;
 		this.mManualSkillsId = null;
 
-		this.attr = null;
+		this.mAttr = null;
 		this._lifeBarFg = null;
-		this.bgLayer = null;
+		this._bgLayer = null;
 		this._headBar = null;
 		this._shieldBar = null;
 	}

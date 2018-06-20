@@ -139,7 +139,7 @@ class Buff {
 		// add attr
 		let attrAdd = this._attrsAdd;
 		let attrMul = this._attrsMul;
-		let targetAttr = target.attr;
+		let targetAttr = target.mAttr;
 		for (let attrId in attrAdd) {
 			let index = parseInt(attrId);
 			if (attrAdd[index] > 0) {
@@ -250,7 +250,7 @@ class Buff {
 		let attrAdd = this._attrsAdd;
 		let attrMul = this._attrsMul;
 		let target = this._char;
-		let targetAttr = target.attr;
+		let targetAttr = target.mAttr;
 		for (let attrId in attrAdd) {
 			let index = parseInt(attrId);
 			if (attrAdd[index] > 0) {

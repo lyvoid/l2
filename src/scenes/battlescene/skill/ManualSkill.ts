@@ -9,7 +9,7 @@ class ManualSkill {
 	private _hurtIdToSelf: number;
 	private _buffsIdToTarget: number[];
 	private _buffsIdToSelf: number[];
-	private _isNoPerformance: boolean;
+	private _isNoUseDefaultPerf: boolean;
 	// can cast judge 
 	private _isSelectInBattle: boolean;
 	private _selectNeedBelong: number;//0:noneed,1:self,2:enemy
@@ -44,7 +44,7 @@ class ManualSkill {
 		hurtIdToTarget: number,
 		hurtIdToSelf: number,
 		targetSelectId: number = 0,
-		isNoPerformance: boolean = false,
+		isNoUseDefaultPerf: boolean = false,
 		isSelectInBattle: boolean,
 		selectNeedBelong: number = 0,
 		selectNeedStat: number = 0,
@@ -58,7 +58,7 @@ class ManualSkill {
 		this._description = description;
 		this._fireNeed = fireNeed;
 		this._caster = caster;
-		this._isNoPerformance = isNoPerformance;
+		this._isNoUseDefaultPerf = isNoUseDefaultPerf;
 		this._buffsIdToTarget = buffsIdToTarget;
 		this._targetSelectId = targetSelectId;
 		this._selectNeedStat = selectNeedStat;
@@ -97,6 +97,20 @@ class ManualSkill {
 				return;
 			}
 		}
+
+		// ----- if all condition pass
+		// default performance
+		if (!this._isNoUseDefaultPerf) {
+			// if use default performance
+			this.dftPrPerf();
+		}
+
+		// use special affect function
+		if (this._cusAffFc) {
+			this._cusAffFc();
+		}
+
+		// normal affect
 		if (this._targets) {
 			let hurt = null;
 			if (this._hurtIdToTarget != 0) {
@@ -113,7 +127,7 @@ class ManualSkill {
 				}
 			}
 		}
-		
+
 		if (this._caster && this._hurtIdToSelf != 0) {
 			let hurt = scene.mHurtManager.newHurt(
 				this._hurtIdToSelf,
@@ -128,20 +142,8 @@ class ManualSkill {
 			}
 		}
 
-		// if no affectfunction, then use default function
-		if (!this._cusAffFc) {
-			this.dftAffFc();
-		} else {
-			this._cusAffFc();
-		}
-
 		// auto release after cast
 		this.release();
-	}
-
-	// 采用默认处理方法时，必须拥有合法的targetselectid
-	private dftAffFc(): void {
-		this.dftPrPerf();
 	}
 
 	private selectTarget(): void {
@@ -152,7 +154,7 @@ class ManualSkill {
 
 	// 默认演出
 	private dftPrPerf(): void {
-		if (this._isNoPerformance) {
+		if (this._isNoUseDefaultPerf) {
 			// if this skill don't need performance
 			return;
 		}
@@ -185,36 +187,26 @@ class ManualSkill {
 			isMove = true;
 		}
 
-		let tw = egret.Tween.get(caster);
+		if (isMove) {
+			let newPos = { x: nearestEnemy.x + 100 * nearestEnemy.camp, y: nearestEnemy.y + 20 }
+			caster.nextPerf({
+				pType: PType.Move,
+				param: { newP: newPos }
+			})
+		}
 
-		if (isMove) tw.to(
-			{ x: nearestEnemy.x + 100 * nearestEnemy.camp, y: nearestEnemy.y + 20 }, 200);
-
-		tw.call(
-			() => {
-				caster.playDBAnim("attack1_+1", 1, "idle");
-				caster.mArmatureDisplay.addEventListener(
-					dragonBones.EventObject.COMPLETE,
-					animEnd,
-					this
-				);
-			}
-		);
+		caster.nextPerf({
+			pType: PType.DBAnim,
+			param: { animName: "attack1_+1" }
+		})
 
 		// call when anim end event dispatched
-		let animEnd = () => {
-			caster.mArmatureDisplay.removeEventListener(
-				dragonBones.EventObject.COMPLETE,
-				animEnd,
-				this
-			);
-			caster.playDBAnim("idle", 0);
-			if (isMove) {
-				let newP: { x: number, y: number } = caster.getPositon();
-				egret.Tween.get(caster).to({ x: newP.x, y: newP.y }, 200).call(
-					() => egret.Tween.removeTweens(caster)
-				);
-			}
+		if (isMove) {
+			let newPos: { x: number, y: number } = caster.getPositon();
+			caster.nextPerf({
+				pType: PType.Move,
+				param: { newP: newPos }
+			});
 		}
 	}
 

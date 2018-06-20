@@ -68,7 +68,7 @@ class Hurt {
 	}
 
 	private affectWithoutPerfrom(target: Character): IHurtResult {
-		let targetAttr = target.attr;
+		let targetAttr = target.mAttr;
 		let harm = 0;
 		let hurtResult: IHurtResult = {
 			targetChar: target,
@@ -87,7 +87,7 @@ class Hurt {
 		if (this._isAbs) {
 			harm = this._absValue;
 		} else {
-			let fromAttr = this._fromChar.attr;
+			let fromAttr = this._fromChar.mAttr;
 			if (this._hurtType == HurtType.Pysic || this._hurtType == HurtType.Magic) {
 				let ar = this._hurtType == HurtType.Pysic ? targetAttr.arPys : targetAttr.arMagic;
 				ar -= fromAttr.pierceAr;
@@ -168,7 +168,7 @@ class Hurt {
 		hurtResult: IHurtResult,
 		char: Character
 	): IHurtResult {
-		let newAttr = char.attr;
+		let newAttr = char.mAttr;
 		hurtResult.hpNew = newAttr.hp;
 		hurtResult.aliveNew = char.alive;
 		hurtResult.shieldNew = newAttr.shield;
@@ -176,47 +176,29 @@ class Hurt {
 		return hurtResult;
 	}
 
-
 	// 对血量护盾复活死亡排除出游戏进行表现
 	private static statePerformance(change: IHurtResult) {
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		let target = change.targetChar;
 		if (change.shieldNew != change.shieldOld) {
-			target.lifeBarShieldAnim(change.shieldNew);
+			target.nextPerf({ pType: PType.ShieldBar, param: { newShield: change.shieldNew } });
 			damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
 		}
 
 		if (change.hpOld != change.hpNew) {
-			target.lifeBarAnim(change.hpNew).call(
-				// 血条变化完之后如果此次人物还死亡了的话
-				() => {
-					if (change.aliveNew != change.aliveOld && !change.aliveNew) {
-						target.stopDBAnim();
-						(SceneManager.Ins.curScene as BattleScene).mFilterManager.addGreyFilter(target.mArmatureDisplay);
-					}
-					if (change.isInBattleNew == false) {
-						// 如果扣血后移除
-						Hurt.removeFromGamePerform(target);
-					}
-				}
-			);
-			// 飘字
+			target.nextPerf({ pType: PType.LifeBar, param: { newShield: change.hpNew } });
 			damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
-		} else if (change.isInBattleOld && !change.isInBattleNew) {
-			// 如果直接被排除出游戏
-			Hurt.removeFromGamePerform(target);
 		}
-	}
-
-	private static removeFromGamePerform(target: Character) {
-		egret.Tween.get(target.mArmatureDisplay).to({
-			alpha: 0
-		}, 1000).call(
-			() => {
-				target.touchEnabled = false;
-				target.visible = false;
-			}
-			);
+		if (change.isInBattleOld && !change.isInBattleNew) {
+			// if die
+			target.nextPerf({ pType: PType.Die });
+		}
+		if (change.isInBattleNew && !change.isInBattleOld) {
+			target.nextPerf({ pType: PType.Resurgence });
+		}
+		if (change.isInBattleOld && !change.isInBattleNew) {
+			target.nextPerf({ pType: PType.RemoveFromBattle });
+		}
 	}
 }
 
