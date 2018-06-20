@@ -165,13 +165,13 @@ class ManualSkill {
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;;
 		let targets = this._targets;
-		let casterCamp = caster.camp;
+		let casterCamp = caster.mCamp;
 		let enemiesNum = 0;
 		let minX = 1000;
 		let nearestEnemy: Character;
 		for (let char of targets) {
 			// calculate proper position
-			if (char.camp != casterCamp) {
+			if (char.mCamp != casterCamp) {
 				enemiesNum++;
 				let distance = Math.abs(char.x - caster.x);
 				if (distance < minX) {
@@ -188,7 +188,7 @@ class ManualSkill {
 		}
 
 		if (isMove) {
-			let newPos = { x: nearestEnemy.x + 100 * nearestEnemy.camp, y: nearestEnemy.y + 20 }
+			let newPos = { x: nearestEnemy.x + 100 * nearestEnemy.mCamp, y: nearestEnemy.y + 20 }
 			caster.nextPerf({
 				pType: PType.Move,
 				param: { newP: newPos }
@@ -217,10 +217,10 @@ class ManualSkill {
 		if (this._isSelectInBattle && !selectedChar.isInBattle) {
 			return [false, "选中目标已从游戏中排除"];
 		}
-		if (this._selectNeedBelong == 1 && selectedChar.camp == CharCamp.Enemy) {
+		if (this._selectNeedBelong == 1 && selectedChar.mCamp == CharCamp.Enemy) {
 			return [false, "需要对我方单位释放"];
 		}
-		if (this._selectNeedBelong == 2 && selectedChar.camp == CharCamp.Player) {
+		if (this._selectNeedBelong == 2 && selectedChar.mCamp == CharCamp.Player) {
 			return [false, "需要对敌方单位释放"]
 		}
 		if (this._selectNeedStat == 1 && !selectedChar.alive) {

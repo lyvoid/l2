@@ -1,8 +1,8 @@
 class Attribute {
 	public static AttrsTemplate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-	
+
 	private _char: Character;
-	public set char(char:Character){this._char = char;}
+	public set char(char: Character) { this._char = char; }
 	private _attrs: number[];
 	private _attrsRaw: number[];
 	private _attrsAdd: number[];
@@ -18,7 +18,7 @@ class Attribute {
 	public get pierceAr(): number { return this._attrs[AttrName.PierceAr]; }
 	public get shield(): number { return this._attrs[AttrName.Shield]; }
 	public get pysDamageReduceAbs(): number { return this._attrs[AttrName.PysDamageReduceAbs]; }
-	// 物理伤害增加相对值 damage = (damage + abs) * (1 + perc)
+	// 物理伤害增加相对值 damage = (damage - abs) * (1 - perc)
 	public get pysDamageReducePerc(): number { return this._attrs[AttrName.PysDamageReducePerc]; }
 	// 魔法伤害增加绝对值
 	public get magicDamageReduceAbs(): number { return this._attrs[AttrName.MagicDamageReduceAbs]; }
@@ -45,26 +45,36 @@ class Attribute {
 		this._attrs[AttrName.Shield] = value;
 	}
 
-	public constructor() {
+	public initial(
+		ap: number,
+		hp: number,
+		maxHp: number,
+		shield?: number,
+		maxShield?: number,
+		arMagic?: number,
+		arPys?: number,
+		pierceAr?: number,
+		pysDamageReduceAbs?: number,
+		pysDamageReducePerc?: number,
+		magicDamageReduceAbs?: number,
+		magicDamageReducePerc?: number
+	): void {
 		this._attrs = Object.create(Attribute.AttrsTemplate);
 		this._attrsRaw = Object.create(Attribute.AttrsTemplate);
 		this._attrsMul = Object.create(Attribute.AttrsTemplate);
 		this._attrsAdd = Object.create(Attribute.AttrsTemplate);
-		for (let i in this._attrs) {
-			this._attrs[i] = 10;
-			this._attrsRaw[i] = 10;
-		}
-		for (let i of [AttrName.MagicDamageReduceAbs,
-		AttrName.PysDamageReduceAbs]) {
-			this._attrs[i] = 0;
-			this._attrsRaw[i] = 0;
-		}
-
-		for (let i of [AttrName.MagicDamageReducePerc,
-		AttrName.PysDamageReducePerc]) {
-			this._attrs[i] = 0;
-			this._attrsRaw[i] = 0;
-		}
+		this._attrsRaw[AttrName.Ap] = ap;
+		this._attrsRaw[AttrName.Hp] = hp;
+		this._attrsRaw[AttrName.MaxHp] = maxHp;
+		if (shield) this._attrsRaw[AttrName.Shield] = shield;
+		if (maxShield) this._attrsRaw[AttrName.MaxShield] = maxShield;
+		if (arMagic) this._attrsRaw[AttrName.ArMagic] = arMagic;
+		if (arPys) this._attrsRaw[AttrName.ArPys] = arPys;
+		if (pierceAr) this._attrsRaw[AttrName.PierceAr] = pierceAr;
+		if (pysDamageReduceAbs) this._attrsRaw[AttrName.PysDamageReduceAbs] = pysDamageReduceAbs;
+		if (pysDamageReducePerc) this._attrsRaw[AttrName.PysDamageReducePerc] = pysDamageReducePerc;
+		if (magicDamageReduceAbs) this._attrsRaw[AttrName.MagicDamageReduceAbs] = magicDamageReduceAbs;
+		if (magicDamageReducePerc) this._attrsRaw[AttrName.MagicDamageReducePerc] = magicDamageReducePerc;
 	}
 
 	public setAttrAddition(attrName: AttrName, value: number, type: AttrAdditionType): void {
@@ -105,7 +115,7 @@ class Attribute {
 穿甲:<font color="#7CFC00">${this.pierceAr}</font>`;
 	}
 
-	public release(): void{
+	public release(): void {
 		this._char = null;
 	}
 

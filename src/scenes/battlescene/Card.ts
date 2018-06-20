@@ -4,7 +4,7 @@ class Card extends egret.DisplayObjectContainer {
 	public mCaster: Character;
 	public get description(): string {
 		let caster = this.mCaster;
-		let casterName = caster ? caster.mCharName : "无";
+		let casterName = caster ? caster.charName : "无";
 		let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
 		return `<font color="#EE7942"><b>${skillInfo['skillName']}</b></font>
 <b>释放单位:</b> ${casterName}
@@ -52,7 +52,6 @@ class Card extends egret.DisplayObjectContainer {
 		if (caster) {
 			caster.armatureUnBlink();
 		}
-		caster.mArmatureDisplay.alpha = 1;
 	}
 
 	private onLongTouchBegin(): void {

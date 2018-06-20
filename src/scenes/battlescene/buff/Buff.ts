@@ -16,6 +16,7 @@ class Buff {
 	public get isDeadRemove(): boolean { return this._isDeadRemove; }
 	private _initialRemainRound: number; // 初始剩余回合, -1为无限
 	private _exType: BuffExTy; // buff外在类型，隐藏buff/普通buff/被动技能
+	public get exType(): BuffExTy { return this._exType; }
 	// attr benifit
 	private _attrsAdd: number[];	// 属性加成
 	private _attrsMul: number[];	// 属性加成
@@ -98,7 +99,7 @@ class Buff {
 	public attachToChar(target: Character): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		this._attachRound = scene.mRound;
-		let allBuff = target.mPassiveSkills.concat(target.mBuffs).concat(target.mHideBuffs);
+		let allBuff = target.getAllBuff();
 		let sameLayBuffs: Buff[] = [];
 		let earliestSameLayIdBuf: Buff;
 		let buffLayNum = 0;
@@ -120,20 +121,11 @@ class Buff {
 		}
 
 		// add buff to target
-		switch (this._exType) {
-			case BuffExTy.HideBuff:
-				target.mHideBuffs.push(this);
-				break;
-			case BuffExTy.PassvieSkill:
-				target.mPassiveSkills.push(this);
-				break;
-			case BuffExTy.NormalBuff:
-				target.mBuffs.push(this);
-				this.mIconBitMap = new egret.Bitmap(RES.getRes(this._iconName));
-				// 调整targetbuff栏的位置
-				target.adjustBuffIconPos();
-				break;
+		if (this._exType == BuffExTy.NormalBuff) {
+			this.mIconBitMap = new egret.Bitmap(RES.getRes(this._iconName));
 		}
+		target.addBuff(this);
+
 
 		this._char = target;
 		// add attr
@@ -156,8 +148,8 @@ class Buff {
 		// if have effect, listen affect affectPhase
 		if (this._isAffect) {
 			if (this._affectPhase == BuffAffectPhase.TargetRoundStart) {
-				let eType = target.camp == CharCamp.Enemy ? 
-					MessageType.EnemyRoundStart : 
+				let eType = target.mCamp == CharCamp.Enemy ?
+					MessageType.EnemyRoundStart :
 					MessageType.PlayerRoundStart;
 				MessageManager.Ins.addEventListener(
 					eType,
@@ -266,19 +258,7 @@ class Buff {
 		}
 
 		// remove from target
-		switch (this._exType) {
-			case BuffExTy.HideBuff:
-				Util.removeObjFromArray(target.mHideBuffs, this);
-				break;
-			case BuffExTy.NormalBuff:
-				let buffs = this._char.mBuffs;
-				Util.removeObjFromArray(buffs, this);
-				target.adjustBuffIconPos();
-				break;
-			case BuffExTy.PassvieSkill:
-				Util.removeObjFromArray(target.mPassiveSkills, this);
-				break;
-		}
+		target.removeBuff(this);
 		this.release();
 	}
 

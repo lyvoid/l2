@@ -7,9 +7,9 @@ class EnemyRoundEndPhase extends ISceneState{
 
 		ToastInfoManager.Ins.newToast("敌方回合结束阶段");
 
-		// TODO 回合结束阶段buff结算
+		// buff round--
 		for (let char of this.scene.mEnemies){
-			for (let buff of char.mBuffs.concat(char.mHideBuffs).concat(char.mPassiveSkills)){
+			for (let buff of char.getAllBuff()){
 				buff.onCharEndPhase();
 			}
 		}

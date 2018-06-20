@@ -46,14 +46,10 @@ class Hurt {
 	public affect(target: Character) {
 		let aliveBefore = target.alive;
 		let hurtResult = this.affectWithoutPerfrom(target);;
-		if (!hurtResult.aliveNew && this._isRemoveFromGameWhenDie) {
+		if ((!hurtResult.aliveNew && this._isRemoveFromGameWhenDie)||this._isRemoveFromGame) {
 			target.isInBattle = false;
-			hurtResult.isInBattleNew = false;
 		}
-		if (this._isRemoveFromGame) {
-			target.isInBattle = false;
-			hurtResult.isInBattleNew = false;
-		}
+		hurtResult = Hurt.fullNewAttrToResult(hurtResult, target);
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		Hurt.statePerformance(hurtResult);
 		// judge after every hurt affect
@@ -67,21 +63,11 @@ class Hurt {
 		);
 	}
 
-	private affectWithoutPerfrom(target: Character): IHurtResult {
+	private affectWithoutPerfrom(target: Character): HurtResult {
 		let targetAttr = target.mAttr;
 		let harm = 0;
-		let hurtResult: IHurtResult = {
-			targetChar: target,
-			fromChar: this._fromChar,
-			shieldOld: targetAttr.shield,
-			shieldNew: 0,
-			hpOld: targetAttr.hp,
-			hpNew: 0,
-			aliveOld: target.alive,
-			aliveNew: target.alive,
-			isInBattleOld: target.isInBattle,
-			isInBattleNew: target.isInBattle
-		};
+		let hurtResult: HurtResult = new HurtResult();
+		Hurt.fullOldAttrToResult(hurtResult, target);
 
 		// armor
 		if (this._isAbs) {
@@ -108,12 +94,12 @@ class Hurt {
 		if (this._hurtType == HurtType.HealHp && (target.alive || this._isResurgence)) {
 			let newHp = targetAttr.hp + harm;
 			targetAttr.hp = newHp;
-			return Hurt.CompleteNewAttrToResult(hurtResult, target);
+			return hurtResult;
 		}
 
 		// if target is dead, no affect beside heal hp
 		if (!target.alive) {
-			return Hurt.CompleteNewAttrToResult(hurtResult, target);
+			return hurtResult;
 		}
 
 		// HealShield
@@ -122,7 +108,7 @@ class Hurt {
 			newShield = newShield > targetAttr.maxShield ? targetAttr.maxShield : newShield;
 			let healValue = newShield - targetAttr.shield;
 			targetAttr.shield = newShield;
-			return Hurt.CompleteNewAttrToResult(hurtResult, target);
+			return hurtResult;
 		}
 
 		// double shield
@@ -150,7 +136,7 @@ class Hurt {
 			// if shield can counteract all harm
 			if (harmRemain <= 0) {
 				targetAttr.shield = -harmRemain;
-				return Hurt.CompleteNewAttrToResult(hurtResult, target);
+				return hurtResult;
 			}
 			// if shield can not counteract all harm
 			targetAttr.shield = 0;
@@ -160,14 +146,13 @@ class Hurt {
 		let newTargetHp = targetAttr.hp - harmRemain;
 		targetAttr.hp = newTargetHp;
 
-		return Hurt.CompleteNewAttrToResult(hurtResult, target);
+		return hurtResult;
 	}
 
-	// 辅助函数，把char中的属性填充到hurt result中
-	private static CompleteNewAttrToResult(
-		hurtResult: IHurtResult,
-		char: Character
-	): IHurtResult {
+	private static fullNewAttrToResult(
+		hurtResult: HurtResult,
+		char: Character,
+	): HurtResult {
 		let newAttr = char.mAttr;
 		hurtResult.hpNew = newAttr.hp;
 		hurtResult.aliveNew = char.alive;
@@ -176,8 +161,20 @@ class Hurt {
 		return hurtResult;
 	}
 
+	private static fullOldAttrToResult(
+		hurtResult: HurtResult,
+		char: Character
+	): HurtResult {
+		let oldAttr = char.mAttr;
+		hurtResult.hpOld = oldAttr.hp;
+		hurtResult.aliveOld = char.alive;
+		hurtResult.shieldOld = oldAttr.shield;
+		hurtResult.isInBattleOld = char.isInBattle;
+		return hurtResult;
+	}
+
 	// 对血量护盾复活死亡排除出游戏进行表现
-	private static statePerformance(change: IHurtResult) {
+	private static statePerformance(change: HurtResult) {
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		let target = change.targetChar;
 		if (change.shieldNew != change.shieldOld) {
@@ -213,7 +210,7 @@ enum HurtType {
 	HealShield // 增加护盾
 }
 
-interface IHurtResult {
+class HurtResult {
 	targetChar: Character;
 	fromChar: Character;
 	shieldOld: number;

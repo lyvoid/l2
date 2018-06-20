@@ -1,7 +1,7 @@
 class BattleScene extends IScene {
-	public mDbManager: DBManager = new DBManager();
-	public mBuffManager: BuffManager = new BuffManager();
-	public mHurtManager: HurtManager = new HurtManager();
+	public mDbManager: DBManager;
+	public mBuffManager: BuffManager;
+	public mHurtManager: HurtManager;
 	public mCardBoard: CardBoard;
 	public mSelectImg: egret.Bitmap;
 	public mFilterManager: FilterManager;
@@ -12,6 +12,7 @@ class BattleScene extends IScene {
 	public mManualSkillIdPool: [number, Character][];
 	public mManualSkillManager: ManualSkillManager;
 	public mTargetSelectManager: TargetSelectManager;
+	public _charFactory: CharFactory;
 	public mRound: number;
 
 	// ui
@@ -19,10 +20,10 @@ class BattleScene extends IScene {
 	public mBattleEndPopUp: BattleEndPopUp;
 	public mCardInfoPopupUI: CardInfoPopupUI;
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
-	private _castQueue: { cast: () => void }[] = [];
+	private _castQueue: { cast: () => void }[];
 
 	public mDamageFloatManager: DamageFloatManager;
-	public mWinnerCamp: CharCamp = CharCamp.Neut;
+	public mWinnerCamp: CharCamp;
 	public mPhaseUtil: PhaseUtil;
 
 	public initial() {
@@ -152,90 +153,51 @@ class BattleScene extends IScene {
 		this.mEnemies = [];
 		this.mFriends = [];
 		this.mManualSkillIdPool = [];
+		this.mDbManager = new DBManager();
+		this.mBuffManager = new BuffManager();
+		this.mHurtManager = new HurtManager();
 		this.mCardBoard = new CardBoard();
 		this.mDamageFloatManager = new DamageFloatManager();
 		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
 		this.mTargetSelectManager = new TargetSelectManager();
+		this._castQueue = [];
+		this.mWinnerCamp = CharCamp.Neut;
+		this._charFactory = new CharFactory();
 
-		// TODO: 初始化游戏角色
-		let chars: Character[] = [];
-		for (let i in [0, 1, 2, 3, 4]) {
-			let char1 = new Character("Dragon");
-			chars[i] = char1;
-			char1.playDBAnim("idle", 0);
-			char1.camp = CharCamp.Enemy;
+		let charFactory = this._charFactory;
+		// TODO:initial char
+		for (let row of [CharRowType.down, CharRowType.mid, CharRowType.up]) {
+			this.mFriends.push(charFactory.newChar(
+				2,
+				CharCamp.Player,
+				row,
+				CharColType.midRow,
+			));
 		}
-		chars[0].col = CharColType.backRow;
-		chars[0].row = CharRowType.down;
-		chars[0].setPosition();
-		chars[0].setAsSelect();
-
-		chars[1].col = CharColType.backRow;
-		chars[1].row = CharRowType.up;
-		chars[1].setPosition();
-
-		chars[2].col = CharColType.midRow;
-		chars[2].row = CharRowType.up;
-		chars[2].setPosition();
-
-		chars[3].col = CharColType.midRow;
-		chars[3].row = CharRowType.down;
-		chars[3].setPosition();
-
-		chars[4].col = CharColType.frontRow;
-		chars[4].row = CharRowType.down;
-		chars[4].setPosition();
-
-		for (let char of chars) {
-			let charLayer = LayerManager.getSubLayerAt(
-				LayerManager.Ins.gameLayer,
-				BattleSLEnum.CharLayer
-			);
-			charLayer.addChildAt(char, char.row * 1000);
-			this.mEnemies.push(char);
+		for (let row of [CharRowType.down, CharRowType.mid, CharRowType.up]) {
+			this.mEnemies.push(charFactory.newChar(
+				1,
+				CharCamp.Enemy,
+				row,
+				CharColType.midRow,
+			));
 		}
 
-		chars = [];
-		for (let i in [0, 1, 2, 3, 4]) {
-			let char1 = new Character("Swordsman");
-			chars[i] = char1;
-			char1.playDBAnim("idle", 0);
-		}
-		chars[0].col = CharColType.backRow;
-		chars[0].row = CharRowType.down;
-		chars[0].setPosition();
-
-
-		chars[1].col = CharColType.backRow;
-		chars[1].row = CharRowType.up;
-		chars[1].setPosition();
-
-		chars[2].col = CharColType.midRow;
-		chars[2].row = CharRowType.up;
-		chars[2].setPosition();
-
-		chars[3].col = CharColType.midRow;
-		chars[3].row = CharRowType.down;
-		chars[3].setPosition();
-
-		chars[4].col = CharColType.frontRow;
-		chars[4].row = CharRowType.mid;
-		chars[4].setPosition();
-
-		for (let char of chars) {
-			let charLayer = LayerManager.getSubLayerAt(
-				LayerManager.Ins.gameLayer,
-				BattleSLEnum.CharLayer
-			);
-
-			charLayer.addChildAt(char, char.row * 1000);
-			this.mFriends.push(char);
-			// TODO: 填充技能池子
-			for (let skillid of char.mManualSkillsId) {
+		// add char to char layer
+		let charLayer = LayerManager.getSubLayerAt(
+			LayerManager.Ins.gameLayer,
+			BattleSLEnum.CharLayer
+		);
+		for (let char of this.mFriends.concat(this.mEnemies).sort(Character.sortFnByRow)) {
+			charLayer.addChild(char);
+			for (let skillid of char.manualSkillsId) {
 				this.mManualSkillIdPool.push([skillid, char]);
 			}
 		}
+
+		// select a default Enemy
+		this.mEnemies[0].onSelect();
 
 
 		// 发放游戏开始的卡牌
@@ -282,7 +244,7 @@ class BattleScene extends IScene {
 			this.mWinnerCamp = CharCamp.Enemy;
 		}
 
-		if (this.mWinnerCamp != CharCamp.Neut){
+		if (this.mWinnerCamp != CharCamp.Neut) {
 			// 延迟两秒跳战斗结果，方便演出
 			egret.setTimeout(
 				this.onBattleEnd,

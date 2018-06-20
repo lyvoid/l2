@@ -14,7 +14,7 @@ class ManualSkillManager {
             skill = new ManualSkill();
         }
         if (camp == null){
-            camp = cast ? cast.camp : CharCamp.Neut;
+            camp = cast ? cast.mCamp : CharCamp.Neut;
         }
         let skillConfig = ConfigManager.Ins.mSkillConfig;
         let skillInfo = skillConfig[id];

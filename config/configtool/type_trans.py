@@ -13,7 +13,7 @@ def _add_to_trans_funcs(name):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(data):
-            if "ls" in name:
+            if "[]" in name:
                 data = _trans_str(data)
             return func(data)
 
@@ -54,7 +54,7 @@ def _trans_bool(data):
     return data
 
 
-@_add_to_trans_funcs('int_ls')
+@_add_to_trans_funcs('int[]')
 def _trans_num_ls(data):
     if data == '':
         return []
@@ -62,7 +62,7 @@ def _trans_num_ls(data):
     return data
 
 
-@_add_to_trans_funcs('float_ls')
+@_add_to_trans_funcs('float[]')
 def _trans_num_ls(data):
     if data == '':
         return []
@@ -70,7 +70,7 @@ def _trans_num_ls(data):
     return data
 
 
-@_add_to_trans_funcs('str_ls')
+@_add_to_trans_funcs('str[]')
 def _trans_str_ls(data):
     if data == '':
         return []
