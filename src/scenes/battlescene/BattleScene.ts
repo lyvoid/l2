@@ -191,8 +191,10 @@ class BattleScene extends IScene {
 		);
 		for (let char of this.mFriends.concat(this.mEnemies).sort(Character.sortFnByRow)) {
 			charLayer.addChild(char);
-			for (let skillid of char.manualSkillsId) {
-				this.mManualSkillIdPool.push([skillid, char]);
+			if (char.mCamp == CharCamp.Player) {
+				for (let skillid of char.manualSkillsId) {
+					this.mManualSkillIdPool.push([skillid, char]);
+				}
 			}
 		}
 

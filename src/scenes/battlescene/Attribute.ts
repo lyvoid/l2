@@ -3,7 +3,7 @@ class Attribute {
 
 	private _char: Character;
 	public set char(char: Character) { this._char = char; }
-	private _attrs: number[];
+	private _attrs: number[];// final value
 	private _attrsRaw: number[];
 	private _attrsAdd: number[];
 	private _attrsMul: number[];
@@ -75,6 +75,9 @@ class Attribute {
 		if (pysDamageReducePerc) this._attrsRaw[AttrName.PysDamageReducePerc] = pysDamageReducePerc;
 		if (magicDamageReduceAbs) this._attrsRaw[AttrName.MagicDamageReduceAbs] = magicDamageReduceAbs;
 		if (magicDamageReducePerc) this._attrsRaw[AttrName.MagicDamageReducePerc] = magicDamageReducePerc;
+		for(let index in this._attrsRaw){
+			this._attrs[index] = this._attrsRaw[index];
+		}
 	}
 
 	public setAttrAddition(attrName: AttrName, value: number, type: AttrAdditionType): void {

@@ -45,8 +45,8 @@ class Hurt {
 
 	public affect(target: Character) {
 		let aliveBefore = target.alive;
-		let hurtResult = this.affectWithoutPerfrom(target);;
-		if ((!hurtResult.aliveNew && this._isRemoveFromGameWhenDie)||this._isRemoveFromGame) {
+		let hurtResult = this.affectWithoutPerfrom(target);
+		if (((!target.alive) && this._isRemoveFromGameWhenDie) || this._isRemoveFromGame) {
 			target.isInBattle = false;
 		}
 		hurtResult = Hurt.fullNewAttrToResult(hurtResult, target);
@@ -67,6 +67,8 @@ class Hurt {
 		let targetAttr = target.mAttr;
 		let harm = 0;
 		let hurtResult: HurtResult = new HurtResult();
+		hurtResult.fromChar = this._fromChar;
+		hurtResult.targetChar = target;
 		Hurt.fullOldAttrToResult(hurtResult, target);
 
 		// armor
@@ -175,16 +177,29 @@ class Hurt {
 
 	// 对血量护盾复活死亡排除出游戏进行表现
 	private static statePerformance(change: HurtResult) {
-		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		let target = change.targetChar;
 		if (change.shieldNew != change.shieldOld) {
-			target.nextPerf({ pType: PType.ShieldBar, param: { newShield: change.shieldNew } });
-			damageFloatManage.newFloat(target, change.shieldOld, change.shieldNew, "护盾");
+			target.nextPerf(
+				{
+					pType: PType.ShieldBar,
+					param: {
+						shieldOld: change.shieldOld,
+						shieldNew: change.shieldNew
+					}
+				}
+			);
 		}
 
 		if (change.hpOld != change.hpNew) {
-			target.nextPerf({ pType: PType.LifeBar, param: { newShield: change.hpNew } });
-			damageFloatManage.newFloat(target, change.hpOld, change.hpNew, "生命");
+			target.nextPerf(
+				{ 
+					pType: PType.LifeBar, 
+					param: {
+						hpNew: change.hpNew,
+						hpOld: change.hpOld
+					} 
+				}
+			);
 		}
 		if (change.isInBattleOld && !change.isInBattleNew) {
 			// if die

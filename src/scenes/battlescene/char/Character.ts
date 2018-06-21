@@ -154,10 +154,10 @@ class Character extends egret.DisplayObjectContainer {
 		this._perfQueue = [];
 
 		// display initial
-		this.loadArmature(charCode);
 		let bg = new egret.DisplayObjectContainer();
 		this._bgLayer = bg;
 		this.addChild(bg);
+		this.loadArmature(charCode);
 
 		// headBar(lifeBar/shield bar/ buff bar)
 		let headBar = new egret.DisplayObjectContainer();
@@ -368,6 +368,7 @@ class Character extends egret.DisplayObjectContainer {
 
 		this._isInPerf = true;
 		let nextP = this._perfQueue.shift();
+		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		switch (nextP.pType) {
 			case PType.Die:
 				this.stopDBAnim();
@@ -398,14 +399,17 @@ class Character extends egret.DisplayObjectContainer {
 				);
 				break;
 			case PType.ShieldBar:
-				this._isInPerf = false;
-				this.nextPerf();
-				this.shieldBarAnim(nextP.param.newShield)
+				damageFloatManage.newFloat(this, nextP.param.shieldOld, nextP.param.shieldNew, "护盾");
+				this.shieldBarAnim(nextP.param.shieldNew).call(
+					() => {
+						this._isInPerf = false;
+						this.nextPerf();
+					}
+				);
 				break;
 			case PType.LifeBar:
-				this._isInPerf = false;
-				this.nextPerf();
-				this.lifeBarAnim(nextP.param.newHp).call(
+				damageFloatManage.newFloat(this, nextP.param.hpOld, nextP.param.hpNew, "生命");
+				this.lifeBarAnim(nextP.param.hpNew).call(
 					() => {
 						this._isInPerf = false;
 						this.nextPerf();
@@ -422,6 +426,10 @@ class Character extends egret.DisplayObjectContainer {
 					this._isInPerf = false;
 					this.nextPerf();
 				});
+				break;
+			case PType.DamageFloat:
+
+
 				break;
 		}
 	}
@@ -474,7 +482,7 @@ class Character extends egret.DisplayObjectContainer {
 		}
 	}
 
-	public static sortFnByRow(c1: Character, c2: Character): number{
+	public static sortFnByRow(c1: Character, c2: Character): number {
 		let result = c1._row - c2._row;
 		if (result != 0) return result;
 		return c1.mCamp - c2.mCamp;
@@ -537,5 +545,6 @@ enum PType {
 	RemoveFromBattle,
 	LifeBar,
 	ShieldBar,
-	DBAnim
+	DBAnim,
+	DamageFloat,
 }
