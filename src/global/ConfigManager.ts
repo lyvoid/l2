@@ -15,6 +15,8 @@ class ConfigManager{
     public mBuffConfig;
 	public mTargetSelectConfig;
 	public mCharConfig;
+	public mBattleConfig;
+	public mBattleEnemyConfig;
 
     public initial(): void{
 		this.mSkillConfig = RES.getRes("skill_json");
@@ -22,6 +24,8 @@ class ConfigManager{
 		this.mHurtConfig = RES.getRes("hurt_json");
 		this.mTargetSelectConfig = RES.getRes("target_select_json");
 		this.mCharConfig = RES.getRes("char_json");
+		this.mBattleConfig = RES.getRes("battle_json");
+		this.mBattleEnemyConfig = RES.getRes("battle_enemy_json");
     }
     
 }

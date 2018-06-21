@@ -13,7 +13,7 @@
 	"game": [
 		"bin-debug/scenes/battlescene/Attribute.js",
 		"bin-debug/scenesystem/IScene.js",
-		"bin-debug/scenes/battlescene/char/CharFactory.js",
+		"bin-debug/scenes/battlescene/char/Character.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/common/FiltersManager.js",
 		"bin-debug/global/ConfigManager.js",
@@ -22,6 +22,7 @@
 		"bin-debug/global/MessageManager.js",
 		"bin-debug/global/MessageType.js",
 		"bin-debug/global/ToastInfo.js",
+		"bin-debug/global/UserData.js",
 		"bin-debug/global/Util.js",
 		"bin-debug/AssetAdapter.js",
 		"bin-debug/scenes/battlescene/BattleScene.js",
@@ -32,8 +33,8 @@
 		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/scenes/battlescene/buff/Buff.js",
 		"bin-debug/scenes/battlescene/buff/BuffManager.js",
-		"bin-debug/scenes/battlescene/char/Character.js",
 		"bin-debug/Main.js",
+		"bin-debug/scenes/battlescene/char/CharFactory.js",
 		"bin-debug/scenes/battlescene/hurt/Hurt.js",
 		"bin-debug/scenes/battlescene/hurt/HurtManager.js",
 		"bin-debug/scenes/battlescene/skill/ManualSkill.js",
@@ -48,12 +49,12 @@
 		"bin-debug/scenes/battlescene/state/PlayerRoundEndPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerUseCardPhase.js",
-		"bin-debug/scenes/battlescene/ui/BattleEndPopUp.js",
-		"bin-debug/scenes/battlescene/ui/CardInfoPopupUI.js",
-		"bin-debug/scenes/battlescene/ui/CharacterInfoPopupUI.js",
-		"bin-debug/scenes/battlescene/ui/UIBattleScene.js",
+		"bin-debug/scenes/battlescene/UI/BattleEndPopUp.js",
+		"bin-debug/scenes/battlescene/UI/CardInfoPopupUI.js",
+		"bin-debug/scenes/battlescene/UI/CharacterInfoPopupUI.js",
+		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
 		"bin-debug/Platform.js",
 		"bin-debug/scenesystem/SceneManager.js",
-		"bin-debug/ui/LoadingUI.js"
+		"bin-debug/UI/LoadingUI.js"
 	]
 }

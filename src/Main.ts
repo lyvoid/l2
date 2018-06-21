@@ -108,6 +108,7 @@ class Main extends eui.UILayer {
         ToastInfoManager.Ins.initial();
         // 初始化SceneManager
         SceneManager.Ins.initial();
+        UserData.Ins.initial();
 
     }
 }

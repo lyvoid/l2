@@ -165,25 +165,31 @@ class BattleScene extends IScene {
 		this.mWinnerCamp = CharCamp.Neut;
 		this._charFactory = new CharFactory();
 
+		// initial char
 		let charFactory = this._charFactory;
-		// TODO:initial char
-		for (let row of [CharRowType.down, CharRowType.mid, CharRowType.up]) {
+		// initial player team
+		let teamInfo = UserData.Ins.curUserTeam;
+		for (let charInfo of teamInfo) {
 			this.mFriends.push(charFactory.newChar(
-				2,
+				charInfo.charId,
 				CharCamp.Player,
-				row,
-				CharColType.midRow,
+				charInfo.row,
+				charInfo.col,
 			));
 		}
-		for (let row of [CharRowType.down, CharRowType.mid, CharRowType.up]) {
+		// initial enmey
+		let battleInfo = ConfigManager.Ins.mBattleConfig[UserData.Ins.battleId];
+		let enemiesInfo = ConfigManager.Ins.mBattleEnemyConfig;
+		let enemiesId = battleInfo["enemy"];
+		for (let id of enemiesId) {
+			let enemyInfo = enemiesInfo[id];
 			this.mEnemies.push(charFactory.newChar(
-				1,
+				enemyInfo["charId"],
 				CharCamp.Enemy,
-				row,
-				CharColType.midRow,
+				enemyInfo["row"],
+				enemyInfo["col"]
 			));
 		}
-
 		// add char to char layer
 		let charLayer = LayerManager.getSubLayerAt(
 			LayerManager.Ins.gameLayer,
@@ -197,7 +203,6 @@ class BattleScene extends IScene {
 				}
 			}
 		}
-
 		// select a default Enemy
 		this.mEnemies[0].onSelect();
 

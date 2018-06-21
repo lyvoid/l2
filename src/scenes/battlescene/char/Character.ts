@@ -23,8 +23,8 @@ class Character extends egret.DisplayObjectContainer {
 	private _buffBar: egret.DisplayObjectContainer;
 	// background select img or shadow
 	private _bgLayer: egret.DisplayObjectContainer;
-	private _col: CharColType;
-	private _row: CharRowType;
+	private _col: CCType;
+	private _row: CRType;
 	private _armatureDisplay: dragonBones.EgretArmatureDisplay;
 
 	// alive
@@ -129,8 +129,8 @@ class Character extends egret.DisplayObjectContainer {
 		manualSkillsId: number[],
 		passiveSkillsId: number[],
 		camp: CharCamp,
-		col: CharColType,
-		row: CharRowType,
+		col: CCType,
+		row: CRType,
 		attr: Attribute,
 	): void {
 		// set info
@@ -526,13 +526,13 @@ enum CharCamp {
 	Enemy = -1,
 }
 
-enum CharColType {
-	frontRow,
-	midRow,
-	backRow
+enum CCType {
+	front,
+	mid,
+	back
 }
 
-enum CharRowType {
+enum CRType {
 	up,
 	mid,
 	down

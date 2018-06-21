@@ -2,8 +2,8 @@ class CharFactory {
 	public newChar(
 		id: number,
 		camp: CharCamp,
-		row: CharRowType,
-		col: CharColType,
+		row: CRType,
+		col: CCType,
 		attr?: Attribute
 	): Character {
 		let char = new Character();
