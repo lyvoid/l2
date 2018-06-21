@@ -6,6 +6,7 @@ class Buff {
 	private _buffName: string;
 	public get buffName(): string { return this._buffName; }
 	private _iconName: string;
+	public get iconName(): string { return this._iconName; }
 	private _description: string;
 	public get description(): string { return this._description; }
 	private _isPositive: boolean; // 是否正面效果
@@ -41,7 +42,6 @@ class Buff {
 	private _remainRound: number; // 剩余回合数，默认在归属单位的结束回合阶段--，-1表示无限
 	private _remainAffectTime: number; // 剩余结算次数，-1为无限
 	private _attachRound: number;// 上buff的回合，如果buff达到最大上限，挤掉最早加的那个
-	public mIconBitMap: egret.Bitmap;
 
 	public initial(
 		id: number,
@@ -121,9 +121,6 @@ class Buff {
 		}
 
 		// add buff to target
-		if (this._exType == BuffExTy.NormalBuff) {
-			this.mIconBitMap = new egret.Bitmap(RES.getRes(this._iconName));
-		}
 		target.addBuff(this);
 
 
@@ -189,17 +186,16 @@ class Buff {
 			);
 		}
 		this._char = null;
-		this.mIconBitMap = null;
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mBuffManager.recycle(this);
 	}
 
 	// call by send message
 	private affect(e: Message) {
+		// 防止某单位的多个buff同时生效，但第一个buff就把自己给干死了的情况
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (this._remainAffectTime > 0) {
 			this._remainAffectTime = this._remainAffectTime - 1;
 		}
+		if (!this._char) return;
 		if (this._affectHurtId != 0) {
 			let hurt = scene.mHurtManager.newHurt(
 				this._affectHurtId,
@@ -207,6 +203,7 @@ class Buff {
 			);
 			hurt.affect(this._char);
 		}
+		if (!this._char) return;
 		for (let id of this._affectBuffIds) {
 			let buff = scene.mBuffManager.newBuff(id);
 			buff.attachToChar(this._char);
@@ -260,6 +257,7 @@ class Buff {
 		// remove from target
 		target.removeBuff(this);
 		this.release();
+		scene.mBuffManager.recycle(this);
 	}
 
 	public onCharEndPhase() {

@@ -12,7 +12,7 @@ class BattleScene extends IScene {
 	public mManualSkillIdPool: [number, Character][];
 	public mManualSkillManager: ManualSkillManager;
 	public mTargetSelectManager: TargetSelectManager;
-	public _charFactory: CharFactory;
+	private _charFactory: CharFactory;
 	public mRound: number;
 
 	// ui
@@ -326,6 +326,30 @@ class BattleScene extends IScene {
 		this.mSelectedChar = null;
 		this.mFilterManager.release();
 		this.mFilterManager = null;
+
+		this.mCardInfoPopupUI = null;
+		this.mCharInfoPopupUI = null;
+
+		for (let char of this.mEnemies.concat(this.mFriends)) {
+			char.release();
+		}
+		this.mFriends = null;
+		this.mEnemies = null;
+		this._charFactory.release();
+
+		this.mBuffManager.release();
+		this.mBuffManager = null;
+
+		this.mHurtManager.release();
+		this.mHurtManager = null;
+
+		this.mManualSkillIdPool = null;
+
+		this.mManualSkillManager.release();
+		this.mManualSkillManager = null;
+
+		this.mTargetSelectManager.release();
+		this.mTargetSelectManager = null;
 
 		// 释放载入的美术资源
 		this.releaseResource().then(() => {

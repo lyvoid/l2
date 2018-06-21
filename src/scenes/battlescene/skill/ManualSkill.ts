@@ -29,6 +29,8 @@ class ManualSkill {
 	public setParam(input: any) { this._param = input; }
 	private _preSetTargets: Character[];
 	public setPreSettargets(input: Character[]) { this._preSetTargets = input; }
+	// skillmanager
+	private _manualSkillManager: ManualSkillManager;
 
 	public get skillName(): string { return this._skillName }
 	public get fireNeed(): number { return this._fireNeed }

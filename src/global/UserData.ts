@@ -12,7 +12,7 @@ class UserData {
 	private constructor() { }
 	public initial(): void {
 		// TODO:
-		this.battleId = 6;
+		this.battleId = 2;
 
 		// TODO: replace by get curUserTeam from service
 		let curUserTeam = [];

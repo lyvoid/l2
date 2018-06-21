@@ -38,4 +38,6 @@ class CharFactory {
 		);
 		return char;
 	}
+
+	public release(): void{}
 }

@@ -333,6 +333,7 @@ class Character extends egret.DisplayObjectContainer {
 
 	private adjustBuffIconPos(): void {
 		let buffLine = this._buffBar;
+		buffLine.removeChildren();
 		let addedBuffsId: number[] = [];
 		let buffLineIndex = 0;
 		// only add normal buff
@@ -340,7 +341,7 @@ class Character extends egret.DisplayObjectContainer {
 			let id = buff.id;
 			// if never add this buff icon before
 			if (addedBuffsId.indexOf(id) < 0) {
-				let icon = buff.mIconBitMap;
+				let icon = new egret.Bitmap(RES.getRes(buff.iconName));;
 				icon.x = buffLineIndex * 12;
 				buffLine.addChild(icon);
 				buffLineIndex++;
@@ -517,6 +518,7 @@ class Character extends egret.DisplayObjectContainer {
 		this._hidenBuffs = null;
 		this._normalBuffs = null;
 		this._passiveSkills = null;
+		this._perfQueue = null;
 	}
 }
 
