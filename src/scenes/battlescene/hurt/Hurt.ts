@@ -201,11 +201,11 @@ class Hurt {
 				}
 			);
 		}
-		if (change.isInBattleOld && !change.isInBattleNew) {
+		if (change.aliveOld && !change.aliveNew) {
 			// if die
 			target.nextPerf({ pType: PType.Die });
 		}
-		if (change.isInBattleNew && !change.isInBattleOld) {
+		if (change.aliveNew && !change.aliveOld) {
 			target.nextPerf({ pType: PType.Resurgence });
 		}
 		if (change.isInBattleOld && !change.isInBattleNew) {
