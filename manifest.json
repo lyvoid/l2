@@ -33,7 +33,7 @@
 		"bin-debug/scenes/battlescene/FireBoard.js",
 		"bin-debug/scenes/battlescene/buff/Buff.js",
 		"bin-debug/scenes/battlescene/buff/BuffManager.js",
-		"bin-debug/Main.js",
+		"bin-debug/ui/LoadingUI.js",
 		"bin-debug/scenes/battlescene/char/CharFactory.js",
 		"bin-debug/scenes/battlescene/hurt/Hurt.js",
 		"bin-debug/scenes/battlescene/hurt/HurtManager.js",
@@ -49,12 +49,12 @@
 		"bin-debug/scenes/battlescene/state/PlayerRoundEndPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerUseCardPhase.js",
-		"bin-debug/scenes/battlescene/UI/BattleEndPopUp.js",
-		"bin-debug/scenes/battlescene/UI/CardInfoPopupUI.js",
-		"bin-debug/scenes/battlescene/UI/CharacterInfoPopupUI.js",
-		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
+		"bin-debug/scenes/battlescene/ui/BattleEndPopUp.js",
+		"bin-debug/scenes/battlescene/ui/CardInfoPopupUI.js",
+		"bin-debug/scenes/battlescene/ui/CharacterInfoPopupUI.js",
+		"bin-debug/scenes/battlescene/ui/UIBattleScene.js",
 		"bin-debug/Platform.js",
 		"bin-debug/scenesystem/SceneManager.js",
-		"bin-debug/UI/LoadingUI.js"
+		"bin-debug/Main.js"
 	]
 }
