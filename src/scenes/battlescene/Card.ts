@@ -6,10 +6,14 @@ class Card extends egret.DisplayObjectContainer {
 		let caster = this.mCaster;
 		let casterName = caster ? caster.charName : "无";
 		let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
+		let affectDescpt = skillInfo['description'];
+		if (this.mCaster && !this.mCaster.alive){
+			affectDescpt += `<font color="#C0FF3E">(当前释放单位死亡，使用卡片效果替换为累计复活进度)</font>`
+		}
 		return `<font color="#EE7942"><b>${skillInfo['skillName']}</b></font>
 <b>释放单位:</b> ${casterName}
 <b>消耗能量:</b> ${skillInfo['fireNeed']}
-<b>作用效果:</b> ${skillInfo['description']}`;
+<b>作用效果:</b> ${affectDescpt}`;
 	}
 
 	public constructor() {
@@ -79,36 +83,38 @@ class Card extends egret.DisplayObjectContainer {
 				return;
 			}
 
-			if (!(this.mCaster && this.mCaster.alive)) {
-				// TODO: 如果释放者已死亡就是另外一个逻辑了（复活逻辑）
-				return;
-			}
-			let skill = scene.mManualSkillManager.newSkill(this.mSkillId, this.mCaster);
+			let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
 			let fireboard = scene.mPlayerFireBoard;
-			let fireNeed = skill.fireNeed;
+			let fireNeed = skillInfo["fireNeed"];
 			if (fireNeed > fireboard.mFireNum) {
 				ToastInfoManager.Ins.newToast("能量不足");
-				skill.release();
 				return;
+			}
+			if (!(this.mCaster && this.mCaster.alive)) {
+				// if hava a caster and caster is dead, go resurgence logic
+				this.mCaster.getRsPoint(fireNeed);
+			} else {
+				// if no caster or caster alive
+				let skill = scene.mManualSkillManager.newSkill(this.mSkillId, this.mCaster);
+
+				// if can't cast, return
+				let canCastInfo = skill.canCast();
+				if (!canCastInfo[0]) {
+					ToastInfoManager.Ins.newToast(canCastInfo[1]);
+					skill.release();
+					return;
+				}
+				// 使用技能
+				skill.cast();
 			}
 
-			// if can't cast, return
-			let canCastInfo = skill.canCast();
-			if (!canCastInfo[0]) {
-				ToastInfoManager.Ins.newToast(canCastInfo[1]);
-				skill.release();
-				return;
-			}
 			// 移除所需要的点数
-			for (let i = 0; i < skill.fireNeed; i++) {
+			for (let i = 0; i < fireNeed; i++) {
 				fireboard.removeFire();
 			}
-			let caster = this.mCaster;
-			// 使用技能
-			skill.cast();
 
 			// 如果还在游戏中，移除卡牌
-			if (caster.isInBattle) {
+			if (this.mCaster.isInBattle) {
 				// 这里之所以加这个判断是为了防止一张卡牌的效果事将自己排除处游戏外
 				// 这个时候该卡牌会在释放技能的过程中就倍移除了，此时会造成重复删除的错误
 				scene.mCardBoard.removeCard(this);

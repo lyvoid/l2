@@ -1,5 +1,7 @@
 class Character extends egret.DisplayObjectContainer {
 
+	public static resurgencePoint = 4;
+
 	// info
 	private _charName: string;
 	public get charName(): string { return this._charName; }
@@ -16,11 +18,13 @@ class Character extends egret.DisplayObjectContainer {
 	private _hidenBuffs: Buff[];
 	private _perfQueue: { pType: PType, param?: any }[];
 	public mCamp: CharCamp;
+	private _curRs: number;
 
 	// display
 	private _lifeBarFg: egret.Bitmap;
 	private _shieldBar: egret.Bitmap;
 	private _buffBar: egret.DisplayObjectContainer;
+	private _rsBar: egret.Shape;
 	// background select img or shadow
 	private _bgLayer: egret.DisplayObjectContainer;
 	private _col: CCType;
@@ -31,9 +35,10 @@ class Character extends egret.DisplayObjectContainer {
 	private _alive: boolean;
 	public get alive(): boolean { return this._alive; }
 	public set alive(inputAlive: boolean) {
-		// if alive -> die
 		if (!inputAlive && this._alive) {
+			// if alive -> die
 			this._alive = false;
+			this._curRs = 0;
 			// remove buff need remove
 			for (let buff of this.getAllBuff()) {
 				if (buff.isDeadRemove) {
@@ -84,7 +89,15 @@ class Character extends egret.DisplayObjectContainer {
 		} else if (this.mCamp === CharCamp.Player) {
 			color = "#7FFF00";
 		}
-		return `<b><font color="${color}">${this.charName}</font></b>` +
+
+		let addInfo = "";
+		// if not alive
+		if (!this._alive) {
+			addInfo = `<font color="#EE7942"><b>复活进度: </b></font><font color="#7FFF00">${this._curRs}</font>/${Character.resurgencePoint}\n\n`
+		}
+
+
+		return `${addInfo}<b><font color="${color}">${this.charName}</font></b>` +
 			`\n<font color="#3D3D3D" size="15">${this.feature}</font>\n\n${this.mAttr.toString()}`;
 	}
 
@@ -116,6 +129,8 @@ class Character extends egret.DisplayObjectContainer {
 			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` +
 				`${buff.buffName}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
 		}
+
+
 		return `<font color="#EE7942"><b>被动技能</b></font>\n` +
 			`${passiveSkillsDesc}\n\n` +
 			`<font color="#EE7942"><b>当前状态</b></font>\n` +
@@ -188,9 +203,57 @@ class Character extends egret.DisplayObjectContainer {
 		headBar.addChild(shieldBar);
 		this._shieldBar = shieldBar;
 
+		// resugence progress bar
+		let shape = new egret.Shape();
+		headBar.addChild(shape);
+		shape.visible = false;
+		this._rsBar = shape;
+
 		this.setToProperPosition();
 		// start idle
 		this.nextPerf();
+
+	}
+
+	private drawRsProgress(): void {
+		let progress = this._curRs / Character.resurgencePoint;
+		progress = progress > 1 ? 1 : progress;
+		let endRadian = Math.PI * (progress * 2 - 0.5);
+		let startRadian = -Math.PI * 0.5;
+		let shape = this._rsBar;
+		egret.Tween.removeTweens(shape);
+		shape.graphics.clear();
+		shape.visible = true;
+		shape.alpha = 1;
+		shape.graphics.beginFill(0xC0FF3E);
+		let x = -20;
+		let y = 5;
+		let r = 15;
+		shape.graphics.moveTo(x, y);//绘制点移动(r, r)点
+		shape.graphics.lineTo(x, y - r);//画线到弧的起始点
+		shape.graphics.drawArc(x, y, r, startRadian, endRadian, false);//从起始点顺时针画弧到终点
+		shape.graphics.lineTo(x, y);//从终点画线到圆形。到此扇形的封闭区域形成
+		shape.graphics.endFill();
+	}
+
+	public getRsPoint(pt: number): void {
+		if (this._alive || !this._isInBattle) {
+			// only avaliable when die
+			return;
+		}
+		this._curRs += pt;
+		this.drawRsProgress();
+		if (this._curRs >= Character.resurgencePoint) {
+			this.alive = true;
+			this._curRs = 0;
+			let newHp = this.mAttr.maxHp;
+			this.mAttr.hp = newHp;
+			this.nextPerf({ pType: PType.Resurgence });
+			this.nextPerf({ pType: PType.LifeBar, param: { hpOld: 0, hpNew: newHp } })
+			let rsBar = this._rsBar;
+			egret.Tween.get(rsBar).to({ alpha: 0 }, 1000).call(() => rsBar.visible = false);
+		}
+
 	}
 
 	private lifeBarAnim(newHp?: number): egret.Tween {
@@ -356,16 +419,17 @@ class Character extends egret.DisplayObjectContainer {
 			this._perfQueue.push(p);
 		}
 
+		if (this._isInPerf) {
+			return;
+		}
+
 		if (this._perfQueue.length == 0) {
-			if (this._isInBattle) {
+			if (this._isInBattle && this._alive) {
 				this._armatureDisplay.animation.play("idle", 0);
 			}
 			return;
 		}
 
-		if (this._isInPerf) {
-			return;
-		}
 
 		this._isInPerf = true;
 		let nextP = this._perfQueue.shift();
@@ -471,14 +535,14 @@ class Character extends egret.DisplayObjectContainer {
 	public removeBuff(buff: Buff): void {
 		switch (buff.exType) {
 			case BuffExTy.HideBuff:
-				Util.removeObjFromArray(this._hidenBuffs, this);
+				Util.removeObjFromArray(this._hidenBuffs, buff);
 				break;
 			case BuffExTy.NormalBuff:
-				Util.removeObjFromArray(this._normalBuffs, this);
+				Util.removeObjFromArray(this._normalBuffs, buff);
 				this.adjustBuffIconPos();
 				break;
 			case BuffExTy.PassvieSkill:
-				Util.removeObjFromArray(this._passiveSkills, this);
+				Util.removeObjFromArray(this._passiveSkills, buff);
 				break;
 		}
 	}

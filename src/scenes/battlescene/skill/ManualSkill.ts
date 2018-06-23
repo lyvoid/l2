@@ -156,13 +156,9 @@ class ManualSkill {
 
 	// 默认演出
 	private dftPrPerf(): void {
-		if (this._isNoUseDefaultPerf) {
-			// if this skill don't need performance
-			return;
-		}
 		let caster = this._caster;
 		if (!caster) {
-			// if no caster, return (will be extended in the future)
+			// TODO: if no caster, return (will be extended in the future)
 			return;
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;;
