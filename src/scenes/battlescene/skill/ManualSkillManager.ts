@@ -31,7 +31,6 @@ class ManualSkillManager {
             skillInfo['isSelectInBattle'],
             skillInfo['selectNeedBelong'],
             skillInfo['selectNeedStat'],
-            skillInfo['selfNeedStat'],
             skillInfo['affectFunStrId'],
             cast,
             camp

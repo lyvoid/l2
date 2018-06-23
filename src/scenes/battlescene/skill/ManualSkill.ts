@@ -14,7 +14,6 @@ class ManualSkill {
 	private _isSelectInBattle: boolean;
 	private _selectNeedBelong: number;//0:noneed,1:self,2:enemy
 	private _selectNeedStat: number;//0:noneed,1:alive,2:dead
-	private _selfNeedStat: number;//0:noneed,1:alive,2:dead
 	// affect
 	private _affectFunStrId: string;
 
@@ -50,7 +49,6 @@ class ManualSkill {
 		isSelectInBattle: boolean,
 		selectNeedBelong: number = 0,
 		selectNeedStat: number = 0,
-		selfNeedStat: number = 0,
 		affectFunStrId: string,
 		caster: Character,
 		camp: CharCamp
@@ -64,8 +62,7 @@ class ManualSkill {
 		this._buffsIdToTarget = buffsIdToTarget;
 		this._targetSelectId = targetSelectId;
 		this._selectNeedStat = selectNeedStat;
-		this._selectNeedBelong = selectNeedBelong;
-		this._selfNeedStat = selfNeedStat;
+		this._selectNeedBelong = selectNeedBelong;;
 		this._hurtIdToSelf = hurtIdToSelf;
 		this._hurtIdToTarget = hurtIdToTarget;
 		this._buffsIdToSelf = buffsIdToSelf;
@@ -231,12 +228,6 @@ class ManualSkill {
 		if (this._caster) {
 			if (!this._caster.isInBattle) {
 				return [false, "释放者已被排除出游戏外"];
-			}
-			if (this._selfNeedStat == 1 && !this._caster.alive) {
-				return [false, "释放者已死亡"];
-			}
-			if (this._selfNeedStat == 2 && this._caster.alive) {
-				return [false, "释放者未死亡"];
 			}
 		}
 		return [true, ""];
