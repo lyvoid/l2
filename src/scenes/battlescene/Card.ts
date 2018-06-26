@@ -2,12 +2,13 @@ class Card extends egret.DisplayObjectContainer {
 
 	public mSkillId: number;
 	public mCaster: Character;
+	private _skillIcon: egret.Bitmap;
 	public get description(): string {
 		let caster = this.mCaster;
 		let casterName = caster ? caster.charName : "无";
 		let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
 		let affectDescpt = skillInfo['description'];
-		if (this.mCaster && !this.mCaster.alive){
+		if (this.mCaster && !this.mCaster.alive) {
 			affectDescpt += `<font color="#C0FF3E">(当前释放单位死亡，使用卡片效果替换为累计复活进度)</font>`
 		}
 		return `<font color="#EE7942"><b>${skillInfo['skillName']}</b></font>
@@ -34,6 +35,14 @@ class Card extends egret.DisplayObjectContainer {
 		this.scaleY = 1;
 		this.y = 0;
 		this.touchEnabled = true;
+		let texture = RES.getRes(ConfigManager.Ins.mSkillConfig[skillId]["iconName"]);
+		let skillIcon = new egret.Bitmap(texture);
+		skillIcon.width = 72;
+		skillIcon.height = 122;
+		skillIcon.x = 4;
+		skillIcon.y = 4;
+		this.addChild(skillIcon);
+		this._skillIcon = skillIcon;
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
@@ -137,5 +146,7 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		this.mCaster = null;
+		Util.safeRemoveFromParent(this._skillIcon);
+		this._skillIcon = null;
 	}
 }

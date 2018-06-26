@@ -3,6 +3,8 @@ class ManualSkill {
 	private _skillName: string;
 	private _fireNeed: number;
 	private _description: string;
+	private _iconName: string;
+	public get iconName(): string{return this._iconName}
 	// affect info // enable when targetselect not 0
 	private _targetSelectId: number;
 	private _hurtIdToTarget: number;
@@ -10,6 +12,8 @@ class ManualSkill {
 	private _buffsIdToTarget: number[];
 	private _buffsIdToSelf: number[];
 	private _isNoUseDefaultPerf: boolean;
+	private _isRemovePosBuff: boolean;
+	private _isRemoveNegBuff: boolean;
 	// can cast judge 
 	private _isSelectInBattle: boolean;
 	private _selectNeedBelong: number;//0:noneed,1:self,2:enemy
@@ -40,6 +44,9 @@ class ManualSkill {
 		skillName: string,
 		fireNeed: number = 0,
 		description: string,
+		iconName: string,
+		isRemovePosBuff: boolean,
+		isRemoveNegBuff: boolean,
 		buffsIdToTarget: number[],
 		buffsIdToSelf: number[],
 		hurtIdToTarget: number,
@@ -53,6 +60,9 @@ class ManualSkill {
 		caster: Character,
 		camp: CharCamp
 	) {
+		this._isRemoveNegBuff = isRemoveNegBuff;
+		this._isRemovePosBuff = isRemovePosBuff;
+		this._iconName = iconName;
 		this._isSelectInBattle = isSelectInBattle;
 		this._skillName = skillName;
 		this._description = description;
@@ -123,6 +133,10 @@ class ManualSkill {
 				for (let buffid of this._buffsIdToTarget) {
 					let buff = scene.mBuffManager.newBuff(buffid);
 					buff.attachToChar(target);
+				}
+
+				if (this._isRemoveNegBuff || this._isRemovePosBuff){
+					target.removeAllBuff(this._isRemovePosBuff, this._isRemoveNegBuff);
 				}
 			}
 		}

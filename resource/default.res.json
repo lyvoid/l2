@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json,target_select_json,char_json,battle_json,battle_enemy_json",
+			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json,target_select_json,char_json,battle_json,battle_enemy_json,skill_icon_attack_png",
 			"name": "preload"
 		},
 		{
@@ -227,39 +227,44 @@
 			"name": "bufficontest_png"
 		},
 		{
-			"name": "buff_json",
+			"url": "json_config/buff.json",
 			"type": "json",
-			"url": "json_config/buff.json"
+			"name": "buff_json"
 		},
 		{
-			"name": "hurt_json",
+			"url": "json_config/hurt.json",
 			"type": "json",
-			"url": "json_config/hurt.json"
+			"name": "hurt_json"
 		},
 		{
-			"name": "skill_json",
+			"url": "json_config/skill.json",
 			"type": "json",
-			"url": "json_config/skill.json"
+			"name": "skill_json"
 		},
 		{
-			"name": "target_select_json",
+			"url": "json_config/target_select.json",
 			"type": "json",
-			"url": "json_config/target_select.json"
+			"name": "target_select_json"
 		},
 		{
-			"name": "char_json",
+			"url": "json_config/char.json",
 			"type": "json",
-			"url": "json_config/char.json"
+			"name": "char_json"
 		},
 		{
-			"name": "battle_json",
+			"url": "json_config/battle.json",
 			"type": "json",
-			"url": "json_config/battle.json"
+			"name": "battle_json"
 		},
 		{
-			"name": "battle_enemy_json",
+			"url": "json_config/battle_enemy.json",
 			"type": "json",
-			"url": "json_config/battle_enemy.json"
+			"name": "battle_enemy_json"
+		},
+		{
+			"name": "skill_icon_attack_png",
+			"type": "image",
+			"url": "skillicon/skill_icon_attack.png"
 		}
 	]
 }

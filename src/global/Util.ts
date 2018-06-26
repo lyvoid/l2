@@ -15,7 +15,8 @@ class Util{
     /**
      * 安全移除egret的子物体，防止父物体空错误
      */
-    public static safeRemove(element:any): void{
+    public static safeRemoveFromParent(element:any): void{
+        if (!element) return;
 		let p = element.parent;
 		if (p){
 			p.removeChild(element);

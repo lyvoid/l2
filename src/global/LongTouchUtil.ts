@@ -102,8 +102,9 @@ class LongTouchUtil {
 		egret.clearTimeout(LongTouchUtil.touchBeginTime);
 		LongTouchUtil.holderObj = null;
 		if (LongTouchUtil.isInLongTouch) {
+			LongTouchUtil.isInLongTouch = false;
 			this.onLongTouchEnd();
-			Util.safeRemove(LongTouchUtil.longTouchMask);
+			Util.safeRemoveFromParent(LongTouchUtil.longTouchMask);
 		}
 	}
 
@@ -114,7 +115,7 @@ class LongTouchUtil {
 	public static clear(): void {
 		LongTouchUtil.isInLongTouch = false;
 		LongTouchUtil.holderObj = null;
-		Util.safeRemove(LongTouchUtil.longTouchMask);
+		Util.safeRemoveFromParent(LongTouchUtil.longTouchMask);
 		egret.clearTimeout(LongTouchUtil.touchBeginTime);
 	}
 

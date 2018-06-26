@@ -4,6 +4,7 @@ class UIBattleScene extends eui.Component {
 	public roundEndButton: eui.Button;
 	public cardNumLabel: eui.Label;
 	public fireNumLabel: eui.Label;
+	public roundLabel: eui.Label;
 
 
 	public constructor() {

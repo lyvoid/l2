@@ -8,4 +8,5 @@
 	<e:Label id="fireNumLabel" text="10/10" bottom="180" left="245" width="76" fontFamily="Arial"/>
 	<e:Label text="能量：" bottom="180" left="170" width="119" textColor="0xff6700" bold="true" anchorOffsetX="0" fontFamily="Arial"/>
 	<e:Label text="手牌：" bottom="180" left="6" width="96" textColor="0xff6700" anchorOffsetX="0" bold="true" borderColor="0xffffff" fontFamily="Arial"/>
+	<e:Label id="roundLabel" text="第 1 回合" top="10" textColor="0xff6700" size="40" horizontalCenter="0" bold="true" fontFamily="Arial"/>
 </e:Skin>

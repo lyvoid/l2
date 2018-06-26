@@ -15,15 +15,15 @@ class HurtManager {
 		}
 		let info = ConfigManager.Ins.mHurtConfig[id];
 		hurt.initial(
-			info['hurtType'],
-			info['rate'],
-			info['isAbs'],
-			info['absValue'],
-			info['isPericeShield'],
-			info['idDoubleShield'],
-			info['isResurgence'],
-			info['isRemoveFromGame'],
-			info['isRemoveFromGameWhenDie'],
+			info["hurtType"],
+			info["rate"],
+			info["isAbs"],
+			info["absValue"],
+			info["isPericeShield"],
+			info["idDoubleShield"],
+			info["isResurgence"],
+			info["isRemoveFromGame"],
+			info["isRemoveFromGameWhenDie"],
 			fromChar
 		);
 		return hurt;

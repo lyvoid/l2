@@ -126,7 +126,9 @@ class Character extends egret.DisplayObjectContainer {
 				continue;
 			}
 			buffAdded.push(buff.id);
-			buffsDesc = `${buffsDesc}<font color="#7FFF00"><b>` +
+			let color = "#EE2C2C";
+			if(buff.isPositive) color = "#7FFF00";
+			buffsDesc = `${buffsDesc}<font color="${color}"><b>` +
 				`${buff.buffName}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
 		}
 
@@ -213,6 +215,15 @@ class Character extends egret.DisplayObjectContainer {
 		// start idle
 		this.nextPerf();
 
+	}
+
+	// only in normal buff
+	public removeAllBuff(isRemovePos: boolean, isRemoveNeg: boolean): void {
+		for (let buff of this._normalBuffs) {
+			if ((buff.isPositive && isRemovePos) || (!buff.isPositive && isRemoveNeg)) {
+				buff.removeFromChar();
+			}
+		}
 	}
 
 	private drawRsProgress(): void {

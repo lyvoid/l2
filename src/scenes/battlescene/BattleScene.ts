@@ -147,7 +147,6 @@ class BattleScene extends IScene {
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.cardLayer
 		).addChild(this.mPlayerFireBoard);
-		this.mPlayerFireBoard.addFires(2);
 
 		// 初始化game层的内容
 		this.mEnemies = [];
@@ -212,10 +211,6 @@ class BattleScene extends IScene {
 			LayerManager.Ins.gameLayer,
 			BattleSLEnum.CharLayer
 		).addChild(this.mCardBoard);
-
-		// 初始2张卡牌
-		this.mCardBoard.distCardNormal();
-		this.mCardBoard.distCardNormal();
 
 		// 初始化场景中的StatePool
 		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase();

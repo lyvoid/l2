@@ -4,7 +4,7 @@
 class PlayerRoundStartPhase extends ISceneState {
 	protected scene: BattleScene;
 
-	public initial(scene: IScene){
+	public initial(scene: IScene) {
 		super.initial(scene);
 
 		// 1.发牌 + 能量
@@ -19,7 +19,12 @@ class PlayerRoundStartPhase extends ISceneState {
 		this.scene.mCardBoard.distCardNormal();
 
 		// 加能量
-		this.scene.mPlayerFireBoard.addFires(2);
+		// 第几回合加到几点
+		let fireNum = this.scene.mPlayerFireBoard.mFireNum;
+		let fireAdd = this.scene.mRound - fireNum;
+		if (fireAdd > 0) {
+			this.scene.mPlayerFireBoard.addFires(fireAdd);
+		}
 
 		// buff结算(待增加
 
