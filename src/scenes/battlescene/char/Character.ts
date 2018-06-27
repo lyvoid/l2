@@ -581,6 +581,8 @@ class Character extends egret.DisplayObjectContainer {
 			this.onAnimEnd,
 			this
 		);
+
+		this._armatureDisplay.dispose();
 		this._armatureDisplay = null;
 
 		if (this.mAttr) {
@@ -594,6 +596,7 @@ class Character extends egret.DisplayObjectContainer {
 		this._normalBuffs = null;
 		this._passiveSkills = null;
 		this._perfQueue = null;
+		this.removeChildren();
 	}
 }
 

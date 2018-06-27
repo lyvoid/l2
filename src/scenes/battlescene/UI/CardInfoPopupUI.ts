@@ -10,5 +10,10 @@ class CardInfoPopupUI extends eui.Component {
 	public setDescFlowText(content: string): void{
 		this.desc.textFlow = (new egret.HtmlTextParser).parse(content);
 	}
+
+	public release(): void{
+		this.desc = null;
+		this.removeChildren();
+	}
 	
 }

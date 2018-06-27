@@ -11,37 +11,65 @@ class UIBattleScene extends eui.Component {
 		super();
 		this.skinName = "mySkin.UIBattleScene";
 
-		// 这里的三个侦听事件就不做手动释放了，应该都会自己释放的
 		this.roundEndButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
-			()=>{
-				// 如果玩家点击了回合结束按键，进入到回合结束阶段
-				this.roundEndButton.visible = false;
-				// 回合结束
-				let scene = SceneManager.Ins.curScene as BattleScene;
-				scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
-			},
+			this.onRoundEndButtonTap,
 			this
 		);
 
 		// 两个作弊功能
 		this.addCardButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
-			()=>{
-				let scene = SceneManager.Ins.curScene as BattleScene;
-				scene.mCardBoard.distCardNormal();
-			},
+			this.onACBTTap,
 			this
 		);
-		// 作弊功能
 		this.addFireButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
-			() =>{
-				let scene = SceneManager.Ins.curScene as BattleScene;
-				scene.mPlayerFireBoard.addFires(2);
-			},
+			this.onAFBTTap,
 			this
 		);
+	}
+
+	private onRoundEndButtonTap(): void {
+		this.roundEndButton.visible = false;
+		// 回合结束
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundEndPhase);
+	}
+
+	private onACBTTap(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mCardBoard.distCardNormal();
+	}
+
+	private onAFBTTap(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		scene.mPlayerFireBoard.addFires(2);
+	}
+
+	public release(): void {
+		this.addCardButton.removeEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onACBTTap,
+			this
+		);
+		this.addFireButton.removeEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onAFBTTap,
+			this
+		);
+		this.roundEndButton.removeEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onRoundEndButtonTap,
+			this
+		);
+		this.addCardButton = null;
+		this.addFireButton = null;
+		this.roundEndButton = null;
+		this.cardNumLabel = null;
+		this.fireNumLabel = null;
+		this.roundLabel = null;
+		this.removeChildren();
 	}
 
 }

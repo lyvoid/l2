@@ -82,6 +82,7 @@ class FireBoard extends egret.DisplayObjectContainer {
 		for (let i of this._timeOutHandles) {
 			egret.clearTimeout(i);
 		}
+		this.removeChildren();
 	}
 
 }

@@ -13,4 +13,10 @@ class CharacterInfoPopupUI extends eui.Component {
 	public setSkillDescFlowText(content: string): void{
 		this.skillDesc.textFlow = (new egret.HtmlTextParser).parse(content);
 	}
+
+	public release():void{
+		this.desc = null;
+		this.skillDesc = null;
+		this.removeChildren();
+	}
 }

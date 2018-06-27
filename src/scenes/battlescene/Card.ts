@@ -2,7 +2,6 @@ class Card extends egret.DisplayObjectContainer {
 
 	public mSkillId: number;
 	public mCaster: Character;
-	private _skillIcon: egret.Bitmap;
 	public get description(): string {
 		let caster = this.mCaster;
 		let casterName = caster ? caster.charName : "无";
@@ -17,17 +16,14 @@ class Card extends egret.DisplayObjectContainer {
 <b>作用效果:</b> ${affectDescpt}`;
 	}
 
-	public constructor() {
-		super();
+	public initial(skillId: number, caster: Character): void {
+		this.removeChildren();
 		this.width = 80;
 		this.height = 130;
 		let cardBg: egret.Bitmap = new egret.Bitmap(RES.getRes("cardbg_png"));
 		cardBg.width = this.width;
 		cardBg.height = this.height;
 		this.addChild(cardBg);
-	}
-
-	public initial(skillId: number, caster: Character): void {
 		this.mSkillId = skillId;
 		this.mCaster = caster;
 		this.alpha = 1;
@@ -42,7 +38,6 @@ class Card extends egret.DisplayObjectContainer {
 		skillIcon.x = 4;
 		skillIcon.y = 4;
 		this.addChild(skillIcon);
-		this._skillIcon = skillIcon;
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
@@ -146,7 +141,6 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		this.mCaster = null;
-		Util.safeRemoveFromParent(this._skillIcon);
-		this._skillIcon = null;
 	}
+
 }

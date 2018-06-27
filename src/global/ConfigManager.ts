@@ -8,8 +8,6 @@ class ConfigManager{
 		return this._instance;
 	}
 
-    private constructor(){}
-
     public mSkillConfig;
     public mHurtConfig;
     public mBuffConfig;

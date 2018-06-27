@@ -144,9 +144,14 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public release(): void {
 		for (let card of this._cards){
 			card.release();
+			card.removeChildren();
+		}
+		for (let card of this._cardPool){
+			card.removeChildren();
 		}
 		this._cards = null;
 		this._cardPool = null;
+		this.removeChildren();
 	}
 
 }

@@ -17,7 +17,7 @@ class BattleScene extends IScene {
 
 	// ui
 	public mBattleUI: UIBattleScene;
-	public mBattleEndPopUp: BattleEndPopUp;
+	public mBattleEndPopUpUI: BattleEndPopUp;
 	public mCardInfoPopupUI: CardInfoPopupUI;
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
 	private _castQueue: { cast: () => void }[];
@@ -73,7 +73,7 @@ class BattleScene extends IScene {
 		let battleEndPopUp = new BattleEndPopUp();
 		battleEndPopUp.height = LayerManager.Ins.stageHeight;
 		battleEndPopUp.width = LayerManager.Ins.stageWidth;
-		this.mBattleEndPopUp = battleEndPopUp;
+		this.mBattleEndPopUpUI = battleEndPopUp;
 
 		let charInfoPopupUI = new CharacterInfoPopupUI();
 		charInfoPopupUI.width = LayerManager.Ins.stageWidth;
@@ -263,11 +263,11 @@ class BattleScene extends IScene {
 		let lm = LayerManager.Ins
 		lm.maskLayer.addChild(lm.maskBg);
 		if (this.mWinnerCamp == CharCamp.Player) {
-			this.mBattleEndPopUp.winUIAdjust();
+			this.mBattleEndPopUpUI.winUIAdjust();
 		} else {
-			this.mBattleEndPopUp.lostUIAdjust();
+			this.mBattleEndPopUpUI.lostUIAdjust();
 		}
-		LayerManager.Ins.popUpLayer.addChild(this.mBattleEndPopUp);
+		LayerManager.Ins.popUpLayer.addChild(this.mBattleEndPopUpUI);
 	}
 
 	// 用来锁住，一次只能有一个skill在cast，保证cast顺序正确
@@ -296,6 +296,28 @@ class BattleScene extends IScene {
 	}
 
 	public release() {
+		LayerManager.getSubLayerAt(
+			LayerManager.Ins.gameLayer,
+			BattleSLEnum.bgLayer
+		).removeChildren();
+
+		LayerManager.getSubLayerAt(
+			LayerManager.Ins.gameLayer,
+			BattleSLEnum.cardLayer
+		).removeChildren();
+
+
+		LayerManager.getSubLayerAt(
+			LayerManager.Ins.gameLayer,
+			BattleSLEnum.CharLayer
+		).removeChildren();
+
+
+		LayerManager.getSubLayerAt(
+			LayerManager.Ins.gameLayer,
+			BattleSLEnum.fgLayer
+		).removeChildren();
+
 		super.release();
 
 		this.mDbManager.release();
@@ -303,9 +325,6 @@ class BattleScene extends IScene {
 
 		this.mCardBoard.release();
 		this.mCardBoard = null;
-
-		this.mBattleUI = null;
-		this.mBattleEndPopUp = null;
 
 		this.mDamageFloatManager.release();
 		this.mDamageFloatManager = null;
@@ -315,15 +334,23 @@ class BattleScene extends IScene {
 
 		this.mPhaseUtil.release();
 		this.mPhaseUtil = null;
-		LongTouchUtil.clear();
 
 		this.mSelectImg = null;
 		this.mSelectedChar = null;
 		this.mFilterManager.release();
 		this.mFilterManager = null;
 
+		this._castQueue = null;
+
+		// release ui
+		this.mBattleUI.release();
+		this.mCardInfoPopupUI.release();
+		this.mCharInfoPopupUI.release();
+		this.mBattleEndPopUpUI.release();
 		this.mCardInfoPopupUI = null;
 		this.mCharInfoPopupUI = null;
+		this.mBattleUI = null;
+		this.mBattleEndPopUpUI = null;
 
 		for (let char of this.mEnemies.concat(this.mFriends)) {
 			char.release();

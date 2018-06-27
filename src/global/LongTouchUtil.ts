@@ -5,7 +5,7 @@
  * thisObj 需要实现onLongTouchBegin 与 onLongTouchEnd 方法
  */
 class LongTouchUtil {
-	private static touchBeginTime;
+	private static touchBeginTimeOutIndex;
 	public static holderObj; // 一个时间点只能有一个对象进入长按逻辑
 	public static isInLongTouch: boolean = false;
 	private static longTouchMask = new egret.DisplayObjectContainer();
@@ -67,8 +67,8 @@ class LongTouchUtil {
 		}
 		LongTouchUtil.holderObj = this;
 
-		egret.clearTimeout(LongTouchUtil.touchBeginTime);
-		LongTouchUtil.touchBeginTime = egret.setTimeout(
+		egret.clearTimeout(LongTouchUtil.touchBeginTimeOutIndex);
+		LongTouchUtil.touchBeginTimeOutIndex = egret.setTimeout(
 			() => {
 				// 加遮罩，防止二次触发
 				let lm = LayerManager.Ins;
@@ -89,7 +89,7 @@ class LongTouchUtil {
 	 * 如果触发了长按，肯定不存在会有TOUCH_END消息发出来
 	 */
 	private static onTouchEnd(): void {
-		egret.clearTimeout(LongTouchUtil.touchBeginTime);
+		egret.clearTimeout(LongTouchUtil.touchBeginTimeOutIndex);
 		LongTouchUtil.holderObj = null;
 	}
 
@@ -99,7 +99,7 @@ class LongTouchUtil {
 	 * 未触发长按不处理
 	 */
 	private static onTouchOut(): void {
-		egret.clearTimeout(LongTouchUtil.touchBeginTime);
+		egret.clearTimeout(LongTouchUtil.touchBeginTimeOutIndex);
 		LongTouchUtil.holderObj = null;
 		if (LongTouchUtil.isInLongTouch) {
 			LongTouchUtil.isInLongTouch = false;
@@ -116,7 +116,7 @@ class LongTouchUtil {
 		LongTouchUtil.isInLongTouch = false;
 		LongTouchUtil.holderObj = null;
 		Util.safeRemoveFromParent(LongTouchUtil.longTouchMask);
-		egret.clearTimeout(LongTouchUtil.touchBeginTime);
+		egret.clearTimeout(LongTouchUtil.touchBeginTimeOutIndex);
 	}
 
 }

@@ -7,15 +7,12 @@ class UserData {
 		return this._instance;
 	}
 
-	public _battleId: number;
-	public get battleId(): number {
-		return this._battleId++;
-	}
+	public battleId: number;
 	public curUserTeam: { charId: number, row: CRType, col: CCType, level: number, }[]
 	private constructor() { }
 	public initial(): void {
 		// TODO:
-		this._battleId = 1;
+		this.battleId = 1;
 
 		// TODO: replace by get curUserTeam from service
 		let curUserTeam = [];
