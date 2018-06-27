@@ -358,6 +358,7 @@ class BattleScene extends IScene {
 		this.mFriends = null;
 		this.mEnemies = null;
 		this._charFactory.release();
+		this._charFactory = null;
 
 		this.mBuffManager.release();
 		this.mBuffManager = null;
