@@ -31,6 +31,7 @@ class ManualSkillManager {
             skillInfo["hurtIdToSelf"],
             skillInfo["targetSelectId"],
             skillInfo["isNoUseDefaultPerf"],
+            skillInfo["isDefPerfMove"],
             skillInfo["isSelectInBattle"],
             skillInfo["selectNeedBelong"],
             skillInfo["selectNeedStat"],

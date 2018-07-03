@@ -12,6 +12,7 @@ class ManualSkill {
 	private _buffsIdToTarget: number[];
 	private _buffsIdToSelf: number[];
 	private _isNoUseDefaultPerf: boolean;
+	private _isDefPerfMove: boolean;
 	private _isRemovePosBuff: boolean;
 	private _isRemoveNegBuff: boolean;
 	// can cast judge 
@@ -51,11 +52,12 @@ class ManualSkill {
 		buffsIdToSelf: number[],
 		hurtIdToTarget: number,
 		hurtIdToSelf: number,
-		targetSelectId: number = 0,
-		isNoUseDefaultPerf: boolean = false,
+		targetSelectId: number,
+		isNoUseDefaultPerf: boolean,
+		isDefPerfMove: boolean,
 		isSelectInBattle: boolean,
-		selectNeedBelong: number = 0,
-		selectNeedStat: number = 0,
+		selectNeedBelong: number,
+		selectNeedStat: number,
 		affectFunStrId: string,
 		caster: Character,
 		camp: CharCamp
@@ -78,6 +80,7 @@ class ManualSkill {
 		this._buffsIdToSelf = buffsIdToSelf;
 		this._affectFunStrId = affectFunStrId;
 		this._camp = camp;
+		this._isDefPerfMove = isDefPerfMove;
 		// initial custom affect function 
 		this._cusAffFc = SKAFFLS[this._affectFunStrId];
 	}
@@ -190,10 +193,10 @@ class ManualSkill {
 			}
 		}
 
-		let isMove: boolean = false;
-		// if all target is enemy, then add move action
-		if (enemiesNum == targets.length && enemiesNum > 0) {
-			isMove = true;
+		let isMove: boolean = this._isDefPerfMove;
+		// if not all target is enemy, don't move
+		if (!(enemiesNum == targets.length && enemiesNum > 0)) {
+			isMove = false;
 		}
 
 		if (isMove) {
