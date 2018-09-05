@@ -313,6 +313,12 @@ class BattleScene extends IScene {
 
 	}
 
+	public setState(state: ISceneState): void{
+		if((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == CharCamp.Neut){
+			egret.setTimeout(super.setState, this, 1000, state);
+		}
+	}
+
 	public async releaseResource() {
 		await RES.destroyRes("battlecommon");
 		for (let charactorName of ["Dragon", "Swordsman"]) {

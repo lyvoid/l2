@@ -3,7 +3,7 @@ class Hurt {
 	private _hurtType: HurtType; // 伤害类型（物理/魔法/治疗生命/增加护盾）
 	private _rate: number; // 伤害倍率
 	private _isAbs: boolean; // 是否绝对伤害（不考虑护甲）
-	private _absValue: number;// 绝对伤害对应的值是多少
+	private _absValue: number;// 绝对伤害对应的值是多少 
 	private _isPericeShield: boolean;// 是否穿透护盾（无视护盾，直接伤血）  治疗效果时无效
 	private _isDoubleShield: boolean;// 是否破盾（对有护盾的单位造成双倍伤害） 治疗效果时无效
 	private _isResurgence: boolean;// 是否复活 （仅治愈生命类型有效）
