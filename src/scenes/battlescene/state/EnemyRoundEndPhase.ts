@@ -1,23 +1,20 @@
 class EnemyRoundEndPhase extends ISceneState{
-	protected scene: BattleScene;
 
-	public initial(scene: IScene){
-		super.initial(scene);
-		// TODO 删除模拟延迟
-
+	public initial(){
 		ToastInfoManager.Ins.newToast("敌方回合结束阶段");
 
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		// buff round--
-		for (let char of this.scene.mEnemies){
+		for (let char of scene.mEnemies){
 			for (let buff of char.getAllBuff()){
 				buff.onCharEndPhase();
 			}
 		}
 
 		// 回合结束阶段技能效果
-		this.scene.mRound++; //回合数加一
-		this.scene.mBattleUI.roundLabel.text = `第 ${this.scene.mRound} 回合`;
-		this.scene.mPhaseUtil.changePhaseWithDelay(BattleSSEnum.PlayerRoundStartPhase);
+		scene.mRound++; //回合数加一
+		scene.mBattleUI.roundLabel.text = `第 ${scene.mRound} 回合`;
+		scene.setState(new PlayerRoundStartPhase());
 	}
 
 }

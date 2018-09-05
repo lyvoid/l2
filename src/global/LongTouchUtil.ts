@@ -8,7 +8,7 @@ class LongTouchUtil {
 	private static touchBeginTimeOutIndex;
 	public static holderObj; // 一个时间点只能有一个对象进入长按逻辑
 	public static isInLongTouch: boolean = false;
-	private static longTouchMask = new egret.DisplayObjectContainer();
+	private static _maskName = "longtouch";
 
 	/**
 	 * 绑定长按对象，长按Obj后调用thisObj.onLongTouchBegin()
@@ -72,8 +72,7 @@ class LongTouchUtil {
 			() => {
 				// 加遮罩，防止二次触发
 				let lm = LayerManager.Ins;
-				LongTouchUtil.longTouchMask.addChild(lm.maskBg);
-				lm.maskLayer.addChild(LongTouchUtil.longTouchMask);
+				LayerManager.Ins.addMask(LongTouchUtil._maskName);
 				LongTouchUtil.isInLongTouch = true;
 				this.onLongTouchBegin();
 			},
@@ -104,7 +103,7 @@ class LongTouchUtil {
 		if (LongTouchUtil.isInLongTouch) {
 			LongTouchUtil.isInLongTouch = false;
 			this.onLongTouchEnd();
-			Util.safeRemoveFromParent(LongTouchUtil.longTouchMask);
+			LayerManager.Ins.removeMask(LongTouchUtil._maskName);
 		}
 	}
 
@@ -115,7 +114,7 @@ class LongTouchUtil {
 	public static clear(): void {
 		LongTouchUtil.isInLongTouch = false;
 		LongTouchUtil.holderObj = null;
-		Util.safeRemoveFromParent(LongTouchUtil.longTouchMask);
+		LayerManager.Ins.removeMask(LongTouchUtil._maskName);
 		egret.clearTimeout(LongTouchUtil.touchBeginTimeOutIndex);
 	}
 

@@ -1,10 +1,5 @@
 class MessageType{
 
-	// 载入过程事件
-	public static LoadingProcess = "LoadingProcess";
-
-
-
 	// BattleScene
 	// 开始回合
 	public static EnemyRoundStart = "EnemyRoundStart";

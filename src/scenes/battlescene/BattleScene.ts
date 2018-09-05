@@ -24,47 +24,31 @@ class BattleScene extends IScene {
 
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp;
-	public mPhaseUtil: PhaseUtil;
+
+	// sub layer
+	private _gameBgLayer: egret.DisplayObjectContainer;
+	private _gameCharLayer: egret.DisplayObjectContainer;
+	private _gameFgLayer: egret.DisplayObjectContainer;
+	private _gameCardLayer: egret.DisplayObjectContainer;
 
 	public initial() {
 		super.initial();
 
 		// 实例化GameLayer的层
 		let gameLayer = LayerManager.Ins.gameLayer;
-		gameLayer.addChildAt(
-			new egret.DisplayObjectContainer(),
-			BattleSLEnum.bgLayer
-		);
-		gameLayer.addChildAt(
-			new egret.DisplayObjectContainer(),
-			BattleSLEnum.CharLayer
-		);
-		gameLayer.addChildAt(
-			new egret.DisplayObjectContainer(),
-			BattleSLEnum.fgLayer
-		);
-		gameLayer.addChildAt(
-			new egret.DisplayObjectContainer(),
-			BattleSLEnum.cardLayer
-		);
+		let gameBgLayer = new egret.DisplayObjectContainer();
+		let gameCharLayer = new egret.DisplayObjectContainer();
+		let gameFgLayer = new egret.DisplayObjectContainer();
+		let gameCardLayer = new egret.DisplayObjectContainer();
+		gameLayer.addChild(gameBgLayer);
+		gameLayer.addChild(gameCharLayer);
+		gameLayer.addChild(gameFgLayer);
+		gameLayer.addChild(gameCardLayer);
+		this._gameBgLayer = gameBgLayer;
+		this._gameCharLayer = gameCharLayer;
+		this._gameFgLayer = gameFgLayer;
+		this._gameCardLayer = gameCardLayer;
 
-		this.runScene().catch(e => {
-			console.log(e);
-		}).then(() => {
-			console.log("battlescene场景初始化完成");
-			SceneManager.Ins.onSceneLoadingCompelete();
-			this.setState(BattleSSEnum.PlayerRoundStartPhase);
-		});
-
-	}
-
-	private async runScene() {
-
-		// 载入通用资源
-		await RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingLayer);
-		console.log("战场通用资源载入完成");
-
-		// 初始化UI
 		let ui = new UIBattleScene();
 		ui.height = LayerManager.Ins.stageHeight;
 		ui.width = LayerManager.Ins.stageWidth;
@@ -94,41 +78,21 @@ class BattleScene extends IScene {
 		this.mFilterManager = new FilterManager();
 		this.mRound = 1;
 
-		// 载入龙骨资源
-		for (let charactorName of ["Dragon", "Swordsman"]) {
-			await RES.getResAsync(`${charactorName}_db_ske_json`);
-			await RES.getResAsync(`${charactorName}_db_tex_json`);
-			await RES.getResAsync(`${charactorName}_db_tex_png`);
-		}
-		console.log("角色龙骨资源载入完成");
-
-		// 载入game层背景图片资源
-		await RES.getResAsync("bg_json");
-		console.log("战斗背景图片载入完成");
 		let bgTex_1: egret.Texture = RES.getRes("bg_json.-2_png");
 		let img1: egret.Bitmap = new egret.Bitmap(bgTex_1);
 		img1.width = LayerManager.Ins.stageWidth;
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.bgLayer
-		).addChild(img1);
+		this._gameBgLayer.addChild(img1);
 
 		let bgTex_2: egret.Texture = RES.getRes("bg_json.-1_png");
 		let img2: egret.Bitmap = new egret.Bitmap(bgTex_2);
 		img2.width = LayerManager.Ins.stageWidth;
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.bgLayer
-		).addChild(img2);
+		this._gameBgLayer.addChild(img2);
 
 		let bgTex_3: egret.Texture = RES.getRes("bg_json.0_png");
 		let img3: egret.Bitmap = new egret.Bitmap(bgTex_3);
 		img3.width = LayerManager.Ins.stageWidth;
 		img3.height = LayerManager.Ins.stageHeight;
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.bgLayer
-		).addChild(img3);
+		this._gameBgLayer.addChild(img3);
 
 		// 前景
 		let bgTex_4: egret.Texture = RES.getRes("bg_json.1_png");
@@ -136,17 +100,11 @@ class BattleScene extends IScene {
 		img4.width = LayerManager.Ins.stageWidth;
 		img4.y = LayerManager.Ins.stageHeight - img4.height;
 		img4.alpha = 0.5;
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.fgLayer
-		).addChild(img4);
+		this._gameFgLayer.addChild(img4);
 
 		//  初始化能量槽
 		this.mPlayerFireBoard = new FireBoard();
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.cardLayer
-		).addChild(this.mPlayerFireBoard);
+		this._gameCardLayer.addChild(this.mPlayerFireBoard);
 
 		// 初始化game层的内容
 		this.mEnemies = [];
@@ -157,7 +115,6 @@ class BattleScene extends IScene {
 		this.mHurtManager = new HurtManager();
 		this.mCardBoard = new CardBoard();
 		this.mDamageFloatManager = new DamageFloatManager();
-		this.mPhaseUtil = new PhaseUtil();
 		this.mManualSkillManager = new ManualSkillManager();
 		this.mTargetSelectManager = new TargetSelectManager();
 		this._castQueue = [];
@@ -190,10 +147,7 @@ class BattleScene extends IScene {
 			));
 		}
 		// add char to char layer
-		let charLayer = LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.CharLayer
-		);
+		let charLayer = this._gameCharLayer;
 		for (let char of this.mFriends.concat(this.mEnemies).sort(Character.sortFnByRow)) {
 			charLayer.addChild(char);
 			if (char.mCamp == CharCamp.Player) {
@@ -207,18 +161,25 @@ class BattleScene extends IScene {
 
 
 		// 发放游戏开始的卡牌
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.CharLayer
-		).addChild(this.mCardBoard);
+		this._gameCardLayer.addChild(this.mCardBoard);
 
-		// 初始化场景中的StatePool
-		this.statePool[BattleSSEnum.EnemyRoundEndPhase] = new EnemyRoundEndPhase();
-		this.statePool[BattleSSEnum.EnemyRoundStartPhase] = new EnemyRoundStartPhase();
-		this.statePool[BattleSSEnum.EnemyUseCardPhase] = new EnemyUseCardPhase();
-		this.statePool[BattleSSEnum.PlayerRoundEndPhase] = new PlayerRoundEndPhase();
-		this.statePool[BattleSSEnum.PlayerRoundStartPhase] = new PlayerRoundStartPhase();
-		this.statePool[BattleSSEnum.PlayerUseCardPhase] = new PlayerUseCardPhase();
+		this.setState(new PlayerRoundStartPhase());
+	}
+
+	public async loadResource() {
+		await RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI);
+		console.log("战场通用资源载入完成");
+		// 载入龙骨资源
+		for (let charactorName of ["Dragon", "Swordsman"]) {
+			await RES.getResAsync(`${charactorName}_db_ske_json`);
+			await RES.getResAsync(`${charactorName}_db_tex_json`);
+			await RES.getResAsync(`${charactorName}_db_tex_png`);
+		}
+		console.log("角色龙骨资源载入完成");
+
+		// 载入game层背景图片资源
+		await RES.getResAsync("bg_json");
+		console.log("战斗背景图片载入完成");
 	}
 
 	/**
@@ -261,7 +222,7 @@ class BattleScene extends IScene {
 	 */
 	private onBattleEnd(): void {
 		let lm = LayerManager.Ins
-		lm.maskLayer.addChild(lm.maskBg);
+		LayerManager.Ins.addMask("BattleEnd");
 		if (this.mWinnerCamp == CharCamp.Player) {
 			this.mBattleEndPopUpUI.winUIAdjust();
 		} else {
@@ -287,37 +248,11 @@ class BattleScene extends IScene {
 		this._isInCast = false;
 	}
 
-	private async loadResource() {
-
-	}
-
 	public update() {
 		super.update();
 	}
 
 	public release() {
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.bgLayer
-		).removeChildren();
-
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.cardLayer
-		).removeChildren();
-
-
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.CharLayer
-		).removeChildren();
-
-
-		LayerManager.getSubLayerAt(
-			LayerManager.Ins.gameLayer,
-			BattleSLEnum.fgLayer
-		).removeChildren();
-
 		super.release();
 
 		this.mDbManager.release();
@@ -331,9 +266,6 @@ class BattleScene extends IScene {
 
 		this.mPlayerFireBoard.release();
 		this.mPlayerFireBoard = null;
-
-		this.mPhaseUtil.release();
-		this.mPhaseUtil = null;
 
 		this.mSelectImg = null;
 		this.mSelectedChar = null;
@@ -374,13 +306,14 @@ class BattleScene extends IScene {
 		this.mTargetSelectManager.release();
 		this.mTargetSelectManager = null;
 
-		// 释放载入的美术资源
-		this.releaseResource().then(() => {
-			SceneManager.Ins.onSceneReleaseCompelete();
-		});
+		this._gameBgLayer = null;
+		this._gameCardLayer = null;
+		this._gameCharLayer = null;
+		this._gameFgLayer = null;
+
 	}
 
-	private async releaseResource() {
+	public async releaseResource() {
 		await RES.destroyRes("battlecommon");
 		for (let charactorName of ["Dragon", "Swordsman"]) {
 			await RES.destroyRes(`${charactorName}_db_ske_json`);
@@ -389,29 +322,4 @@ class BattleScene extends IScene {
 		}
 		await RES.destroyRes("bg_json");
 	}
-}
-
-/**
- * BattleScene 中所有的层列表
- * BattleScene Layer Names
- */
-enum BattleSLEnum {
-	bgLayer,
-	CharLayer,
-	fgLayer,
-	cardLayer,
-}
-
-/**
- * BattleScene 下的所有状态
- * BattleScene scene status enum
- *
- */
-enum BattleSSEnum {
-	PlayerRoundStartPhase,
-	PlayerRoundEndPhase,
-	PlayerUseCardPhase,
-	EnemyRoundStartPhase,
-	EnemyRoundEndPhase,
-	EnemyUseCardPhase
 }

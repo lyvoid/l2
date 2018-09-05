@@ -982,4 +982,3 @@ var particle;
     particle_2.GravityParticleSystem = GravityParticleSystem;
     __reflect(GravityParticleSystem.prototype, "particle.GravityParticleSystem");
 })(particle || (particle = {}));
-window['particle'] = particle;

@@ -1,5 +1,7 @@
 class LoadingUI extends eui.UILayer implements RES.PromiseTaskReporter{
 
+	private _loadProgressTF: eui.Label;
+
 	public constructor(stageHeight: number, stageWidth: number) {
 		super();
 		let blackBg = new egret.Shape();
@@ -13,24 +15,14 @@ class LoadingUI extends eui.UILayer implements RES.PromiseTaskReporter{
 		imageBg.scaleY = scale;
 		imageBg.y = (stageHeight - imageBg.height * scale) / 2;
 		this.addChild(imageBg);
-		this.textField = new eui.Label();
-		this.textField.bottom = 15;
-		this.textField.horizontalCenter = 0;
-		this.addChild(this.textField);
+		this._loadProgressTF = new eui.Label();
+		this._loadProgressTF.bottom = 15;
+		this._loadProgressTF.horizontalCenter = 0;
+		this.addChild(this._loadProgressTF);
 	}
-
-	private textField: eui.Label;
 
 	public onProgress(current: number, total: number): void {
-        this.textField.text = `Loading...${current}/${total}`;
+        this._loadProgressTF.text = `Loading...${current}/${total}`;
     }
 
-	/**
-	 * 不要用tw动画，否则会被清理
-	 */
-	public initial(): void{
-
-	}
-
-	public unInitial(): void{}
 }

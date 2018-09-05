@@ -25,11 +25,12 @@ class BattleEndPopUp extends eui.Component {
 	private onNextButtonTap(): void {
 		// TODO:
 		// UserData.Ins.battleId++;
-		SceneManager.Ins.setScene(new BattleScene(SceneManager.Ins));
+		SceneManager.Ins.setScene(new BattleScene());
 	}
 
 	private onRetryButtonTap(): void {
-		SceneManager.Ins.setScene(new BattleScene(SceneManager.Ins));
+		SceneManager.Ins.setScene(new BattleScene());
+		
 	}
 
 	/**
