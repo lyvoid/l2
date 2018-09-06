@@ -5,6 +5,8 @@ class Character extends egret.DisplayObjectContainer {
 	// info
 	private _charName: string;
 	public get charName(): string { return this._charName; }
+	private _charCode: string;
+	public get charCode(): string {return this._charCode}
 	private _feature: string;
 	public get feature(): string { return this._feature; }
 	private _manualSkillsId: number[];
@@ -163,6 +165,7 @@ class Character extends egret.DisplayObjectContainer {
 		this.mCamp = camp;
 		this._col = col;
 		this._row = row;
+		this._charCode = charCode;
 
 		// menber initial
 		this._passiveSkills = [];

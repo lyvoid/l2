@@ -1,5 +1,5 @@
 class CharFactory {
-	public newChar(
+	public static newChar(
 		id: number,
 		camp: CharCamp,
 		row: CRType,
@@ -39,5 +39,4 @@ class CharFactory {
 		return char;
 	}
 
-	public release(): void{}
 }

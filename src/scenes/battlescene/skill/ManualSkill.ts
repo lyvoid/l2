@@ -128,7 +128,7 @@ class ManualSkill {
 			if (this._hurtIdToTarget != 0) {
 				hurt = scene.mHurtManager.newHurt(
 					this._hurtIdToTarget,
-					this.caster
+					this._caster
 				);
 			}
 			for (let target of this._targets) {
@@ -147,7 +147,7 @@ class ManualSkill {
 		if (this._caster && this._hurtIdToSelf != 0) {
 			let hurt = scene.mHurtManager.newHurt(
 				this._hurtIdToSelf,
-				this.caster
+				this._caster
 			);
 			hurt.affect(this._caster);
 		}
@@ -164,8 +164,7 @@ class ManualSkill {
 
 	private selectTarget(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;;
-		let targetSelect = scene.mTargetSelectManager.getTargetSelect(this._targetSelectId);
-		this._targets = targetSelect.select(this._camp, this._caster);
+		this._targets = TargetSelect.selectTarget(this._targetSelectId, this._camp, this._caster);
 	}
 
 	// 默认演出

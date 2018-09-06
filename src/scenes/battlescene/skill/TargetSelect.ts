@@ -90,7 +90,7 @@ class TargetSelect {
      * 如果targetNum < 0 ，则放入所有的
      * （也就是说，如果 0 < targetNum < allNum; 就会存在一个随机
      */
-    public select(camp: CharCamp, caster: Character = null): Character[] {
+    private select(camp: CharCamp, caster: Character = null): Character[] {
         let allTargets = this.selectAll(camp, caster);
         if (allTargets.length <= this._targetNum || this._targetNum < 0) {
             return allTargets;
@@ -150,9 +150,23 @@ class TargetSelect {
         }
     }
 
-    public release(): void {
+    private static _ins: TargetSelect = new TargetSelect();
 
-    }
+	public static selectTarget(targetSelectId: number, camp: CharCamp, caster: Character = null): Character[] {
+		let info = ConfigManager.Ins.mTargetSelectConfig[targetSelectId];
+        let targetSelectIns = TargetSelect._ins;
+		targetSelectIns.initial(
+			info["targetNum"],
+			info["allNum"],
+			info["priorType"],
+			info["isContFriend"],
+			info["isContEnemy"],
+			info["isContDead"],
+			info["isContAlive"],
+			info["isReverse"]
+		);
+		return targetSelectIns.select(camp, caster);
+	}
 }
 
 /**

@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json,target_select_json,char_json,battle_json,battle_enemy_json,skill_icon_attack_png,gameEui_json",
+			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json,target_select_json,char_json,battle_json,battle_enemy_json,skill_icon_attack_png,gameEui_json,Swordsman_portrait_png,Dragon_portrait_png,card_info_json",
 			"name": "preload"
 		},
 		{
@@ -262,14 +262,29 @@
 			"name": "battle_enemy_json"
 		},
 		{
-			"name": "skill_icon_attack_png",
+			"url": "skillicon/skill_icon_attack.png",
 			"type": "image",
-			"url": "skillicon/skill_icon_attack.png"
+			"name": "skill_icon_attack_png"
 		},
 		{
-			"name": "gameEui_json",
+			"url": "gameEui.json",
 			"type": "json",
-			"url": "gameEui.json"
+			"name": "gameEui_json"
+		},
+		{
+			"url": "portrait/Dragon_portrait.png",
+			"type": "image",
+			"name": "Dragon_portrait_png"
+		},
+		{
+			"url": "portrait/Swordsman_portrait.png",
+			"type": "image",
+			"name": "Swordsman_portrait_png"
+		},
+		{
+			"name": "card_info_json",
+			"type": "json",
+			"url": "json_config/card_info.json"
 		}
 	]
 }

@@ -11,20 +11,14 @@ class BattleScene extends IScene {
 	public mPlayerFireBoard: FireBoard;
 	public mManualSkillIdPool: [number, Character][];
 	public mManualSkillManager: ManualSkillManager;
-	public mTargetSelectManager: TargetSelectManager;
-	private _charFactory: CharFactory;
+	public mDamageFloatManager: DamageFloatManager;
+	public mWinnerCamp: CharCamp;
 	public mRound: number;
-
 	// ui
 	public mBattleUI: UIBattleScene;
 	public mBattleEndPopUpUI: BattleEndPopUp;
 	public mCardInfoPopupUI: CardInfoPopupUI;
 	public mCharInfoPopupUI: CharacterInfoPopupUI;
-	private _castQueue: { cast: () => void }[];
-
-	public mDamageFloatManager: DamageFloatManager;
-	public mWinnerCamp: CharCamp;
-
 	// sub layer
 	private _gameBgLayer: egret.DisplayObjectContainer;
 	private _gameCharLayer: egret.DisplayObjectContainer;
@@ -33,8 +27,7 @@ class BattleScene extends IScene {
 
 	public initial() {
 		super.initial();
-
-		// 实例化GameLayer的层
+		// instantiate sub-layer of gamelayer
 		let gameLayer = LayerManager.Ins.gameLayer;
 		let gameBgLayer = new egret.DisplayObjectContainer();
 		let gameCharLayer = new egret.DisplayObjectContainer();
@@ -48,7 +41,7 @@ class BattleScene extends IScene {
 		this._gameCharLayer = gameCharLayer;
 		this._gameFgLayer = gameFgLayer;
 		this._gameCardLayer = gameCardLayer;
-
+		// instantiate ui
 		let ui = new UIBattleScene();
 		ui.height = LayerManager.Ins.stageHeight;
 		ui.width = LayerManager.Ins.stageWidth;
@@ -58,55 +51,49 @@ class BattleScene extends IScene {
 		battleEndPopUp.height = LayerManager.Ins.stageHeight;
 		battleEndPopUp.width = LayerManager.Ins.stageWidth;
 		this.mBattleEndPopUpUI = battleEndPopUp;
-
 		let charInfoPopupUI = new CharacterInfoPopupUI();
 		charInfoPopupUI.width = LayerManager.Ins.stageWidth;
 		charInfoPopupUI.height = LayerManager.Ins.stageHeight;
 		this.mCharInfoPopupUI = charInfoPopupUI;
-
 		let popUpInfo = new CardInfoPopupUI();
 		popUpInfo.width = LayerManager.Ins.stageWidth;
 		popUpInfo.height = LayerManager.Ins.stageHeight;
 		this.mCardInfoPopupUI = popUpInfo;
-
-		// 选择圈及滤镜初始化
+		// instantiate select circle
 		let selectTex = RES.getRes("selfSelectChar_png");
 		let selectImg = new egret.Bitmap(selectTex);
 		selectImg.x = -selectImg.width / 2;
 		selectImg.y = -selectImg.height / 2;
 		this.mSelectImg = selectImg;
+		// instantiate filter
 		this.mFilterManager = new FilterManager();
+		// initialize game round
 		this.mRound = 1;
-
+		// initialize game background
 		let bgTex_1: egret.Texture = RES.getRes("bg_json.-2_png");
 		let img1: egret.Bitmap = new egret.Bitmap(bgTex_1);
 		img1.width = LayerManager.Ins.stageWidth;
 		this._gameBgLayer.addChild(img1);
-
 		let bgTex_2: egret.Texture = RES.getRes("bg_json.-1_png");
 		let img2: egret.Bitmap = new egret.Bitmap(bgTex_2);
 		img2.width = LayerManager.Ins.stageWidth;
 		this._gameBgLayer.addChild(img2);
-
 		let bgTex_3: egret.Texture = RES.getRes("bg_json.0_png");
 		let img3: egret.Bitmap = new egret.Bitmap(bgTex_3);
 		img3.width = LayerManager.Ins.stageWidth;
 		img3.height = LayerManager.Ins.stageHeight;
 		this._gameBgLayer.addChild(img3);
-
-		// 前景
+		// initialize game frontground
 		let bgTex_4: egret.Texture = RES.getRes("bg_json.1_png");
 		let img4: egret.Bitmap = new egret.Bitmap(bgTex_4);
 		img4.width = LayerManager.Ins.stageWidth;
 		img4.y = LayerManager.Ins.stageHeight - img4.height;
 		img4.alpha = 0.5;
 		this._gameFgLayer.addChild(img4);
-
-		//  初始化能量槽
+		//  initialize fireboard
 		this.mPlayerFireBoard = new FireBoard();
 		this._gameCardLayer.addChild(this.mPlayerFireBoard);
-
-		// 初始化game层的内容
+		// initialize game content
 		this.mEnemies = [];
 		this.mFriends = [];
 		this.mManualSkillIdPool = [];
@@ -114,19 +101,15 @@ class BattleScene extends IScene {
 		this.mBuffManager = new BuffManager();
 		this.mHurtManager = new HurtManager();
 		this.mCardBoard = new CardBoard();
+		this._gameCardLayer.addChild(this.mCardBoard);
 		this.mDamageFloatManager = new DamageFloatManager();
 		this.mManualSkillManager = new ManualSkillManager();
-		this.mTargetSelectManager = new TargetSelectManager();
-		this._castQueue = [];
 		this.mWinnerCamp = CharCamp.Neut;
-		this._charFactory = new CharFactory();
-
-		// initial char
-		let charFactory = this._charFactory;
+		// initialize character
 		// initial player team
 		let teamInfo = UserData.Ins.curUserTeam;
 		for (let charInfo of teamInfo) {
-			this.mFriends.push(charFactory.newChar(
+			this.mFriends.push(CharFactory.newChar(
 				charInfo.charId,
 				CharCamp.Player,
 				charInfo.row,
@@ -139,14 +122,14 @@ class BattleScene extends IScene {
 		let enemiesId = battleInfo["enemy"];
 		for (let id of enemiesId) {
 			let enemyInfo = enemiesInfo[id];
-			this.mEnemies.push(charFactory.newChar(
+			this.mEnemies.push(CharFactory.newChar(
 				enemyInfo["charId"],
 				CharCamp.Enemy,
 				enemyInfo["row"],
 				enemyInfo["col"]
 			));
 		}
-		// add char to char layer
+		// add character to character layer
 		let charLayer = this._gameCharLayer;
 		for (let char of this.mFriends.concat(this.mEnemies).sort(Character.sortFnByRow)) {
 			charLayer.addChild(char);
@@ -158,11 +141,7 @@ class BattleScene extends IScene {
 		}
 		// select a default Enemy
 		this.mEnemies[0].onSelect();
-
-
-		// 发放游戏开始的卡牌
-		this._gameCardLayer.addChild(this.mCardBoard);
-
+		// initialize scene state
 		this.setState(new PlayerRoundStartPhase());
 	}
 
@@ -232,6 +211,7 @@ class BattleScene extends IScene {
 	}
 
 	// 用来锁住，一次只能有一个skill在cast，保证cast顺序正确
+	private _castQueue: { cast: () => void }[] = [];
 	private _isInCast: boolean = false;
 	public addToCastQueue(input: { cast: () => void } = null): void {
 		if (input) {
@@ -289,8 +269,6 @@ class BattleScene extends IScene {
 		}
 		this.mFriends = null;
 		this.mEnemies = null;
-		this._charFactory.release();
-		this._charFactory = null;
 
 		this.mBuffManager.release();
 		this.mBuffManager = null;
@@ -303,9 +281,6 @@ class BattleScene extends IScene {
 		this.mManualSkillManager.release();
 		this.mManualSkillManager = null;
 
-		this.mTargetSelectManager.release();
-		this.mTargetSelectManager = null;
-
 		this._gameBgLayer = null;
 		this._gameCardLayer = null;
 		this._gameCharLayer = null;
@@ -314,6 +289,7 @@ class BattleScene extends IScene {
 	}
 
 	public setState(state: ISceneState): void{
+		// add a delay in default setState
 		if((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == CharCamp.Neut){
 			egret.setTimeout(super.setState, this, 1000, state);
 		}

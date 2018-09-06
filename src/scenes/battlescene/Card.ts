@@ -1,7 +1,7 @@
 class Card extends egret.DisplayObjectContainer {
-
 	public mSkillId: number;
 	public mCaster: Character;
+	private _recycleTimes: number;
 	public get description(): string {
 		let caster = this.mCaster;
 		let casterName = caster ? caster.charName : "无";
@@ -14,6 +14,10 @@ class Card extends egret.DisplayObjectContainer {
 <b>释放单位:</b> ${casterName}
 <b>消耗能量:</b> ${skillInfo['fireNeed']}
 <b>作用效果:</b> ${affectDescpt}`;
+	}
+
+	public initialByCardId(cardId: number): void{
+		
 	}
 
 	public initial(skillId: number, caster: Character): void {
@@ -31,6 +35,7 @@ class Card extends egret.DisplayObjectContainer {
 		this.scaleY = 1;
 		this.y = 0;
 		this.touchEnabled = true;
+		// skill icon
 		let texture = RES.getRes(ConfigManager.Ins.mSkillConfig[skillId]["iconName"]);
 		let skillIcon = new egret.Bitmap(texture);
 		skillIcon.width = 72;
@@ -38,6 +43,17 @@ class Card extends egret.DisplayObjectContainer {
 		skillIcon.x = 4;
 		skillIcon.y = 4;
 		this.addChild(skillIcon);
+		// caster icon
+		if(caster != null){
+			let castPicTex = RES.getRes(caster.charCode + '_portrait_png');
+			let castPic = new egret.Bitmap(castPicTex);
+			castPic.width = 50;
+			castPic.height = 50;
+			castPic.x = 4;
+			castPic.y = -15;
+			this.addChild(castPic);
+		}
+		
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
@@ -108,11 +124,11 @@ class Card extends egret.DisplayObjectContainer {
 					skill.release();
 					return;
 				}
-				// 使用技能
+				// cast skill
 				skill.cast();
 			}
 
-			// 移除所需要的点数
+			// remove fire for casting skill
 			for (let i = 0; i < fireNeed; i++) {
 				fireboard.removeFire();
 			}

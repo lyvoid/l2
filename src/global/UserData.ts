@@ -8,7 +8,11 @@ class UserData {
 	}
 
 	public battleId: number;
-	public curUserTeam: { charId: number, row: CRType, col: CCType, level: number, }[]
+	public curUserTeam: { charId: number, row: CRType, col: CCType, level: number, }[];
+	public get userDeck(): number[]{
+		// TODO: replace by get from service
+		return [1, 2]
+	};
 	private constructor() { }
 	public initial(): void {
 		// TODO:
