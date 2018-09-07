@@ -14,6 +14,10 @@ declare module mySkin{
 	class UIBattleScene extends eui.Skin{
 	}
 }
+declare module mySkin{
+	class UIMainScene extends eui.Skin{
+	}
+}
 declare module skins{
 	class ButtonSkin extends eui.Skin{
 	}

@@ -4,7 +4,7 @@ class LayerManager {
 	public uiLayer: eui.UILayer;
 	private _maskLayer: eui.UILayer;
 	public popUpLayer: eui.UILayer;
-	private _loadingUI: LoadingUI;
+	private loadingUI: LoadingUI;
 	public stageWidth: number;
 	public stageHeight: number;
 	private _maskBg: egret.Bitmap;
@@ -17,10 +17,6 @@ class LayerManager {
 		return this._instance;
 	}
 
-	public get loadingUI(): LoadingUI {
-		return this._loadingUI;
-	}
-
 	private constructor() { }
 
 	public initial(stage: egret.Stage) {
@@ -30,12 +26,12 @@ class LayerManager {
 		this.stageWidth = stageWidth;
 		this.stageHeight = stageHeight;
 
-		this._loadingUI = new LoadingUI(stageHeight, stageWidth);
+		this.loadingUI = new LoadingUI(stageHeight, stageWidth);
 		this.uiLayer = new eui.UILayer();
 		this.gameLayer = new egret.DisplayObjectContainer();
 		this._maskLayer = new eui.UILayer();
 		this.popUpLayer = new eui.UILayer();
-		this._loadingUI.touchEnabled = false;
+		this.loadingUI.touchEnabled = false;
 		this.uiLayer.touchEnabled = false;
 		this.gameLayer.touchEnabled = false;
 		this._maskLayer.touchEnabled = false;
@@ -53,7 +49,7 @@ class LayerManager {
 		stage.addChild(this.uiLayer);
 		stage.addChild(this._maskLayer);
 		stage.addChild(this.popUpLayer);
-		stage.addChild(this._loadingUI);
+		stage.addChild(this.loadingUI);
 	}
 
 	private _maskList: string[] = [];
@@ -75,13 +71,14 @@ class LayerManager {
 	}
 
 	public showLoadingUILayer(): void {
-		this._loadingUI.visible = true;
-		this._loadingUI.touchEnabled = true;
+		this.loadingUI.initial();
+		this.loadingUI.visible = true;
+		this.loadingUI.touchEnabled = true;
 	}
 
 	public hideLoadingUILayer(): void {
-		this._loadingUI.visible = false;
-		this._loadingUI.touchEnabled = false;
+		this.loadingUI.visible = false;
+		this.loadingUI.touchEnabled = false;
 	}
 
 	public clear(): void {

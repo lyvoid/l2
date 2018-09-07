@@ -43,7 +43,21 @@ class CardBoard extends egret.DisplayObjectContainer {
 		} else{
 			card = new Card();
 		}
-		card.initial(skills[index][0], skills[index][1]);
+		let cardInfo = skills[index];
+		// if recycle times equals -1, load recycle times from config
+		if (cardInfo[2] == -1) {
+			cardInfo[2] = ConfigManager.Ins.mSkillConfig[
+				cardInfo[0]]['recycleTimes'];
+		}
+		// initial card
+		card.initial(cardInfo[0], cardInfo[1], cardInfo[2]);
+		if (cardInfo[2] == 1){
+			// if recycle times of skill is 1, remove from skill _cardPool
+			skills.splice(index, 1);
+		} else if (cardInfo[2] != 0) {
+			// else if recycle times not equal 0 recycle time --
+			cardInfo[2] -= 1;
+		}
 		this.addCard(card);
 	}
 

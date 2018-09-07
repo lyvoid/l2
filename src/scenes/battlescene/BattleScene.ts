@@ -9,7 +9,7 @@ class BattleScene extends IScene {
 	public mFriends: Character[];
 	public mSelectedChar: Character;
 	public mPlayerFireBoard: FireBoard;
-	public mManualSkillIdPool: [number, Character][];
+	public mManualSkillIdPool: [number, Character, number][]; // skillid, caster, recycle times
 	public mManualSkillManager: ManualSkillManager;
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp;
@@ -107,7 +107,7 @@ class BattleScene extends IScene {
 		this.mWinnerCamp = CharCamp.Neut;
 		// initialize character
 		// initial player team
-		let teamInfo = UserData.Ins.curUserTeam;
+		let teamInfo = UserData.Ins.getUserTeamInfo;
 		for (let charInfo of teamInfo) {
 			this.mFriends.push(CharFactory.newChar(
 				charInfo.charId,
@@ -135,9 +135,13 @@ class BattleScene extends IScene {
 			charLayer.addChild(char);
 			if (char.mCamp == CharCamp.Player) {
 				for (let skillid of char.manualSkillsId) {
-					this.mManualSkillIdPool.push([skillid, char]);
+					this.mManualSkillIdPool.push([skillid, char, -1]);
 				}
 			}
+		}
+		// add user desk card to skill mpool
+		for (let skillId of UserData.Ins.userDeck){
+			this.mManualSkillIdPool.push([skillId, null, -1])
 		}
 		// select a default Enemy
 		this.mEnemies[0].onSelect();

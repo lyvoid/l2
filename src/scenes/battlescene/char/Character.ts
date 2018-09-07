@@ -610,9 +610,9 @@ enum CharCamp {
 }
 
 enum CCType {
-	front,
+	back,
 	mid,
-	back
+	front
 }
 
 enum CRType {

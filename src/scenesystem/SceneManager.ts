@@ -23,7 +23,7 @@ class SceneManager{
 	 * 设置初始场景
 	 */
 	public initial(){
-		this.setScene(new BattleScene());
+		this.setScene(new MainScene());
 	}
 
 	/**

@@ -7,10 +7,12 @@ class Card extends egret.DisplayObjectContainer {
 		let casterName = caster ? caster.charName : "无";
 		let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
 		let affectDescpt = skillInfo['description'];
+		let recycleTimes = this._recycleTimes == 0 ? "无限" : this._recycleTimes + ""
 		if (this.mCaster && !this.mCaster.alive) {
 			affectDescpt += `<font color="#C0FF3E">(当前释放单位死亡，使用卡片效果替换为累计复活进度)</font>`
 		}
 		return `<font color="#EE7942"><b>${skillInfo['skillName']}</b></font>
+<b>剩余使用:</b> ${recycleTimes} 次
 <b>释放单位:</b> ${casterName}
 <b>消耗能量:</b> ${skillInfo['fireNeed']}
 <b>作用效果:</b> ${affectDescpt}`;
@@ -20,8 +22,9 @@ class Card extends egret.DisplayObjectContainer {
 		
 	}
 
-	public initial(skillId: number, caster: Character): void {
+	public initial(skillId: number, caster: Character, recycleTimes: number): void {
 		this.removeChildren();
+		this._recycleTimes = recycleTimes;
 		this.width = 80;
 		this.height = 130;
 		let cardBg: egret.Bitmap = new egret.Bitmap(RES.getRes("cardbg_png"));
@@ -110,13 +113,12 @@ class Card extends egret.DisplayObjectContainer {
 				ToastInfoManager.Ins.newToast("能量不足");
 				return;
 			}
-			if (!(this.mCaster && this.mCaster.alive)) {
+			if (this.mCaster && !this.mCaster.alive) {
 				// if hava a caster and caster is dead, go resurgence logic
 				this.mCaster.getRsPoint(fireNeed);
 			} else {
 				// if no caster or caster alive
 				let skill = scene.mManualSkillManager.newSkill(this.mSkillId, this.mCaster);
-
 				// if can't cast, return
 				let canCastInfo = skill.canCast();
 				if (!canCastInfo[0]) {
@@ -133,8 +135,8 @@ class Card extends egret.DisplayObjectContainer {
 				fireboard.removeFire();
 			}
 
-			// 如果还在游戏中，移除卡牌
-			if (this.mCaster.isInBattle) {
+			// 如果不存在释放者或释放者还在游戏中，移除卡牌
+			if ((!this.mCaster) || (this.mCaster && this.mCaster.isInBattle)) {
 				// 这里之所以加这个判断是为了防止一张卡牌的效果事将自己排除处游戏外
 				// 这个时候该卡牌会在释放技能的过程中就倍移除了，此时会造成重复删除的错误
 				scene.mCardBoard.removeCard(this);
