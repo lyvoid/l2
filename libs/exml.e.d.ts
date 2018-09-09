@@ -11,6 +11,18 @@ declare module mySkin{
 	}
 }
 declare module mySkin{
+	class CharSelectPort extends eui.Skin{
+	}
+}
+declare module mySkin{
+	class FormCharPopUpUI extends eui.Skin{
+	}
+}
+declare module mySkin{
+	class SelectCharPopUpUI extends eui.Skin{
+	}
+}
+declare module mySkin{
 	class UIBattleScene extends eui.Skin{
 	}
 }

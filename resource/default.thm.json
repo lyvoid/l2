@@ -12,13 +12,17 @@
 		"eui.ToggleSwitch": "resource/eui_skins/ToggleSwitchSkin.exml",
 		"eui.VScrollBar": "resource/eui_skins/VScrollBarSkin.exml",
 		"eui.VSlider": "resource/eui_skins/VSliderSkin.exml",
-		"eui.ItemRenderer": "resource/eui_skins/ItemRendererSkin.exml"
+		"eui.ItemRenderer": "resource/eui_skins/ItemRendererSkin.exml",
+		"CharSelectPort": "resource/custom_skin/CharSelectPort.exml"
 	},
 	"autoGenerateExmlsList": true,
 	"exmls": [
 		"resource/custom_skin/BattleEndPopUp.exml",
 		"resource/custom_skin/CardInfoPopupUI.exml",
 		"resource/custom_skin/CharacterInfo.exml",
+		"resource/custom_skin/CharSelectPort.exml",
+		"resource/custom_skin/FormCharPopUpUI.exml",
+		"resource/custom_skin/SelectCharPopUpUI.exml",
 		"resource/custom_skin/UIBattleScene.exml",
 		"resource/custom_skin/UIMainScene.exml",
 		"resource/eui_skins/ButtonSkin.exml",

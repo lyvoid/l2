@@ -11,8 +11,6 @@ class DBManager {
 			egretFactory.parseDragonBonesData(dragonbonesData);  
 			egretFactory.parseTextureAtlasData(textureData, texture);
 			this.addedCharNames.push(charName);
-			console.log(`add ${charName}`);
-			
 		}
 		return egretFactory.buildArmatureDisplay(armatureName || charName);
 	}

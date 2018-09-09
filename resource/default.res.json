@@ -1,16 +1,36 @@
 {
 	"groups": [
 		{
-			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,maskbg_png,black_png,loadingbg_png,buff_json,hurt_json,skill_json,target_select_json,char_json,battle_json,battle_enemy_json,skill_icon_attack_png,gameEui_json,Swordsman_portrait_png,Dragon_portrait_png",
+			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,black_png,loadingbg_png,gameEui_json,close_png,imgloading_png",
 			"name": "preload"
-		},
-		{
-			"keys": "bg_json,Dragon_db_ske_json,Dragon_db_tex_json,Dragon_db_tex_png,Swordsman_db_ske_json,Swordsman_db_tex_json,Swordsman_db_tex_png",
-			"name": "assets"
 		},
 		{
 			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg,bufficontest_png",
 			"name": "battlecommon"
+		},
+		{
+			"keys": "Swordsman_portrait_png,Dragon_portrait_png",
+			"name": "portrait"
+		},
+		{
+			"keys": "skill_icon_attack_png",
+			"name": "skillicon"
+		},
+		{
+			"keys": "Dragon_db_ske_json,Dragon_db_tex_json,Dragon_db_tex_png,Swordsman_db_ske_json,Swordsman_db_tex_json,Swordsman_db_tex_png",
+			"name": "db"
+		},
+		{
+			"keys": "defaultselect_png",
+			"name": "mainscenecommon"
+		},
+		{
+			"keys": "buff_json,hurt_json,skill_json,target_select_json,char_json,battle_json,battle_enemy_json",
+			"name": "gameconfig"
+		},
+		{
+			"keys": "bg_json",
+			"name": "battlebg"
 		}
 	],
 	"resources": [
@@ -207,11 +227,6 @@
 			"name": "lifebarbg_jpg"
 		},
 		{
-			"url": "common/maskbg.png",
-			"type": "image",
-			"name": "maskbg_png"
-		},
-		{
 			"url": "common/black.png",
 			"type": "image",
 			"name": "black_png"
@@ -280,6 +295,22 @@
 			"url": "portrait/Swordsman_portrait.png",
 			"type": "image",
 			"name": "Swordsman_portrait_png"
+		},
+		{
+			"url": "formcharui/defaultselect.png",
+			"type": "image",
+			"name": "defaultselect_png"
+		},
+		{
+			"url": "common/close.png",
+			"type": "image",
+			"name": "close_png"
+		},
+		{
+			"url": "common/imgloading.png",
+			"type": "image",
+			"name": "imgloading_png",
+			"scale9grid": "10,55,155,46"
 		}
 	]
 }

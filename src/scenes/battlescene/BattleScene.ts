@@ -14,6 +14,7 @@ class BattleScene extends IScene {
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp;
 	public mRound: number;
+	
 	// ui
 	public mBattleUI: UIBattleScene;
 	public mBattleEndPopUpUI: BattleEndPopUp;
@@ -149,20 +150,27 @@ class BattleScene extends IScene {
 		this.setState(new PlayerRoundStartPhase());
 	}
 
+	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 	public async loadResource() {
-		await RES.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI);
-		console.log("战场通用资源载入完成");
+		let rsLoader = this._rsLoader;
+		await rsLoader.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI);
+		await rsLoader.loadGroup("portrait", 0, LayerManager.Ins.loadingUI);
+		await rsLoader.loadGroup("skillicon", 0, LayerManager.Ins.loadingUI);
+		
+
 		// 载入龙骨资源
 		for (let charactorName of ["Dragon", "Swordsman"]) {
-			await RES.getResAsync(`${charactorName}_db_ske_json`);
-			await RES.getResAsync(`${charactorName}_db_tex_json`);
-			await RES.getResAsync(`${charactorName}_db_tex_png`);
+			await rsLoader.getResAsync(`${charactorName}_db_ske_json`);
+			await rsLoader.getResAsync(`${charactorName}_db_tex_json`);
+			await rsLoader.getResAsync(`${charactorName}_db_tex_png`);
 		}
-		console.log("角色龙骨资源载入完成");
-
 		// 载入game层背景图片资源
-		await RES.getResAsync("bg_json");
-		console.log("战斗背景图片载入完成");
+		await rsLoader.getResAsync("bg_json");
+	}
+
+	public releaseResource() {
+		let rsLoader = this._rsLoader;
+		rsLoader.releaseResource();
 	}
 
 	/**
@@ -205,7 +213,6 @@ class BattleScene extends IScene {
 	 */
 	private onBattleEnd(): void {
 		let lm = LayerManager.Ins
-		LayerManager.Ins.addMask("BattleEnd");
 		if (this.mWinnerCamp == CharCamp.Player) {
 			this.mBattleEndPopUpUI.winUIAdjust();
 		} else {
@@ -289,7 +296,6 @@ class BattleScene extends IScene {
 		this._gameCardLayer = null;
 		this._gameCharLayer = null;
 		this._gameFgLayer = null;
-
 	}
 
 	public setState(state: ISceneState): void{
@@ -299,13 +305,4 @@ class BattleScene extends IScene {
 		}
 	}
 
-	public async releaseResource() {
-		await RES.destroyRes("battlecommon");
-		for (let charactorName of ["Dragon", "Swordsman"]) {
-			await RES.destroyRes(`${charactorName}_db_ske_json`);
-			await RES.destroyRes(`${charactorName}_db_tex_json`);
-			await RES.destroyRes(`${charactorName}_db_tex_png`);
-		}
-		await RES.destroyRes("bg_json");
-	}
 }

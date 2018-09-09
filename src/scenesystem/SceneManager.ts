@@ -34,12 +34,10 @@ class SceneManager{
 		let oldScene = this.curScene;
 		this.curScene = scene;
 		if (oldScene != null){
-			oldScene.release(); // release variable in memory
-			// release resource(asyn), and then load current scene
-			oldScene.releaseResource().then(()=>{this.loadCurScene()});
-		} else {
-			this.loadCurScene();
+			oldScene.release();
+			oldScene.releaseResource();
 		}
+		this.loadCurScene();
 	}
 
 	/**

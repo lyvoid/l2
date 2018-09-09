@@ -1,15 +1,20 @@
 {
-  "163493a6b56": {
-    "path": "..\\resource\\ui\\UIBattleScene.ts",
-    "class": "UIBattleScene",
-    "parentPath": ""
-  },
-  "1635d45e939": {
-    "path": "..\\resource\\eui_skins\\ui\\LongTouchInfo.ts",
-    "class": "LongTouchInfo",
-    "parentPath": ""
-  },
-  "global": {
-    "globalAutoLayerMarkEnable": true
-  }
+    "163493a6b56": {
+        "path": "..\\resource\\ui\\UIBattleScene.ts",
+        "class": "UIBattleScene",
+        "parentPath": ""
+    },
+    "1635d45e939": {
+        "path": "..\\resource\\eui_skins\\ui\\LongTouchInfo.ts",
+        "class": "LongTouchInfo",
+        "parentPath": ""
+    },
+    "global": {
+        "globalAutoLayerMarkEnable": true
+    },
+    "165bdddd6f5": {
+        "path": "..\\resource\\custom_skin\\CharSelectPort.ts",
+        "class": "CharSelectPort",
+        "parentPath": ""
+    }
 }

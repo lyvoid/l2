@@ -3,6 +3,7 @@ class UserData {
 	public battleId: number;
 	// charId & index; 0 means no char in this index
 	public userTeam: [number, number, number, number, number, number];
+	public userArmy: number[] = [];
 
 	public static get Ins(): UserData {
 		if (!this._instance) {
@@ -17,6 +18,7 @@ class UserData {
 		
 		// TODO: replace by get curUserTeam from service
 		this.userTeam = [4, 0, 0, 0, 0, 0];
+		this.userArmy = [1, 2, 3, 4, 5, 1, 1, 1, 1, 1, 1];
 	}
 
 	public get userDeck(): number[] {

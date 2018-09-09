@@ -1,7 +1,7 @@
 // TypeScript file
 class Util{
     /**
-     * 从一个Array中删除元素
+     * 从一个Array中删除元素，如果确实属于ls返回true，否则返回false
      */
     public static removeObjFromArray(ls:any[], obj:any): boolean{
         let index = ls.indexOf(obj);

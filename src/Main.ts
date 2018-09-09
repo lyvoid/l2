@@ -74,6 +74,7 @@ class Main extends eui.UILayer {
             this.stage.addChild(loadingView);
             await this.loadTheme();
             await RES.loadGroup("preload", 0, loadingView);
+            await RES.loadGroup("gameconfig", 0, loadingView);
             this.stage.removeChild(loadingView);
         }
         catch (e) {
@@ -89,8 +90,7 @@ class Main extends eui.UILayer {
             theme.addEventListener(eui.UIEvent.COMPLETE, () => {
                 resolve();
             }, this);
-
-        })
+        });
     }
 
     /**

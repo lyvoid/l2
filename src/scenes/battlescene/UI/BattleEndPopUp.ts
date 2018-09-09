@@ -20,6 +20,12 @@ class BattleEndPopUp extends eui.Component {
 			this.onRetryButtonTap,
 			this
 		);
+
+		this.exitButton.addEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onExitButtonTap,
+			this
+		);
 	}
 
 	private onNextButtonTap(): void {
@@ -31,6 +37,10 @@ class BattleEndPopUp extends eui.Component {
 	private onRetryButtonTap(): void {
 		SceneManager.Ins.setScene(new BattleScene());
 		
+	}
+
+	private onExitButtonTap(): void{
+		SceneManager.Ins.setScene(new MainScene());
 	}
 
 	/**
@@ -61,6 +71,12 @@ class BattleEndPopUp extends eui.Component {
 		this.retryButton.removeEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onRetryButtonTap,
+			this
+		);
+
+		this.exitButton.removeEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onExitButtonTap,
 			this
 		);
 		this.titleLabel = null;

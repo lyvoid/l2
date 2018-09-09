@@ -3,6 +3,7 @@ class MainScene extends IScene{
     private _uiMain: UIMainScene;
 
     public async loadResource(){
+        await RES.loadGroup("mainscenecommon", 0, LayerManager.Ins.loadingUI);
     }
 
     public initial(){

@@ -21,7 +21,7 @@ abstract class IScene{
      * call before changing into other scene,
      * release resource in this function
      */
-    public async releaseResource(){
+    public releaseResource(){
     }
 
     /**

@@ -29,10 +29,16 @@ class UIMainScene extends eui.Component {
 	}
 
 	private onCardButtonTouch(): void{
+
 	}
 
+	private _formCharPopUpUI: FormCharPopUpUI;
 	private onFormButtonTouch(): void{
-
+		if(this._formCharPopUpUI == null){
+			this._formCharPopUpUI = new FormCharPopUpUI();
+		} else {
+			this._formCharPopUpUI.show();
+		}
 	}
 
 
@@ -52,6 +58,10 @@ class UIMainScene extends eui.Component {
 			this.onFormButtonTouch,
 			this
 		);
+		if (this._formCharPopUpUI != null){
+			this._formCharPopUpUI.release();
+			this._formCharPopUpUI = null;
+		}
 	}
 
 }
