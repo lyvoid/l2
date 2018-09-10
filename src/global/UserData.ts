@@ -39,8 +39,9 @@ class UserData {
 		let userArmy = this.userArmy;
 		for (let indexstr in userTeam){
 			let index = parseInt(indexstr);
-			let characterId = userArmy[userTeam[index]];
-			if(characterId == 0) continue;
+			let userCharID = userTeam[index];
+			if(userCharID < 0) continue;
+			let charId = userArmy[userTeam[index]];
 			let rowT: CRType;
 			let rowIdentity = index % 2;
 			if (rowIdentity == 0){
@@ -49,7 +50,7 @@ class UserData {
 				rowT = userTeam[index - 1] != 0 ? CRType.down : CRType.mid;
 			}
 			let colT: CCType = Math.floor(index / 2);
-			infos.push({ charId: characterId, row: rowT, col: colT, level: 1 });
+			infos.push({ charId: charId, row: rowT, col: colT, level: 1 });
 		}
 		return infos;
 	}

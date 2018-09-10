@@ -40,7 +40,7 @@ class SelectCharPopUpUI extends eui.Component {
 	}
 
 	public initial(order: number): void {
-		this.orderLabel.text = order + 1 + "号位";
+		this.orderLabel.text = "更换" + (order + 1) + "号位";
 		this._inOrder = order; // 进入时候的order
 		let groupWidth = LayerManager.Ins.stageWidth * 0.4;
 		let imgWidth = (groupWidth - 20) / 3;
@@ -55,10 +55,12 @@ class SelectCharPopUpUI extends eui.Component {
 			let y = Math.floor(positionOrder / 3) * (imgWidth + 4) + 6;
 			let iInt = parseInt(i);
 			let port: CharSelectPort;
+			// 如果池中有，优先从池中取
 			if (this._portPool.length > 0) {
 				port = this._portPool.pop();
 			}
 			else {
+				// 如果池中没有，新建一个，并加一下事件监听
 				port = new CharSelectPort();
 				port.touchEnabled = true;
 				port.addEventListener(
@@ -124,6 +126,7 @@ class SelectCharPopUpUI extends eui.Component {
 		}
 		let info = `
 <font color="#7FFF00"><b>${charInfo['charName']}</b></font>
+${charInfo["feature"]}
 
 <font color="#EE7942"><b>主动技能：</b></font>
 ${manualSkillInfos}
@@ -162,7 +165,7 @@ ${otherInfos}
 			// if user already have such char id in userTeam
 			for (let i of userTeam) {
 				if (userArmy[i] == selectCharId) {
-					MyAlert.Ins.show("已经存在相同角色");
+					MyAlert.Ins.show("队伍中不可以使用相同角色哦");
 					return;
 				}
 			}

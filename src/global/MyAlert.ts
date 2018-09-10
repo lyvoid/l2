@@ -12,9 +12,11 @@ class MyAlert extends eui.Component{
 		return MyAlert._ins;
 	}
 
-	public constructor(){
+	private constructor(){
 		super();
-		this.skinName = "mySkin.MyAlert"
+		this.skinName = "mySkin.MyAlert";
+		this.width = LayerManager.Ins.stageWidth;
+		this.height = LayerManager.Ins.stageHeight;
 		this.comfirmButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			()=>{

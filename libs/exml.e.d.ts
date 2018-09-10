@@ -1,5 +1,5 @@
 declare module mySkin{
-	class MyAlert extends eui.Skin{
+	class BattleEndPopUp extends eui.Skin{
 	}
 }
 declare module mySkin{
@@ -19,7 +19,7 @@ declare module mySkin{
 	}
 }
 declare module mySkin{
-	class BattleEndPopUp extends eui.Skin{
+	class MyAlert extends eui.Skin{
 	}
 }
 declare module mySkin{
