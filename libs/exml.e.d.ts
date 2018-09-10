@@ -15,6 +15,10 @@ declare module mySkin{
 	}
 }
 declare module mySkin{
+	class FormCardPopUpUI extends eui.Skin{
+	}
+}
+declare module mySkin{
 	class FormCharPopUpUI extends eui.Skin{
 	}
 }

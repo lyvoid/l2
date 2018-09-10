@@ -8,7 +8,6 @@ class MainScene extends IScene{
 
     public initial(){
         let uiMain = new UIMainScene();
-        LayerManager.Ins.uiLayer.addChild(uiMain);
         this._uiMain = uiMain;
     }
     

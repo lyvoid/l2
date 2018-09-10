@@ -21,14 +21,12 @@ class NetManager {
 	public get msgNum(): number { return this._curMsgNum++; }
 	private connect(): void {
 		const url = "ws://localhost:5000/echo";
-		LayerManager.Ins.netMask.show(0);
 		let socket = new egret.WebSocket();
 		socket.addEventListener(egret.ProgressEvent.SOCKET_DATA, () => {
 			this.handleMessage(socket.readUTF());
 		}, this);
 		socket.addEventListener(egret.Event.CONNECT, () => {
 			console.log("connected to service");
-			LayerManager.Ins.netMask.hide(0);
 			this._connectRetryTime = 0
 		}, this);
 		socket.addEventListener(egret.Event.CLOSE, () => {

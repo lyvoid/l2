@@ -89,8 +89,14 @@ class FormCharPopUpUI extends eui.Component {
 				this
 			);
 		}
+		if (this._selectCharPopUpUI != null){
+			this._selectCharPopUpUI.release();
+			this._selectCharPopUpUI = null;
+		}
+		this._p6Imgs = null;
 		// 释放所有资源
 		this._rsLoader.releaseResource();
+		this._rsLoader = null;
 	}
 
 }

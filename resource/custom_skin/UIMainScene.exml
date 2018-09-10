@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e:Skin class="mySkin.UIMainScene" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" xmlns:ns1="*" >
-	<e:Button id="battleButton" label="进入战斗" anchorOffsetX="0" width="100" anchorOffsetY="0" height="100" left="100" top="150"/>
-	<e:Button id="formButton" label="编队" anchorOffsetX="0" width="100" anchorOffsetY="0" height="100" left="100" top="20"/>
-	<e:Button id="cardButton" label="组卡" anchorOffsetX="0" width="100" anchorOffsetY="0" height="100" left="250" top="20"/>
+<e:Skin class="mySkin.UIMainScene" width="1000" height="500" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" xmlns:ns1="*" >
+	<e:Button id="battleButton" label="进入战斗" anchorOffsetX="0" width="200" anchorOffsetY="0" height="200" verticalCenter="0" horizontalCenter="320"/>
+	<e:Button id="formButton" label="编队" anchorOffsetX="0" width="200" anchorOffsetY="0" height="200" horizontalCenter="-320" verticalCenter="0"/>
+	<e:Button id="cardButton" label="组卡" anchorOffsetX="0" anchorOffsetY="0" height="200" width="200" horizontalCenter="0" verticalCenter="0"/>
 </e:Skin>

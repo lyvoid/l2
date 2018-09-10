@@ -1,25 +1,20 @@
-class SelectCharPopUpUI extends eui.Component {
+class FormCardPopUpUI extends eui.Component {
 
 	private charInfoLabel: eui.Label;
 	private portGroup: eui.Group;
 	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
-	private orderLabel: eui.Label;
-	private _selectPort: CharSelectPort;
-	private _ports: CharSelectPort[] = [];
-	private _portPool: CharSelectPort[] = [];
+	private _selectPort: CardSelectPort;
+	private _ports: CardSelectPort[] = [];
+	private _portPool: CardSelectPort[] = [];
 	private backButton: eui.Button;
 	private removeButton: eui.Button;
 	private selectButton: eui.Button;
-	private _formCharPopUp: FormCharPopUpUI;
-	private _inOrder: number;
 
-	public constructor(order: number, forCharPopUp: FormCharPopUpUI) {
+	public constructor() {
 		super();
-		this.skinName = "mySkin.SelectCharPopUpUI";
+		this.skinName = "mySkin.FormCardPopUpUI";
 		this.width = LayerManager.Ins.stageWidth;
 		this.height = LayerManager.Ins.stageHeight;
-		LayerManager.Ins.popUpLayer.addChild(this);
-		this._formCharPopUp = forCharPopUp;
 		this.backButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onBackButtonTap,
@@ -35,32 +30,31 @@ class SelectCharPopUpUI extends eui.Component {
 			this.onSelectButtonTap,
 			this
 		);
-		this.initial(order);
+		this.initial();
+		LayerManager.Ins.popUpLayer.addChild(this);
 	}
 
-	public initial(order: number): void {
-		this.orderLabel.text = "更换" + (order + 1) + "号位";
-		this._inOrder = order; // 进入时候的order
+	public initial(): void {
 		let groupWidth = LayerManager.Ins.stageWidth * 0.4;
 		let imgWidth = (groupWidth - 20) / 3;
 		let userTeam = UserData.Ins.userTeam;
-		let charConfig = ConfigManager.Ins.mCharConfig;
-		let userArmy = UserData.Ins.userArmy;
+		let skillConfig = ConfigManager.Ins.mSkillConfig;
+		let userCard = UserData.Ins.userCards;
 		let positionOrder = 0;
 		this._ports = [];
-		for (let i in userArmy) {
-			let portName = charConfig[userArmy[i]]["charCode"] + "_portrait_png";
+		for (let i in userCard) {
+			let portName = skillConfig[userCard[i]]["iconName"];
 			let x = (imgWidth + 4) * (positionOrder % 3) + 6;
 			let y = Math.floor(positionOrder / 3) * (imgWidth + 4) + 6;
 			let iInt = parseInt(i);
-			let port: CharSelectPort;
+			let port: CardSelectPort;
 			// 如果池中有，优先从池中取
 			if (this._portPool.length > 0) {
 				port = this._portPool.pop();
 			}
 			else {
 				// 如果池中没有，新建一个，并加一下事件监听
-				port = new CharSelectPort();
+				port = new CardSelectPort();
 				port.touchEnabled = true;
 				port.addEventListener(
 					egret.TouchEvent.TOUCH_TAP,
@@ -75,10 +69,9 @@ class SelectCharPopUpUI extends eui.Component {
 			port.y = y;
 			this.portGroup.addChild(port);
 			if (positionOrder == 0) {
-				// 默认选中第0个
 				port.select();
 				this._selectPort = port;
-				this.setCharInfo(userArmy[port.userCharId]);
+				this.setCardInfo(userCard[port.userCardId]);
 			}
 			this._ports.push(port);
 			positionOrder += 1;
@@ -87,92 +80,61 @@ class SelectCharPopUpUI extends eui.Component {
 
 	private onPortTap(e: egret.TouchEvent): void {
 		this._selectPort.unSelect();
-		let port = e.currentTarget as CharSelectPort;
+		let port = e.currentTarget as CardSelectPort;
 		port.select();
 		this._selectPort = port;
-		let userArmy = UserData.Ins.userArmy;
-		this.setCharInfo(userArmy[port.userCharId]);
+		let userCard = UserData.Ins.userCards;
+		this.setCardInfo(userCard[port.userCardId]);
 	}
 
-	private setCharInfoLabel(info: string): void {
+	private setCardInfoLabel(info: string): void {
 		this.charInfoLabel.textFlow = (new egret.HtmlTextParser).parse(info);;
 		let height = this.charInfoLabel.textHeight;
 		this.charInfoLabel.height = height;
 	}
 
-	private setCharInfo(charId: number): void {
-		let charInfo = ConfigManager.Ins.mCharConfig[charId];
-		let skillInfos = ConfigManager.Ins.mSkillConfig;
+	private setCardInfo(cardId: number): void {
+		let skillInfo = ConfigManager.Ins.mSkillConfig[cardId];
 		let buffInfos = ConfigManager.Ins.mBuffConfig;
-		let manualSkillInfos = "";
-		let passiveSkillInfos = "";
 		let otherInfos = "";
-		let otherInfoOfBuff = new MySet<number>();
-		for (let i of charInfo["manualSkillsId"]) {
-			let skillinfo = skillInfos[i]
-			otherInfoOfBuff.addList(skillinfo["otherInfosOfBuffsId"]);
-			manualSkillInfos += `<font color="#7FFF00"><b>` +
-				`${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量):</b></font>${skillinfo["description"]}\n`;
-		}
-		for (let i of charInfo["passiveSkillsId"]) {
-			let buffInfo = buffInfos[i];
-			passiveSkillInfos += `<font color="#7FFF00"><b>` +
-				`${buffInfo["buffName"]}:</b></font>${buffInfo["description"]}\n`;
-		}
-		for (let i of otherInfoOfBuff.data) {
+		for (let i of skillInfo["otherInfosOfBuffsId"]) {
 			let buffInfo = buffInfos[i];
 			otherInfos += `<font color="#7FFF00"><b>` +
 				`${buffInfo["buffName"]}:</b></font>${buffInfo["description"]}\n`;
 		}
 		let info = `
-<font color="#7FFF00"><b>${charInfo['charName']}</b></font>
-${charInfo["feature"]}
+<font color="#7FFF00"><b>${skillInfo['skillName']}(${skillInfo["fireNeed"]}能量)</b></font>
 
-<font color="#EE7942"><b>主动技能：</b></font>
-${manualSkillInfos}
-
-<font color="#EE7942"><b>被动技能：</b></font>
-${passiveSkillInfos}
+<font color="#EE7942"><b>描述：</b></font>
+${skillInfo["description"]}
 
 <font color="#EE7942"><b>其他描述：</b></font>
 ${otherInfos}
 `
-		this.setCharInfoLabel(info);
+		this.setCardInfoLabel(info);
 	}
 
 	public onBackButtonTap(): void {
 		this.hide();
-		this._formCharPopUp.show();
 	}
 
 	public onRemoveButtonTap(): void {
-		UserData.Ins.userTeam[this._inOrder] = -1;
-		this.hide();
-		this._formCharPopUp.show();
+		Util.removeObjFromArray(UserData.Ins.userDeck, this._selectPort.userCardId);
+		this._selectPort.outOfDeck();
 	}
 
 	public onSelectButtonTap(): void {
-		let userTeam = UserData.Ins.userTeam;
-		let userArmy = UserData.Ins.userArmy;
-		let selectUserCharId = this._selectPort.userCharId;
-		let selectCharId = userArmy[selectUserCharId];
-		// if selected char already in user team
-		let curSelectInTeamOrder = userTeam.indexOf(selectUserCharId);
-		if (curSelectInTeamOrder >= 0) {
-			// remove this char from team
-			userTeam[curSelectInTeamOrder] = -1;
-		} else {
-			// if user already have such char id in userTeam
-			for (let i of userTeam) {
-				if (userArmy[i] == selectCharId) {
-					MyAlert.Ins.show("队伍中不可以使用相同角色哦");
-					return;
-				}
-			}
+		let userDeck = UserData.Ins.userDeck;
+		let userCard = UserData.Ins.userCards;
+		let selectCard = this._selectPort;
+		// if selected char already in user deck
+		let curSelectInDeckOrder = userDeck.indexOf(selectCard.userCardId);
+		if (curSelectInDeckOrder >= 0) {
+			// return
+			return;
 		}
-		UserData.Ins.userTeam[this._inOrder] = selectUserCharId;
-		this.hide();
-		this._formCharPopUp.show();
+		userDeck.push(selectCard.userCardId);
+		this._selectPort.setInDeck();
 	}
 
 	public hide(): void {
@@ -181,12 +143,11 @@ ${otherInfos}
 		this._ports = [];
 		this.portGroup.removeChildren();
 		this._selectPort.unSelect();
-		this._selectPort = null;
 		this.enabled = false;
 	}
 
-	public show(order: number): void {
-		this.initial(order);
+	public show(): void {
+		this.initial();
 		this.visible = true;
 		this.enabled = true;
 	}
@@ -223,7 +184,6 @@ ${otherInfos}
 		// 释放引用
 		this._ports = null;
 		this._portPool = null;
-		this._formCharPopUp = null;
 		this._selectPort = null;
 		// 释放所有资源
 		this._rsLoader.releaseResource();

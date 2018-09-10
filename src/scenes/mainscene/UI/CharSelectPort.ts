@@ -4,7 +4,6 @@ class CharSelectPort extends eui.Component {
 	private portImg: eui.Image;
 	public userCharId: number;
 	private maskLabel: eui.Label;
-	public teamOrder: number = -1;
 	private isSelectRect: eui.Rect;
 
 	public constructor() {
@@ -17,7 +16,6 @@ class CharSelectPort extends eui.Component {
 		this.maskGroup.visible = false;
 		let order = UserData.Ins.userTeam.indexOf(userCharId);
 		if (order >= 0){
-			this.teamOrder = order;
 			this.maskGroup.visible = true;
 			this.maskLabel.text = order + 1 + "号位";
 		}
