@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="mySkin.BattleEndPopUp" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+	<e:Rect width="100%" height="100%" x="0" y="0" fillColor="0xffffff" fillAlpha="0.3" touchEnabled="true"/>
+	<e:Label id="infoLabel" text="label" size="30" fontFamily="KaiTi" bold="true" left="10" top="30" anchorOffsetY="0" height="80%" anchorOffsetX="0" width="90%"/>
+	<e:Button id="comfirmButton" label="确认" horizontalCenter="0" bottom="20"/>
+
+
+</e:Skin>

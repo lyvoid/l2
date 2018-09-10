@@ -22,6 +22,7 @@
 		"bin-debug/global/LongTouchUtil.js",
 		"bin-debug/global/MessageManager.js",
 		"bin-debug/global/MessageType.js",
+		"bin-debug/global/MyAlert.js",
 		"bin-debug/global/MySet.js",
 		"bin-debug/global/ResAsyncLoadManager.js",
 		"bin-debug/global/ToastInfo.js",

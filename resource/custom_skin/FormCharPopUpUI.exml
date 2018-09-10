@@ -8,7 +8,8 @@
 	<e:Image id="p3Img" width="172" height="172" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0" verticalCenter="88" x="10" y="10" source="defaultselect_png" touchEnabled="true"/>
 	<e:Image id="p4Img" width="172" height="172" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="174" verticalCenter="-88" source="defaultselect_png" touchEnabled="true"/>
 	<e:Image id="p5Img" width="172" height="172" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="174" verticalCenter="88" x="20" y="20" source="defaultselect_png" touchEnabled="true"/>
-	<e:Image id="closeImg" width="60" height="60" horizontalCenter="260" verticalCenter="-170" source="close_png" touchEnabled="true"/>
+	<e:Button id="backButton" label="返回" verticalCenter="-174" horizontalCenter="260"/>
+
 
 
 </e:Skin>

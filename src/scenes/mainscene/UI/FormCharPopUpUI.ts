@@ -1,6 +1,6 @@
 class FormCharPopUpUI extends eui.Component {
 
-	private closeImg: eui.Image;
+	private backButton: eui.Button;
 	private p0Img: eui.Image;
 	private p1Img: eui.Image;
 	private p2Img: eui.Image;
@@ -17,7 +17,7 @@ class FormCharPopUpUI extends eui.Component {
 		this.width = LayerManager.Ins.stageWidth;
 		this.height = LayerManager.Ins.stageHeight;
 		this._p6Imgs = [this.p0Img, this.p1Img, this.p2Img, this.p3Img, this.p4Img, this.p5Img];
-		this.closeImg.addEventListener(
+		this.backButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onCloseTap,
 			this
@@ -37,11 +37,14 @@ class FormCharPopUpUI extends eui.Component {
 
 	public initial(): void {
 		let userTeam = this._userTeam;
+		let userArmy = UserData.Ins.userArmy;
 		for (let i in userTeam) {
-			if (userTeam[i] != 0) {
-				let portName = ConfigManager.Ins.mCharConfig[userTeam[i]]["charCode"] + "_portrait_png";
+			if (userTeam[i] > 0) {
+				let portName = ConfigManager.Ins.mCharConfig[userArmy[userTeam[i]]]["charCode"] + "_portrait_png";
 				this._p6Imgs[i].texture = RES.getRes("imgloading_png");
 				this._rsLoader.getResAsyncAndSetValue(portName, "texture", this._p6Imgs[i]);
+			} else {
+				this._p6Imgs[i].texture = RES.getRes("defaultselect_png");
 			}
 		}
 	}
@@ -54,11 +57,11 @@ class FormCharPopUpUI extends eui.Component {
 	private onChangeChar(e): void {
 		let charOrder = this._p6Imgs.indexOf(e.target);
 		if (this._selectCharPopUpUI == null){
-			this._selectCharPopUpUI = new SelectCharPopUpUI(charOrder);
+			this._selectCharPopUpUI = new SelectCharPopUpUI(charOrder, this);
 		} else {
 			this._selectCharPopUpUI.show(charOrder);
 		}
-		
+		this.hide();
 	}
 
 	public show(): void{
@@ -68,12 +71,13 @@ class FormCharPopUpUI extends eui.Component {
 	}
 	
 	public hide(): void{
+
 		this.visible = false;
 		this.enabled = false;
 	}
 
 	public release(): void {
-		this.closeImg.removeEventListener(
+		this.backButton.removeEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onCloseTap,
 			this

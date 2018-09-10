@@ -22,6 +22,7 @@
 		"resource/custom_skin/CharacterInfo.exml",
 		"resource/custom_skin/CharSelectPort.exml",
 		"resource/custom_skin/FormCharPopUpUI.exml",
+		"resource/custom_skin/MyAlert.exml",
 		"resource/custom_skin/SelectCharPopUpUI.exml",
 		"resource/custom_skin/UIBattleScene.exml",
 		"resource/custom_skin/UIMainScene.exml",
