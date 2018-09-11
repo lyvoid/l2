@@ -9,7 +9,7 @@
 			"name": "battlecommon"
 		},
 		{
-			"keys": "98K_portrait_png,Destroyer_portrait_png,Excutioner_portrait_png,Golyat_portrait_png,HK416_portrait_png,Hunter_portrait_png,Intruder_portrait_png,OTs12_portrait_png,Scarecrow_portrait_png,UMP45_portrait_png,Vector_portrait_png,WA2000_portrait_png,Dragon_db_portrait_png",
+			"keys": "yuji_portrait_png,change_portrait_png,daji_portrait_png,diaochan_portrait_png,diaochanhong_portrait_png,monvyemei_portrait_png,mudanxianzi_portrait_png,nvshizhuang1_portrait_png,nvshizhuang2_1_portrait_png,nvzhujueerjie_portrait_png,profilePic_ZastavaM21_znq_png,wangmuniangnianghong_portrait_png,nvshizhuang5_portrait_png,nvshizhuang6_portrait_png,nvshizhuang7_portrait_png,nvshizhuang8_portrait_png,nvzhujueliujie_portrait_png",
 			"name": "portrait"
 		},
 		{
@@ -17,7 +17,7 @@
 			"name": "skillicon"
 		},
 		{
-			"keys": "Destroyer_ske_json,Destroyer_tex_json,Destroyer_tex_png,Excutioner_ske_json,Excutioner_tex_json,Excutioner_tex_png,Golyat_ske_json,Golyat_tex_json,Golyat_tex_png,HK416_ske_json,HK416_tex_json,HK416_tex_png,Hunter_ske_json,Hunter_tex_json,Hunter_tex_png,Intruder_ske_json,Intruder_tex_json,Intruder_tex_png,OTs12_ske_json,OTs12_tex_json,OTs12_tex_png,Scarecrow_ske_json,Scarecrow_tex_json,Scarecrow_tex_png,UMP45_ske_json,UMP45_tex_json,UMP45_tex_png,Vector_ske_json,Vector_tex_json,Vector_tex_png,98K_ske_json,98K_tex_json,98K_tex_png,WA2000_ske_json,WA2000_tex_json,WA2000_tex_png,Dragon_db_tex_png,Swordsman_db_tex_png,Dragon_db_ske_json,Dragon_db_tex_json,Swordsman_db_tex_json,Swordsman_db_ske_json",
+			"keys": "yuji_tex_png,yuji_ske_json,yuji_tex_json,change_tex_png,daji_tex_png,diaochan_tex_png,diaochanhong_tex_png,monvyemei_tex_png,mudanxianzi_tex_png,nvshizhuang1_tex_png,nvshizhuang2_1_tex_png,nvshizhuang5_tex_png,nvshizhuang6_tex_png,nvshizhuang7_tex_png,nvshizhuang8_tex_png,nvzhujueerjie_tex_png,nvzhujueliujie_tex_png,nvzhujuesanjie_tex_png,nvzhujuesijie_tex_png,nvzhujuewujie_tex_png,nvzhujueyijie_tex_png,change_tex_json,diaochan_tex_json,diaochan_ske_json,change_ske_json,daji_ske_json,daji_tex_json,diaochanhong_ske_json,monvyemei_tex_json,diaochanhong_tex_json,monvyemei_ske_json,mudanxianzi_tex_json,mudanxianzi_ske_json,nvshizhuang1_ske_json,nvshizhuang1_tex_json,nvshizhuang2_1_tex_json,nvshizhuang5_tex_json,nvshizhuang2_1_ske_json,nvshizhuang6_ske_json,nvshizhuang5_ske_json,nvshizhuang7_tex_json,nvshizhuang7_ske_json,nvshizhuang8_tex_json,nvshizhuang6_tex_json,nvzhujueerjie_tex_json,nvzhujueliujie_tex_json,nvzhujueerjie_ske_json,nvshizhuang8_ske_json,nvzhujuesanjie_ske_json,nvzhujuesanjie_tex_json,nvzhujueliujie_ske_json,nvzhujuesijie_tex_json,nvzhujuesijie_ske_json,nvzhujuewujie_tex_json,nvzhujuewujie_ske_json,nvzhujueyijie_tex_json,nvzhujueyijie_ske_json",
 			"name": "db"
 		},
 		{
@@ -263,214 +263,374 @@
 			"scale9grid": "10,55,155,46"
 		},
 		{
-			"url": "battle/dbs/Destroyer_tex.png",
+			"url": "portrait/yuji_portrait.png",
 			"type": "image",
-			"name": "Destroyer_tex_png"
+			"name": "yuji_portrait_png"
 		},
 		{
-			"url": "battle/dbs/Excutioner_tex.png",
+			"url": "battle/dbs/yuji_tex.png",
 			"type": "image",
-			"name": "Excutioner_tex_png"
+			"name": "yuji_tex_png"
 		},
 		{
-			"url": "battle/dbs/Golyat_tex.png",
-			"type": "image",
-			"name": "Golyat_tex_png"
-		},
-		{
-			"url": "battle/dbs/HK416_tex.png",
-			"type": "image",
-			"name": "HK416_tex_png"
-		},
-		{
-			"url": "battle/dbs/Hunter_tex.png",
-			"type": "image",
-			"name": "Hunter_tex_png"
-		},
-		{
-			"url": "battle/dbs/Intruder_tex.png",
-			"type": "image",
-			"name": "Intruder_tex_png"
-		},
-		{
-			"url": "battle/dbs/OTs12_tex.png",
-			"type": "image",
-			"name": "OTs12_tex_png"
-		},
-		{
-			"url": "battle/dbs/Scarecrow_tex.png",
-			"type": "image",
-			"name": "Scarecrow_tex_png"
-		},
-		{
-			"url": "battle/dbs/UMP45_tex.png",
-			"type": "image",
-			"name": "UMP45_tex_png"
-		},
-		{
-			"url": "battle/dbs/Vector_tex.png",
-			"type": "image",
-			"name": "Vector_tex_png"
-		},
-		{
-			"url": "battle/dbs/Excutioner_ske.json",
+			"url": "battle/dbs/yuji_ske.json",
 			"type": "json",
-			"name": "Excutioner_ske_json"
+			"name": "yuji_ske_json"
 		},
 		{
-			"url": "battle/dbs/Golyat_ske.json",
+			"url": "battle/dbs/yuji_tex.json",
 			"type": "json",
-			"name": "Golyat_ske_json"
+			"name": "yuji_tex_json"
 		},
 		{
-			"url": "battle/dbs/Excutioner_tex.json",
-			"type": "json",
-			"name": "Excutioner_tex_json"
-		},
-		{
-			"url": "battle/dbs/Destroyer_ske.json",
-			"type": "json",
-			"name": "Destroyer_ske_json"
-		},
-		{
-			"url": "battle/dbs/Golyat_tex.json",
-			"type": "json",
-			"name": "Golyat_tex_json"
-		},
-		{
-			"url": "battle/dbs/Destroyer_tex.json",
-			"type": "json",
-			"name": "Destroyer_tex_json"
-		},
-		{
-			"url": "battle/dbs/HK416_tex.json",
-			"type": "json",
-			"name": "HK416_tex_json"
-		},
-		{
-			"url": "battle/dbs/Hunter_ske.json",
-			"type": "json",
-			"name": "Hunter_ske_json"
-		},
-		{
-			"url": "battle/dbs/HK416_ske.json",
-			"type": "json",
-			"name": "HK416_ske_json"
-		},
-		{
-			"url": "battle/dbs/Hunter_tex.json",
-			"type": "json",
-			"name": "Hunter_tex_json"
-		},
-		{
-			"url": "battle/dbs/Intruder_tex.json",
-			"type": "json",
-			"name": "Intruder_tex_json"
-		},
-		{
-			"url": "battle/dbs/Intruder_ske.json",
-			"type": "json",
-			"name": "Intruder_ske_json"
-		},
-		{
-			"url": "battle/dbs/Scarecrow_tex.json",
-			"type": "json",
-			"name": "Scarecrow_tex_json"
-		},
-		{
-			"url": "battle/dbs/OTs12_tex.json",
-			"type": "json",
-			"name": "OTs12_tex_json"
-		},
-		{
-			"url": "battle/dbs/OTs12_ske.json",
-			"type": "json",
-			"name": "OTs12_ske_json"
-		},
-		{
-			"url": "battle/dbs/Scarecrow_ske.json",
-			"type": "json",
-			"name": "Scarecrow_ske_json"
-		},
-		{
-			"url": "battle/dbs/UMP45_ske.json",
-			"type": "json",
-			"name": "UMP45_ske_json"
-		},
-		{
-			"url": "battle/dbs/Vector_ske.json",
-			"type": "json",
-			"name": "Vector_ske_json"
-		},
-		{
-			"url": "battle/dbs/UMP45_tex.json",
-			"type": "json",
-			"name": "UMP45_tex_json"
-		},
-		{
-			"url": "battle/dbs/Vector_tex.json",
-			"type": "json",
-			"name": "Vector_tex_json"
-		},
-		{
-			"url": "portrait/98K_portrait.png",
+			"url": "battle/dbs/change_tex.png",
 			"type": "image",
-			"name": "98K_portrait_png"
+			"name": "change_tex_png"
 		},
 		{
-			"url": "portrait/Destroyer_portrait.png",
+			"url": "battle/dbs/daji_tex.png",
 			"type": "image",
-			"name": "Destroyer_portrait_png"
+			"name": "daji_tex_png"
 		},
 		{
-			"url": "portrait/Excutioner_portrait.png",
+			"url": "battle/dbs/diaochan_tex.png",
 			"type": "image",
-			"name": "Excutioner_portrait_png"
+			"name": "diaochan_tex_png"
 		},
 		{
-			"url": "portrait/Golyat_portrait.png",
+			"url": "battle/dbs/diaochanhong_tex.png",
 			"type": "image",
-			"name": "Golyat_portrait_png"
+			"name": "diaochanhong_tex_png"
 		},
 		{
-			"url": "portrait/HK416_portrait.png",
+			"url": "battle/dbs/monvyemei_tex.png",
 			"type": "image",
-			"name": "HK416_portrait_png"
+			"name": "monvyemei_tex_png"
 		},
 		{
-			"url": "portrait/Hunter_portrait.png",
+			"url": "battle/dbs/mudanxianzi_tex.png",
 			"type": "image",
-			"name": "Hunter_portrait_png"
+			"name": "mudanxianzi_tex_png"
 		},
 		{
-			"url": "portrait/Intruder_portrait.png",
+			"url": "battle/dbs/nvshizhuang1_tex.png",
 			"type": "image",
-			"name": "Intruder_portrait_png"
+			"name": "nvshizhuang1_tex_png"
 		},
 		{
-			"url": "portrait/OTs12_portrait.png",
+			"url": "battle/dbs/nvshizhuang2_1_tex.png",
 			"type": "image",
-			"name": "OTs12_portrait_png"
+			"name": "nvshizhuang2_1_tex_png"
 		},
 		{
-			"url": "portrait/Scarecrow_portrait.png",
+			"url": "battle/dbs/nvshizhuang5_tex.png",
 			"type": "image",
-			"name": "Scarecrow_portrait_png"
+			"name": "nvshizhuang5_tex_png"
 		},
 		{
-			"url": "portrait/UMP45_portrait.png",
+			"url": "battle/dbs/nvshizhuang6_tex.png",
 			"type": "image",
-			"name": "UMP45_portrait_png"
+			"name": "nvshizhuang6_tex_png"
 		},
 		{
-			"url": "portrait/Vector_portrait.png",
+			"url": "battle/dbs/nvshizhuang7_tex.png",
 			"type": "image",
-			"name": "Vector_portrait_png"
+			"name": "nvshizhuang7_tex_png"
 		},
 		{
-			"url": "portrait/WA2000_portrait.png",
+			"url": "battle/dbs/nvshizhuang8_tex.png",
 			"type": "image",
-			"name": "WA2000_portrait_png"
+			"name": "nvshizhuang8_tex_png"
+		},
+		{
+			"url": "battle/dbs/nvzhujueerjie_tex.png",
+			"type": "image",
+			"name": "nvzhujueerjie_tex_png"
+		},
+		{
+			"url": "battle/dbs/nvzhujueliujie_tex.png",
+			"type": "image",
+			"name": "nvzhujueliujie_tex_png"
+		},
+		{
+			"url": "battle/dbs/nvzhujuesanjie_tex.png",
+			"type": "image",
+			"name": "nvzhujuesanjie_tex_png"
+		},
+		{
+			"url": "battle/dbs/nvzhujuesijie_tex.png",
+			"type": "image",
+			"name": "nvzhujuesijie_tex_png"
+		},
+		{
+			"url": "battle/dbs/nvzhujuewujie_tex.png",
+			"type": "image",
+			"name": "nvzhujuewujie_tex_png"
+		},
+		{
+			"url": "battle/dbs/nvzhujueyijie_tex.png",
+			"type": "image",
+			"name": "nvzhujueyijie_tex_png"
+		},
+		{
+			"url": "battle/dbs/change_tex.json",
+			"type": "json",
+			"name": "change_tex_json"
+		},
+		{
+			"url": "battle/dbs/diaochan_tex.json",
+			"type": "json",
+			"name": "diaochan_tex_json"
+		},
+		{
+			"url": "battle/dbs/diaochan_ske.json",
+			"type": "json",
+			"name": "diaochan_ske_json"
+		},
+		{
+			"url": "battle/dbs/change_ske.json",
+			"type": "json",
+			"name": "change_ske_json"
+		},
+		{
+			"url": "battle/dbs/daji_ske.json",
+			"type": "json",
+			"name": "daji_ske_json"
+		},
+		{
+			"url": "battle/dbs/daji_tex.json",
+			"type": "json",
+			"name": "daji_tex_json"
+		},
+		{
+			"url": "battle/dbs/diaochanhong_ske.json",
+			"type": "json",
+			"name": "diaochanhong_ske_json"
+		},
+		{
+			"url": "battle/dbs/monvyemei_tex.json",
+			"type": "json",
+			"name": "monvyemei_tex_json"
+		},
+		{
+			"url": "battle/dbs/diaochanhong_tex.json",
+			"type": "json",
+			"name": "diaochanhong_tex_json"
+		},
+		{
+			"url": "battle/dbs/monvyemei_ske.json",
+			"type": "json",
+			"name": "monvyemei_ske_json"
+		},
+		{
+			"url": "battle/dbs/mudanxianzi_tex.json",
+			"type": "json",
+			"name": "mudanxianzi_tex_json"
+		},
+		{
+			"url": "battle/dbs/mudanxianzi_ske.json",
+			"type": "json",
+			"name": "mudanxianzi_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang1_ske.json",
+			"type": "json",
+			"name": "nvshizhuang1_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang1_tex.json",
+			"type": "json",
+			"name": "nvshizhuang1_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang2_1_tex.json",
+			"type": "json",
+			"name": "nvshizhuang2_1_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang5_tex.json",
+			"type": "json",
+			"name": "nvshizhuang5_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang2_1_ske.json",
+			"type": "json",
+			"name": "nvshizhuang2_1_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang6_ske.json",
+			"type": "json",
+			"name": "nvshizhuang6_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang5_ske.json",
+			"type": "json",
+			"name": "nvshizhuang5_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang7_tex.json",
+			"type": "json",
+			"name": "nvshizhuang7_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang7_ske.json",
+			"type": "json",
+			"name": "nvshizhuang7_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang8_tex.json",
+			"type": "json",
+			"name": "nvshizhuang8_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang6_tex.json",
+			"type": "json",
+			"name": "nvshizhuang6_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujueerjie_tex.json",
+			"type": "json",
+			"name": "nvzhujueerjie_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujueliujie_tex.json",
+			"type": "json",
+			"name": "nvzhujueliujie_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujueerjie_ske.json",
+			"type": "json",
+			"name": "nvzhujueerjie_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvshizhuang8_ske.json",
+			"type": "json",
+			"name": "nvshizhuang8_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujuesanjie_ske.json",
+			"type": "json",
+			"name": "nvzhujuesanjie_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujuesanjie_tex.json",
+			"type": "json",
+			"name": "nvzhujuesanjie_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujueliujie_ske.json",
+			"type": "json",
+			"name": "nvzhujueliujie_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujuesijie_tex.json",
+			"type": "json",
+			"name": "nvzhujuesijie_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujuesijie_ske.json",
+			"type": "json",
+			"name": "nvzhujuesijie_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujuewujie_tex.json",
+			"type": "json",
+			"name": "nvzhujuewujie_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujuewujie_ske.json",
+			"type": "json",
+			"name": "nvzhujuewujie_ske_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujueyijie_tex.json",
+			"type": "json",
+			"name": "nvzhujueyijie_tex_json"
+		},
+		{
+			"url": "battle/dbs/nvzhujueyijie_ske.json",
+			"type": "json",
+			"name": "nvzhujueyijie_ske_json"
+		},
+		{
+			"url": "portrait/change_portrait.png",
+			"type": "image",
+			"name": "change_portrait_png"
+		},
+		{
+			"url": "portrait/daji_portrait.png",
+			"type": "image",
+			"name": "daji_portrait_png"
+		},
+		{
+			"url": "portrait/diaochan_portrait.png",
+			"type": "image",
+			"name": "diaochan_portrait_png"
+		},
+		{
+			"url": "portrait/diaochanhong_portrait.png",
+			"type": "image",
+			"name": "diaochanhong_portrait_png"
+		},
+		{
+			"url": "portrait/monvyemei_portrait.png",
+			"type": "image",
+			"name": "monvyemei_portrait_png"
+		},
+		{
+			"url": "portrait/mudanxianzi_portrait.png",
+			"type": "image",
+			"name": "mudanxianzi_portrait_png"
+		},
+		{
+			"url": "portrait/nvshizhuang1_portrait.png",
+			"type": "image",
+			"name": "nvshizhuang1_portrait_png"
+		},
+		{
+			"url": "portrait/nvshizhuang2_1_portrait.png",
+			"type": "image",
+			"name": "nvshizhuang2_1_portrait_png"
+		},
+		{
+			"url": "portrait/nvzhujueerjie_portrait.png",
+			"type": "image",
+			"name": "nvzhujueerjie_portrait_png"
+		},
+		{
+			"url": "portrait/profilePic_ZastavaM21_znq.png",
+			"type": "image",
+			"name": "profilePic_ZastavaM21_znq_png"
+		},
+		{
+			"url": "portrait/wangmuniangnianghong_portrait.png",
+			"type": "image",
+			"name": "wangmuniangnianghong_portrait_png"
+		},
+		{
+			"url": "portrait/nvzhujueliujie_portrait.png",
+			"type": "image",
+			"name": "nvzhujueliujie_portrait_png"
+		},
+		{
+			"url": "portrait/nvshizhuang5_portrait.png",
+			"type": "image",
+			"name": "nvshizhuang5_portrait_png"
+		},
+		{
+			"url": "portrait/nvshizhuang6_portrait.png",
+			"type": "image",
+			"name": "nvshizhuang6_portrait_png"
+		},
+		{
+			"url": "portrait/nvshizhuang7_portrait.png",
+			"type": "image",
+			"name": "nvshizhuang7_portrait_png"
+		},
+		{
+			"url": "portrait/nvshizhuang8_portrait.png",
+			"type": "image",
+			"name": "nvshizhuang8_portrait_png"
 		},
 		{
 			"url": "skillicon/AK12_Buff.png",
@@ -1041,71 +1201,6 @@
 			"url": "skillicon/targetspeedDebuff.png",
 			"type": "image",
 			"name": "targetspeedDebuff_png"
-		},
-		{
-			"url": "battle/dbs/WA2000_ske.json",
-			"type": "json",
-			"name": "WA2000_ske_json"
-		},
-		{
-			"url": "battle/dbs/WA2000_tex.json",
-			"type": "json",
-			"name": "WA2000_tex_json"
-		},
-		{
-			"url": "battle/dbs/WA2000_tex.png",
-			"type": "image",
-			"name": "WA2000_tex_png"
-		},
-		{
-			"url": "battle/dbs/98K_ske.json",
-			"type": "json",
-			"name": "98K_ske_json"
-		},
-		{
-			"url": "battle/dbs/98K_tex.json",
-			"type": "json",
-			"name": "98K_tex_json"
-		},
-		{
-			"url": "battle/dbs/98K_tex.png",
-			"type": "image",
-			"name": "98K_tex_png"
-		},
-		{
-			"url": "battle/dbs/Dragon_db_tex.png",
-			"type": "image",
-			"name": "Dragon_db_tex_png"
-		},
-		{
-			"url": "battle/dbs/Swordsman_db_tex.png",
-			"type": "image",
-			"name": "Swordsman_db_tex_png"
-		},
-		{
-			"url": "battle/dbs/Dragon_db_ske.json",
-			"type": "json",
-			"name": "Dragon_db_ske_json"
-		},
-		{
-			"url": "battle/dbs/Dragon_db_tex.json",
-			"type": "json",
-			"name": "Dragon_db_tex_json"
-		},
-		{
-			"url": "battle/dbs/Swordsman_db_tex.json",
-			"type": "json",
-			"name": "Swordsman_db_tex_json"
-		},
-		{
-			"url": "battle/dbs/Swordsman_db_ske.json",
-			"type": "json",
-			"name": "Swordsman_db_ske_json"
-		},
-		{
-			"url": "portrait/Dragon_db_portrait.png",
-			"type": "image",
-			"name": "Dragon_db_portrait_png"
 		}
 	]
 }

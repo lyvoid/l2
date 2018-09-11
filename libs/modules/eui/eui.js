@@ -3139,10 +3139,6 @@ var eui;
             }
             var values = this.$Component;
             var oldSkin = values[8 /* skin */];
-            if (oldSkin && oldSkin["__proto__"] == skin["__proto__"]) {
-                console.log(this.skinName + "已经被定义");
-                return;
-            }
             if (oldSkin) {
                 var skinParts = oldSkin.skinParts;
                 var length_7 = skinParts.length;

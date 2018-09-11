@@ -24,7 +24,7 @@ class UserData {
 		
 		// TODO: replace by get curUserTeam from service
 		this.userTeam = [-1, -1, -1, -1, -1, -1];
-		this.userArmy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+		this.userArmy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 		this.userCards = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
 		this.userDeck = [];
 	}
@@ -52,9 +52,9 @@ class UserData {
 			let rowT: CRType;
 			let rowIdentity = index % 2;
 			if (rowIdentity == 0){
-				rowT = userTeam[index + 1] != 0 ? CRType.up : CRType.mid;
+				rowT = userTeam[index + 1] != -1 ? CRType.up : CRType.mid;
 			} else {
-				rowT = userTeam[index - 1] != 0 ? CRType.down : CRType.mid;
+				rowT = userTeam[index - 1] != -1 ? CRType.down : CRType.mid;
 			}
 			let colT: CCType = Math.floor(index / 2);
 			infos.push({ charId: charId, row: rowT, col: colT, level: 1 });

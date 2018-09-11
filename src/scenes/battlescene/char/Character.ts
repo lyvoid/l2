@@ -215,7 +215,7 @@ class Character extends egret.DisplayObjectContainer {
 		this._rsBar = shape;
 
 		this.setToProperPosition();
-		// start idle
+		// start stand
 		this.nextPerf();
 
 	}
@@ -301,12 +301,13 @@ class Character extends egret.DisplayObjectContainer {
 			charactorName);
 
 		// 设置龙骨动画资源大小
-		let demandArmatureWidth = 100;
+		// let demandArmatureWidth = 100;
 		let demandArmatureHeight = 200;
-		armatureDisplay.scaleX = demandArmatureWidth / armatureDisplay.width;
 		armatureDisplay.scaleY = demandArmatureHeight / armatureDisplay.height;
-		armatureDisplay.width = demandArmatureWidth;
-		armatureDisplay.height = demandArmatureHeight;
+		// armatureDisplay.scaleX = demandArmatureWidth / armatureDisplay.width;
+		armatureDisplay.scaleX = armatureDisplay.scaleY;		
+		// armatureDisplay.width = demandArmatureWidth;
+		// armatureDisplay.height = demandArmatureHeight;
 
 		// 增加动画点击事件
 		armatureDisplay.touchEnabled = true;
@@ -334,7 +335,7 @@ class Character extends egret.DisplayObjectContainer {
 	private playDBAnim(
 		animationName: string,
 		animationTimes: number = -1,
-		animationNameBack: string = "idle"
+		animationNameBack: string = "stand"
 	): void {
 		if (this._armatureDisplay.animation.animationNames.indexOf(animationName) >= 0) {
 			this._armatureDisplay.animation.play(animationName, animationTimes);
@@ -380,8 +381,8 @@ class Character extends egret.DisplayObjectContainer {
 
 	// get a proper position
 	public getPositon(): { x: number, y: number } {
-		let y = 300 + 65 * this._row + Math.random() * 30;
-		let x = 120 + this._col * 130 + this._row * 20 + Math.random() * 10;
+		let y = 300 + 85 * this._row + Math.random() * 30;
+		let x = 120 + this._col * 130 + this._row * 30 + Math.random() * 10;
 		if (this.mCamp == CharCamp.Enemy) {
 			x = LayerManager.Ins.stageWidth - x;
 		}
@@ -439,7 +440,7 @@ class Character extends egret.DisplayObjectContainer {
 
 		if (this._perfQueue.length == 0) {
 			if (this._isInBattle && this._alive) {
-				this._armatureDisplay.animation.play("idle", 0);
+				this._armatureDisplay.animation.play("stand", 0);
 			}
 			return;
 		}
@@ -450,7 +451,7 @@ class Character extends egret.DisplayObjectContainer {
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		switch (nextP.pType) {
 			case PType.Die:
-				this.stopDBAnim();
+				this.playDBAnim("dizzy", 1);
 				(SceneManager.Ins.curScene as BattleScene).mFilterManager.addGreyFilter(this._armatureDisplay);
 				this._isInPerf = false;
 				this.nextPerf();
@@ -464,7 +465,7 @@ class Character extends egret.DisplayObjectContainer {
 				);
 				break;
 			case PType.Resurgence:
-				this._armatureDisplay.animation.play("idle", 0);
+				this._armatureDisplay.animation.play("stand", 0);
 				(SceneManager.Ins.curScene as BattleScene).mFilterManager.removeGreyFilter(this._armatureDisplay);
 				this._isInPerf = false;
 				this.nextPerf();
@@ -478,6 +479,7 @@ class Character extends egret.DisplayObjectContainer {
 				);
 				break;
 			case PType.ShieldBar:
+				this.playDBAnim("injured", 1);
 				damageFloatManage.newFloat(this, nextP.param.shieldOld, nextP.param.shieldNew, "护盾");
 				this.shieldBarAnim(nextP.param.shieldNew).call(
 					() => {
@@ -487,6 +489,7 @@ class Character extends egret.DisplayObjectContainer {
 				);
 				break;
 			case PType.LifeBar:
+				this.playDBAnim("injured", 1);
 				damageFloatManage.newFloat(this, nextP.param.hpOld, nextP.param.hpNew, "生命");
 				this.lifeBarAnim(nextP.param.hpNew).call(
 					() => {
@@ -496,6 +499,7 @@ class Character extends egret.DisplayObjectContainer {
 				);
 				break;
 			case PType.RemoveFromBattle:
+				this.playDBAnim("death", 1);
 				egret.Tween.get(this._armatureDisplay).to({
 					alpha: 0
 				}, 1000).call(() => {
@@ -507,8 +511,6 @@ class Character extends egret.DisplayObjectContainer {
 				});
 				break;
 			case PType.DamageFloat:
-
-
 				break;
 		}
 	}

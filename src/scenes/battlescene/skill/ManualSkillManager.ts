@@ -37,7 +37,8 @@ class ManualSkillManager {
             skillInfo["selectNeedStat"],
             skillInfo["affectFunStrId"],
             cast,
-            camp
+            camp,
+            skillInfo["defPerfAnim"] == "" ? "attack" : skillInfo["defPerfAnim"]
         )
         return skill;
     }

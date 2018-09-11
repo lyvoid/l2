@@ -13,6 +13,7 @@ class ManualSkill {
 	private _buffsIdToSelf: number[];
 	private _isNoUseDefaultPerf: boolean;
 	private _isDefPerfMove: boolean;
+	private _defPerfAnim: string;
 	private _isRemovePosBuff: boolean;
 	private _isRemoveNegBuff: boolean;
 	// can cast judge 
@@ -60,7 +61,8 @@ class ManualSkill {
 		selectNeedStat: number,
 		affectFunStrId: string,
 		caster: Character,
-		camp: CharCamp
+		camp: CharCamp,
+		defPerfAnim: string
 	) {
 		this._isRemoveNegBuff = isRemoveNegBuff;
 		this._isRemovePosBuff = isRemovePosBuff;
@@ -81,6 +83,7 @@ class ManualSkill {
 		this._affectFunStrId = affectFunStrId;
 		this._camp = camp;
 		this._isDefPerfMove = isDefPerfMove;
+		this._defPerfAnim = defPerfAnim;
 		// initial custom affect function 
 		this._cusAffFc = SKAFFLS[this._affectFunStrId];
 	}
@@ -208,7 +211,7 @@ class ManualSkill {
 
 		caster.nextPerf({
 			pType: PType.DBAnim,
-			param: { animName: "attack1_+1" }
+			param: { animName: this._defPerfAnim }
 		})
 
 		// call when anim end event dispatched

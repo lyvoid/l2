@@ -56,7 +56,7 @@ class Card extends egret.DisplayObjectContainer {
 		if (caster != null) {
 			let castPic = new egret.Bitmap();
 			rsLoad.getResAsyncAndSetValue(
-				RES.getRes(caster.charCode + '_portrait_png'),
+				caster.charCode + '_portrait_png',
 				"texture",
 				castPic
 			);

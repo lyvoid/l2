@@ -12,7 +12,7 @@ class ResAsyncLoadManager {
 		}
 	}
 
-	public loadGroup(name: string, priority?: number, reporter?: RES.PromiseTaskReporter): Promise<void>{
+	public loadGroup(name: string, priority?: number, reporter?: RES.PromiseTaskReporter): void | Promise<void>{
 		this._loadResouceLs.add(name);
 		return RES.loadGroup(name, priority, reporter);
 	}
