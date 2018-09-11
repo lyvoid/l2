@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <e:Skin class="mySkin.BattleEndPopUp" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
-	<e:Rect width="100%" height="100%" x="0" y="0" fillColor="0xffffff" fillAlpha="0.3" touchEnabled="true"/>
+	<e:Rect width="100%" height="100%" x="0" y="0" fillColor="0x000000" fillAlpha="0.5" touchEnabled="true"/>
 	<e:Label id="titleLabel" text="战斗胜利" horizontalCenter="23" size="100" fontFamily="KaiTi" verticalCenter="-100" bold="true"/>
 	<e:Button id="exitButton" label="离开" horizontalCenter="-100" verticalCenter="100"/>
 	<e:Button id="nextButton" label="下一关" horizontalCenter="100" verticalCenter="100"/>

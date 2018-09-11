@@ -5,7 +5,7 @@
 			"name": "preload"
 		},
 		{
-			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg,bufficontest_png",
+			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg,bufficontest_png,selectHead_png,no_caster_portrait_png",
 			"name": "battlecommon"
 		},
 		{
@@ -1201,6 +1201,16 @@
 			"url": "skillicon/targetspeedDebuff.png",
 			"type": "image",
 			"name": "targetspeedDebuff_png"
+		},
+		{
+			"url": "battle/common/selectHead.png",
+			"type": "image",
+			"name": "selectHead_png"
+		},
+		{
+			"url": "battle/common/no_caster_portrait.png",
+			"type": "image",
+			"name": "no_caster_portrait_png"
 		}
 	]
 }

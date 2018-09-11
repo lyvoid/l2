@@ -15,7 +15,7 @@ class SelectCharPopUpUI extends eui.Component {
 
 	public constructor(order: number, forCharPopUp: FormCharPopUpUI) {
 		super();
-		this.skinName = "mySkin.SelectCharPopUpUI";
+		this.skinName = "mySkin.FormCardPopUpUI";
 		this.width = LayerManager.Ins.stageWidth;
 		this.height = LayerManager.Ins.stageHeight;
 		LayerManager.Ins.popUpLayer.addChild(this);

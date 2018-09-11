@@ -48,24 +48,26 @@ class Card extends egret.DisplayObjectContainer {
 			skillIcon
 		);
 		skillIcon.width = 72;
-		skillIcon.height = 122;
+		skillIcon.height = 72;
 		skillIcon.x = 4;
-		skillIcon.y = 4;
+		skillIcon.y = 54;
 		this.addChild(skillIcon);
 		// caster icon
+		let castPic = new egret.Bitmap();
+		castPic.width = 65;
+		castPic.height = 65;
+		castPic.x = 4;
+		castPic.y = -5;
 		if (caster != null) {
-			let castPic = new egret.Bitmap();
 			rsLoad.getResAsyncAndSetValue(
 				caster.charCode + '_portrait_png',
 				"texture",
 				castPic
 			);
-			castPic.width = 50;
-			castPic.height = 50;
-			castPic.x = 4;
-			castPic.y = -15;
-			this.addChild(castPic);
+		} else {
+			castPic.texture = RES.getRes("no_caster_portrait_png");
 		}
+		this.addChild(castPic);
 
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
@@ -85,9 +87,10 @@ class Card extends egret.DisplayObjectContainer {
 		LayerManager.Ins.popUpLayer.removeChild(scene.mCardInfoPopupUI);
 		// 显示选择圈
 		scene.mSelectImg.visible = true;
+		scene.mSelectHead.visible = true;
 		let caster = this.mCaster;
 		if (caster) {
-			caster.armatureUnBlink();
+			caster.unBlink();
 		}
 	}
 
@@ -97,10 +100,11 @@ class Card extends egret.DisplayObjectContainer {
 		LayerManager.Ins.popUpLayer.addChild(scene.mCardInfoPopupUI);
 		// 隐藏选择圈
 		scene.mSelectImg.visible = false;
+		scene.mSelectHead.visible = false;
 		// 释放者闪烁
 		let caster = this.mCaster;
 		if (caster) {
-			caster.armatureBlink();
+			caster.blink();
 		}
 	}
 

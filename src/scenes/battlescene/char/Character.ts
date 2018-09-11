@@ -182,7 +182,7 @@ class Character extends egret.DisplayObjectContainer {
 		// headBar(lifeBar/shield bar/ buff bar)
 		let headBar = new egret.DisplayObjectContainer();
 		headBar.x = -50;
-		headBar.y = -210;
+		headBar.y = -160;
 		// life bar
 		let lifebarBg = new egret.Bitmap(RES.getRes("lifebarbg_jpg"));
 		lifebarBg.alpha = 0.5;
@@ -302,7 +302,7 @@ class Character extends egret.DisplayObjectContainer {
 
 		// 设置龙骨动画资源大小
 		// let demandArmatureWidth = 100;
-		let demandArmatureHeight = 200;
+		let demandArmatureHeight = 160;
 		armatureDisplay.scaleY = demandArmatureHeight / armatureDisplay.height;
 		// armatureDisplay.scaleX = demandArmatureWidth / armatureDisplay.width;
 		armatureDisplay.scaleX = armatureDisplay.scaleY;		
@@ -381,8 +381,8 @@ class Character extends egret.DisplayObjectContainer {
 
 	// get a proper position
 	public getPositon(): { x: number, y: number } {
-		let y = 300 + 85 * this._row + Math.random() * 30;
-		let x = 120 + this._col * 130 + this._row * 30 + Math.random() * 10;
+		let y = 320 + 70 * this._row + Math.random() * 15;
+		let x = 50 + this._col * 155 + this._row * 30 + Math.random() * 10;
 		if (this.mCamp == CharCamp.Enemy) {
 			x = LayerManager.Ins.stageWidth - x;
 		}
@@ -403,9 +403,31 @@ class Character extends egret.DisplayObjectContainer {
 		this._armatureDisplay.alpha = 1;
 	}
 
+	public blink(): void {
+		egret.Tween.get(
+			this,
+			{ loop: true }
+		).to(
+			{ alpha: 0 }, 300
+			).to({ alpha: 1 }, 300);
+	}
+
+	public unBlink(): void {
+		egret.Tween.removeTweens(this);
+		this.alpha = 1;
+	}
+
 	public onSelect() {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		this._bgLayer.addChild(scene.mSelectImg);
+		let selectHead = scene.mSelectHead;
+		const startY = -215;
+		selectHead.y = startY;
+		this._bgLayer.addChild(selectHead);
+		egret.Tween.removeTweens(selectHead);
+		egret.Tween.get(selectHead, {loop: true}).to(
+			{y:startY + 20}, 500
+		).to({y:startY}, 500);
 		scene.mSelectedChar = this;
 	}
 

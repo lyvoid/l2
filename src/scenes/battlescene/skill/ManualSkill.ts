@@ -181,7 +181,7 @@ class ManualSkill {
 		let targets = this._targets;
 		let casterCamp = caster.mCamp;
 		let enemiesNum = 0;
-		let minX = 1000;
+		let minX = 3000;
 		let nearestEnemy: Character;
 		for (let char of targets) {
 			// calculate proper position

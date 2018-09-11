@@ -1,6 +1,5 @@
 class FormCharPopUpUI extends eui.Component {
 
-	private backButton: eui.Button;
 	private p0Img: eui.Image;
 	private p1Img: eui.Image;
 	private p2Img: eui.Image;
@@ -8,6 +7,7 @@ class FormCharPopUpUI extends eui.Component {
 	private p4Img: eui.Image;
 	private p5Img: eui.Image;
 	private _p6Imgs: eui.Image[];
+	private bg: eui.Rect;
 	private _userTeam;
 	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 
@@ -17,7 +17,7 @@ class FormCharPopUpUI extends eui.Component {
 		this.width = LayerManager.Ins.stageWidth;
 		this.height = LayerManager.Ins.stageHeight;
 		this._p6Imgs = [this.p0Img, this.p1Img, this.p2Img, this.p3Img, this.p4Img, this.p5Img];
-		this.backButton.addEventListener(
+		this.bg.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onCloseTap,
 			this
@@ -77,7 +77,7 @@ class FormCharPopUpUI extends eui.Component {
 	}
 
 	public release(): void {
-		this.backButton.removeEventListener(
+		this.bg.removeEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onCloseTap,
 			this

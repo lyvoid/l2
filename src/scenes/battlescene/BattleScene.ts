@@ -4,6 +4,7 @@ class BattleScene extends IScene {
 	public mHurtManager: HurtManager;
 	public mCardBoard: CardBoard;
 	public mSelectImg: egret.Bitmap;
+	public mSelectHead: egret.Bitmap;
 	public mFilterManager: FilterManager;
 	public mEnemies: Character[];
 	public mFriends: Character[];
@@ -67,6 +68,9 @@ class BattleScene extends IScene {
 		selectImg.x = -selectImg.width / 2;
 		selectImg.y = -selectImg.height / 2;
 		this.mSelectImg = selectImg;
+		let selectHead = new egret.Bitmap(RES.getRes("selectHead_png"));
+		selectHead.x = -selectHead.width / 2;
+		this.mSelectHead = selectHead;
 		// instantiate filter
 		this.mFilterManager = new FilterManager();
 		// initialize game round
@@ -170,7 +174,6 @@ class BattleScene extends IScene {
 			charCodes.add(charConfig[i]["charCode"]);
 		}
 		for (let charactorName of charCodes.data) {
-			console.log("dbload" + charactorName);
 			awaits.push(rsLoader.getResAsync(`${charactorName}_ske_json`));
 			awaits.push(rsLoader.getResAsync(`${charactorName}_tex_json`));
 			awaits.push(rsLoader.getResAsync(`${charactorName}_tex_png`));
