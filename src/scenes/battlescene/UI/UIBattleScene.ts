@@ -5,6 +5,11 @@ class UIBattleScene extends eui.Component {
 	public cardNumLabel: eui.Label;
 	public fireNumLabel: eui.Label;
 	public roundLabel: eui.Label;
+	private remainCardInfo: eui.Label;
+	public set remainCardNum(value: number){
+		this.remainCardInfo.text = `${value}`;
+		this.remainCardInfo.textColor = value==0 ? 0xEE2C2C : 0x7FFF00
+	};
 
 
 	public constructor() {

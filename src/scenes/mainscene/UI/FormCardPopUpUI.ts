@@ -103,7 +103,10 @@ class FormCardPopUpUI extends eui.Component {
 				`${buffInfo["buffName"]}:</b></font>${buffInfo["description"]}\n`;
 		}
 		let info = `
-<font color="#7FFF00"><b>${skillInfo['skillName']}(${skillInfo["fireNeed"]}能量)</b></font>
+<font color="#7FFF00"><b>${skillInfo['skillName']}</b></font>
+
+<b>需要能量</b>：${skillInfo["fireNeed"]} 点
+<b>循环次数</b>: ${skillInfo["recycleTimes"]} 次
 
 <font color="#EE7942"><b>描述：</b></font>
 ${skillInfo["description"]}

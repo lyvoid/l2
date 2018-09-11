@@ -1,5 +1,6 @@
 class Card extends egret.DisplayObjectContainer {
 	public mSkillId: number;
+	public mSkillInfoOfPoll;
 	public mCaster: Character;
 	private _recycleTimes: number;
 	public get description(): string {

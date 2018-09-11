@@ -141,31 +141,46 @@ class BattleScene extends IScene {
 			}
 		}
 		// add user desk card to skill mpool
-		for (let skillId of UserData.Ins.userDeck){
-			this.mManualSkillIdPool.push([skillId, null, -1])
+		for (let userCardId of UserData.Ins.userDeck){
+			this.mManualSkillIdPool.push([UserData.Ins.userCards[userCardId], null, -1])
 		}
+		this.mBattleUI.remainCardNum = this.mManualSkillIdPool.length;
 		// select a default Enemy
 		this.mEnemies[0].onSelect();
 		// initialize scene state
-		this.setState(new PlayerRoundStartPhase());
+		this.setState(new PlayerRoundStartPhase(), 0);
 	}
 
 	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 	public async loadResource() {
 		let rsLoader = this._rsLoader;
-		await rsLoader.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI);
-		await rsLoader.loadGroup("portrait", 0, LayerManager.Ins.loadingUI);
-		await rsLoader.loadGroup("skillicon", 0, LayerManager.Ins.loadingUI);
+		let awaits = [];
+		awaits.push(rsLoader.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI));
+		awaits.push(rsLoader.loadGroup("portrait", 0, LayerManager.Ins.loadingUI));
+		awaits.push(rsLoader.loadGroup("skillicon", 0, LayerManager.Ins.loadingUI));
 		
-
 		// 载入龙骨资源
-		for (let charactorName of ["Dragon", "Swordsman"]) {
-			await rsLoader.getResAsync(`${charactorName}_db_ske_json`);
-			await rsLoader.getResAsync(`${charactorName}_db_tex_json`);
-			await rsLoader.getResAsync(`${charactorName}_db_tex_png`);
+		let charCodes = new MySet<string>();
+		let charConfig = ConfigManager.Ins.mCharConfig;
+		for(let info of UserData.Ins.getUserTeamInfo){
+			charCodes.add(charConfig[info.charId]["charCode"]);
+		}
+		let battleInfo = ConfigManager.Ins.mBattleConfig[UserData.Ins.battleId];
+		let enemiesInfo = ConfigManager.Ins.mBattleEnemyConfig;
+		let enemiesId = battleInfo["enemy"];
+		for(let i of enemiesId){
+			charCodes.add(charConfig[i]["charCode"]);
+		}
+		for (let charactorName of charCodes.data) {
+			awaits.push(rsLoader.getResAsync(`${charactorName}_db_ske_json`));
+			awaits.push(rsLoader.getResAsync(`${charactorName}_db_tex_json`));
+			awaits.push(rsLoader.getResAsync(`${charactorName}_db_tex_png`));
 		}
 		// 载入game层背景图片资源
-		await rsLoader.getResAsync("bg_json");
+		awaits.push(rsLoader.getResAsync("bg_json"));
+		for (let wait of awaits){
+			await wait;
+		}
 	}
 
 	public releaseResource() {
@@ -193,6 +208,7 @@ class BattleScene extends IScene {
 		}
 
 		if (!isEnemyAlive) {
+			UserData.Ins.battleId += 1;
 			this.mWinnerCamp = CharCamp.Player;
 		} else if (!isPlayerAlive) {
 			this.mWinnerCamp = CharCamp.Enemy;
@@ -298,10 +314,10 @@ class BattleScene extends IScene {
 		this._gameFgLayer = null;
 	}
 
-	public setState(state: ISceneState): void{
+	public setState(state: ISceneState, delay=1000): void{
 		// add a delay in default setState
 		if((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == CharCamp.Neut){
-			egret.setTimeout(super.setState, this, 1000, state);
+			egret.setTimeout(super.setState, this, delay, state);
 		}
 	}
 

@@ -65,7 +65,7 @@ class Character extends egret.DisplayObjectContainer {
 				scene.mCardBoard.removeCardOfChar(this);
 				// 移除SkillPool中归属于该角色的技能
 				let skillPools = scene.mManualSkillIdPool;
-				let skillsForDelete: [number, Character][] = [];
+				let skillsForDelete = [];
 				for (let skill of skillPools) {
 					if (skill[1] == this) {
 						skillsForDelete.push(skill);

@@ -36,6 +36,10 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public distCardNormal(){
 		let scene = SceneManager.Ins.curScene as BattleScene
 		let skills = scene.mManualSkillIdPool;
+		if(skills.length == 0){
+			ToastInfoManager.Ins.newToast("卡组已空");
+			return;
+		}
 		let index = Math.floor(Math.random() * skills.length);
 		let card: Card;
 		if (this._cardPool.length > 0){
@@ -51,14 +55,17 @@ class CardBoard extends egret.DisplayObjectContainer {
 		}
 		// initial card
 		card.initial(cardInfo[0], cardInfo[1], cardInfo[2]);
+		card.mSkillInfoOfPoll = cardInfo;
+		skills.splice(index, 1);
 		if (cardInfo[2] == 1){
 			// if recycle times of skill is 1, remove from skill _cardPool
-			skills.splice(index, 1);
+			card.mSkillInfoOfPoll = null;
 		} else if (cardInfo[2] != 0) {
 			// else if recycle times not equal 0 recycle time --
 			cardInfo[2] -= 1;
 		}
 		this.addCard(card);
+		scene.mBattleUI.remainCardNum = skills.length;
 	}
 
 	private _overFlowNum: number = 0;//记录当前场上溢出的卡牌总数，方便表现
@@ -66,7 +73,6 @@ class CardBoard extends egret.DisplayObjectContainer {
 		if (this._cards.length < CardBoard._maxCardNum){
 			this._cards.push(card);
 			this.addCardToBoard(card, this._cards.length - 1);
-			
 			let scene = SceneManager.Ins.curScene as BattleScene;
 			let cardNumLabel = scene.mBattleUI.cardNumLabel;
 			cardNumLabel.text = `${this._cards.length}/${CardBoard._maxCardNum}`
@@ -117,12 +123,16 @@ class CardBoard extends egret.DisplayObjectContainer {
 
 	public removeCard(card:Card){
 		// 逻辑上去除
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		let cards: Card[] = this._cards;
+		if(card.mSkillInfoOfPoll){
+			scene.mManualSkillIdPool.push(card.mSkillInfoOfPoll);
+			scene.mBattleUI.remainCardNum = scene.mManualSkillIdPool.length;
+		}
 		card.release();
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
-		let scene = SceneManager.Ins.curScene as BattleScene;
 		let cardNumLabel = scene.mBattleUI.cardNumLabel;
 		cardNumLabel.text = `${this._cards.length}/${CardBoard._maxCardNum}`
 		cardNumLabel.textColor = 0xADFF2F;

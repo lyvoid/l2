@@ -39,7 +39,7 @@ class FormCharPopUpUI extends eui.Component {
 		let userTeam = this._userTeam;
 		let userArmy = UserData.Ins.userArmy;
 		for (let i in userTeam) {
-			if (userTeam[i] > 0) {
+			if (userTeam[i] >= 0) {
 				let portName = ConfigManager.Ins.mCharConfig[userArmy[userTeam[i]]]["charCode"] + "_portrait_png";
 				this._p6Imgs[i].texture = RES.getRes("imgloading_png");
 				this._rsLoader.getResAsyncAndSetValue(portName, "texture", this._p6Imgs[i]);

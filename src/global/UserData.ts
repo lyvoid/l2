@@ -24,20 +24,9 @@ class UserData {
 		
 		// TODO: replace by get curUserTeam from service
 		this.userTeam = [-1, -1, -1, -1, -1, -1];
-		this.userArmy[1] = 1;
-		this.userArmy[2] = 2;
-		this.userArmy[3] = 3;
-		this.userArmy[4] = 4;
-		this.userArmy[5] = 5;
-		this.userArmy[6] = 6;
-
+		this.userArmy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+		this.userCards = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
 		this.userDeck = [];
-		this.userCards[1] = 1;
-		this.userCards[2] = 2;
-		this.userCards[3] = 3;
-		this.userCards[4] = 4;
-		this.userCards[5] = 5;
-
 	}
 
 	public get cardIdOfUserDeck(): number[] {
