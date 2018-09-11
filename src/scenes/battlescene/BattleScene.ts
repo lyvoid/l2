@@ -14,6 +14,7 @@ class BattleScene extends IScene {
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp;
 	public mRound: number;
+	public mRsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 	
 	// ui
 	public mBattleUI: UIBattleScene;
@@ -151,13 +152,10 @@ class BattleScene extends IScene {
 		this.setState(new PlayerRoundStartPhase(), 0);
 	}
 
-	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 	public async loadResource() {
-		let rsLoader = this._rsLoader;
+		let rsLoader = this.mRsLoader;
 		let awaits = [];
 		awaits.push(rsLoader.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI));
-		awaits.push(rsLoader.loadGroup("portrait", 0, LayerManager.Ins.loadingUI));
-		awaits.push(rsLoader.loadGroup("skillicon", 0, LayerManager.Ins.loadingUI));
 		
 		// 载入龙骨资源
 		let charCodes = new MySet<string>();
@@ -172,9 +170,10 @@ class BattleScene extends IScene {
 			charCodes.add(charConfig[i]["charCode"]);
 		}
 		for (let charactorName of charCodes.data) {
-			awaits.push(rsLoader.getResAsync(`${charactorName}_db_ske_json`));
-			awaits.push(rsLoader.getResAsync(`${charactorName}_db_tex_json`));
-			awaits.push(rsLoader.getResAsync(`${charactorName}_db_tex_png`));
+			console.log("dbload" + charactorName);
+			awaits.push(rsLoader.getResAsync(`${charactorName}_ske_json`));
+			awaits.push(rsLoader.getResAsync(`${charactorName}_tex_json`));
+			awaits.push(rsLoader.getResAsync(`${charactorName}_tex_png`));
 		}
 		// 载入game层背景图片资源
 		awaits.push(rsLoader.getResAsync("bg_json"));
@@ -184,7 +183,7 @@ class BattleScene extends IScene {
 	}
 
 	public releaseResource() {
-		let rsLoader = this._rsLoader;
+		let rsLoader = this.mRsLoader;
 		rsLoader.releaseResource();
 	}
 

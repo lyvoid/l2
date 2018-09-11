@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,black_png,loadingbg_png,gameEui_json,close_png,imgloading_png",
+			"keys": "button_down_png,button_up_png,checkbox_select_disabled_png,checkbox_select_down_png,checkbox_select_up_png,checkbox_unselect_png,selected_png,border_png,header_png,thumb_pb_png,track_pb_png,radiobutton_select_disabled_png,radiobutton_select_down_png,radiobutton_select_up_png,radiobutton_unselect_png,roundthumb_png,track_sb_png,thumb_png,track_png,tracklight_png,handle_png,off_png,on_png,black_png,loadingbg_png,gameEui_json,imgloading_png",
 			"name": "preload"
 		},
 		{
@@ -9,15 +9,15 @@
 			"name": "battlecommon"
 		},
 		{
-			"keys": "Swordsman_portrait_png,Dragon_portrait_png",
+			"keys": "98K_portrait_png,Destroyer_portrait_png,Excutioner_portrait_png,Golyat_portrait_png,HK416_portrait_png,Hunter_portrait_png,Intruder_portrait_png,OTs12_portrait_png,Scarecrow_portrait_png,UMP45_portrait_png,Vector_portrait_png,WA2000_portrait_png,Dragon_db_portrait_png",
 			"name": "portrait"
 		},
 		{
-			"keys": "skill_icon_attack_png",
+			"keys": "AK12_Buff_png,AN94_Shot_png,AR15_Shot_png,AimAttackCurrentTarge_png,AimAttackDistanceTarge_png,AimAttackSpecificTarge_png,AugBuff_png,BB_Noel_png,Bronya_png,CBJMS_png,Carcano1891_png,Carcano1938_png,Chloe_png,Clear_png,Coldweapon_png,DJMAX_ArrowCircle_png,DJMAX_ArrowLeft_png,DJMAX_ArrowUp_png,DJMAX_Triangle_png,Fail_png,Flare_png,Flashbomb_png,GG_Elfeldt_png,Grenade_png,Himeko_png,IWantU_png,Invincible_png,Invincible_35_png,Kaguya_png,Kiana_png,LadyMadeSTAR_png,Landmines_png,M1918_png,M4_Nightmare_png,MosinNagant_png,Napalm_png,No_consumption_png,OblivioN_png,RaidenMei_png,RifleGrenade_png,Sakura_png,Seele_png,Shotgun_png,Smoke_png,Theresa_png,VariableBuff_png,air_attack_png,airborne_png,armor_png,armorBuff_png,armorBuffSelf_png,armorDebuff_png,armorDebuffSelf_png,bombard_png,buff_png,comboBuffSelf_png,command_png,crit_png,critBuff_png,critBuffSelf_png,debuff_png,defense_png,dodgeBuff_png,dodgeBuffSelf_png,dodgeDebuff_png,empty_png,fighting_png,fortress_png,golden_png,hitBuff_png,hitBuffSelf_png,hitDebuff_png,illumine_png,nightcritBuff_png,nightcritBuffSelf_png,nightcritBuff_38_png,nightdodgeBuff_png,nightdodgeBuffSelf_png,nightdodgeDebuff_png,nighthitBuff_png,nighthitBuffSelf_png,nighthitDebuff_png,nightpowBuff_png,nightpowBuffSelf_png,nightpowDebuff_png,nightrateBuff_png,nightrateBuffSelf_png,nightrateDebuff_png,nightspeedDebuff_png,nighttargetdodgeDebuff_png,nighttargethitDebuff_png,nighttargetpowDebuff_png,nighttargetrateDebuff_png,nighttargetspeedDebuff_png,position_png,powBuff_png,powBuffSelf_png,powBuffShield_png,powDebuff_png,rateBuff_png,rateBuffSelf_png,rateDebuff_png,reinforce_png,rescue_png,roadblocks_png,shield_png,sniper_png,speedDebuff_png,target_png,targetdodgeDebuff_png,targethitDebuff_png,targetpowDebuff_png,targetrateDebuff_png,targetspeedDebuff_png",
 			"name": "skillicon"
 		},
 		{
-			"keys": "Dragon_db_ske_json,Dragon_db_tex_json,Dragon_db_tex_png,Swordsman_db_ske_json,Swordsman_db_tex_json,Swordsman_db_tex_png",
+			"keys": "Destroyer_ske_json,Destroyer_tex_json,Destroyer_tex_png,Excutioner_ske_json,Excutioner_tex_json,Excutioner_tex_png,Golyat_ske_json,Golyat_tex_json,Golyat_tex_png,HK416_ske_json,HK416_tex_json,HK416_tex_png,Hunter_ske_json,Hunter_tex_json,Hunter_tex_png,Intruder_ske_json,Intruder_tex_json,Intruder_tex_png,OTs12_ske_json,OTs12_tex_json,OTs12_tex_png,Scarecrow_ske_json,Scarecrow_tex_json,Scarecrow_tex_png,UMP45_ske_json,UMP45_tex_json,UMP45_tex_png,Vector_ske_json,Vector_tex_json,Vector_tex_png,98K_ske_json,98K_tex_json,98K_tex_png,WA2000_ske_json,WA2000_tex_json,WA2000_tex_png,Dragon_db_tex_png,Swordsman_db_tex_png,Dragon_db_ske_json,Dragon_db_tex_json,Swordsman_db_tex_json,Swordsman_db_ske_json",
 			"name": "db"
 		},
 		{
@@ -156,36 +156,6 @@
 			"subkeys": "-1_png,-2_png,0_png,1_png"
 		},
 		{
-			"url": "battle/dbs/Dragon/Dragon_db_tex.png",
-			"type": "image",
-			"name": "Dragon_db_tex_png"
-		},
-		{
-			"url": "battle/dbs/Swordsman/Swordsman_db_tex.png",
-			"type": "image",
-			"name": "Swordsman_db_tex_png"
-		},
-		{
-			"url": "battle/dbs/Dragon/Dragon_db_tex.json",
-			"type": "json",
-			"name": "Dragon_db_tex_json"
-		},
-		{
-			"url": "battle/dbs/Dragon/Dragon_db_ske.json",
-			"type": "json",
-			"name": "Dragon_db_ske_json"
-		},
-		{
-			"url": "battle/dbs/Swordsman/Swordsman_db_ske.json",
-			"type": "json",
-			"name": "Swordsman_db_ske_json"
-		},
-		{
-			"url": "battle/dbs/Swordsman/Swordsman_db_tex.json",
-			"type": "json",
-			"name": "Swordsman_db_tex_json"
-		},
-		{
 			"url": "battle/common/cardbg.png",
 			"type": "image",
 			"name": "cardbg_png"
@@ -277,24 +247,9 @@
 			"name": "battle_enemy_json"
 		},
 		{
-			"url": "skillicon/skill_icon_attack.png",
-			"type": "image",
-			"name": "skill_icon_attack_png"
-		},
-		{
 			"url": "gameEui.json",
 			"type": "json",
 			"name": "gameEui_json"
-		},
-		{
-			"url": "portrait/Dragon_portrait.png",
-			"type": "image",
-			"name": "Dragon_portrait_png"
-		},
-		{
-			"url": "portrait/Swordsman_portrait.png",
-			"type": "image",
-			"name": "Swordsman_portrait_png"
 		},
 		{
 			"url": "formcharui/defaultselect.png",
@@ -302,15 +257,855 @@
 			"name": "defaultselect_png"
 		},
 		{
-			"url": "common/close.png",
-			"type": "image",
-			"name": "close_png"
-		},
-		{
 			"url": "common/imgloading.png",
 			"type": "image",
 			"name": "imgloading_png",
 			"scale9grid": "10,55,155,46"
+		},
+		{
+			"url": "battle/dbs/Destroyer_tex.png",
+			"type": "image",
+			"name": "Destroyer_tex_png"
+		},
+		{
+			"url": "battle/dbs/Excutioner_tex.png",
+			"type": "image",
+			"name": "Excutioner_tex_png"
+		},
+		{
+			"url": "battle/dbs/Golyat_tex.png",
+			"type": "image",
+			"name": "Golyat_tex_png"
+		},
+		{
+			"url": "battle/dbs/HK416_tex.png",
+			"type": "image",
+			"name": "HK416_tex_png"
+		},
+		{
+			"url": "battle/dbs/Hunter_tex.png",
+			"type": "image",
+			"name": "Hunter_tex_png"
+		},
+		{
+			"url": "battle/dbs/Intruder_tex.png",
+			"type": "image",
+			"name": "Intruder_tex_png"
+		},
+		{
+			"url": "battle/dbs/OTs12_tex.png",
+			"type": "image",
+			"name": "OTs12_tex_png"
+		},
+		{
+			"url": "battle/dbs/Scarecrow_tex.png",
+			"type": "image",
+			"name": "Scarecrow_tex_png"
+		},
+		{
+			"url": "battle/dbs/UMP45_tex.png",
+			"type": "image",
+			"name": "UMP45_tex_png"
+		},
+		{
+			"url": "battle/dbs/Vector_tex.png",
+			"type": "image",
+			"name": "Vector_tex_png"
+		},
+		{
+			"url": "battle/dbs/Excutioner_ske.json",
+			"type": "json",
+			"name": "Excutioner_ske_json"
+		},
+		{
+			"url": "battle/dbs/Golyat_ske.json",
+			"type": "json",
+			"name": "Golyat_ske_json"
+		},
+		{
+			"url": "battle/dbs/Excutioner_tex.json",
+			"type": "json",
+			"name": "Excutioner_tex_json"
+		},
+		{
+			"url": "battle/dbs/Destroyer_ske.json",
+			"type": "json",
+			"name": "Destroyer_ske_json"
+		},
+		{
+			"url": "battle/dbs/Golyat_tex.json",
+			"type": "json",
+			"name": "Golyat_tex_json"
+		},
+		{
+			"url": "battle/dbs/Destroyer_tex.json",
+			"type": "json",
+			"name": "Destroyer_tex_json"
+		},
+		{
+			"url": "battle/dbs/HK416_tex.json",
+			"type": "json",
+			"name": "HK416_tex_json"
+		},
+		{
+			"url": "battle/dbs/Hunter_ske.json",
+			"type": "json",
+			"name": "Hunter_ske_json"
+		},
+		{
+			"url": "battle/dbs/HK416_ske.json",
+			"type": "json",
+			"name": "HK416_ske_json"
+		},
+		{
+			"url": "battle/dbs/Hunter_tex.json",
+			"type": "json",
+			"name": "Hunter_tex_json"
+		},
+		{
+			"url": "battle/dbs/Intruder_tex.json",
+			"type": "json",
+			"name": "Intruder_tex_json"
+		},
+		{
+			"url": "battle/dbs/Intruder_ske.json",
+			"type": "json",
+			"name": "Intruder_ske_json"
+		},
+		{
+			"url": "battle/dbs/Scarecrow_tex.json",
+			"type": "json",
+			"name": "Scarecrow_tex_json"
+		},
+		{
+			"url": "battle/dbs/OTs12_tex.json",
+			"type": "json",
+			"name": "OTs12_tex_json"
+		},
+		{
+			"url": "battle/dbs/OTs12_ske.json",
+			"type": "json",
+			"name": "OTs12_ske_json"
+		},
+		{
+			"url": "battle/dbs/Scarecrow_ske.json",
+			"type": "json",
+			"name": "Scarecrow_ske_json"
+		},
+		{
+			"url": "battle/dbs/UMP45_ske.json",
+			"type": "json",
+			"name": "UMP45_ske_json"
+		},
+		{
+			"url": "battle/dbs/Vector_ske.json",
+			"type": "json",
+			"name": "Vector_ske_json"
+		},
+		{
+			"url": "battle/dbs/UMP45_tex.json",
+			"type": "json",
+			"name": "UMP45_tex_json"
+		},
+		{
+			"url": "battle/dbs/Vector_tex.json",
+			"type": "json",
+			"name": "Vector_tex_json"
+		},
+		{
+			"url": "portrait/98K_portrait.png",
+			"type": "image",
+			"name": "98K_portrait_png"
+		},
+		{
+			"url": "portrait/Destroyer_portrait.png",
+			"type": "image",
+			"name": "Destroyer_portrait_png"
+		},
+		{
+			"url": "portrait/Excutioner_portrait.png",
+			"type": "image",
+			"name": "Excutioner_portrait_png"
+		},
+		{
+			"url": "portrait/Golyat_portrait.png",
+			"type": "image",
+			"name": "Golyat_portrait_png"
+		},
+		{
+			"url": "portrait/HK416_portrait.png",
+			"type": "image",
+			"name": "HK416_portrait_png"
+		},
+		{
+			"url": "portrait/Hunter_portrait.png",
+			"type": "image",
+			"name": "Hunter_portrait_png"
+		},
+		{
+			"url": "portrait/Intruder_portrait.png",
+			"type": "image",
+			"name": "Intruder_portrait_png"
+		},
+		{
+			"url": "portrait/OTs12_portrait.png",
+			"type": "image",
+			"name": "OTs12_portrait_png"
+		},
+		{
+			"url": "portrait/Scarecrow_portrait.png",
+			"type": "image",
+			"name": "Scarecrow_portrait_png"
+		},
+		{
+			"url": "portrait/UMP45_portrait.png",
+			"type": "image",
+			"name": "UMP45_portrait_png"
+		},
+		{
+			"url": "portrait/Vector_portrait.png",
+			"type": "image",
+			"name": "Vector_portrait_png"
+		},
+		{
+			"url": "portrait/WA2000_portrait.png",
+			"type": "image",
+			"name": "WA2000_portrait_png"
+		},
+		{
+			"url": "skillicon/AK12_Buff.png",
+			"type": "image",
+			"name": "AK12_Buff_png"
+		},
+		{
+			"url": "skillicon/AN94_Shot.png",
+			"type": "image",
+			"name": "AN94_Shot_png"
+		},
+		{
+			"url": "skillicon/AR15_Shot.png",
+			"type": "image",
+			"name": "AR15_Shot_png"
+		},
+		{
+			"url": "skillicon/AimAttackCurrentTarge.png",
+			"type": "image",
+			"name": "AimAttackCurrentTarge_png"
+		},
+		{
+			"url": "skillicon/AimAttackDistanceTarge.png",
+			"type": "image",
+			"name": "AimAttackDistanceTarge_png"
+		},
+		{
+			"url": "skillicon/AimAttackSpecificTarge.png",
+			"type": "image",
+			"name": "AimAttackSpecificTarge_png"
+		},
+		{
+			"url": "skillicon/AugBuff.png",
+			"type": "image",
+			"name": "AugBuff_png"
+		},
+		{
+			"url": "skillicon/BB_Noel.png",
+			"type": "image",
+			"name": "BB_Noel_png"
+		},
+		{
+			"url": "skillicon/Bronya.png",
+			"type": "image",
+			"name": "Bronya_png"
+		},
+		{
+			"url": "skillicon/CBJMS.png",
+			"type": "image",
+			"name": "CBJMS_png"
+		},
+		{
+			"url": "skillicon/Carcano1891.png",
+			"type": "image",
+			"name": "Carcano1891_png"
+		},
+		{
+			"url": "skillicon/Carcano1938.png",
+			"type": "image",
+			"name": "Carcano1938_png"
+		},
+		{
+			"url": "skillicon/Chloe.png",
+			"type": "image",
+			"name": "Chloe_png"
+		},
+		{
+			"url": "skillicon/Clear.png",
+			"type": "image",
+			"name": "Clear_png"
+		},
+		{
+			"url": "skillicon/Coldweapon.png",
+			"type": "image",
+			"name": "Coldweapon_png"
+		},
+		{
+			"url": "skillicon/DJMAX_ArrowCircle.png",
+			"type": "image",
+			"name": "DJMAX_ArrowCircle_png"
+		},
+		{
+			"url": "skillicon/DJMAX_ArrowLeft.png",
+			"type": "image",
+			"name": "DJMAX_ArrowLeft_png"
+		},
+		{
+			"url": "skillicon/DJMAX_ArrowUp.png",
+			"type": "image",
+			"name": "DJMAX_ArrowUp_png"
+		},
+		{
+			"url": "skillicon/DJMAX_Triangle.png",
+			"type": "image",
+			"name": "DJMAX_Triangle_png"
+		},
+		{
+			"url": "skillicon/Fail.png",
+			"type": "image",
+			"name": "Fail_png"
+		},
+		{
+			"url": "skillicon/Flare.png",
+			"type": "image",
+			"name": "Flare_png"
+		},
+		{
+			"url": "skillicon/Flashbomb.png",
+			"type": "image",
+			"name": "Flashbomb_png"
+		},
+		{
+			"url": "skillicon/GG_Elfeldt.png",
+			"type": "image",
+			"name": "GG_Elfeldt_png"
+		},
+		{
+			"url": "skillicon/Grenade.png",
+			"type": "image",
+			"name": "Grenade_png"
+		},
+		{
+			"url": "skillicon/Himeko.png",
+			"type": "image",
+			"name": "Himeko_png"
+		},
+		{
+			"url": "skillicon/IWantU.png",
+			"type": "image",
+			"name": "IWantU_png"
+		},
+		{
+			"url": "skillicon/Invincible.png",
+			"type": "image",
+			"name": "Invincible_png"
+		},
+		{
+			"url": "skillicon/Invincible_35.png",
+			"type": "image",
+			"name": "Invincible_35_png"
+		},
+		{
+			"url": "skillicon/Kaguya.png",
+			"type": "image",
+			"name": "Kaguya_png"
+		},
+		{
+			"url": "skillicon/Kiana.png",
+			"type": "image",
+			"name": "Kiana_png"
+		},
+		{
+			"url": "skillicon/LadyMadeSTAR.png",
+			"type": "image",
+			"name": "LadyMadeSTAR_png"
+		},
+		{
+			"url": "skillicon/Landmines.png",
+			"type": "image",
+			"name": "Landmines_png"
+		},
+		{
+			"url": "skillicon/M1918.png",
+			"type": "image",
+			"name": "M1918_png"
+		},
+		{
+			"url": "skillicon/M4_Nightmare.png",
+			"type": "image",
+			"name": "M4_Nightmare_png"
+		},
+		{
+			"url": "skillicon/MosinNagant.png",
+			"type": "image",
+			"name": "MosinNagant_png"
+		},
+		{
+			"url": "skillicon/Napalm.png",
+			"type": "image",
+			"name": "Napalm_png"
+		},
+		{
+			"url": "skillicon/No_consumption.png",
+			"type": "image",
+			"name": "No_consumption_png"
+		},
+		{
+			"url": "skillicon/OblivioN.png",
+			"type": "image",
+			"name": "OblivioN_png"
+		},
+		{
+			"url": "skillicon/RaidenMei.png",
+			"type": "image",
+			"name": "RaidenMei_png"
+		},
+		{
+			"url": "skillicon/RifleGrenade.png",
+			"type": "image",
+			"name": "RifleGrenade_png"
+		},
+		{
+			"url": "skillicon/Sakura.png",
+			"type": "image",
+			"name": "Sakura_png"
+		},
+		{
+			"url": "skillicon/Seele.png",
+			"type": "image",
+			"name": "Seele_png"
+		},
+		{
+			"url": "skillicon/Shotgun.png",
+			"type": "image",
+			"name": "Shotgun_png"
+		},
+		{
+			"url": "skillicon/Smoke.png",
+			"type": "image",
+			"name": "Smoke_png"
+		},
+		{
+			"url": "skillicon/Theresa.png",
+			"type": "image",
+			"name": "Theresa_png"
+		},
+		{
+			"url": "skillicon/VariableBuff.png",
+			"type": "image",
+			"name": "VariableBuff_png"
+		},
+		{
+			"url": "skillicon/air_attack.png",
+			"type": "image",
+			"name": "air_attack_png"
+		},
+		{
+			"url": "skillicon/airborne.png",
+			"type": "image",
+			"name": "airborne_png"
+		},
+		{
+			"url": "skillicon/armor.png",
+			"type": "image",
+			"name": "armor_png"
+		},
+		{
+			"url": "skillicon/armorBuff.png",
+			"type": "image",
+			"name": "armorBuff_png"
+		},
+		{
+			"url": "skillicon/armorBuffSelf.png",
+			"type": "image",
+			"name": "armorBuffSelf_png"
+		},
+		{
+			"url": "skillicon/armorDebuff.png",
+			"type": "image",
+			"name": "armorDebuff_png"
+		},
+		{
+			"url": "skillicon/armorDebuffSelf.png",
+			"type": "image",
+			"name": "armorDebuffSelf_png"
+		},
+		{
+			"url": "skillicon/bombard.png",
+			"type": "image",
+			"name": "bombard_png"
+		},
+		{
+			"url": "skillicon/buff.png",
+			"type": "image",
+			"name": "buff_png"
+		},
+		{
+			"url": "skillicon/comboBuffSelf.png",
+			"type": "image",
+			"name": "comboBuffSelf_png"
+		},
+		{
+			"url": "skillicon/command.png",
+			"type": "image",
+			"name": "command_png"
+		},
+		{
+			"url": "skillicon/crit.png",
+			"type": "image",
+			"name": "crit_png"
+		},
+		{
+			"url": "skillicon/critBuff.png",
+			"type": "image",
+			"name": "critBuff_png"
+		},
+		{
+			"url": "skillicon/critBuffSelf.png",
+			"type": "image",
+			"name": "critBuffSelf_png"
+		},
+		{
+			"url": "skillicon/debuff.png",
+			"type": "image",
+			"name": "debuff_png"
+		},
+		{
+			"url": "skillicon/defense.png",
+			"type": "image",
+			"name": "defense_png"
+		},
+		{
+			"url": "skillicon/dodgeBuff.png",
+			"type": "image",
+			"name": "dodgeBuff_png"
+		},
+		{
+			"url": "skillicon/dodgeBuffSelf.png",
+			"type": "image",
+			"name": "dodgeBuffSelf_png"
+		},
+		{
+			"url": "skillicon/dodgeDebuff.png",
+			"type": "image",
+			"name": "dodgeDebuff_png"
+		},
+		{
+			"url": "skillicon/empty.png",
+			"type": "image",
+			"name": "empty_png"
+		},
+		{
+			"url": "skillicon/fighting.png",
+			"type": "image",
+			"name": "fighting_png"
+		},
+		{
+			"url": "skillicon/fortress.png",
+			"type": "image",
+			"name": "fortress_png"
+		},
+		{
+			"url": "skillicon/golden.png",
+			"type": "image",
+			"name": "golden_png"
+		},
+		{
+			"url": "skillicon/hitBuff.png",
+			"type": "image",
+			"name": "hitBuff_png"
+		},
+		{
+			"url": "skillicon/hitBuffSelf.png",
+			"type": "image",
+			"name": "hitBuffSelf_png"
+		},
+		{
+			"url": "skillicon/hitDebuff.png",
+			"type": "image",
+			"name": "hitDebuff_png"
+		},
+		{
+			"url": "skillicon/illumine.png",
+			"type": "image",
+			"name": "illumine_png"
+		},
+		{
+			"url": "skillicon/nightcritBuff.png",
+			"type": "image",
+			"name": "nightcritBuff_png"
+		},
+		{
+			"url": "skillicon/nightcritBuffSelf.png",
+			"type": "image",
+			"name": "nightcritBuffSelf_png"
+		},
+		{
+			"url": "skillicon/nightcritBuff_38.png",
+			"type": "image",
+			"name": "nightcritBuff_38_png"
+		},
+		{
+			"url": "skillicon/nightdodgeBuff.png",
+			"type": "image",
+			"name": "nightdodgeBuff_png"
+		},
+		{
+			"url": "skillicon/nightdodgeBuffSelf.png",
+			"type": "image",
+			"name": "nightdodgeBuffSelf_png"
+		},
+		{
+			"url": "skillicon/nightdodgeDebuff.png",
+			"type": "image",
+			"name": "nightdodgeDebuff_png"
+		},
+		{
+			"url": "skillicon/nighthitBuff.png",
+			"type": "image",
+			"name": "nighthitBuff_png"
+		},
+		{
+			"url": "skillicon/nighthitBuffSelf.png",
+			"type": "image",
+			"name": "nighthitBuffSelf_png"
+		},
+		{
+			"url": "skillicon/nighthitDebuff.png",
+			"type": "image",
+			"name": "nighthitDebuff_png"
+		},
+		{
+			"url": "skillicon/nightpowBuff.png",
+			"type": "image",
+			"name": "nightpowBuff_png"
+		},
+		{
+			"url": "skillicon/nightpowBuffSelf.png",
+			"type": "image",
+			"name": "nightpowBuffSelf_png"
+		},
+		{
+			"url": "skillicon/nightpowDebuff.png",
+			"type": "image",
+			"name": "nightpowDebuff_png"
+		},
+		{
+			"url": "skillicon/nightrateBuff.png",
+			"type": "image",
+			"name": "nightrateBuff_png"
+		},
+		{
+			"url": "skillicon/nightrateBuffSelf.png",
+			"type": "image",
+			"name": "nightrateBuffSelf_png"
+		},
+		{
+			"url": "skillicon/nightrateDebuff.png",
+			"type": "image",
+			"name": "nightrateDebuff_png"
+		},
+		{
+			"url": "skillicon/nightspeedDebuff.png",
+			"type": "image",
+			"name": "nightspeedDebuff_png"
+		},
+		{
+			"url": "skillicon/nighttargetdodgeDebuff.png",
+			"type": "image",
+			"name": "nighttargetdodgeDebuff_png"
+		},
+		{
+			"url": "skillicon/nighttargethitDebuff.png",
+			"type": "image",
+			"name": "nighttargethitDebuff_png"
+		},
+		{
+			"url": "skillicon/nighttargetpowDebuff.png",
+			"type": "image",
+			"name": "nighttargetpowDebuff_png"
+		},
+		{
+			"url": "skillicon/nighttargetrateDebuff.png",
+			"type": "image",
+			"name": "nighttargetrateDebuff_png"
+		},
+		{
+			"url": "skillicon/nighttargetspeedDebuff.png",
+			"type": "image",
+			"name": "nighttargetspeedDebuff_png"
+		},
+		{
+			"url": "skillicon/position.png",
+			"type": "image",
+			"name": "position_png"
+		},
+		{
+			"url": "skillicon/powBuff.png",
+			"type": "image",
+			"name": "powBuff_png"
+		},
+		{
+			"url": "skillicon/powBuffSelf.png",
+			"type": "image",
+			"name": "powBuffSelf_png"
+		},
+		{
+			"url": "skillicon/powBuffShield.png",
+			"type": "image",
+			"name": "powBuffShield_png"
+		},
+		{
+			"url": "skillicon/powDebuff.png",
+			"type": "image",
+			"name": "powDebuff_png"
+		},
+		{
+			"url": "skillicon/rateBuff.png",
+			"type": "image",
+			"name": "rateBuff_png"
+		},
+		{
+			"url": "skillicon/rateBuffSelf.png",
+			"type": "image",
+			"name": "rateBuffSelf_png"
+		},
+		{
+			"url": "skillicon/rateDebuff.png",
+			"type": "image",
+			"name": "rateDebuff_png"
+		},
+		{
+			"url": "skillicon/reinforce.png",
+			"type": "image",
+			"name": "reinforce_png"
+		},
+		{
+			"url": "skillicon/rescue.png",
+			"type": "image",
+			"name": "rescue_png"
+		},
+		{
+			"url": "skillicon/roadblocks.png",
+			"type": "image",
+			"name": "roadblocks_png"
+		},
+		{
+			"url": "skillicon/shield.png",
+			"type": "image",
+			"name": "shield_png"
+		},
+		{
+			"url": "skillicon/sniper.png",
+			"type": "image",
+			"name": "sniper_png"
+		},
+		{
+			"url": "skillicon/speedDebuff.png",
+			"type": "image",
+			"name": "speedDebuff_png"
+		},
+		{
+			"url": "skillicon/target.png",
+			"type": "image",
+			"name": "target_png"
+		},
+		{
+			"url": "skillicon/targetdodgeDebuff.png",
+			"type": "image",
+			"name": "targetdodgeDebuff_png"
+		},
+		{
+			"url": "skillicon/targethitDebuff.png",
+			"type": "image",
+			"name": "targethitDebuff_png"
+		},
+		{
+			"url": "skillicon/targetpowDebuff.png",
+			"type": "image",
+			"name": "targetpowDebuff_png"
+		},
+		{
+			"url": "skillicon/targetrateDebuff.png",
+			"type": "image",
+			"name": "targetrateDebuff_png"
+		},
+		{
+			"url": "skillicon/targetspeedDebuff.png",
+			"type": "image",
+			"name": "targetspeedDebuff_png"
+		},
+		{
+			"url": "battle/dbs/WA2000_ske.json",
+			"type": "json",
+			"name": "WA2000_ske_json"
+		},
+		{
+			"url": "battle/dbs/WA2000_tex.json",
+			"type": "json",
+			"name": "WA2000_tex_json"
+		},
+		{
+			"url": "battle/dbs/WA2000_tex.png",
+			"type": "image",
+			"name": "WA2000_tex_png"
+		},
+		{
+			"url": "battle/dbs/98K_ske.json",
+			"type": "json",
+			"name": "98K_ske_json"
+		},
+		{
+			"url": "battle/dbs/98K_tex.json",
+			"type": "json",
+			"name": "98K_tex_json"
+		},
+		{
+			"url": "battle/dbs/98K_tex.png",
+			"type": "image",
+			"name": "98K_tex_png"
+		},
+		{
+			"url": "battle/dbs/Dragon_db_tex.png",
+			"type": "image",
+			"name": "Dragon_db_tex_png"
+		},
+		{
+			"url": "battle/dbs/Swordsman_db_tex.png",
+			"type": "image",
+			"name": "Swordsman_db_tex_png"
+		},
+		{
+			"url": "battle/dbs/Dragon_db_ske.json",
+			"type": "json",
+			"name": "Dragon_db_ske_json"
+		},
+		{
+			"url": "battle/dbs/Dragon_db_tex.json",
+			"type": "json",
+			"name": "Dragon_db_tex_json"
+		},
+		{
+			"url": "battle/dbs/Swordsman_db_tex.json",
+			"type": "json",
+			"name": "Swordsman_db_tex_json"
+		},
+		{
+			"url": "battle/dbs/Swordsman_db_ske.json",
+			"type": "json",
+			"name": "Swordsman_db_ske_json"
+		},
+		{
+			"url": "portrait/Dragon_db_portrait.png",
+			"type": "image",
+			"name": "Dragon_db_portrait_png"
 		}
 	]
 }

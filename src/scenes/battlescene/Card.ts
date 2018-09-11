@@ -19,11 +19,12 @@ class Card extends egret.DisplayObjectContainer {
 <b>作用效果:</b> ${affectDescpt}`;
 	}
 
-	public initialByCardId(cardId: number): void{
-		
+	public initialByCardId(cardId: number): void {
+
 	}
 
 	public initial(skillId: number, caster: Character, recycleTimes: number): void {
+		let rsLoad = (SceneManager.Ins.curScene as BattleScene).mRsLoader;
 		this.removeChildren();
 		this._recycleTimes = recycleTimes;
 		this.width = 80;
@@ -39,25 +40,33 @@ class Card extends egret.DisplayObjectContainer {
 		this.scaleY = 1;
 		this.y = 0;
 		this.touchEnabled = true;
-		// skill icon
-		let texture = RES.getRes(ConfigManager.Ins.mSkillConfig[skillId]["iconName"]);
-		let skillIcon = new egret.Bitmap(texture);
+		// skill skillIcon
+		let skillIcon = new egret.Bitmap();
+		rsLoad.getResAsyncAndSetValue(
+			ConfigManager.Ins.mSkillConfig[skillId]["iconName"],
+			"texture",
+			skillIcon
+		);
 		skillIcon.width = 72;
 		skillIcon.height = 122;
 		skillIcon.x = 4;
 		skillIcon.y = 4;
 		this.addChild(skillIcon);
 		// caster icon
-		if(caster != null){
-			let castPicTex = RES.getRes(caster.charCode + '_portrait_png');
-			let castPic = new egret.Bitmap(castPicTex);
+		if (caster != null) {
+			let castPic = new egret.Bitmap();
+			rsLoad.getResAsyncAndSetValue(
+				RES.getRes(caster.charCode + '_portrait_png'),
+				"texture",
+				castPic
+			);
 			castPic.width = 50;
 			castPic.height = 50;
 			castPic.x = 4;
 			castPic.y = -15;
 			this.addChild(castPic);
 		}
-		
+
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
