@@ -20,8 +20,7 @@ class BattleScene extends IScene {
 	// ui
 	public mBattleUI: UIBattleScene;
 	public mBattleEndPopUpUI: BattleEndPopUp;
-	public mCardInfoPopupUI: CardInfoPopupUI;
-	public mCharInfoPopupUI: CharacterInfoPopupUI;
+	public mBattleInfoPopupUI: BattleInfoPopupUI;
 	// sub layer
 	private _gameBgLayer: egret.DisplayObjectContainer;
 	private _gameCharLayer: egret.DisplayObjectContainer;
@@ -45,23 +44,9 @@ class BattleScene extends IScene {
 		this._gameFgLayer = gameFgLayer;
 		this._gameCardLayer = gameCardLayer;
 		// instantiate ui
-		let ui = new UIBattleScene();
-		ui.height = LayerManager.Ins.stageHeight;
-		ui.width = LayerManager.Ins.stageWidth;
-		LayerManager.Ins.uiLayer.addChild(ui);
-		this.mBattleUI = ui;
-		let battleEndPopUp = new BattleEndPopUp();
-		battleEndPopUp.height = LayerManager.Ins.stageHeight;
-		battleEndPopUp.width = LayerManager.Ins.stageWidth;
-		this.mBattleEndPopUpUI = battleEndPopUp;
-		let charInfoPopupUI = new CharacterInfoPopupUI();
-		charInfoPopupUI.width = LayerManager.Ins.stageWidth;
-		charInfoPopupUI.height = LayerManager.Ins.stageHeight;
-		this.mCharInfoPopupUI = charInfoPopupUI;
-		let popUpInfo = new CardInfoPopupUI();
-		popUpInfo.width = LayerManager.Ins.stageWidth;
-		popUpInfo.height = LayerManager.Ins.stageHeight;
-		this.mCardInfoPopupUI = popUpInfo;
+		this.mBattleUI = new UIBattleScene();
+		this.mBattleEndPopUpUI = new BattleEndPopUp();
+		this.mBattleInfoPopupUI = new BattleInfoPopupUI();
 		// instantiate select circle
 		let selectTex = RES.getRes("selfSelectChar_png");
 		let selectImg = new egret.Bitmap(selectTex);
@@ -285,11 +270,9 @@ class BattleScene extends IScene {
 
 		// release ui
 		this.mBattleUI.release();
-		this.mCardInfoPopupUI.release();
-		this.mCharInfoPopupUI.release();
+		this.mBattleInfoPopupUI.release();
 		this.mBattleEndPopUpUI.release();
-		this.mCardInfoPopupUI = null;
-		this.mCharInfoPopupUI = null;
+		this.mBattleInfoPopupUI = null;
 		this.mBattleUI = null;
 		this.mBattleEndPopUpUI = null;
 

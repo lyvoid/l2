@@ -111,30 +111,47 @@ class SelectCharPopUpUI extends eui.Component {
 		for (let i of charInfo["manualSkillsId"]) {
 			let skillinfo = skillInfos[i]
 			otherInfoOfBuff.addList(skillinfo["otherInfosOfBuffsId"]);
-			manualSkillInfos += `<font color="#7FFF00"><b>` +
-				`${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量):</b></font>${skillinfo["description"]}\n`;
+			let recycleTimes = skillinfo["recycleTimes"];
+			let recycleTimesStr = recycleTimes == 0 ? "无限" : recycleTimes;
+			manualSkillInfos += `<font color="#FFFFE0"><b>` +
+				`${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量, ${recycleTimesStr}次)</b></font>:${skillinfo["description"]}\n`;
 		}
 		for (let i of charInfo["passiveSkillsId"]) {
 			let buffInfo = buffInfos[i];
-			passiveSkillInfos += `<font color="#7FFF00"><b>` +
-				`${buffInfo["buffName"]}:</b></font>${buffInfo["description"]}\n`;
+			passiveSkillInfos += `<font color="#FFFFE0"><b>` +
+				`${buffInfo["buffName"]}</b></font>:${buffInfo["description"]}\n`;
 		}
 		for (let i of otherInfoOfBuff.data) {
 			let buffInfo = buffInfos[i];
-			otherInfos += `<font color="#7FFF00"><b>` +
-				`${buffInfo["buffName"]}:</b></font>${buffInfo["description"]}\n`;
+			otherInfos += `<font color="#FFFFE0"><b>` +
+				`${buffInfo["buffName"]}</b></font>:${buffInfo["description"]}\n`;
 		}
-		let info = `
-<font color="#7FFF00"><b>${charInfo['charName']}</b></font>
-${charInfo["feature"]}
+		let info = `<font color="#7FFF00" size="35"><b>${charInfo['charName']}</b></font>
+<font size="25">${charInfo["feature"]}</font>
 
-<font color="#EE7942"><b>主动技能：</b></font>
+
+<font color="#FFFFE0"><b>--------属性--------</b></font>
+生命:<font color="#FFFFE0">${charInfo["hp"]}</font>/${charInfo["maxHp"]}
+护盾:<font color="#FFFFE0">${charInfo["shield"]}</font>/${charInfo["maxShield"]}
+攻击:<font color="#FFFFE0">${charInfo["ap"]}</font>
+物理护甲:<font color="#FFFFE0">${charInfo["arPys"]}</font>
+魔法护甲:<font color="#FFFFE0">${charInfo["arMagic"]}</font>
+穿甲:<font color="#FFFFE0">${charInfo["pierceAr"]}</font>
+魔法减伤:<font color="#FFFFE0">${Math.floor(charInfo["magicDamageReducePerc"] * 100)}</font>%
+最终魔法减伤:<font color="#FFFFE0">${charInfo["magicDamageReduceAbs"]}</font>
+物理减伤:<font color="#FFFFE0">${Math.floor(charInfo["pysDamageReducePerc"] * 100)}</font>%
+最终物理减伤:<font color="#FFFFE0">${charInfo["pysDamageReduceAbs"]}</font>
+
+
+<font color="#FFFFE0"><b>--------主动技能--------</b></font>
 ${manualSkillInfos}
 
-<font color="#EE7942"><b>被动技能：</b></font>
+
+<font color="#FFFFE0"><b>--------被动技能--------</b></font>
 ${passiveSkillInfos}
 
-<font color="#EE7942"><b>其他描述：</b></font>
+
+<font color="#FFFFE0"><b>--------其他描述--------</b></font>
 ${otherInfos}
 `
 		this.setCharInfoLabel(info);

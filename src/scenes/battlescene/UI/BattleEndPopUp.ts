@@ -9,6 +9,8 @@ class BattleEndPopUp extends eui.Component {
 	public constructor() {
 		super();
 		this.skinName = "mySkin.BattleEndPopUp";
+		this.height = LayerManager.Ins.stageHeight;
+		this.width = LayerManager.Ins.stageWidth;
 		this.nextButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onNextButtonTap,
@@ -36,7 +38,7 @@ class BattleEndPopUp extends eui.Component {
 		SceneManager.Ins.setScene(new BattleScene());
 	}
 
-	private onExitButtonTap(): void{
+	private onExitButtonTap(): void {
 		SceneManager.Ins.setScene(new MainScene());
 	}
 

@@ -10,13 +10,14 @@ class Card extends egret.DisplayObjectContainer {
 		let affectDescpt = skillInfo['description'];
 		let recycleTimes = this._recycleTimes == 0 ? "无限" : this._recycleTimes + ""
 		if (this.mCaster && !this.mCaster.alive) {
-			affectDescpt += `<font color="#C0FF3E">(当前释放单位死亡，使用卡片效果替换为累计复活进度)</font>`
+			affectDescpt = `<font color="#EE4000">【释放单位已阵亡，卡牌效果替换为<b>增加角色复活进度</b>】</font>(初始效果：${affectDescpt})`
 		}
-		return `<font color="#EE7942"><b>${skillInfo['skillName']}</b></font>
-<b>剩余使用:</b> ${recycleTimes} 次
-<b>释放单位:</b> ${casterName}
-<b>消耗能量:</b> ${skillInfo['fireNeed']}
-<b>作用效果:</b> ${affectDescpt}`;
+		return `<font color="#BF3EFF" size="35"><b>${skillInfo['skillName']}(${casterName})</b></font>
+
+<b>剩余使用:</b> <font color="#EE4000"><b>${recycleTimes}</b></font> 次
+<b>消耗能量:</b> <font color="#EE4000"><b>${skillInfo['fireNeed']}</b></font> 点
+<b>作用效果:</b> ${affectDescpt}
+`;
 	}
 
 	public initialByCardId(cardId: number): void {
@@ -84,7 +85,7 @@ class Card extends egret.DisplayObjectContainer {
 
 	private onLongTouchEnd(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.mCardInfoPopupUI);
+		LayerManager.Ins.popUpLayer.removeChild(scene.mBattleInfoPopupUI);
 		// 显示选择圈
 		scene.mSelectImg.visible = true;
 		scene.mSelectHead.visible = true;
@@ -96,8 +97,9 @@ class Card extends egret.DisplayObjectContainer {
 
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mCardInfoPopupUI.setDescFlowText(this.description);
-		LayerManager.Ins.popUpLayer.addChild(scene.mCardInfoPopupUI);
+		scene.mBattleInfoPopupUI.setDescFlowText(this.description);
+		scene.mBattleInfoPopupUI.setOnRight();
+		LayerManager.Ins.popUpLayer.addChild(scene.mBattleInfoPopupUI);
 		// 隐藏选择圈
 		scene.mSelectImg.visible = false;
 		scene.mSelectHead.visible = false;

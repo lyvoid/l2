@@ -6,7 +6,7 @@ class Character extends egret.DisplayObjectContainer {
 	private _charName: string;
 	public get charName(): string { return this._charName; }
 	private _charCode: string;
-	public get charCode(): string {return this._charCode}
+	public get charCode(): string { return this._charCode }
 	private _feature: string;
 	public get feature(): string { return this._feature; }
 	private _manualSkillsId: number[];
@@ -85,28 +85,45 @@ class Character extends egret.DisplayObjectContainer {
 	}
 
 	public get description(): string {
-		let color = "#000000";
-		if (this.mCamp === CharCamp.Enemy) {
-			color = "#EE2C2C";
-		} else if (this.mCamp === CharCamp.Player) {
-			color = "#7FFF00";
-		}
 
 		let addInfo = "";
 		// if not alive
 		if (!this._alive) {
-			addInfo = `<font color="#EE7942"><b>复活进度: </b></font><font color="#7FFF00">${this._curRs}</font>/${Character.resurgencePoint}\n\n`
+			addInfo = `
+<font color="#EE4000"><b>【角色已阵亡，等待复活】
+复活进度: <font color="#DC143C">${this._curRs}</font>/${Character.resurgencePoint}
+</b></font>`
 		}
 
 
-		return `${addInfo}<b><font color="${color}">${this.charName}</font></b>` +
-			`\n<font color="#3D3D3D" size="15">${this.feature}</font>\n\n${this.mAttr.toString()}`;
+		return `<font color="#BF3EFF" size="35"><b>${this.charName}</b></font>
+<font size="25">${this.feature}</font>
+${addInfo}
+<font color="#EE4000"><b>----------属性----------</b></font>
+${this.mAttr.toString()}
+
+`;
 	}
 
 	public get buffDescription(): string {
 		let passiveSkillsDesc = "";
 		let buffsDesc = "";
 		let skillsDesc = "";
+		let manualSkillInfos = "";
+		let otherInfos = "";
+		let skillInfos = ConfigManager.Ins.mSkillConfig;
+		let buffInfos = ConfigManager.Ins.mBuffConfig;
+		let otherInfoOfBuff = new MySet<number>();
+		for (let i of this._manualSkillsId) {
+			let skillinfo = skillInfos[i]
+			otherInfoOfBuff.addList(skillinfo["otherInfosOfBuffsId"]);
+			manualSkillInfos += `<b>${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量):</b>${skillinfo["description"]}\n`;
+		}
+		for (let i of otherInfoOfBuff.data) {
+			let buffInfo = buffInfos[i];
+			otherInfos += `<b>` +
+				`${buffInfo["buffName"]}:</b>${buffInfo["description"]}\n`;
+		}
 		for (let buff of this._passiveSkills) {
 			passiveSkillsDesc = `${passiveSkillsDesc}<font color="#7FFF00"><b>` +
 				`${buff.buffName}:</b></font>${buff.description}\n`
@@ -129,16 +146,27 @@ class Character extends egret.DisplayObjectContainer {
 			}
 			buffAdded.push(buff.id);
 			let color = "#EE2C2C";
-			if(buff.isPositive) color = "#7FFF00";
+			if (buff.isPositive) color = "#7FFF00";
 			buffsDesc = `${buffsDesc}<font color="${color}"><b>` +
 				`${buff.buffName}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
 		}
 
 
-		return `<font color="#EE7942"><b>被动技能</b></font>\n` +
-			`${passiveSkillsDesc}\n\n` +
-			`<font color="#EE7942"><b>当前状态</b></font>\n` +
-			`${buffsDesc}`;
+		return `<font color="#EE4000"><b>--------被动技能--------</b></font>
+${passiveSkillsDesc}
+
+
+<font color="#EE4000"><b>--------当前状态--------</b></font>
+${buffsDesc}
+
+
+<font color="#EE4000"><b>--------主动技能--------</b></font>
+${manualSkillInfos}
+
+
+<font color="#EE4000"><b>--------补充效果说明--------</b></font>
+${otherInfos}
+`;
 	}
 
 	public initial(
@@ -305,7 +333,7 @@ class Character extends egret.DisplayObjectContainer {
 		let demandArmatureHeight = 160;
 		armatureDisplay.scaleY = demandArmatureHeight / armatureDisplay.height;
 		// armatureDisplay.scaleX = demandArmatureWidth / armatureDisplay.width;
-		armatureDisplay.scaleX = armatureDisplay.scaleY;		
+		armatureDisplay.scaleX = armatureDisplay.scaleY;
 		// armatureDisplay.width = demandArmatureWidth;
 		// armatureDisplay.height = demandArmatureHeight;
 
@@ -346,14 +374,18 @@ class Character extends egret.DisplayObjectContainer {
 
 	private onLongTouchEnd(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.mCharInfoPopupUI);
+		LayerManager.Ins.popUpLayer.removeChild(scene.mBattleInfoPopupUI);
 	}
 
 	private onLongTouchBegin(): void {
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mCharInfoPopupUI.setDescFlowText(this.description);
-		scene.mCharInfoPopupUI.setSkillDescFlowText(this.buffDescription);
-		LayerManager.Ins.popUpLayer.addChild(scene.mCharInfoPopupUI);
+		let battleInfoPopUP = (SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI;
+		if (this.mCamp == CharCamp.Enemy) {
+			battleInfoPopUP.setOnLeft();
+		} else {
+			battleInfoPopUP.setOnRight();
+		}
+		battleInfoPopUP.setDescFlowText(this.description + this.buffDescription);
+		LayerManager.Ins.popUpLayer.addChild(battleInfoPopUP);
 	}
 
 	private stopDBAnim() {
@@ -425,9 +457,9 @@ class Character extends egret.DisplayObjectContainer {
 		selectHead.y = startY;
 		this._bgLayer.addChild(selectHead);
 		egret.Tween.removeTweens(selectHead);
-		egret.Tween.get(selectHead, {loop: true}).to(
-			{y:startY + 20}, 500
-		).to({y:startY}, 500);
+		egret.Tween.get(selectHead, { loop: true }).to(
+			{ y: startY + 20 }, 500
+		).to({ y: startY }, 500);
 		scene.mSelectedChar = this;
 	}
 

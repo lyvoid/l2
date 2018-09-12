@@ -99,19 +99,22 @@ class FormCardPopUpUI extends eui.Component {
 		let otherInfos = "";
 		for (let i of skillInfo["otherInfosOfBuffsId"]) {
 			let buffInfo = buffInfos[i];
-			otherInfos += `<font color="#7FFF00"><b>` +
+			otherInfos += `<font color="#FFFFE0"><b>` +
 				`${buffInfo["buffName"]}:</b></font>${buffInfo["description"]}\n`;
 		}
-		let info = `
-<font color="#7FFF00"><b>${skillInfo['skillName']}</b></font>
+		let info = `<font color="#7FFF00" size="35"><b>${skillInfo['skillName']}</b></font>
 
-<b>需要能量</b>：${skillInfo["fireNeed"]} 点
-<b>循环次数</b>: ${skillInfo["recycleTimes"]} 次
 
-<font color="#EE7942"><b>描述：</b></font>
+<font color="#FFFFE0"><b>--------基础信息--------</b></font>
+<font color="#FFFFE0"><b>释放消耗能量</b></font>：${skillInfo["fireNeed"]} 点
+<font color="#FFFFE0"><b>单场战斗可用次数</b></font>: ${skillInfo["recycleTimes"]} 次
+
+
+<font color="#FFFFE0"><b>--------效果描述--------</b></font>
 ${skillInfo["description"]}
 
-<font color="#EE7942"><b>其他描述：</b></font>
+
+<font color="#FFFFE0"><b>--------补充信息--------</b></font>
 ${otherInfos}
 `
 		this.setCardInfoLabel(info);

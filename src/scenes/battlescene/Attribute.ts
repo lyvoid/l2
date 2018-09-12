@@ -110,12 +110,17 @@ class Attribute {
 	}
 
 	public toString(): string {
-		return `生命:<font color="#7CFC00">${this.hp}</font>/${this.maxHp}
-护盾:<font color="#7CFC00">${this.shield}</font>/${this.maxShield}
-攻击:<font color="#7CFC00">${this.ap}</font>
-物理护甲:<font color="#7CFC00">${this.arPys}</font>
-魔法护甲:<font color="#7CFC00">${this.arMagic}</font>
-穿甲:<font color="#7CFC00">${this.pierceAr}</font>`;
+		return `生命:<font color="#EE4000">${this.hp}</font>/${this.maxHp}
+护盾:<font color="#EE4000">${this.shield}</font>/${this.maxShield}
+攻击:<font color="#EE4000">${this.ap}</font>
+物理护甲:<font color="#EE4000">${this.arPys}</font>
+魔法护甲:<font color="#EE4000">${this.arMagic}</font>
+穿甲:<font color="#EE4000">${this.pierceAr}</font>
+魔法减伤:<font color="#EE4000">${Math.floor(this.magicDamageReducePerc * 100)}</font>%
+最终魔法减伤:<font color="#EE4000">${this.magicDamageReduceAbs}</font>
+物理减伤:<font color="#EE4000">${Math.floor(this.pysDamageReducePerc * 100)}</font>%
+最终物理减伤:<font color="#EE4000">${this.pysDamageReduceAbs}</font>
+`;
 	}
 
 	public release(): void {

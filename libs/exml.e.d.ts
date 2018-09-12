@@ -3,11 +3,7 @@ declare module mySkin{
 	}
 }
 declare module mySkin{
-	class CardInfoPopupUI extends eui.Skin{
-	}
-}
-declare module mySkin{
-	class CharacterInfo extends eui.Skin{
+	class BattleInfoPopupUI extends eui.Skin{
 	}
 }
 declare module mySkin{

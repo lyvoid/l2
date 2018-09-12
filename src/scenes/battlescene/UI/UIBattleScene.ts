@@ -15,7 +15,9 @@ class UIBattleScene extends eui.Component {
 	public constructor() {
 		super();
 		this.skinName = "mySkin.UIBattleScene";
-
+		this.height = LayerManager.Ins.stageHeight;
+		this.width = LayerManager.Ins.stageWidth;
+		LayerManager.Ins.uiLayer.addChild(this);
 		this.roundEndButton.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onRoundEndButtonTap,
