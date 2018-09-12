@@ -151,7 +151,7 @@ ${manualSkillInfos}
 ${passiveSkillInfos}
 
 
-<font color="#FFFFE0"><b>--------其他描述--------</b></font>
+<font color="#FFFFE0"><b>--------补充信息--------</b></font>
 ${otherInfos}
 `
 		this.setCharInfoLabel(info);
