@@ -20,6 +20,7 @@ class CharSelectPort extends eui.Component {
 			this.maskLabel.text = order + 1 + "号位";
 		}
 		let rsLoader = (SceneManager.Ins.curScene as MainScene).mRsLoader;
+		this.portImg.texture = RES.getRes("imgloading_png");
 		rsLoader.getResAsyncAndSetValue(portName, "texture", this.portImg);
 	}
 

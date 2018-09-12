@@ -33,9 +33,9 @@ abstract class IScene{
             this.state.release();
             this.state = null;
         }
-        LayerManager.Ins.clear();
-        LongTouchUtil.clear();
         egret.Tween.removeAllTweens();
+        LongTouchUtil.clear();
+        LayerManager.Ins.clear();
     }
 
     /**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e:Skin class="mySkin.UIBattleScene" width="400" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+<e:Skin class="mySkin.UIBattleScene" width="1000" height="500" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
 	<e:Button id="addFireButton" label="whosyourdaddy-addFire" right="0" top="0" height="50" anchorOffsetX="0" width="240"/>
 	<e:Button id="addCardButton" label="whosyourdaddy-addCard" right="240" top="0" height="50" anchorOffsetX="0" width="240"/>
 	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="10" anchorOffsetY="0" height="100" visible="false"/>
@@ -10,4 +10,9 @@
 	<e:Label id="roundLabel" text="第 1 回合" top="10" textColor="0xff6700" size="40" horizontalCenter="0" bold="true" fontFamily="Arial"/>
 	<e:Label text="卡组剩余" bottom="120" right="46" anchorOffsetX="0" width="124" bold="true" fontFamily="Georgia"/>
 	<e:Label id="remainCardInfo" text="0" bottom="120" right="1" anchorOffsetX="0" width="46" bold="true" fontFamily="Georgia"/>
+	<e:Image width="30" height="30" source="help_icon_png" bottom="140" right="0"/>
+	<e:Rect id="cardRemainHelpRect" width="45" height="55" anchorOffsetX="0" anchorOffsetY="0" strokeAlpha="1" fillAlpha="0" touchEnabled="true" bottom="115" right="0"/>
+	<e:Image width="30" height="30" source="help_icon_png" bottom="196" left="312"/>
+	<e:Rect id="fireRemainHelpRect" width="45" height="55" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="0" touchEnabled="true" bottom="170" left="295"/>
+	<e:Image id="fireHelpArrayImg" width="200" height="200" source="array_down_png" anchorOffsetY="0" bottom="197" left="162" visible="false"/>
 </e:Skin>

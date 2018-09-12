@@ -1,5 +1,5 @@
 /**
- * 点击滤镜动画管理器，点击的时候会有一个外发光效果，同时只有一个单位处于holder状态
+ * 点击滤镜动画管理器
  */
 class FilterManager {
 
@@ -37,7 +37,7 @@ class FilterManager {
 	}
 
 	/**
-	 * 为holder增加一个滤镜动画
+	 * 为holder增加一个外发光滤镜动画（动画结束后删除）【加入前会删除此前的obj的该滤镜】
 	 */
 	public setOutGlowHolderWithAnim(holder: any) {
 		this.setOutGrowFilterHolder(holder);
@@ -48,21 +48,21 @@ class FilterManager {
 	}
 
 	/**
-	 * 增加一个灰色滤镜
+	 * 增加灰色滤镜（该类中的）
 	 */
 	public addGreyFilter(obj: any): void {
 		FilterManager.addFilter(obj, this.greyColFlilter);
 	}
 
 	/**
-	 * 删除这个灰色滤镜
+	 * 删除灰色滤镜（该类中的）
 	 */
 	public removeGreyFilter(obj: any): void{
 		FilterManager.removeFilter(obj, this.greyColFlilter);
 	}
 
 	/**
-	 * 删除一个filter
+	 * 删除obj的一个滤镜
 	 */
 	public static removeFilter(obj: any, filter: any): void {
 		if (!obj.filters) {
@@ -87,7 +87,7 @@ class FilterManager {
 	}
 
 	/**
-	 * 给holder加上一个滤镜(无动画)
+	 * 给holder加上一个外发光滤镜(无动画)【一时间只能有一个动画，会删除此前的obj的滤镜】
 	 */
 	private setOutGrowFilterHolder(holder: any) {
 		this.removeOutFilterFromHolder();
@@ -97,7 +97,7 @@ class FilterManager {
 	}
 
 	/**
-	 * 移除holder的全部滤镜
+	 * 移除holder的外发光滤镜
 	 */
 	private removeOutFilterFromHolder() {
 		if (this.touchBeginHolder) {
@@ -106,7 +106,7 @@ class FilterManager {
 	}
 
 	/**
-	 * 释放资源，销毁前手动调用
+	 * 释放资源，销毁前手动调用（应该不用释放）
 	 */
 	public release() {
 		this.removeOutFilterFromHolder();

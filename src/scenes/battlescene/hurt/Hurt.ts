@@ -145,7 +145,8 @@ class Hurt {
 		}
 
 		// harm to hp
-		let newTargetHp = targetAttr.hp - harmRemain;
+		let dev = this._isDoubleShield ? 2 : 1; // 如果对shield造成双倍伤害，多余的伤害应该/2
+		let newTargetHp = targetAttr.hp - harmRemain / dev;
 		targetAttr.hp = newTargetHp;
 
 		return hurtResult;

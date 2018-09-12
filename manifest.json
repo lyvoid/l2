@@ -54,7 +54,7 @@
 		"bin-debug/scenes/battlescene/state/PlayerRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerUseCardPhase.js",
 		"bin-debug/scenes/battlescene/UI/BattleEndPopUp.js",
-		"bin-debug/scenes/battlescene/UI/CardInfoPopupUI.js",
+		"bin-debug/scenes/battlescene/UI/BattleInfoPopupUI.js",
 		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
 		"bin-debug/scenes/mainscene/MainScene.js",
 		"bin-debug/scenes/mainscene/UI/CardSelectPort.js",

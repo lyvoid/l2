@@ -29,12 +29,13 @@ class ToastInfoManager{
 			label = new eui.Label();
 			label.horizontalCenter = 0;
 		}
-		label.y = 100;
+		label.y = 300;
 		label.alpha = 1;
+		label.size = 30;
 		label.text = info;
 		LayerManager.Ins.popUpLayer.addChild(label);
 		egret.Tween.get(label).to(
-			{y: 20, alpha: 0}, 2000, egret.Ease.quintInOut
+			{y: 150, alpha: 0}, 2000, egret.Ease.quintInOut
 		).call(
 			()=>{
 				LayerManager.Ins.popUpLayer.removeChild(label);

@@ -37,6 +37,9 @@ class Character extends egret.DisplayObjectContainer {
 	private _alive: boolean;
 	public get alive(): boolean { return this._alive; }
 	public set alive(inputAlive: boolean) {
+		if (inputAlive == this._alive) {
+			return;
+		}
 		if (!inputAlive && this._alive) {
 			// if alive -> die
 			this._alive = false;
@@ -49,6 +52,17 @@ class Character extends egret.DisplayObjectContainer {
 			}
 			this.mAttr.shield = 0;
 			this.mAttr.hp = 0;
+			// if is player's char, show card warning
+			if (this.mCamp == CharCamp.Player) {
+				(SceneManager.Ins.curScene as BattleScene).mCardBoard.showCardsWarnIconOfChar(this);
+			}
+		}
+		if (!this._alive && inputAlive) {
+			// if die -> alive
+			// if is player's char, hide card warning
+			if (this.mCamp == CharCamp.Player) {
+				(SceneManager.Ins.curScene as BattleScene).mCardBoard.hideCardsWarnIconOfChar(this);
+			}
 		}
 		this._alive = inputAlive;
 	}
@@ -117,7 +131,9 @@ ${this.mAttr.toString()}
 		for (let i of this._manualSkillsId) {
 			let skillinfo = skillInfos[i]
 			otherInfoOfBuff.addList(skillinfo["otherInfosOfBuffsId"]);
-			manualSkillInfos += `<b>${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量):</b>${skillinfo["description"]}\n`;
+			let recycleTimes = skillinfo["recycleTimes"];
+			let recycleTimesStr = recycleTimes == 0 ? "无限" : recycleTimes;
+			manualSkillInfos += `<b>${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量, ${recycleTimesStr}次):</b>${skillinfo["description"]}\n`;
 		}
 		for (let i of otherInfoOfBuff.data) {
 			let buffInfo = buffInfos[i];
@@ -385,6 +401,7 @@ ${otherInfos}
 			battleInfoPopUP.setOnRight();
 		}
 		battleInfoPopUP.setDescFlowText(this.description + this.buffDescription);
+		battleInfoPopUP.removeBgTapExit();
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopUP);
 	}
 

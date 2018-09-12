@@ -5,7 +5,7 @@ class Card extends egret.DisplayObjectContainer {
 	private _recycleTimes: number;
 	public get description(): string {
 		let caster = this.mCaster;
-		let casterName = caster ? caster.charName : "无";
+		let casterName = caster ? caster.charName : "不需要释放单位";
 		let skillInfo = ConfigManager.Ins.mSkillConfig[this.mSkillId];
 		let affectDescpt = skillInfo['description'];
 		let recycleTimes = this._recycleTimes == 0 ? "无限" : this._recycleTimes + ""
@@ -20,10 +20,7 @@ class Card extends egret.DisplayObjectContainer {
 `;
 	}
 
-	public initialByCardId(cardId: number): void {
-
-	}
-
+	private _warnIcon: egret.Bitmap;
 	public initial(skillId: number, caster: Character, recycleTimes: number): void {
 		let rsLoad = (SceneManager.Ins.curScene as BattleScene).mRsLoader;
 		this.removeChildren();
@@ -43,6 +40,7 @@ class Card extends egret.DisplayObjectContainer {
 		this.touchEnabled = true;
 		// skill skillIcon
 		let skillIcon = new egret.Bitmap();
+		skillIcon.texture = RES.getRes("imgloading_png");
 		rsLoad.getResAsyncAndSetValue(
 			ConfigManager.Ins.mSkillConfig[skillId]["iconName"],
 			"texture",
@@ -60,6 +58,7 @@ class Card extends egret.DisplayObjectContainer {
 		castPic.x = 4;
 		castPic.y = -5;
 		if (caster != null) {
+			castPic.texture = RES.getRes("imgloading_png");
 			rsLoad.getResAsyncAndSetValue(
 				caster.charCode + '_portrait_png',
 				"texture",
@@ -69,7 +68,15 @@ class Card extends egret.DisplayObjectContainer {
 			castPic.texture = RES.getRes("no_caster_portrait_png");
 		}
 		this.addChild(castPic);
-
+		// warn ! icon
+		let warnIcon = new egret.Bitmap(RES.getRes("warn_icon_png"));
+		warnIcon.width = 30;
+		warnIcon.height = 30;
+		warnIcon.x = 60;
+		warnIcon.y = -10;
+		warnIcon.visible = false;
+		this._warnIcon = warnIcon;
+		this.addChild(warnIcon);
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
@@ -81,6 +88,14 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		LongTouchUtil.bindLongTouch(this, this);;
+	}
+
+	public showWarnIcon(): void{
+		this._warnIcon.visible = true;
+	}
+
+	public hideWarnIcon(): void{
+		this._warnIcon.visible = false;
 	}
 
 	private onLongTouchEnd(): void {
@@ -97,9 +112,11 @@ class Card extends egret.DisplayObjectContainer {
 
 	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mBattleInfoPopupUI.setDescFlowText(this.description);
-		scene.mBattleInfoPopupUI.setOnRight();
-		LayerManager.Ins.popUpLayer.addChild(scene.mBattleInfoPopupUI);
+		let battleInfoPopupUI = scene.mBattleInfoPopupUI;
+		battleInfoPopupUI.setDescFlowText(this.description);
+		battleInfoPopupUI.setOnRight();
+		battleInfoPopupUI.removeBgTapExit();
+		LayerManager.Ins.popUpLayer.addChild(battleInfoPopupUI);
 		// 隐藏选择圈
 		scene.mSelectImg.visible = false;
 		scene.mSelectHead.visible = false;
@@ -127,6 +144,7 @@ class Card extends egret.DisplayObjectContainer {
 			let fireNeed = skillInfo["fireNeed"];
 			if (fireNeed > fireboard.mFireNum) {
 				ToastInfoManager.Ins.newToast("能量不足");
+				scene.mBattleUI.fireSufficentAnim();
 				return;
 			}
 			if (this.mCaster && !this.mCaster.alive) {

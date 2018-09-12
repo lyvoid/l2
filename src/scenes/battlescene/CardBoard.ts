@@ -1,5 +1,5 @@
 class CardBoard extends egret.DisplayObjectContainer {
-	private _cards: Card[] = [];
+	private _deckCards: Card[] = [];
 	private _cardPool: Card[] = [];
 	public static maxCardNum = 10;
 
@@ -11,7 +11,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	
 	public removeCardOfChar(char: Character): void{
 		let cardsForDelete: Card[] = [];
-		for (let card of this._cards){
+		for (let card of this._deckCards){
 			if (card.mCaster == char){
 				cardsForDelete.push(card);
 			}
@@ -19,16 +19,32 @@ class CardBoard extends egret.DisplayObjectContainer {
 		this.removeCards(cardsForDelete);
 	}
 
+	public hideCardsWarnIconOfChar(char: Character): void{
+		for (let card of this._deckCards){
+			if (card.mCaster == char){
+				card.hideWarnIcon();
+			}
+		}
+	}
+
+	public showCardsWarnIconOfChar(char: Character): void{
+		for (let card of this._deckCards){
+			if (card.mCaster == char){
+				card.showWarnIcon();
+			}
+		}
+	}
+
 	private removeCards(cards:Card[]): void{
 		for(let index in cards){
 			let card = cards[index]
-			Util.removeObjFromArray(this._cards, card);
+			Util.removeObjFromArray(this._deckCards, card);
 			card.release();
 			if (parseInt(index) == cards.length-1){
 				// 如果是最后一张，对全体调整
 				this.removeCardFromBoard(card, 0);
 			} else {
-				this.removeCardFromBoard(card, this._cards.length);
+				this.removeCardFromBoard(card, this._deckCards.length);
 			}
 		}
 	}
@@ -70,11 +86,11 @@ class CardBoard extends egret.DisplayObjectContainer {
 
 	private _overFlowNum: number = 0;//记录当前场上溢出的卡牌总数，方便表现
 	private addCard(card: Card): void{
-		if (this._cards.length < CardBoard.maxCardNum){
-			this._cards.push(card);
-			this.addCardToBoard(card, this._cards.length - 1);
+		if (this._deckCards.length < CardBoard.maxCardNum){
+			this._deckCards.push(card);
+			this.addCardToBoard(card, this._deckCards.length - 1);
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			scene.mBattleUI.deckNum = this._cards.length;
+			scene.mBattleUI.deckNum = this._deckCards.length;
 		} else {
 			this._overFlowNum += 1;
 			// 如果是溢出的卡牌，需要立马关闭其touchEnable
@@ -90,7 +106,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	private adjustCardsPosition(twTime: number = 600, minIndex:number=0): void {
-		let cards: Card[] = this._cards;
+		let cards: Card[] = this._deckCards;
 		for (let i in cards) {
 			if (parseInt(i) >= minIndex){
 				let card: Card = cards[i]
@@ -118,7 +134,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public removeCard(card:Card){
 		// 逻辑上去除
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		let cards: Card[] = this._cards;
+		let cards: Card[] = this._deckCards;
 		if(card.mSkillInfoOfPoll){
 			scene.mManualSkillIdPool.push(card.mSkillInfoOfPoll);
 			scene.mBattleUI.remainCardNum = scene.mManualSkillIdPool.length;
@@ -127,7 +143,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
-		scene.mBattleUI.deckNum = this._cards.length;
+		scene.mBattleUI.deckNum = this._deckCards.length;
 	}
 
 	private removeCardFromBoard(card: Card, index:number): void{
@@ -158,14 +174,14 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	public release(): void {
-		for (let card of this._cards){
+		for (let card of this._deckCards){
 			card.release();
 			card.removeChildren();
 		}
 		for (let card of this._cardPool){
 			card.removeChildren();
 		}
-		this._cards = null;
+		this._deckCards = null;
 		this._cardPool = null;
 		this.removeChildren();
 	}

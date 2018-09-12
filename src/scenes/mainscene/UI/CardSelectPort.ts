@@ -19,6 +19,7 @@ class CardSelectPort extends eui.Component {
 			this.setInDeck();
 		}
 		let rsLoader = (SceneManager.Ins.curScene as MainScene).mRsLoader;
+		this.portImg.texture = RES.getRes("imgloading_png");
 		rsLoader.getResAsyncAndSetValue(portName, "texture", this.portImg);
 	}
 
