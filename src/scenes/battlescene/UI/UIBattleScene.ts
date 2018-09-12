@@ -1,15 +1,33 @@
 class UIBattleScene extends eui.Component {
 	private addCardButton: eui.Button;
 	private addFireButton: eui.Button;
-	public roundEndButton: eui.Button;
-	public cardNumLabel: eui.Label;
-	public fireNumLabel: eui.Label;
-	public roundLabel: eui.Label;
+	private roundEndButton: eui.Button;
+	private cardNumLabel: eui.Label;
+	private fireNumLabel: eui.Label;
+	private roundLabel: eui.Label;
 	private remainCardInfo: eui.Label;
 	public set remainCardNum(value: number){
 		this.remainCardInfo.text = `${value}`;
-		this.remainCardInfo.textColor = value==0 ? 0xEE2C2C : 0x7FFF00
+		this.remainCardInfo.textColor = value==0 ? 0xEE2C2C : 0x7FFF00;
 	};
+
+	public set fireNum(value: number){
+		this.fireNumLabel.text = `${value}/${FireBoard.maxFireNum}`;
+		this.fireNumLabel.textColor = value==0 ? 0xEE2C2C : 0x7FFF00;
+	}
+
+	public set round(value: number){
+		this.roundLabel.text = `第 ${value} 回合`;
+	}
+
+	public set deckNum(value: number){
+		this.cardNumLabel.text = `${value}/${CardBoard.maxCardNum}`;
+		this.cardNumLabel.textColor = value==0 ? 0xEE2C2C : 0x7FFF00;
+	}
+
+	public showRoundEndButton():void{
+		this.roundEndButton.visible = true;
+	}
 
 
 	public constructor() {

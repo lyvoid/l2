@@ -1,7 +1,7 @@
 class CardBoard extends egret.DisplayObjectContainer {
 	private _cards: Card[] = [];
 	private _cardPool: Card[] = [];
-	private static _maxCardNum = 10;
+	public static maxCardNum = 10;
 
 	public constructor() {
 		super();
@@ -70,24 +70,18 @@ class CardBoard extends egret.DisplayObjectContainer {
 
 	private _overFlowNum: number = 0;//记录当前场上溢出的卡牌总数，方便表现
 	private addCard(card: Card): void{
-		if (this._cards.length < CardBoard._maxCardNum){
+		if (this._cards.length < CardBoard.maxCardNum){
 			this._cards.push(card);
 			this.addCardToBoard(card, this._cards.length - 1);
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			let cardNumLabel = scene.mBattleUI.cardNumLabel;
-			cardNumLabel.text = `${this._cards.length}/${CardBoard._maxCardNum}`
-			if (this._cards.length == CardBoard._maxCardNum){
-				cardNumLabel.textColor = 0xFF0000;
-			} else {
-				cardNumLabel.textColor = 0xADFF2F;
-			}
+			scene.mBattleUI.deckNum = this._cards.length;
 		} else {
 			this._overFlowNum += 1;
 			// 如果是溢出的卡牌，需要立马关闭其touchEnable
 			card.touchEnabled = false;
-			this.addCardToBoard(card, CardBoard._maxCardNum + this._overFlowNum -1).call(
+			this.addCardToBoard(card, CardBoard.maxCardNum + this._overFlowNum -1).call(
 				()=>{
-					this.removeCardFromBoard(card, CardBoard._maxCardNum);
+					this.removeCardFromBoard(card, CardBoard.maxCardNum);
 					this._overFlowNum -= 1;
 				}
 			);
@@ -133,9 +127,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
-		let cardNumLabel = scene.mBattleUI.cardNumLabel;
-		cardNumLabel.text = `${this._cards.length}/${CardBoard._maxCardNum}`
-		cardNumLabel.textColor = 0xADFF2F;
+		scene.mBattleUI.deckNum = this._cards.length;
 	}
 
 	private removeCardFromBoard(card: Card, index:number): void{

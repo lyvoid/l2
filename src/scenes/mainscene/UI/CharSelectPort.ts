@@ -11,7 +11,7 @@ class CharSelectPort extends eui.Component {
 		this.skinName = "mySkin.CharSelectPort";
 	}
 
-	public initial(userCharId: number, portName:string, rsLoad: ResAsyncLoadManager): void{
+	public initial(userCharId: number, portName:string): void{
 		this.userCharId = userCharId;
 		this.maskGroup.visible = false;
 		let order = UserData.Ins.userTeam.indexOf(userCharId);
@@ -19,7 +19,8 @@ class CharSelectPort extends eui.Component {
 			this.maskGroup.visible = true;
 			this.maskLabel.text = order + 1 + "号位";
 		}
-		rsLoad.getResAsyncAndSetValue(portName, "texture", this.portImg);
+		let rsLoader = (SceneManager.Ins.curScene as MainScene).mRsLoader;
+		rsLoader.getResAsyncAndSetValue(portName, "texture", this.portImg);
 	}
 
 	public select(): void{

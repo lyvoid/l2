@@ -1,7 +1,7 @@
 class FireBoard extends egret.DisplayObjectContainer {
 
 	public mFireNum: number = 0;
-	private static _maxFireNum: number = 10;
+	public static maxFireNum: number = 10;
 	private static _maxOverflowFireNum: number = 4;
 	private _particles: particle.ParticleSystem[] = [];
 	private _timeOutHandles: number[] = []; // 主要为了方便timeout的释放
@@ -12,7 +12,7 @@ class FireBoard extends egret.DisplayObjectContainer {
 		this.width = LayerManager.Ins.stageWidth;
 		let texture = RES.getRes("fireParticle_png");
 		let config = RES.getRes("fireParticle_json");
-		for (let i = 0; i < FireBoard._maxFireNum + FireBoard._maxOverflowFireNum; i++) {
+		for (let i = 0; i < FireBoard.maxFireNum + FireBoard._maxOverflowFireNum; i++) {
 			let sys = new particle.GravityParticleSystem(texture, config)
 			sys.x = (i + 1) * 40;
 			this._particles.push(sys);
@@ -22,19 +22,13 @@ class FireBoard extends egret.DisplayObjectContainer {
 
 	private _overflowFireNum: number = 0; // 当前溢出的数量
 	public addFire() {
-		if (this.mFireNum < FireBoard._maxFireNum) {
+		if (this.mFireNum < FireBoard.maxFireNum) {
 			this._particles[this.mFireNum].start();
 			this.mFireNum += 1;
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			let fireNumLabel = scene.mBattleUI.fireNumLabel;
-			fireNumLabel.text = `${this.mFireNum}/${FireBoard._maxFireNum}`
-			if (this.mFireNum == FireBoard._maxFireNum) {
-				fireNumLabel.textColor = 0xFF0000;
-			} else {
-				fireNumLabel.textColor = 0xADFF2F;
-			}
+			scene.mBattleUI.fireNum = this.mFireNum;
 		} else if (this._overflowFireNum < FireBoard._maxOverflowFireNum) {
-			let index = FireBoard._maxFireNum + this._overflowFireNum;
+			let index = FireBoard.maxFireNum + this._overflowFireNum;
 			this._particles[index].start();
 			this._overflowFireNum += 1;
 			let to = egret.setTimeout(
@@ -62,9 +56,7 @@ class FireBoard extends egret.DisplayObjectContainer {
 			this._particles[this.mFireNum - 1].stop();
 			this.mFireNum -= 1;
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			let fireNumLabel = scene.mBattleUI.fireNumLabel;
-			fireNumLabel.text = `${this.mFireNum}/${FireBoard._maxFireNum}`
-			fireNumLabel.textColor = 0xADFF2F;
+			scene.mBattleUI.fireNum = this.mFireNum;
 		}
 	}
 

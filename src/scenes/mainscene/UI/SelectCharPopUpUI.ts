@@ -2,7 +2,6 @@ class SelectCharPopUpUI extends eui.Component {
 
 	private charInfoLabel: eui.Label;
 	private portGroup: eui.Group;
-	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 	private orderLabel: eui.Label;
 	private _selectPort: CharSelectPort;
 	private _ports: CharSelectPort[] = [];
@@ -68,7 +67,7 @@ class SelectCharPopUpUI extends eui.Component {
 					this
 				);
 			}
-			port.initial(iInt, portName, this._rsLoader);
+			port.initial(iInt, portName);
 			port.width = imgWidth;
 			port.height = imgWidth;
 			port.x = x;
@@ -242,9 +241,6 @@ ${otherInfos}
 		this._portPool = null;
 		this._formCharPopUp = null;
 		this._selectPort = null;
-		// 释放所有资源
-		this._rsLoader.releaseResource();
-		this._rsLoader = null;
 	}
 
 }

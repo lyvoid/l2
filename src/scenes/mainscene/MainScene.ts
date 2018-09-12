@@ -1,9 +1,10 @@
 class MainScene extends IScene{
     
     private _uiMain: UIMainScene;
+    public mRsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 
     public async loadResource(){
-        await RES.loadGroup("mainscenecommon", 0, LayerManager.Ins.loadingUI);
+        await this.mRsLoader.loadGroup("mainscenecommon", 0, LayerManager.Ins.loadingUI);
     }
 
     public initial(){
@@ -18,5 +19,6 @@ class MainScene extends IScene{
 		  super.release();
           this._uiMain.release();
           this._uiMain = null;
+          this.mRsLoader.releaseResource();
     }
 }

@@ -14,7 +14,7 @@ class EnemyRoundEndPhase extends ISceneState{
 		// 回合结束阶段技能效果
 		// TODO:offensive or defensive
 		scene.mRound++; //回合数加一
-		scene.mBattleUI.roundLabel.text = `第 ${scene.mRound} 回合`;
+		scene.mBattleUI.round = scene.mRound;
 		scene.setState(new PlayerRoundStartPhase());
 	}
 

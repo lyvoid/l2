@@ -11,14 +11,15 @@ class CardSelectPort extends eui.Component {
 		this.skinName = "mySkin.CharSelectPort";
 	}
 
-	public initial(userCardId: number, portName: string, rsLoad: ResAsyncLoadManager): void {
+	public initial(userCardId: number, portName: string): void {
 		this.userCardId = userCardId;
 		this.maskGroup.visible = false;
 		if (UserData.Ins.userDeck.indexOf(userCardId) >= 0) {
 			// if card in user deck, show mask
 			this.setInDeck();
 		}
-		rsLoad.getResAsyncAndSetValue(portName, "texture", this.portImg);
+		let rsLoader = (SceneManager.Ins.curScene as MainScene).mRsLoader;
+		rsLoader.getResAsyncAndSetValue(portName, "texture", this.portImg);
 	}
 
 	public setInDeck(): void {

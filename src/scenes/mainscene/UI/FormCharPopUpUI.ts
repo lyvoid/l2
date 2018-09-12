@@ -9,7 +9,6 @@ class FormCharPopUpUI extends eui.Component {
 	private _p6Imgs: eui.Image[];
 	private bg: eui.Rect;
 	private _userTeam;
-	private _rsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 
 	public constructor() {
 		super();
@@ -36,13 +35,14 @@ class FormCharPopUpUI extends eui.Component {
 	}
 
 	public initial(): void {
+		let rsLoader = (SceneManager.Ins.curScene as MainScene).mRsLoader;
 		let userTeam = this._userTeam;
 		let userArmy = UserData.Ins.userArmy;
 		for (let i in userTeam) {
 			if (userTeam[i] >= 0) {
 				let portName = ConfigManager.Ins.mCharConfig[userArmy[userTeam[i]]]["charCode"] + "_portrait_png";
 				this._p6Imgs[i].texture = RES.getRes("imgloading_png");
-				this._rsLoader.getResAsyncAndSetValue(portName, "texture", this._p6Imgs[i]);
+				rsLoader.getResAsyncAndSetValue(portName, "texture", this._p6Imgs[i]);
 			} else {
 				this._p6Imgs[i].texture = RES.getRes("defaultselect_png");
 			}
@@ -94,9 +94,6 @@ class FormCharPopUpUI extends eui.Component {
 			this._selectCharPopUpUI = null;
 		}
 		this._p6Imgs = null;
-		// 释放所有资源
-		this._rsLoader.releaseResource();
-		this._rsLoader = null;
 	}
 
 }
