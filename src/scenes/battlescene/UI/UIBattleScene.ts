@@ -8,7 +8,8 @@ class UIBattleScene extends eui.Component {
 	private remainCardInfo: eui.Label;
 	private cardRemainHelpRect: eui.Rect;
 	private fireRemainHelpRect: eui.Rect;
-	private fireHelpArrayImg: eui.Image;
+	private fireHelpArrayGroup: eui.Group;
+	private remainCardHelpGroup: eui.Group;
 
 	public set remainCardNum(value: number){
 		this.remainCardInfo.text = `${value}`;
@@ -69,15 +70,29 @@ class UIBattleScene extends eui.Component {
 	}
 
 	public fireSufficentAnim(): void{
-		let fireHelpArrayImg = this.fireHelpArrayImg;
-		fireHelpArrayImg.visible = true;
-		fireHelpArrayImg.alpha = 1;
-		egret.Tween.removeTweens(fireHelpArrayImg);
-		egret.Tween.get(fireHelpArrayImg).to({
+		let fireHelpArrayGroup = this.fireHelpArrayGroup;
+		fireHelpArrayGroup.visible = true;
+		fireHelpArrayGroup.alpha = 1;
+		egret.Tween.removeTweens(fireHelpArrayGroup);
+		egret.Tween.get(fireHelpArrayGroup).to({
 			alpha: 0
-		}, 1000).call(
+		}, 1500, egret.Ease.cubicIn).call(
 			()=>{
-				fireHelpArrayImg.visible = false;
+				fireHelpArrayGroup.visible = false;
+			}
+		)
+	}
+
+	public remainCardSufficentAnim(): void{
+		let remainCardHelpGroup = this.remainCardHelpGroup;
+		remainCardHelpGroup.visible = true;
+		remainCardHelpGroup.alpha = 1;
+		egret.Tween.removeTweens(remainCardHelpGroup);
+		egret.Tween.get(remainCardHelpGroup).to({
+			alpha: 0
+		}, 1500, egret.Ease.cubicIn).call(
+			()=>{
+				remainCardHelpGroup.visible = false;
 			}
 		)
 	}

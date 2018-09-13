@@ -21,7 +21,7 @@ class ToastInfoManager{
 		this._labelPools = null;
 	}
 
-	public newToast(info: string): void{
+	public newToast(info: string, color:number=0xFFFFFF): void{
 		let label: eui.Label;
 		if (this._labelPools.length > 0){
 			label = this._labelPools.pop()
@@ -29,7 +29,8 @@ class ToastInfoManager{
 			label = new eui.Label();
 			label.horizontalCenter = 0;
 		}
-		label.y = 300;
+		label.textColor = color;
+		label.y = LayerManager.Ins.stageHeight/2;
 		label.alpha = 1;
 		label.size = 30;
 		label.text = info;

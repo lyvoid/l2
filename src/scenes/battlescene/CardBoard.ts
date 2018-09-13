@@ -53,7 +53,8 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let scene = SceneManager.Ins.curScene as BattleScene
 		let skills = scene.mManualSkillIdPool;
 		if(skills.length == 0){
-			ToastInfoManager.Ins.newToast("卡组已空");
+			ToastInfoManager.Ins.newToast("卡组已空", 0xff0000);
+			scene.mBattleUI.remainCardSufficentAnim();
 			return;
 		}
 		let index = Math.floor(Math.random() * skills.length);

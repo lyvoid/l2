@@ -135,7 +135,7 @@ class Card extends egret.DisplayObjectContainer {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (scene.state instanceof PlayerUseCardPhase) {
 			if (scene.mWinnerCamp != CharCamp.Neut) {
-				ToastInfoManager.Ins.newToast("胜负已分");
+				ToastInfoManager.Ins.newToast("胜负已分", 0xff0000);
 				return;
 			}
 
@@ -143,7 +143,7 @@ class Card extends egret.DisplayObjectContainer {
 			let fireboard = scene.mPlayerFireBoard;
 			let fireNeed = skillInfo["fireNeed"];
 			if (fireNeed > fireboard.mFireNum) {
-				ToastInfoManager.Ins.newToast("能量不足");
+				ToastInfoManager.Ins.newToast("能量不足", 0xff0000);
 				scene.mBattleUI.fireSufficentAnim();
 				return;
 			}
@@ -156,7 +156,7 @@ class Card extends egret.DisplayObjectContainer {
 				// if can't cast, return
 				let canCastInfo = skill.canCast();
 				if (!canCastInfo[0]) {
-					ToastInfoManager.Ins.newToast(canCastInfo[1]);
+					ToastInfoManager.Ins.newToast(canCastInfo[1], 0xff0000);
 					skill.release();
 					return;
 				}
