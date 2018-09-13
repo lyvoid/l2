@@ -430,7 +430,8 @@ ${otherInfos}
 
 	// get a proper position
 	public getPositon(): { x: number, y: number } {
-		let y = 320 + 70 * this._row + Math.random() * 15;
+		let stageHeight = LayerManager.Ins.stageHeight;
+		let y = (stageHeight - 220) - 70 * (2 - this._row) + Math.random() * 15;
 		let x = 50 + this._col * 155 + this._row * 30 + Math.random() * 10;
 		if (this.mCamp == CharCamp.Enemy) {
 			x = LayerManager.Ins.stageWidth - x;
