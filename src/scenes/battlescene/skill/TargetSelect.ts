@@ -69,6 +69,7 @@ class TargetSelect {
             }
         }
 
+        allTargetsTmp2 = Util.getRandomArray(allTargetsTmp2);
         // 按照优先排序
         allTargetsTmp2.sort(
             (c1: Character, c2: Character): number => {
@@ -99,7 +100,7 @@ class TargetSelect {
         let i = 0;
         let targets = [];
         let targetNum = this._targetNum;
-        let tmp = Util.getRandomArray(allTargets);
+
         while (i < targetNum) {
             targets.push(allTargets[i]);
             i++;
@@ -134,19 +135,19 @@ class TargetSelect {
         }
         if (priorType == TSPriorType.Select) {
             if (camp != CharCamp.Player) {
-                return 0;
+                return 100;
             }
             let scene = SceneManager.Ins.curScene as BattleScene;
             if (scene.mSelectedChar == char) {
-                return 100;
+                return 0;
             }
-            return 0;
+            return 100;
         }
         if (priorType == TSPriorType.Self) {
             if (char === caster) {
-                return 100;
+                return 0;
             }
-            return 0;
+            return 100;
         }
     }
 

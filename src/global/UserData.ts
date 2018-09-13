@@ -25,7 +25,7 @@ class UserData {
 		// TODO: replace by get curUserTeam from service
 		this.userTeam = [-1, -1, -1, -1, -1, -1];
 		this.userArmy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-		this.userCards = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
+		this.userCards = [2001, 2002, 500001];
 		this.userDeck = [];
 	}
 

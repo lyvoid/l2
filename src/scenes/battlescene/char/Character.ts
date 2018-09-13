@@ -54,15 +54,17 @@ class Character extends egret.DisplayObjectContainer {
 			this.mAttr.hp = 0;
 			// if is player's char, show card warning
 			if (this.mCamp == CharCamp.Player) {
-				(SceneManager.Ins.curScene as BattleScene).mCardBoard.showCardsWarnIconOfChar(this);
+				(SceneManager.Ins.curScene as BattleScene).mCardBoard.setCardsWarnIconOfChar(this);
 			}
 		}
 		if (!this._alive && inputAlive) {
 			// if die -> alive
 			// if is player's char, hide card warning
 			if (this.mCamp == CharCamp.Player) {
-				(SceneManager.Ins.curScene as BattleScene).mCardBoard.hideCardsWarnIconOfChar(this);
+				(SceneManager.Ins.curScene as BattleScene).mCardBoard.setCardsWarnIconOfChar(this);
 			}
+			this._curRs = 0;
+			this.drawRsProgress();
 		}
 		this._alive = inputAlive;
 	}
@@ -77,16 +79,16 @@ class Character extends egret.DisplayObjectContainer {
 			if (this.mCamp == CharCamp.Player) {
 				// 移除手牌中属于当前角色的牌
 				scene.mCardBoard.removeCardOfChar(this);
-				// 移除SkillPool中归属于该角色的技能
-				let skillPools = scene.mManualSkillIdPool;
+				// remove every card of this character from user deck
+				let cardDeck = scene.mCardInfoDeck;
 				let skillsForDelete = [];
-				for (let skill of skillPools) {
+				for (let skill of cardDeck) {
 					if (skill[1] == this) {
 						skillsForDelete.push(skill);
 					}
 				}
 				for (let skill of skillsForDelete) {
-					Util.removeObjFromArray(skillPools, skill);
+					Util.removeObjFromArray(cardDeck, skill);
 				}
 			}
 			// remove all buff

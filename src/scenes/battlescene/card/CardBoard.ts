@@ -1,5 +1,5 @@
 class CardBoard extends egret.DisplayObjectContainer {
-	private _deckCards: Card[] = [];
+	private _handCards: Card[] = [];
 	private _cardPool: Card[] = [];
 	public static maxCardNum = 10;
 
@@ -11,26 +11,18 @@ class CardBoard extends egret.DisplayObjectContainer {
 	
 	public removeCardOfChar(char: Character): void{
 		let cardsForDelete: Card[] = [];
-		for (let card of this._deckCards){
-			if (card.mCaster == char){
+		for (let card of this._handCards){
+			if (card.caster == char){
 				cardsForDelete.push(card);
 			}
 		}
 		this.removeCards(cardsForDelete);
 	}
 
-	public hideCardsWarnIconOfChar(char: Character): void{
-		for (let card of this._deckCards){
-			if (card.mCaster == char){
-				card.hideWarnIcon();
-			}
-		}
-	}
-
-	public showCardsWarnIconOfChar(char: Character): void{
-		for (let card of this._deckCards){
-			if (card.mCaster == char){
-				card.showWarnIcon();
+	public setCardsWarnIconOfChar(char: Character): void{
+		for (let card of this._handCards){
+			if (card.caster == char){
+				card.setWarnIconVisible();
 			}
 		}
 	}
@@ -38,60 +30,47 @@ class CardBoard extends egret.DisplayObjectContainer {
 	private removeCards(cards:Card[]): void{
 		for(let index in cards){
 			let card = cards[index]
-			Util.removeObjFromArray(this._deckCards, card);
+			Util.removeObjFromArray(this._handCards, card);
 			card.release();
 			if (parseInt(index) == cards.length-1){
 				// 如果是最后一张，对全体调整
 				this.removeCardFromBoard(card, 0);
 			} else {
-				this.removeCardFromBoard(card, this._deckCards.length);
+				this.removeCardFromBoard(card, this._handCards.length);
 			}
 		}
 	}
 
 	public distCardNormal(){
 		let scene = SceneManager.Ins.curScene as BattleScene
-		let skills = scene.mManualSkillIdPool;
-		if(skills.length == 0){
+		let cardInfoPool = scene.mCardInfoDeck;
+		if(cardInfoPool.length == 0){
 			ToastInfoManager.Ins.newToast("卡组已空", 0xff0000);
 			scene.mBattleUI.remainCardSufficentAnim();
 			return;
 		}
-		let index = Math.floor(Math.random() * skills.length);
+		let index = Math.floor(Math.random() * cardInfoPool.length);
 		let card: Card;
 		if (this._cardPool.length > 0){
 			card = this._cardPool.pop();
 		} else{
 			card = new Card();
 		}
-		let cardInfo = skills[index];
-		// if recycle times equals -1, load recycle times from config
-		if (cardInfo[2] == -1) {
-			cardInfo[2] = ConfigManager.Ins.mSkillConfig[
-				cardInfo[0]]['recycleTimes'];
-		}
+		let cardInfo = cardInfoPool[index];
 		// initial card
-		card.initial(cardInfo[0], cardInfo[1], cardInfo[2]);
-		card.mSkillInfoOfPoll = cardInfo;
-		skills.splice(index, 1);
-		if (cardInfo[2] == 1){
-			// if recycle times of skill is 1, remove from skill _cardPool
-			card.mSkillInfoOfPoll = null;
-		} else if (cardInfo[2] != 0) {
-			// else if recycle times not equal 0 recycle time --
-			cardInfo[2] -= 1;
-		}
+		card.initial(cardInfo);
+		cardInfoPool.splice(index, 1);
 		this.addCard(card);
-		scene.mBattleUI.remainCardNum = skills.length;
+		scene.mBattleUI.remainCardNum = cardInfoPool.length;
 	}
 
 	private _overFlowNum: number = 0;//记录当前场上溢出的卡牌总数，方便表现
 	private addCard(card: Card): void{
-		if (this._deckCards.length < CardBoard.maxCardNum){
-			this._deckCards.push(card);
-			this.addCardToBoard(card, this._deckCards.length - 1);
+		if (this._handCards.length < CardBoard.maxCardNum){
+			this._handCards.push(card);
+			this.addCardToBoard(card, this._handCards.length - 1);
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			scene.mBattleUI.deckNum = this._deckCards.length;
+			scene.mBattleUI.deckNum = this._handCards.length;
 		} else {
 			this._overFlowNum += 1;
 			// 如果是溢出的卡牌，需要立马关闭其touchEnable
@@ -107,7 +86,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	private adjustCardsPosition(twTime: number = 600, minIndex:number=0): void {
-		let cards: Card[] = this._deckCards;
+		let cards: Card[] = this._handCards;
 		for (let i in cards) {
 			if (parseInt(i) >= minIndex){
 				let card: Card = cards[i]
@@ -135,16 +114,22 @@ class CardBoard extends egret.DisplayObjectContainer {
 	public removeCard(card:Card){
 		// 逻辑上去除
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		let cards: Card[] = this._deckCards;
-		if(card.mSkillInfoOfPoll){
-			scene.mManualSkillIdPool.push(card.mSkillInfoOfPoll);
-			scene.mBattleUI.remainCardNum = scene.mManualSkillIdPool.length;
+		let cards: Card[] = this._handCards;
+		// if recycleTimes > 0, recycleTimes --
+		if(card.cardInfo.recycleTimes > 0){
+			card.cardInfo.recycleTimes--;
+		}
+		// if recycleTimes != 0, card back to deck, 
+		// else this card info will be delete with releasing
+		if (card.cardInfo.recycleTimes != 0){
+			scene.mCardInfoDeck.push(card.cardInfo);
+			scene.mBattleUI.remainCardNum = scene.mCardInfoDeck.length;
 		}
 		card.release();
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);
 		this.removeCardFromBoard(card, index);
-		scene.mBattleUI.deckNum = this._deckCards.length;
+		scene.mBattleUI.deckNum = this._handCards.length;
 	}
 
 	private removeCardFromBoard(card: Card, index:number): void{
@@ -175,14 +160,14 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	public release(): void {
-		for (let card of this._deckCards){
+		for (let card of this._handCards){
 			card.release();
 			card.removeChildren();
 		}
 		for (let card of this._cardPool){
 			card.removeChildren();
 		}
-		this._deckCards = null;
+		this._handCards = null;
 		this._cardPool = null;
 		this.removeChildren();
 	}

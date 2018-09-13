@@ -10,13 +10,13 @@ class BattleScene extends IScene {
 	public mFriends: Character[];
 	public mSelectedChar: Character;
 	public mPlayerFireBoard: FireBoard;
-	public mManualSkillIdPool: [number, Character, number][]; // skillid, caster, recycle times
+	public mCardInfoDeck: CardInfo[];
 	public mManualSkillManager: ManualSkillManager;
 	public mDamageFloatManager: DamageFloatManager;
 	public mWinnerCamp: CharCamp;
 	public mRound: number;
 	public mRsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
-	
+
 	// ui
 	public mBattleUI: UIBattleScene;
 	public mBattleEndPopUpUI: BattleEndPopUp;
@@ -87,7 +87,7 @@ class BattleScene extends IScene {
 		// initialize game content
 		this.mEnemies = [];
 		this.mFriends = [];
-		this.mManualSkillIdPool = [];
+		this.mCardInfoDeck = [];
 		this.mDbManager = new DBManager();
 		this.mBuffManager = new BuffManager();
 		this.mHurtManager = new HurtManager();
@@ -121,20 +121,34 @@ class BattleScene extends IScene {
 			));
 		}
 		// add character to character layer
+		let skillConfig = ConfigManager.Ins.mSkillConfig;
 		let charLayer = this._gameCharLayer;
 		for (let char of this.mFriends.concat(this.mEnemies).sort(Character.sortFnByRow)) {
 			charLayer.addChild(char);
 			if (char.mCamp == CharCamp.Player) {
-				for (let skillid of char.manualSkillsId) {
-					this.mManualSkillIdPool.push([skillid, char, -1]);
+				for (let skillId of char.manualSkillsId) {
+					let recycleTimes = skillConfig[skillId]["recycleTimes"];
+					recycleTimes = recycleTimes == 0 ? -1 : recycleTimes;
+					this.mCardInfoDeck.push({
+						caster: char,
+						skillId: skillId,
+						recycleTimes: recycleTimes
+					});
 				}
 			}
 		}
 		// add user desk card to skill mpool
-		for (let userCardId of UserData.Ins.userDeck){
-			this.mManualSkillIdPool.push([UserData.Ins.userCards[userCardId], null, -1])
+		let userCards = UserData.Ins.userCards;
+		for (let userCardId of UserData.Ins.userDeck) {
+			let skillId = userCards[userCardId];
+			let recycleTimes = skillConfig[skillId]["recycleTimes"];
+			recycleTimes = recycleTimes == 0 ? -1 : recycleTimes;
+			this.mCardInfoDeck.push({
+				skillId: skillId,
+				recycleTimes: recycleTimes
+			});
 		}
-		this.mBattleUI.remainCardNum = this.mManualSkillIdPool.length;
+		this.mBattleUI.remainCardNum = this.mCardInfoDeck.length;
 		// select a default Enemy
 		this.mEnemies[0].onSelect();
 		// initialize scene state
@@ -145,17 +159,17 @@ class BattleScene extends IScene {
 		let rsLoader = this.mRsLoader;
 		let awaits = [];
 		awaits.push(rsLoader.loadGroup("battlecommon", 0, LayerManager.Ins.loadingUI));
-		
+
 		// 载入龙骨资源
 		let charCodes = new MySet<string>();
 		let charConfig = ConfigManager.Ins.mCharConfig;
-		for(let info of UserData.Ins.getUserTeamInfo){
+		for (let info of UserData.Ins.getUserTeamInfo) {
 			charCodes.add(charConfig[info.charId]["charCode"]);
 		}
 		let battleInfo = ConfigManager.Ins.mBattleConfig[UserData.Ins.battleId];
 		let enemiesInfo = ConfigManager.Ins.mBattleEnemyConfig;
 		let enemiesId = battleInfo["enemy"];
-		for(let i of enemiesId){
+		for (let i of enemiesId) {
 			charCodes.add(charConfig[i]["charCode"]);
 		}
 		for (let charactorName of charCodes.data) {
@@ -165,7 +179,7 @@ class BattleScene extends IScene {
 		}
 		// 载入game层背景图片资源
 		awaits.push(rsLoader.getResAsync("bg_json"));
-		for (let wait of awaits){
+		for (let wait of awaits) {
 			await wait;
 		}
 	}
@@ -248,7 +262,7 @@ class BattleScene extends IScene {
 
 	public release() {
 		super.release();
-
+		
 		this.mDbManager.release();
 		this.mDbManager = null;
 
@@ -288,7 +302,7 @@ class BattleScene extends IScene {
 		this.mHurtManager.release();
 		this.mHurtManager = null;
 
-		this.mManualSkillIdPool = null;
+		this.mCardInfoDeck = null;
 
 		this.mManualSkillManager.release();
 		this.mManualSkillManager = null;
@@ -299,9 +313,9 @@ class BattleScene extends IScene {
 		this._gameFgLayer = null;
 	}
 
-	public setState(state: ISceneState, delay=1000): void{
+	public setState(state: ISceneState, delay = 1000): void {
 		// add a delay in default setState
-		if((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == CharCamp.Neut){
+		if ((SceneManager.Ins.curScene as BattleScene).mWinnerCamp == CharCamp.Neut) {
 			egret.setTimeout(super.setState, this, delay, state);
 		}
 	}
