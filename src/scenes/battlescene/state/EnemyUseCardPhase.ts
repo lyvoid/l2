@@ -7,8 +7,8 @@ class EnemyUseCardPhase extends ISceneState {
 		for (let enemy of scene.mEnemies) {
 			if (enemy.isInBattle && enemy.alive) {
 				for(let skillId of enemy.manualSkillsId){
-					// scene.addToCastQueue(skillManager.newSkill(skillId, enemy));
-					skillManager.newSkill(skillId, enemy).cast();
+					scene.addToCastQueue(skillManager.newSkill(skillId, enemy));
+					// skillManager.newSkill(skillId, enemy).cast();
 				}
 			}
 		}

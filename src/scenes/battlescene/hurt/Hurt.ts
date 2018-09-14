@@ -54,8 +54,6 @@ class Hurt {
 		Hurt.statePerformance(hurtResult);
 		// judge after every hurt affect
 		scene.judge();
-		// release hurt after affect
-		this.release();
 		// send hurt affect message
 		MessageManager.Ins.sendMessage(
 			MessageType.HurtAffect,

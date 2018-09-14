@@ -127,7 +127,7 @@ class ManualSkill {
 
 		// normal affect
 		if (this._targets) {
-			let hurt = null;
+			let hurt: Hurt = null;
 			if (this._hurtIdToTarget != 0) {
 				hurt = scene.mHurtManager.newHurt(
 					this._hurtIdToTarget,
@@ -145,6 +145,7 @@ class ManualSkill {
 					target.removeAllBuff(this._isRemovePosBuff, this._isRemoveNegBuff);
 				}
 			}
+			if (hurt) hurt.release();
 		}
 
 		if (this._caster && this._hurtIdToSelf != 0) {
@@ -153,6 +154,7 @@ class ManualSkill {
 				this._caster
 			);
 			hurt.affect(this._caster);
+			if (hurt) hurt.release();
 		}
 		if (this._caster) {
 			for (let buffid of this._buffsIdToSelf) {

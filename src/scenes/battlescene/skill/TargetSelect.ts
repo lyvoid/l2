@@ -69,7 +69,7 @@ class TargetSelect {
             }
         }
 
-        allTargetsTmp2 = Util.getRandomArray(allTargetsTmp2);
+        // allTargetsTmp2 = Util.getRandomArray(allTargetsTmp2);
         // 按照优先排序
         allTargetsTmp2.sort(
             (c1: Character, c2: Character): number => {

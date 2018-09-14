@@ -202,6 +202,7 @@ class Buff {
 				this._char
 			);
 			hurt.affect(this._char);
+			hurt.release();
 		}
 		if (!this._char) return;
 		for (let id of this._affectBuffIds) {

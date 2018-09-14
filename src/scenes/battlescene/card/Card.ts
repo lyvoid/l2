@@ -196,7 +196,7 @@ class Card extends egret.DisplayObjectContainer {
 				this.caster.getRsPoint(fireNeed);
 			} else {
 				// if no caster or caster alive
-				let skill = scene.mManualSkillManager.newSkill(this._skillId, this.caster);
+				let skill = scene.mManualSkillManager.newSkill(this._skillId, this.caster, CharCamp.Player);
 				// if can't cast, return
 				let canCastInfo = skill.canCast();
 				if (!canCastInfo[0]) {
@@ -205,8 +205,8 @@ class Card extends egret.DisplayObjectContainer {
 					return;
 				}
 				// cast skill
-				// scene.addToCastQueue(skill);
-				skill.cast();
+				scene.addToCastQueue(skill);
+				// skill.cast();
 			}
 
 			// remove fire for casting skill
