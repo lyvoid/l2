@@ -25,6 +25,7 @@ class Card extends egret.DisplayObjectContainer {
 	private _skillIcon: egret.Bitmap;
 	private _casterIcon: egret.Bitmap;
 	private _skillNameTextField: egret.TextField;
+	private _fireNeedTextField: egret.TextField;
 	public constructor() {
 		super();
 		this.width = 80;
@@ -50,15 +51,7 @@ class Card extends egret.DisplayObjectContainer {
 		casterIcon.y = -2;
 		this.addChild(casterIcon);
 		this._casterIcon = casterIcon;
-		// warn ! icon
-		let warnIcon = new egret.Bitmap(RES.getRes("warn_icon_png"));
-		warnIcon.width = 30;
-		warnIcon.height = 30;
-		warnIcon.x = 60;
-		warnIcon.y = -10;
-		warnIcon.visible = false;
-		this._warnIcon = warnIcon;
-		// TextField
+		// skill name TextField
 		let skillNameTextField = new egret.TextField();
 		skillNameTextField.background = true;
 		skillNameTextField.size = 18;
@@ -74,6 +67,31 @@ class Card extends egret.DisplayObjectContainer {
 		skillNameTextField.backgroundColor = 0xFAFAD2;
 		this._skillNameTextField = skillNameTextField;
 		this.addChild(skillNameTextField);
+		// point
+		let fireNeedTextField = new egret.TextField();
+		fireNeedTextField.background = true;
+		fireNeedTextField.size = 20;
+		fireNeedTextField.width = 25;
+		fireNeedTextField.height = 20;
+		fireNeedTextField.y = 10;
+		fireNeedTextField.x = 65;
+		fireNeedTextField.bold = true;
+		fireNeedTextField.text = "10";
+		fireNeedTextField.textColor = 0x0;
+		fireNeedTextField.borderColor = 0xEE00EE;
+		fireNeedTextField.border = true;
+		fireNeedTextField.backgroundColor = 0xFAFAD2;
+		this._fireNeedTextField = fireNeedTextField;
+		this.addChild(fireNeedTextField);
+		// warn ! icon
+		let warnIcon = new egret.Bitmap(RES.getRes("warn_icon_png"));
+		warnIcon.width = 30;
+		warnIcon.height = 30;
+		warnIcon.x = 60;
+		warnIcon.y = -25;
+		warnIcon.visible = false;
+		this._warnIcon = warnIcon;
+		this.addChild(warnIcon);
 	}
 
 	private _warnIcon: egret.Bitmap;
@@ -113,11 +131,12 @@ class Card extends egret.DisplayObjectContainer {
 			casterIcon.texture = RES.getRes("no_caster_portrait_png");
 		}
 		// warn ! icon
-		if (caster != null && caster.alive) {
-			this._warnIcon.visible = false;
-		}
+		this.setWarnIconVisible();
 		// skillname
 		this._skillNameTextField.text = skillInfo["skillName"];
+		// fireneed text
+		this._fireNeedTextField.text = skillInfo["fireNeed"];
+		this._fireNeedTextField.width = this._fireNeedTextField.textWidth;
 		// initial event listener
 		this.addEventListener(
 			egret.TouchEvent.TOUCH_TAP,
@@ -135,9 +154,10 @@ class Card extends egret.DisplayObjectContainer {
 
 	public setWarnIconVisible(): void {
 		let caster = this.caster;
-		if (caster != null && caster.alive) {
+		if (caster == null || caster.alive) {
 			this._warnIcon.visible = false;
-		} else {
+		}
+		if (caster != null && !caster.alive) {
 			this._warnIcon.visible = true;
 		}
 	}
