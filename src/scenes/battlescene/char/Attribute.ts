@@ -40,7 +40,7 @@ class Attribute {
 		this._attrs[AttrName.Hp] = value;
 	}
 	public set shield(value: number) {
-		if (value <= 0) value = 0;
+		if (value <= 0 || !this._char.alive) value = 0; // if unit is dead, let value = 0
 		if (value > this.maxShield) value = this.maxShield;
 		this._attrs[AttrName.Shield] = value;
 	}

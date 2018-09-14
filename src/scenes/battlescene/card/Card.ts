@@ -70,17 +70,16 @@ class Card extends egret.DisplayObjectContainer {
 		// point
 		let fireNeedTextField = new egret.TextField();
 		fireNeedTextField.background = true;
-		fireNeedTextField.size = 20;
-		fireNeedTextField.width = 25;
-		fireNeedTextField.height = 20;
+		fireNeedTextField.size = 30;
+		fireNeedTextField.width = 30;
+		fireNeedTextField.height = 30;
 		fireNeedTextField.y = 10;
 		fireNeedTextField.x = 65;
 		fireNeedTextField.bold = true;
 		fireNeedTextField.text = "10";
-		fireNeedTextField.textColor = 0x0;
-		fireNeedTextField.borderColor = 0xEE00EE;
+		fireNeedTextField.borderColor = 0xFFFF00;
 		fireNeedTextField.border = true;
-		fireNeedTextField.backgroundColor = 0xFAFAD2;
+		fireNeedTextField.backgroundColor = 0x2F4F4F;
 		this._fireNeedTextField = fireNeedTextField;
 		this.addChild(fireNeedTextField);
 		// warn ! icon

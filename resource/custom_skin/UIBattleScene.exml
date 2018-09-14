@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <e:Skin class="mySkin.UIBattleScene" width="1000" height="500" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+	<e:Group id="remainCardHelpGroup" width="0" height="0" bottom="0" right="0" anchorOffsetX="0" visible="false">
+		<e:Image width="200" height="200" source="array_down_png" anchorOffsetY="0" scaleX="1" scaleY="1" left="154" bottom="210" visible="false"/>
+		<e:Rect width="21" height="37" scaleX="1" scaleY="1" strokeColor="0xFF0000" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="1" bottom="114" right="25" fillColor="0xff0000"/>
+	</e:Group>
+	<e:Group id="fireHelpArrayGroup" width="0" height="0" bottom="0" left="0" anchorOffsetY="0" visible="false">
+		<e:Rect width="82" height="37" scaleX="1" scaleY="1" strokeColor="0xff0000" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="1" bottom="176" left="244" fillColor="0xff0000"/>
+		<e:Image width="200" height="200" source="array_down_png" anchorOffsetY="0" scaleX="1" scaleY="1" left="154" bottom="210" visible="false"/>
+	</e:Group>
 	<e:Button id="addFireButton" label="whosyourdaddy-addFire" right="0" top="0" height="50" anchorOffsetX="0" width="240"/>
 	<e:Button id="addCardButton" label="whosyourdaddy-addCard" right="240" top="0" height="50" anchorOffsetX="0" width="240"/>
 	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="10" anchorOffsetY="0" height="100" visible="false"/>
@@ -14,12 +22,6 @@
 	<e:Rect id="cardRemainHelpRect" width="45" height="55" anchorOffsetX="0" anchorOffsetY="0" strokeAlpha="1" fillAlpha="0" touchEnabled="true" bottom="115" right="0"/>
 	<e:Image width="30" height="30" source="help_icon_png" bottom="196" left="312"/>
 	<e:Rect id="fireRemainHelpRect" width="45" height="55" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="0" touchEnabled="true" bottom="170" left="295"/>
-	<e:Group id="fireHelpArrayGroup" width="100" height="200" bottom="0" left="0" visible="false">
-		<e:Rect width="184" height="45" scaleX="1" scaleY="1" strokeColor="0xff0000" strokeWeight="5" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="0" bottom="174" left="162"/>
-		<e:Image width="200" height="200" source="array_down_png" anchorOffsetY="0" scaleX="1" scaleY="1" left="154" bottom="210" visible="false"/>
-	</e:Group>
-	<e:Group id="remainCardHelpGroup" width="190" height="200" bottom="0" right="0" anchorOffsetX="0" visible="false">
-		<e:Image width="200" height="200" source="array_down_png" anchorOffsetY="0" scaleX="1" scaleY="1" left="154" bottom="210" visible="false"/>
-		<e:Rect width="184" height="45" scaleX="1" scaleY="1" strokeColor="0xFF0000" strokeWeight="5" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="0" bottom="115" right="0"/>
-	</e:Group>
+
+
 </e:Skin>

@@ -17,6 +17,8 @@ class ExcelData:
             row_dict = {}
             index = 0
             for i in range(len(self.col_types)):
+                if self.col_names[i].startswith("~"):
+                    continue
                 cell_data = type_trans(
                     data_row[i],
                     self.col_types[i]
