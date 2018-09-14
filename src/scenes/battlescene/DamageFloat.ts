@@ -17,13 +17,14 @@ class DamageFloatManager {
 		floatLabel.textColor = changeHp > 0 ? 0x7CFC00 : 0xCD0000;
 		floatLabel.text = `${prefix} ${sign}${Math.abs(changeHp)}`;
 		char.addChild(floatLabel);
-		floatLabel.y = -200;
-		floatLabel.x = -30;
+		floatLabel.y = -80;
+		floatLabel.x = -80;
+		floatLabel.bold = true;
 		floatLabel.alpha = 1;
 		egret.Tween.get(floatLabel).to({
 			y: floatLabel.y - 100,
 			alpha: 0
-		}, 3000, egret.Ease.quadInOut).call(
+		}, 6000, egret.Ease.circOut).call(
 			()=>{
 				char.removeChild(floatLabel);
 				numberFloatPool.push(floatLabel);

@@ -34,9 +34,10 @@ class ToastInfoManager{
 		label.alpha = 1;
 		label.size = 30;
 		label.text = info;
+		label.bold = true;
 		LayerManager.Ins.popUpLayer.addChild(label);
 		egret.Tween.get(label).to(
-			{y: 150, alpha: 0}, 2000, egret.Ease.quintInOut
+			{y: label.y - 100, alpha: 0}, 6000, egret.Ease.circOut
 		).call(
 			()=>{
 				LayerManager.Ins.popUpLayer.removeChild(label);
