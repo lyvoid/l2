@@ -1,7 +1,7 @@
 class PlayerUseCardPhase extends ISceneState {
 
 	public initial(){
-		ToastInfoManager.Ins.newToast("我方出牌阶段");
+		ToastInfoManager.newToast("我方出牌阶段");
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		// 显示下一个回合的按键
 		scene.mBattleUI.showRoundEndButton();

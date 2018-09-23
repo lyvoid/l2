@@ -1,7 +1,7 @@
 class EnemyRoundEndPhase extends ISceneState{
 
 	public initial(){
-		ToastInfoManager.Ins.newToast("敌方回合结束阶段");
+		ToastInfoManager.newToast("敌方回合结束阶段");
 
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		// buff round--

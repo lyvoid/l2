@@ -147,8 +147,12 @@ class Card extends egret.DisplayObjectContainer {
 			this.onTouchBegin,
 			this
 		);
-		// initial longtouch
-		LongTouchUtil.bindLongTouch(this, this);;
+
+		this.addEventListener(
+			egret.TouchEvent.TOUCH_END,
+			this.onTouchEnd,
+			this
+		);
 	}
 
 	public setWarnIconVisible(): void {
@@ -161,44 +165,98 @@ class Card extends egret.DisplayObjectContainer {
 		}
 	}
 
-	private onLongTouchEnd(): void {
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.mBattleInfoPopupUI);
-		// 显示选择圈
-		scene.mSelectImg.visible = true;
-		scene.mSelectHead.visible = true;
-		let caster = this.caster;
-		if (caster) {
-			caster.unBlink();
+	private onTouchTap(): void {
+		if (this._isTapCancle){
+			this._isTapCancle = false;
+			return;
 		}
-	}
-
-	private onLongTouchBegin(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let battleInfoPopupUI = scene.mBattleInfoPopupUI;
 		battleInfoPopupUI.setDescFlowText(this.description);
 		battleInfoPopupUI.setOnRight();
-		battleInfoPopupUI.removeBgTapExit();
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopupUI);
-		// 隐藏选择圈
-		scene.mSelectImg.visible = false;
-		scene.mSelectHead.visible = false;
 		// 释放者闪烁
 		let caster = this.caster;
 		if (caster) {
 			caster.blink();
+			L2Filters.addOutGlowFilter(caster);
+		}
+		L2Filters.addOutGlowFilter(this);
+		MessageManager.Ins.addEventListener(
+			MessageType.BattleInfoPopUpClose,
+			this.onBattleInfoPopUpClose,
+			this
+		);
+	}
+
+	private onBattleInfoPopUpClose(): void {
+		L2Filters.removeOutGlowFilter(this);
+		let caster = this.caster;
+		if (caster) {
+			caster.unBlink();
+			L2Filters.removeOutGlowFilter(caster);
+		}
+		MessageManager.Ins.removeEventListener(
+			MessageType.BattleInfoPopUpClose,
+			this.onBattleInfoPopUpClose,
+			this
+		);
+	}
+
+	private _touchBeginStageX: number;
+	private _touchBeginStageY: number;
+	private _touchBeginLocalX: number;
+	private _touchBeginLocalY: number;
+	private onTouchBegin(e: egret.TouchEvent): void {
+		this._touchBeginStageX = e.stageX;
+		this._touchBeginStageY = e.stageY;
+		let point = this.globalToLocal(e.stageX, e.stageY);
+		this._touchBeginLocalX = point.x;
+		this._touchBeginLocalY = point.y;
+		MessageManager.Ins.addEventListener(
+			MessageType.StageTouchMove,
+			this.onStageTouchMove,
+			this
+		);
+	}
+
+	private _isMove: boolean = false;
+	private onStageTouchMove(msg: Message): void {
+		let e: egret.TouchEvent = msg.messageContent;
+		let touchStageX = e.stageX;
+		let touchStageY = e.stageY;
+		if (!this._isMove) {
+			const minDis = 40;
+			let disToBegin = (touchStageX - this._touchBeginStageX
+			) ** 2 + (touchStageY - this._touchBeginStageY) ** 2;
+			if (disToBegin > minDis) {
+				this._isMove = true;
+			}
+		} else {
+			let parent = this.parent;
+			let point = parent.globalToLocal(touchStageX, touchStageY);
+			this.x = point.x - this._touchBeginLocalX;
+			this.y = point.y - this._touchBeginLocalY;
 		}
 	}
 
-	private onTouchBegin(): void {
-		(SceneManager.Ins.curScene as BattleScene).mFilterManager.setOutGlowHolderWithAnim(this);
+	private _isTapCancle = false;
+	private onTouchEnd(): void {
+		MessageManager.Ins.removeEventListener(
+			MessageType.StageTouchMove,
+			this.onStageTouchMove,
+			this
+		);
+		if (this._isMove){
+			this._isTapCancle = true;
+		}
 	}
 
-	private onTouchTap(): void {
+	private onTouchTap1(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (scene.state instanceof PlayerUseCardPhase) {
 			if (scene.mWinnerCamp != CharCamp.Neut) {
-				ToastInfoManager.Ins.newToast("胜负已分", 0xff0000);
+				ToastInfoManager.newToast("胜负已分", 0xff0000);
 				return;
 			}
 
@@ -206,7 +264,7 @@ class Card extends egret.DisplayObjectContainer {
 			let fireboard = scene.mPlayerFireBoard;
 			let fireNeed = skillInfo["fireNeed"];
 			if (fireNeed > fireboard.mFireNum) {
-				ToastInfoManager.Ins.newToast("能量不足", 0xff0000);
+				ToastInfoManager.newToast("能量不足", 0xff0000);
 				scene.mBattleUI.fireSufficentAnim();
 				return;
 			}
@@ -219,7 +277,7 @@ class Card extends egret.DisplayObjectContainer {
 				// if can't cast, return
 				let canCastInfo = skill.canCast();
 				if (!canCastInfo[0]) {
-					ToastInfoManager.Ins.newToast(canCastInfo[1], 0xff0000);
+					ToastInfoManager.newToast(canCastInfo[1], 0xff0000);
 					skill.release();
 					return;
 				}
@@ -244,16 +302,19 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	public release(): void {
-		LongTouchUtil.unbindLongTouch(this, this);
-		this.touchEnabled = false;
 		this.removeEventListener(
 			egret.TouchEvent.TOUCH_TAP,
 			this.onTouchTap,
 			this
 		);
-		this.removeEventListener(
-			egret.TouchEvent.TOUCH_BEGIN,
-			this.onTouchBegin,
+		MessageManager.Ins.removeEventListener(
+			MessageType.StageTouchMove,
+			this.onStageTouchMove,
+			this
+		);
+		MessageManager.Ins.addEventListener(
+			MessageType.BattleInfoPopUpClose,
+			this.onBattleInfoPopUpClose,
 			this
 		);
 		this._caster = null;

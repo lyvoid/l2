@@ -1,4 +1,5 @@
 /**
+ * 【弃用】
  * 用于需要长按的对象，直接使用LongTouchUtil.bindLongTouch()来使用
  * 一个时间点最多只有一个单位会触发长按，一旦有单位被touch就会屏蔽掉其他的bind的对象
  * 一旦触发了长按会将遮罩层的touchenable=true，即屏蔽掉除了取消长按外的所有其他事件

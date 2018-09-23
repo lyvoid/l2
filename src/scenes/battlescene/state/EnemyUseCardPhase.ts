@@ -1,7 +1,7 @@
 class EnemyUseCardPhase extends ISceneState {
 
 	public initial() {
-		ToastInfoManager.Ins.newToast("敌方出牌阶段");
+		ToastInfoManager.newToast("敌方出牌阶段");
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let skillManager = scene.mManualSkillManager;
 		for (let enemy of scene.mEnemies) {

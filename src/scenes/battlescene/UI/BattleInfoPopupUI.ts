@@ -12,6 +12,11 @@ class BattleInfoPopupUI extends eui.Component {
 		this.width = LayerManager.Ins.stageWidth;
 		this.height = LayerManager.Ins.stageHeight;
 		this._ny = this.infoScroller.viewport.scrollV;
+		this.bg.addEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onBgTap,
+			this
+		);
 	}
 
 	public setDescFlowText(content: string): void {
@@ -24,28 +29,21 @@ class BattleInfoPopupUI extends eui.Component {
 		this.contentGroup.horizontalCenter = 280;
 	}
 
-	public addBgTapExit(): void {
-		this.bg.addEventListener(
-			egret.TouchEvent.TOUCH_TAP,
-			this.onBgTap,
-			this
-		);
-	}
-
-	public removeBgTapExit(): void {
-		this.bg.removeEventListener(
-			egret.TouchEvent.TOUCH_TAP,
-			this.onBgTap,
-			this
-		);
-	}
-
 	private onBgTap(): void {
-		Util.safeRemoveFromParent(this);
+		MessageManager.Ins.sendMessage(MessageType.BattleInfoPopUpClose);
+		this.hide();
 	}
 
 	public setOnLeft(): void {
 		this.contentGroup.horizontalCenter = -280;
+	}
+
+	public show(): void {
+		LayerManager.Ins.popUpLayer.addChild(this);
+	}
+
+	public hide(): void {
+		LayerManager.Ins.popUpLayer.removeChild(this);
 	}
 
 	public release(): void {

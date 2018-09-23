@@ -45,7 +45,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		let scene = SceneManager.Ins.curScene as BattleScene
 		let cardInfoPool = scene.mCardInfoDeck;
 		if(cardInfoPool.length == 0){
-			ToastInfoManager.Ins.newToast("卡组已空", 0xff0000);
+			ToastInfoManager.newToast("卡组已空", 0xff0000);
 			scene.mBattleUI.remainCardSufficentAnim();
 			return;
 		}

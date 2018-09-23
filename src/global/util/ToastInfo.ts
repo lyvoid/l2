@@ -1,27 +1,8 @@
 class ToastInfoManager{
 
-	private _labelPools: eui.Label[] = [];
+	private static _labelPools: eui.Label[] = [];
 
-	private static _instance: ToastInfoManager;
-
-	public static get Ins(): ToastInfoManager{
-		let ins = ToastInfoManager._instance
-		if (ins != null){
-			return ins;
-		}
-		ins = new ToastInfoManager();
-		ToastInfoManager._instance = ins;
-		return ins;
-	}
-
-	public initial(): void{
-	}
-
-	public release(): void{
-		this._labelPools = null;
-	}
-
-	public newToast(info: string, color:number=0xFFFFFF): void{
+	public static newToast(info: string, color:number=0xFFFFFF): void{
 		let label: eui.Label;
 		if (this._labelPools.length > 0){
 			label = this._labelPools.pop()

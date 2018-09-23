@@ -357,23 +357,14 @@ ${otherInfos}
 
 		// 增加动画点击事件
 		armatureDisplay.touchEnabled = true;
-		armatureDisplay.addEventListener(
-			egret.TouchEvent.TOUCH_TAP,
-			this.onTouchTap,
-			this
-		);
 
 		// 龙骨动画添加到Character中
 		this.addChild(armatureDisplay);
 		this._armatureDisplay = armatureDisplay;
 
-		// 绑定长按动作
-		LongTouchUtil.bindLongTouch(armatureDisplay, this);
-
-		// 绑定TouchBegin事件（发送TouchBegin消息）
 		this.addEventListener(
-			egret.TouchEvent.TOUCH_BEGIN,
-			this.onTouchBegin,
+			egret.TouchEvent.TOUCH_TAP,
+			this.onTouchTap,
 			this
 		);
 	}
@@ -390,12 +381,8 @@ ${otherInfos}
 		}
 	}
 
-	private onLongTouchEnd(): void {
-		let scene = SceneManager.Ins.curScene as BattleScene;
-		LayerManager.Ins.popUpLayer.removeChild(scene.mBattleInfoPopupUI);
-	}
-
-	private onLongTouchBegin(): void {
+	private onTouchTap(): void {
+		L2Filters.addOutGlowFilter(this._armatureDisplay);
 		let battleInfoPopUP = (SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI;
 		if (this.mCamp == CharCamp.Enemy) {
 			battleInfoPopUP.setOnLeft();
@@ -403,20 +390,25 @@ ${otherInfos}
 			battleInfoPopUP.setOnRight();
 		}
 		battleInfoPopUP.setDescFlowText(this.description + this.buffDescription);
-		battleInfoPopUP.removeBgTapExit();
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopUP);
+		MessageManager.Ins.addEventListener(
+			MessageType.BattleInfoPopUpClose,
+			this.onBattleInfoPopUpClose,
+			this
+		);
+	}
+
+	private onBattleInfoPopUpClose(): void {
+		L2Filters.removeOutGlowFilter(this._armatureDisplay);
+		MessageManager.Ins.removeEventListener(
+			MessageType.BattleInfoPopUpClose,
+			this.onBattleInfoPopUpClose,
+			this
+		);
 	}
 
 	private stopDBAnim() {
 		this._armatureDisplay.animation.stop();
-	}
-
-	private onTouchBegin(): void {
-		(SceneManager.Ins.curScene as BattleScene).mFilterManager.setOutGlowHolderWithAnim(this._armatureDisplay);
-	}
-
-	private onTouchTap(): void {
-		this.onSelect();
 	}
 
 	// set to proper position
@@ -456,17 +448,19 @@ ${otherInfos}
 	}
 
 	public blink(): void {
-		egret.Tween.get(
-			this,
-			{ loop: true }
-		).to(
-			{ alpha: 0 }, 300
-			).to({ alpha: 1 }, 300);
+		this.playDBAnim("attack", 0);
+		// egret.Tween.get(
+		// 	this,
+		// 	{ loop: true }
+		// ).to(
+		// 	{ alpha: 0 }, 300
+		// 	).to({ alpha: 1 }, 300, egret.Ease.circIn);
 	}
 
 	public unBlink(): void {
-		egret.Tween.removeTweens(this);
-		this.alpha = 1;
+		this.playDBAnim("stand", 0);
+		// egret.Tween.removeTweens(this);
+		// this.alpha = 1;
 	}
 
 	public onSelect() {
@@ -526,7 +520,7 @@ ${otherInfos}
 		switch (nextP.pType) {
 			case PType.Die:
 				this.playDBAnim("dizzy", 1);
-				(SceneManager.Ins.curScene as BattleScene).mFilterManager.addGreyFilter(this._armatureDisplay);
+				L2Filters.addGreyFilter(this._armatureDisplay);
 				this._isInPerf = false;
 				this.nextPerf();
 				break;
@@ -540,7 +534,7 @@ ${otherInfos}
 				break;
 			case PType.Resurgence:
 				this._armatureDisplay.animation.play("stand", 0);
-				(SceneManager.Ins.curScene as BattleScene).mFilterManager.removeGreyFilter(this._armatureDisplay);
+				L2Filters.removeGreyFilter(this._armatureDisplay);
 				this._isInPerf = false;
 				this.nextPerf();
 				break;
@@ -644,15 +638,9 @@ ${otherInfos}
 	}
 
 	public release(): void {
-		LongTouchUtil.unbindLongTouch(this._armatureDisplay, this);
-		this._armatureDisplay.removeEventListener(
-			egret.TouchEvent.TOUCH_TAP,
-			this.onTouchTap,
-			this
-		);
-		this._armatureDisplay.removeEventListener(
-			egret.TouchEvent.TOUCH_BEGIN,
-			this.onTouchBegin,
+		MessageManager.Ins.addEventListener(
+			MessageType.BattleInfoPopUpClose,
+			this.onBattleInfoPopUpClose,
 			this
 		);
 		this._armatureDisplay.removeEventListener(

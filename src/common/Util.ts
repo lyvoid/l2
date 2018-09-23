@@ -1,5 +1,8 @@
-// TypeScript file
 class Util{
+
+    // 防止被new
+    private constructor(){}
+
     /**
      * 从一个Array中删除元素，如果确实属于ls返回true，否则返回false
      */

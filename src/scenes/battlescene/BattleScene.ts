@@ -5,7 +5,7 @@ class BattleScene extends IScene {
 	public mCardBoard: CardBoard;
 	public mSelectImg: egret.Bitmap;
 	public mSelectHead: egret.Bitmap;
-	public mFilterManager: FilterManager;
+	public mFilterManager: L2Filters;
 	public mEnemies: Character[];
 	public mFriends: Character[];
 	public mSelectedChar: Character;
@@ -57,7 +57,7 @@ class BattleScene extends IScene {
 		selectHead.x = -selectHead.width / 2;
 		this.mSelectHead = selectHead;
 		// instantiate filter
-		this.mFilterManager = new FilterManager();
+		this.mFilterManager = new L2Filters();
 		// initialize game round
 		this.mRound = 1;
 		// initialize game background
@@ -261,8 +261,6 @@ class BattleScene extends IScene {
 	}
 
 	public release() {
-		super.release();
-		
 		this.mDbManager.release();
 		this.mDbManager = null;
 
@@ -277,8 +275,6 @@ class BattleScene extends IScene {
 
 		this.mSelectImg = null;
 		this.mSelectedChar = null;
-		this.mFilterManager.release();
-		this.mFilterManager = null;
 
 		this._castQueue = null;
 

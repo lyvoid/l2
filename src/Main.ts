@@ -105,9 +105,23 @@ class Main extends eui.UILayer {
         ConfigManager.Ins.initial();
         // 初始化LayerManager
         LayerManager.Ins.initial(this.stage);
-        ToastInfoManager.Ins.initial();
         // 初始化SceneManager
         SceneManager.Ins.initial();
         UserData.Ins.initial();
+        this.userInputInitial();
+    }
+
+    private userInputInitial(): void {
+        let stage = this.stage;
+        stage.addEventListener(
+            egret.TouchEvent.TOUCH_MOVE,
+            (e: egret.TouchEvent) => {
+                MessageManager.Ins.sendMessage(
+                    MessageType.StageTouchMove,
+                    e,
+                );
+            },
+            this
+        )
     }
 }

@@ -127,7 +127,6 @@ class UIBattleScene extends eui.Component {
 		);
 		
 		battleInfoPopupUI.setOnLeft();
-		battleInfoPopupUI.addBgTapExit();
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopupUI);
 	}
 
@@ -141,7 +140,6 @@ class UIBattleScene extends eui.Component {
 `
 		);
 		battleInfoPopupUI.setOnRight();
-		battleInfoPopupUI.addBgTapExit();
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopupUI);
 	}
 

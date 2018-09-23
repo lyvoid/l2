@@ -1,24 +1,23 @@
-class MainScene extends IScene{
-    
+class MainScene extends IScene {
+
     private _uiMain: UIMainScene;
     public mRsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
 
-    public async loadResource(){
+    public async loadResource() {
         await this.mRsLoader.loadGroup("mainscenecommon", 0, LayerManager.Ins.loadingUI);
     }
 
-    public initial(){
+    public initial() {
         let uiMain = new UIMainScene();
         this._uiMain = uiMain;
     }
-    
-    public async releaseResource(){
+
+    public async releaseResource() {
     }
 
-    public release(){
-		  super.release();
-          this._uiMain.release();
-          this._uiMain = null;
-          this.mRsLoader.releaseResource();
+    public release() {
+        this._uiMain.release();
+        this._uiMain = null;
+        this.mRsLoader.releaseResource();
     }
 }

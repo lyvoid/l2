@@ -9,4 +9,10 @@ class MessageType{
 	public static HurtAffect = "HurtAffect";
 	// buff attach
 	public static BuffAttach = "BuffAttach";
+
+	// battle scene pop up cancle
+	public static BattleInfoPopUpClose = "BattleInfoPopUpClose";
+
+	// user input
+	public static StageTouchMove = "StageTouchMove";
 }

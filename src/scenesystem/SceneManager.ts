@@ -34,6 +34,7 @@ class SceneManager{
 		let oldScene = this.curScene;
 		this.curScene = scene;
 		if (oldScene != null){
+			oldScene.defaultRelease();
 			oldScene.release();
 			oldScene.releaseResource();
 		}

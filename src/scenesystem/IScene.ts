@@ -1,6 +1,6 @@
 /**
  * scene life cycle:
- * constructor -> loadResource -> initial -> release -> releaseResource
+ * constructor -> loadResource -> initial -> defaultRelease -> release -> releaseResource
  */
 abstract class IScene{
     public state: ISceneState;
@@ -25,17 +25,23 @@ abstract class IScene{
     }
 
     /**
-     * call before changing into other scene,
-     * release reference in this function
+     * call before release
+     * dont override this until you know what you are doing
      */
-    public release(){
+    public defaultRelease(){
         if (this.state){
             this.state.release();
             this.state = null;
         }
         egret.Tween.removeAllTweens();
-        LongTouchUtil.clear();
-        LayerManager.Ins.clear();
+		LayerManager.Ins.clear();
+    }
+
+    /**
+     * call before changing into other scene,
+     * release reference in this function
+     */
+    public release(){
     }
 
     /**
