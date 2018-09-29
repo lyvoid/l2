@@ -155,12 +155,27 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	private showInfo(): void {
-
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let battleInfoPopupUI = scene.mBattleInfoPopupUI;
 		battleInfoPopupUI.setDescFlowText(this.description);
 		battleInfoPopupUI.setOnRight();
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopupUI);
+	}
+
+	private hideInfo(): void {
+		(SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI.hide();
+	}
+
+	private castUnBlink(): void {
+		L2Filters.removeOutGlowFilter(this);
+		let caster = this.caster;
+		if (caster) {
+			caster.unBlink();
+			L2Filters.removeOutGlowFilter(caster);
+		}
+	}
+
+	private castBlink(): void {
 		// 释放者闪烁
 		let caster = this.caster;
 		if (caster) {
@@ -169,35 +184,30 @@ class Card extends egret.DisplayObjectContainer {
 		}
 	}
 
-	private hideInfo(): void{
-		L2Filters.removeOutGlowFilter(this);
-		let caster = this.caster;
-		if (caster) {
-			caster.unBlink();
-			L2Filters.removeOutGlowFilter(caster);
-		}
-		(SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI.hide();
-	}
-
 	private _touchBeginStageX: number;
 	private _touchBeginStageY: number;
 	private _touchBeginLocalX: number;
 	private _touchBeginLocalY: number;
+	private _touchBeginCardLocalX: number;
+	private _touchBeginCardLocalY: number;
 	private onTouchBegin(e: egret.TouchEvent): void {
 		this.showInfo();
+		this.castBlink();
 		this._touchBeginStageX = e.stageX;
 		this._touchBeginStageY = e.stageY;
 		let point = this.globalToLocal(e.stageX, e.stageY);
 		this._touchBeginLocalX = point.x;
 		this._touchBeginLocalY = point.y;
+		this._touchBeginCardLocalX = this.x;
+		this._touchBeginCardLocalY = this.y;
 		MessageManager.Ins.addEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
 			this
 		);
 		MessageManager.Ins.addEventListener(
-			MessageType.StageTouchTap,
-			this.onStageTouchTap,
+			MessageType.StageTouchEnd,
+			this.onStageTouchEnd,
 			this
 		);
 	}
@@ -220,24 +230,44 @@ class Card extends egret.DisplayObjectContainer {
 			let point = parent.globalToLocal(touchStageX, touchStageY);
 			this.x = point.x - this._touchBeginLocalX;
 			this.y = point.y - this._touchBeginLocalY;
+			let scene = SceneManager.Ins.curScene as BattleScene;
+			for (let char of scene.mEnemies) {
+				if (char.isNear(touchStageX, touchStageY)) {
+					if (scene.mSelectedChar != char) {
+						char.onSelect();
+					}
+				}
+			}
 		}
 	}
 
-	private onStageTouchTap(): void{
+	private backToTouchBeginPos(): void {
+		this.touchEnabled = false;
+		egret.Tween.get(this).to({
+			x: this._touchBeginCardLocalX,
+			y: this._touchBeginCardLocalY
+		}).call(() => this.touchEnabled = true);
+	}
+
+	private onStageTouchEnd(): void {
 		MessageManager.Ins.removeEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
 			this
 		);
 		MessageManager.Ins.removeEventListener(
-			MessageType.StageTouchTap,
-			this.onStageTouchTap,
+			MessageType.StageTouchEnd,
+			this.onStageTouchEnd,
 			this
 		);
-		if (this._isMove){
-			this.hideInfo();
-			this._isMove = false;
+		if (this._isMove) {
+			this.backToTouchBeginPos();
 		}
+		if (!this._isMove) {
+			this.hideInfo();
+		}
+		this.castUnBlink();
+		this._isMove = false;
 	}
 
 	private onTouchTap1(): void {
@@ -293,6 +323,16 @@ class Card extends egret.DisplayObjectContainer {
 		MessageManager.Ins.removeEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
+			this
+		);
+		MessageManager.Ins.removeEventListener(
+			MessageType.StageTouchEnd,
+			this.onStageTouchEnd,
+			this
+		);
+		this.removeEventListener(
+			egret.TouchEvent.TOUCH_BEGIN,
+			this.onTouchBegin,
 			this
 		);
 		this._caster = null;

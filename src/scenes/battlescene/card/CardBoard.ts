@@ -73,10 +73,9 @@ class CardBoard extends egret.DisplayObjectContainer {
 			scene.mBattleUI.deckNum = this._handCards.length;
 		} else {
 			this._overFlowNum += 1;
-			// 如果是溢出的卡牌，需要立马关闭其touchEnable
-			card.touchEnabled = false;
 			this.addCardToBoard(card, CardBoard.maxCardNum + this._overFlowNum -1).call(
 				()=>{
+					card.touchEnabled = false;
 					this.removeCardFromBoard(card, CardBoard.maxCardNum);
 					this._overFlowNum -= 1;
 				}
@@ -96,9 +95,10 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	private adjustCardPosition(card: Card, index: number, twTime: number = 400): egret.Tween {
+		card.touchEnabled = false;
 		let newX = this.getCardX(index);
 		let tw = egret.Tween.get(card);
-		return tw.to({ x: newX }, twTime);
+		return tw.to({ x: newX }, twTime).call(()=>card.touchEnabled = true);
 	}
 
 	private getCardX(index: number): number {

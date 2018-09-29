@@ -266,6 +266,13 @@ ${otherInfos}
 
 	}
 
+	/**
+	 * point(x, y) is near this character or not
+	 */
+	public isNear(x: number, y: number): boolean{
+		return (Math.abs(this.x - x) <= 40) && (Math.abs(this.y - y) <= 80);
+	}
+
 	// only in normal buff
 	public removeAllBuff(isRemovePos: boolean, isRemoveNeg: boolean): void {
 		for (let buff of this._normalBuffs) {

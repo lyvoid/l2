@@ -124,7 +124,6 @@ class Main extends eui.UILayer {
             },
             this
         )
-        // 在stage层面发送滑动信号，优化滑动体验
         stage.addEventListener(
             egret.TouchEvent.TOUCH_END,
             (e: egret.TouchEvent) => {
