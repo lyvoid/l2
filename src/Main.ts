@@ -63,8 +63,8 @@ class Main extends eui.UILayer {
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
-
     }
+
 
     private async loadResource() {
         try {
