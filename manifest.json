@@ -54,9 +54,9 @@
 		"bin-debug/scenes/battlescene/state/PlayerRoundEndPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerRoundStartPhase.js",
 		"bin-debug/scenes/battlescene/state/PlayerUseCardPhase.js",
-		"bin-debug/scenes/battlescene/UI/BattleEndPopUp.js",
-		"bin-debug/scenes/battlescene/UI/BattleInfoPopupUI.js",
-		"bin-debug/scenes/battlescene/UI/UIBattleScene.js",
+		"bin-debug/scenes/battlescene/ui/BattleEndPopUp.js",
+		"bin-debug/scenes/battlescene/ui/BattleInfoPopupUI.js",
+		"bin-debug/scenes/battlescene/ui/UIBattleScene.js",
 		"bin-debug/scenes/mainscene/MainScene.js",
 		"bin-debug/scenes/mainscene/UI/CardSelectPort.js",
 		"bin-debug/scenes/mainscene/UI/CharSelectPort.js",
@@ -67,6 +67,6 @@
 		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/scenesystem/SceneManager.js",
-		"bin-debug/UI/LoadingUI.js"
+		"bin-debug/ui/LoadingUI.js"
 	]
 }

@@ -481,7 +481,15 @@ ${otherInfos}
 		egret.Tween.get(selectHead, { loop: true }).to(
 			{ y: startY + 20 }, 500
 		).to({ y: startY }, 500);
+		L2Filters.addOutGlowFilter(this);
 		scene.mSelectedChar = this;
+	}
+
+	public unSelect(){
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		L2Filters.removeOutGlowFilter(this);
+		Util.safeRemoveFromParent(scene.mSelectHead);
+		Util.safeRemoveFromParent(scene.mSelectImg);
 	}
 
 	private adjustBuffIconPos(): void {

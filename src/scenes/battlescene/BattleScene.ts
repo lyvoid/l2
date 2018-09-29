@@ -149,8 +149,6 @@ class BattleScene extends IScene {
 			});
 		}
 		this.mBattleUI.remainCardNum = this.mCardInfoDeck.length;
-		// select a default Enemy
-		this.mEnemies[0].onSelect();
 		// initialize scene state
 		this.setState(new PlayerRoundStartPhase(), 0);
 	}

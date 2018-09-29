@@ -234,6 +234,9 @@ class Card extends egret.DisplayObjectContainer {
 			for (let char of scene.mEnemies) {
 				if (char.isNear(touchStageX, touchStageY)) {
 					if (scene.mSelectedChar != char) {
+						if (scene.mSelectedChar != null){
+							scene.mSelectedChar.unSelect();
+						}
 						char.onSelect();
 					}
 				}
@@ -260,8 +263,12 @@ class Card extends egret.DisplayObjectContainer {
 			this.onStageTouchEnd,
 			this
 		);
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (this._isMove) {
 			this.backToTouchBeginPos();
+			if (scene.mSelectedChar!=null){
+				scene.mSelectedChar.unSelect();
+			}
 		}
 		if (!this._isMove) {
 			this.hideInfo();
