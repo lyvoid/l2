@@ -76,7 +76,7 @@ class UIBattleScene extends eui.Component {
 		egret.Tween.removeTweens(fireHelpArrayGroup);
 		egret.Tween.get(fireHelpArrayGroup).to({
 			alpha: 0
-		}, 1500, egret.Ease.cubicIn).call(
+		}, 500, egret.Ease.cubicIn).call(
 			()=>{
 				fireHelpArrayGroup.visible = false;
 			}
@@ -90,7 +90,7 @@ class UIBattleScene extends eui.Component {
 		egret.Tween.removeTweens(remainCardHelpGroup);
 		egret.Tween.get(remainCardHelpGroup).to({
 			alpha: 0
-		}, 1500, egret.Ease.cubicIn).call(
+		}, 500, egret.Ease.cubicIn).call(
 			()=>{
 				remainCardHelpGroup.visible = false;
 			}

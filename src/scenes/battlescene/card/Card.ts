@@ -115,7 +115,7 @@ class Card extends egret.DisplayObjectContainer {
 		let skillInfo = ManualSkillManager.getSkillInfo(this._skillId);
 		this._selectNeedStat = skillInfo['selectNeedStat'];
 		this._selectNeedBelong = skillInfo['selectNeedBelong'];
-		this._isCustomSelectTarget = ManualSkillManager.isCusSelectTarget(this._skillId);
+		this._isCustomSelectTarget = skillInfo['isCustomSelect'];
 		// skill skillIcon
 		let skillIcon = this._skillIcon;
 		skillIcon.texture = RES.getRes("imgloading_png");
@@ -173,21 +173,19 @@ class Card extends egret.DisplayObjectContainer {
 		(SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI.hide();
 	}
 
-	private casterUnBlink(): void {
-		L2Filters.removeOutGlowFilter(this);
+	private castSelect(): void {
+		L2Filters.addOutGlowFilter(this);
 		let caster = this.caster;
 		if (caster) {
-			caster.unBlink();
-			L2Filters.removeOutGlowFilter(caster);
+			caster.selectAsCaster();
 		}
 	}
 
-	private castBlink(): void {
-		// 释放者闪烁
+	private castUnSelect(): void {
+		L2Filters.removeOutGlowFilter(this);
 		let caster = this.caster;
 		if (caster) {
-			caster.blink();
-			L2Filters.addOutGlowFilter(caster);
+			caster.unSelectAsCaster();
 		}
 	}
 
@@ -197,9 +195,12 @@ class Card extends egret.DisplayObjectContainer {
 	private _touchBeginLocalY: number;
 	private _touchBeginCardLocalX: number;
 	private _touchBeginCardLocalY: number;
+	private _isMove: boolean = false;
+	private _selectedChar: Character = null;
+	private _swipChar: Character = null;
 	private onTouchBegin(e: egret.TouchEvent): void {
 		this.showInfo();
-		this.castBlink();
+		this.castSelect();
 		this._touchBeginStageX = e.stageX;
 		this._touchBeginStageY = e.stageY;
 		let point = this.globalToLocal(e.stageX, e.stageY);
@@ -207,8 +208,9 @@ class Card extends egret.DisplayObjectContainer {
 		this._touchBeginLocalY = point.y;
 		this._touchBeginCardLocalX = this.x;
 		this._touchBeginCardLocalY = this.y;
-		this._selectedChar = null;
 		this._isMove = false;
+		this._selectedChar = null;
+		this._swipChar = null;
 		MessageManager.Ins.addEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
@@ -221,9 +223,6 @@ class Card extends egret.DisplayObjectContainer {
 		);
 	}
 
-	private _isMove: boolean = false;
-	private _selectedChar: Character = null;
-	private _swipChar: Character = null;
 	private onStageTouchMove(msg: Message): void {
 		let e: egret.TouchEvent = msg.messageContent;
 		let touchStageX = e.stageX;
@@ -254,6 +253,7 @@ class Card extends egret.DisplayObjectContainer {
 			// if this skill need to select a target
 			for (let char of scene.mEnemies.concat(scene.mFriends)) {
 				if (char.isNear(touchStageX, touchStageY)) {
+					// if find a near char
 					if (this._swipChar == char) return;
 					this._swipChar = char;
 					if (this._selectedChar != char &&
@@ -261,20 +261,20 @@ class Card extends egret.DisplayObjectContainer {
 					) {
 						// and this char can be a target
 						// set char as target
-						char.onSelect();
-						if (this._selectedChar) this._selectedChar.unSelect();
+						char.selectAsTarget();
+						if (this._selectedChar) this._selectedChar.unSelectAsTarget();
 						this._selectedChar = char;
 						return;
 					}
-					break;
+					return;
 				}
 			}
 			// if can not find a proper target
 			if (this._selectedChar) {
-				this._selectedChar.unSelect();
+				this._selectedChar.unSelectAsTarget();
 				this._selectedChar = null;
-				this._swipChar = null;
 			}
+			this._swipChar = null;
 		}
 	}
 
@@ -288,11 +288,11 @@ class Card extends egret.DisplayObjectContainer {
 			return false;
 		}
 		if (this._selectNeedStat == 1 && !target.alive) {
-			ToastInfoManager.newRedToast("选中单位已死亡");
+			ToastInfoManager.newRedToast("目标单位已死亡");
 			return false;
 		}
 		if (this._selectNeedStat == 2 && target.alive) {
-			ToastInfoManager.newRedToast("选中单位未死亡");
+			ToastInfoManager.newRedToast("目标单位未死亡");
 			return false;
 		}
 		return true;
@@ -318,9 +318,9 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		this.casterUnBlink();
+		this.castUnSelect();
 		if (this._selectedChar != null) {
-			this._selectedChar.unSelect();
+			this._selectedChar.unSelectAsTarget();
 		}
 		if (this._isMove) {
 			let e: egret.TouchEvent = msg.messageContent;
@@ -364,7 +364,7 @@ class Card extends egret.DisplayObjectContainer {
 			// if caster is null or caster is alive
 			// and this skill need a custom target
 			// then must have a selectedChar before cast
-			ToastInfoManager.newRedToast("需要选择目标释放");
+			ToastInfoManager.newRedToast("需要对目标释放");
 			return false;
 		}
 		return true;
@@ -419,6 +419,8 @@ class Card extends egret.DisplayObjectContainer {
 			this.onTouchBegin,
 			this
 		);
+		this._selectedChar = null;
+		this._swipChar = null;
 		this._caster = null;
 		this._cardInfo = null;
 	}

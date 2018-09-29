@@ -30,9 +30,9 @@ class ManualSkillManager {
             skillInfo["hurtIdToTarget"],
             skillInfo["hurtIdToSelf"],
             skillInfo["targetSelectId"],
+            skillInfo["isCustomSelect"],
             skillInfo["isNoUseDefaultPerf"],
             skillInfo["isDefPerfMove"],
-            skillInfo["isSelectInBattle"],
             skillInfo["selectNeedBelong"],
             skillInfo["selectNeedStat"],
             skillInfo["affectFunStrId"],
@@ -47,10 +47,6 @@ class ManualSkillManager {
         let skillConfig = ConfigManager.Ins.mSkillConfig;
         let skillInfo = skillConfig[skillId];
         return skillInfo;
-    }
-
-    public static isCusSelectTarget(skillId: number): boolean{
-        return ManualSkillManager.getSkillInfo(skillId)['targetSelectId'] == 1;
     }
 
     public recycle(skill: ManualSkill): void {

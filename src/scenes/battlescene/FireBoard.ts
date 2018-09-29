@@ -8,13 +8,13 @@ class FireBoard extends egret.DisplayObjectContainer {
 
 	public constructor() {
 		super();
-		this.y = LayerManager.Ins.stageHeight - 165;
+		this.y = LayerManager.Ins.stageHeight - 200;
 		this.width = LayerManager.Ins.stageWidth;
 		let texture = RES.getRes("fireParticle_png");
 		let config = RES.getRes("fireParticle_json");
 		for (let i = 0; i < FireBoard.maxFireNum + FireBoard._maxOverflowFireNum; i++) {
 			let sys = new particle.GravityParticleSystem(texture, config)
-			sys.x = (i + 1) * 40;
+			sys.x = (i + 1) * 40 + 50;
 			this._particles.push(sys);
 			this.addChild(sys);
 		}

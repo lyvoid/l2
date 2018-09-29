@@ -9,6 +9,7 @@ class ManualSkill {
 	private _targetSelectId: number;
 	private _hurtIdToTarget: number;
 	private _hurtIdToSelf: number;
+	private _isCusSelect: boolean;
 	private _buffsIdToTarget: number[];
 	private _buffsIdToSelf: number[];
 	private _isNoUseDefaultPerf: boolean;
@@ -54,9 +55,9 @@ class ManualSkill {
 		hurtIdToTarget: number,
 		hurtIdToSelf: number,
 		targetSelectId: number,
+		isCustomSelect: boolean,
 		isNoUseDefaultPerf: boolean,
 		isDefPerfMove: boolean,
-		isSelectInBattle: boolean,
 		selectNeedBelong: number,
 		selectNeedStat: number,
 		affectFunStrId: string,
@@ -64,10 +65,10 @@ class ManualSkill {
 		camp: CharCamp,
 		defPerfAnim: string
 	) {
+		this._isCusSelect = isCustomSelect;
 		this._isRemoveNegBuff = isRemoveNegBuff;
 		this._isRemovePosBuff = isRemovePosBuff;
 		this._iconName = iconName;
-		this._isSelectInBattle = isSelectInBattle;
 		this._skillName = skillName;
 		this._description = description;
 		this._fireNeed = fireNeed;

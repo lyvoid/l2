@@ -433,29 +433,16 @@ ${otherInfos}
 	public getPositon(): { x: number, y: number } {
 		let stageHeight = LayerManager.Ins.stageHeight;
 		let y = (stageHeight - 220) - 70 * (2 - this._row) + Math.random() * 15;
-		let x = 50 + this._col * 155 + this._row * 30 + Math.random() * 10;
+		let x = 80 + this._col * 155 + this._row * 30 + Math.random() * 10;
 		if (this.mCamp == CharCamp.Enemy) {
 			x = LayerManager.Ins.stageWidth - x;
 		}
 		return { x: x, y: y }
 	}
 
-	public armatureBlink(): void {
-		egret.Tween.get(
-			this._armatureDisplay,
-			{ loop: true }
-		).to(
-			{ alpha: 0 }, 300
-			).to({ alpha: 1 }, 300);
-	}
-
-	public armatureUnBlink(): void {
-		egret.Tween.removeTweens(this._armatureDisplay);
-		this._armatureDisplay.alpha = 1;
-	}
-
-	public blink(): void {
+	public selectAsCaster(): void {
 		this.playDBAnim("attack", 0);
+		L2Filters.addOutGlowFilter(this);
 		// egret.Tween.get(
 		// 	this,
 		// 	{ loop: true }
@@ -464,13 +451,14 @@ ${otherInfos}
 		// 	).to({ alpha: 1 }, 300, egret.Ease.circIn);
 	}
 
-	public unBlink(): void {
+	public unSelectAsCaster(): void {
 		this.playDBAnim("stand", 0);
+		L2Filters.removeOutGlowFilter(this);
 		// egret.Tween.removeTweens(this);
 		// this.alpha = 1;
 	}
 
-	public onSelect() {
+	public selectAsTarget() {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		this._bgLayer.addChild(scene.mSelectImg);
 		let selectHead = scene.mSelectHead;
@@ -484,7 +472,7 @@ ${otherInfos}
 		L2Filters.addYellowGlow(this);
 	}
 
-	public unSelect(){
+	public unSelectAsTarget(){
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		L2Filters.removeYellowGlow(this);
 		Util.safeRemoveFromParent(scene.mSelectHead);
