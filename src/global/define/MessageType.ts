@@ -15,4 +15,6 @@ class MessageType{
 
 	// user input
 	public static StageTouchMove = "StageTouchMove";
+	public static StageTouchEnd = "StageTouchEnd";
+	public static StageTouchTap = "StageTouchTap";
 }

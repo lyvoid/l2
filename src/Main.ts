@@ -113,11 +113,33 @@ class Main extends eui.UILayer {
 
     private userInputInitial(): void {
         let stage = this.stage;
+        // 在stage层面发送滑动信号，优化滑动体验
         stage.addEventListener(
             egret.TouchEvent.TOUCH_MOVE,
             (e: egret.TouchEvent) => {
                 MessageManager.Ins.sendMessage(
                     MessageType.StageTouchMove,
+                    e,
+                );
+            },
+            this
+        )
+        // 在stage层面发送滑动信号，优化滑动体验
+        stage.addEventListener(
+            egret.TouchEvent.TOUCH_END,
+            (e: egret.TouchEvent) => {
+                MessageManager.Ins.sendMessage(
+                    MessageType.StageTouchEnd,
+                    e,
+                );
+            },
+            this
+        )
+        stage.addEventListener(
+            egret.TouchEvent.TOUCH_TAP,
+            (e: egret.TouchEvent) => {
+                MessageManager.Ins.sendMessage(
+                    MessageType.StageTouchTap,
                     e,
                 );
             },

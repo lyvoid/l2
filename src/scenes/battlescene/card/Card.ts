@@ -138,19 +138,8 @@ class Card extends egret.DisplayObjectContainer {
 		this._fireNeedTextField.width = this._fireNeedTextField.textWidth;
 		// initial event listener
 		this.addEventListener(
-			egret.TouchEvent.TOUCH_TAP,
-			this.onTouchTap,
-			this
-		);
-		this.addEventListener(
 			egret.TouchEvent.TOUCH_BEGIN,
 			this.onTouchBegin,
-			this
-		);
-
-		this.addEventListener(
-			egret.TouchEvent.TOUCH_END,
-			this.onTouchEnd,
 			this
 		);
 	}
@@ -165,11 +154,8 @@ class Card extends egret.DisplayObjectContainer {
 		}
 	}
 
-	private onTouchTap(): void {
-		if (this._isTapCancle){
-			this._isTapCancle = false;
-			return;
-		}
+	private showInfo(): void {
+
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let battleInfoPopupUI = scene.mBattleInfoPopupUI;
 		battleInfoPopupUI.setDescFlowText(this.description);
@@ -181,26 +167,16 @@ class Card extends egret.DisplayObjectContainer {
 			caster.blink();
 			L2Filters.addOutGlowFilter(caster);
 		}
-		L2Filters.addOutGlowFilter(this);
-		MessageManager.Ins.addEventListener(
-			MessageType.BattleInfoPopUpClose,
-			this.onBattleInfoPopUpClose,
-			this
-		);
 	}
 
-	private onBattleInfoPopUpClose(): void {
+	private hideInfo(): void{
 		L2Filters.removeOutGlowFilter(this);
 		let caster = this.caster;
 		if (caster) {
 			caster.unBlink();
 			L2Filters.removeOutGlowFilter(caster);
 		}
-		MessageManager.Ins.removeEventListener(
-			MessageType.BattleInfoPopUpClose,
-			this.onBattleInfoPopUpClose,
-			this
-		);
+		(SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI.hide();
 	}
 
 	private _touchBeginStageX: number;
@@ -208,6 +184,7 @@ class Card extends egret.DisplayObjectContainer {
 	private _touchBeginLocalX: number;
 	private _touchBeginLocalY: number;
 	private onTouchBegin(e: egret.TouchEvent): void {
+		this.showInfo();
 		this._touchBeginStageX = e.stageX;
 		this._touchBeginStageY = e.stageY;
 		let point = this.globalToLocal(e.stageX, e.stageY);
@@ -216,6 +193,11 @@ class Card extends egret.DisplayObjectContainer {
 		MessageManager.Ins.addEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
+			this
+		);
+		MessageManager.Ins.addEventListener(
+			MessageType.StageTouchTap,
+			this.onStageTouchTap,
 			this
 		);
 	}
@@ -231,6 +213,7 @@ class Card extends egret.DisplayObjectContainer {
 			) ** 2 + (touchStageY - this._touchBeginStageY) ** 2;
 			if (disToBegin > minDis) {
 				this._isMove = true;
+				this.hideInfo();
 			}
 		} else {
 			let parent = this.parent;
@@ -240,15 +223,20 @@ class Card extends egret.DisplayObjectContainer {
 		}
 	}
 
-	private _isTapCancle = false;
-	private onTouchEnd(): void {
+	private onStageTouchTap(): void{
 		MessageManager.Ins.removeEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
 			this
 		);
+		MessageManager.Ins.removeEventListener(
+			MessageType.StageTouchTap,
+			this.onStageTouchTap,
+			this
+		);
 		if (this._isMove){
-			this._isTapCancle = true;
+			this.hideInfo();
+			this._isMove = false;
 		}
 	}
 
@@ -302,19 +290,9 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	public release(): void {
-		this.removeEventListener(
-			egret.TouchEvent.TOUCH_TAP,
-			this.onTouchTap,
-			this
-		);
 		MessageManager.Ins.removeEventListener(
 			MessageType.StageTouchMove,
 			this.onStageTouchMove,
-			this
-		);
-		MessageManager.Ins.addEventListener(
-			MessageType.BattleInfoPopUpClose,
-			this.onBattleInfoPopUpClose,
 			this
 		);
 		this._caster = null;
