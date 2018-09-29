@@ -94,6 +94,9 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	private _warnIcon: egret.Bitmap;
+	private _isCustomSelectTarget: boolean;
+	private _selectNeedStat: number;
+	private _selectNeedBelong: number;
 	public initial(cardInfo: CardInfo): void {
 		let rsLoad = (SceneManager.Ins.curScene as BattleScene).mRsLoader;
 		// initial info
@@ -108,8 +111,12 @@ class Card extends egret.DisplayObjectContainer {
 		this.scaleY = 1;
 		this.y = 0;
 		this.touchEnabled = true;
+		// skill info 
+		let skillInfo = ManualSkillManager.getSkillInfo(this._skillId);
+		this._selectNeedStat = skillInfo['selectNeedStat'];
+		this._selectNeedBelong = skillInfo['selectNeedBelong'];
+		this._isCustomSelectTarget = ManualSkillManager.isCusSelectTarget(this._skillId);
 		// skill skillIcon
-		let skillInfo = ConfigManager.Ins.mSkillConfig[this._skillId];
 		let skillIcon = this._skillIcon;
 		skillIcon.texture = RES.getRes("imgloading_png");
 		rsLoad.getResAsyncAndSetValue(
@@ -213,6 +220,7 @@ class Card extends egret.DisplayObjectContainer {
 	}
 
 	private _isMove: boolean = false;
+	private _beforeSelectChar: Character = null;
 	private onStageTouchMove(msg: Message): void {
 		let e: egret.TouchEvent = msg.messageContent;
 		let touchStageX = e.stageX;
@@ -231,17 +239,47 @@ class Card extends egret.DisplayObjectContainer {
 			this.x = point.x - this._touchBeginLocalX;
 			this.y = point.y - this._touchBeginLocalY;
 			let scene = SceneManager.Ins.curScene as BattleScene;
-			for (let char of scene.mEnemies) {
-				if (char.isNear(touchStageX, touchStageY)) {
-					if (scene.mSelectedChar != char) {
-						if (scene.mSelectedChar != null){
-							scene.mSelectedChar.unSelect();
+
+			// select proper target if needed
+			let caster = this._caster
+			if (this._isCustomSelectTarget && (caster == null || caster.alive)) {
+				let skillInfo = ManualSkillManager.getSkillInfo(this._skillId);
+				for (let char of scene.mEnemies.concat(scene.mFriends)) {
+					if (char.isNear(touchStageX, touchStageY)) {
+						if (scene.mSelectedChar != char) {
+							if (scene.mSelectedChar != null) {
+								scene.mSelectedChar.unSelect();
+							}
+							if (this._beforeSelectChar != char && this.canBeTarget(char)) {
+								char.onSelect();
+							}
+							this._beforeSelectChar = char;
+							break;
 						}
-						char.onSelect();
 					}
 				}
 			}
 		}
+	}
+
+	private canBeTarget(target: Character): boolean {
+		if (this._selectNeedBelong == 1 && target.mCamp == CharCamp.Enemy) {
+			ToastInfoManager.newRedToast("需要对我方单位释放");
+			return false;
+		}
+		if (this._selectNeedBelong == 2 && target.mCamp == CharCamp.Player) {
+			ToastInfoManager.newRedToast("需要对敌方单位释放");
+			return false;
+		}
+		if (this._selectNeedStat == 1 && !target.alive) {
+			ToastInfoManager.newRedToast("选中单位已死亡");
+			return false;
+		}
+		if (this._selectNeedStat == 2 && target.alive) {
+			ToastInfoManager.newRedToast("选中单位未死亡");
+			return false;
+		}
+		return true;
 	}
 
 	private backToTouchBeginPos(): void {
@@ -264,57 +302,63 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		let scene = SceneManager.Ins.curScene as BattleScene;
+		this.castUnBlink();
 		if (this._isMove) {
-			this.backToTouchBeginPos();
-			if (scene.mSelectedChar!=null){
-				scene.mSelectedChar.unSelect();
+			if (!this.canCast()) {
+				this.backToTouchBeginPos();
+				if (scene.mSelectedChar != null) {
+					scene.mSelectedChar.unSelect();
+				}
+				this._isMove = false;
+			} else {
+				this.cast();
 			}
-		}
-		if (!this._isMove) {
+		} else {
 			this.hideInfo();
 		}
-		this.castUnBlink();
-		this._isMove = false;
 	}
 
-	private onTouchTap1(): void {
+	private canCast(): boolean {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		if (scene.mWinnerCamp != CharCamp.Neut) {
+			ToastInfoManager.newToast("胜负已分", 0xff0000);
+			return false;
+		}
+		let skillInfo = ManualSkillManager.getSkillInfo(this._skillId);
+		let fireboard = scene.mPlayerFireBoard;
+		let fireNeed = skillInfo["fireNeed"];
+		if (fireNeed > fireboard.mFireNum) {
+			ToastInfoManager.newToast("能量不足", 0xff0000);
+			scene.mBattleUI.fireSufficentAnim();
+			return false;
+		}
+
+		if (this._isCustomSelectTarget && (this._caster == null || this._caster.alive) && scene.mSelectedChar == null) {
+			ToastInfoManager.newRedToast("需要选择目标释放");
+			return false;
+		}
+		return true;
+	}
+
+	private cast(): void {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (scene.state instanceof PlayerUseCardPhase) {
-			if (scene.mWinnerCamp != CharCamp.Neut) {
-				ToastInfoManager.newToast("胜负已分", 0xff0000);
-				return;
-			}
-
 			let skillInfo = ConfigManager.Ins.mSkillConfig[this._skillId];
 			let fireboard = scene.mPlayerFireBoard;
 			let fireNeed = skillInfo["fireNeed"];
-			if (fireNeed > fireboard.mFireNum) {
-				ToastInfoManager.newToast("能量不足", 0xff0000);
-				scene.mBattleUI.fireSufficentAnim();
-				return;
-			}
 			if (this.caster && !this.caster.alive) {
 				// if hava a caster and caster is dead, go resurgence logic
 				this.caster.getRsPoint(fireNeed);
 			} else {
 				// if no caster or caster alive
 				let skill = scene.mManualSkillManager.newSkill(this._skillId, this.caster, CharCamp.Player);
-				// if can't cast, return
-				let canCastInfo = skill.canCast();
-				if (!canCastInfo[0]) {
-					ToastInfoManager.newToast(canCastInfo[1], 0xff0000);
-					skill.release();
-					return;
-				}
 				// cast skill
 				scene.addToCastQueue(skill);
 				// skill.cast();
 			}
 
 			// remove fire for casting skill
-			for (let i = 0; i < fireNeed; i++) {
-				fireboard.removeFire();
-			}
+			fireboard.removeFires(fireNeed);
 
 			// 如果不存在释放者或释放者还在游戏中，移除卡牌
 			if ((!this.caster) || (this.caster && this.caster.isInBattle)) {

@@ -12,6 +12,21 @@ class L2Filters {
 		false, // inner 指定发光是否为内侧发光，暂未实现
 		false // knockout 指定对象是否具有挖空效果，暂未实现
 	);
+
+	/**
+	 * outer glow of click object
+	 */
+	private static _outerGlowYellowFilter: egret.GlowFilter = new egret.GlowFilter(
+		0xEEEE00, // color  光晕的颜色，十六进制，不包含透明度
+		1, // alpha
+		40, // blurX 水平模糊量。有效值为 0 到 255.0（浮点）
+		40, // blurY垂直模糊量。有效值为 0 到 255.0（浮点）
+		2, // strength压印的强度，值越大，压印的颜色越深，而且发光与背景之间的对比度也越强。有效值为 0 到 255。暂未实现
+		egret.BitmapFilterQuality.HIGH,  // quality 应用滤镜的次数，建议用 BitmapFilterQuality 类的常量来体现
+		false, // inner 指定发光是否为内侧发光，暂未实现
+		false // knockout 指定对象是否具有挖空效果，暂未实现
+	);
+
 	/**
 	 * grey color filter
 	 */
@@ -28,28 +43,36 @@ class L2Filters {
 	 * add a outer glow filter to object
 	 */
 	public static addOutGlowFilter(obj: any): void {
-		L2Filters.addFilter(obj, this._outerGlowFilter);
+		L2Filters.addFilter(obj, L2Filters._outerGlowFilter);
 	}
 
 	/**
 	 * remove outer glow filter from object
 	 */
 	public static removeOutGlowFilter(obj: any): void {
-		L2Filters.removeFilter(obj, this._outerGlowFilter);
+		L2Filters.removeFilter(obj, L2Filters._outerGlowFilter);
 	}
 
 	/**
 	 * 增加灰色滤镜
 	 */
 	public static addGreyFilter(obj: any): void {
-		L2Filters.addFilter(obj, this._greyColorFlilter);
+		L2Filters.addFilter(obj, L2Filters._greyColorFlilter);
 	}
 
 	/**
 	 * 删除灰色滤镜
 	 */
 	public static removeGreyFilter(obj: any): void {
-		L2Filters.removeFilter(obj, this._greyColorFlilter);
+		L2Filters.removeFilter(obj, L2Filters._greyColorFlilter);
+	}
+
+	public static addYellowGlow(obj: any): void {
+		L2Filters.addFilter(obj, L2Filters._outerGlowYellowFilter)
+	}
+
+	public static removeYellowGlow(obj: any): void {
+		L2Filters.removeFilter(obj, L2Filters._outerGlowYellowFilter)
 	}
 
 	/**

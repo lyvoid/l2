@@ -26,4 +26,8 @@ class ToastInfoManager{
 			}
 		)
 	}
+
+	public static newRedToast(info: string): void{
+		ToastInfoManager.newToast(info, 0xff0000);
+	}
 }

@@ -5,7 +5,7 @@ class ManualSkillManager {
         this._skillPool = [];
     }
 
-    public newSkill(id: number, cast: Character = null, camp: CharCamp=null): ManualSkill {
+    public newSkill(id: number, cast: Character = null, camp: CharCamp = null): ManualSkill {
         let skillPool = this._skillPool;
         let skill: ManualSkill;
         if (skillPool.length > 0) {
@@ -13,7 +13,7 @@ class ManualSkillManager {
         } else {
             skill = new ManualSkill();
         }
-        if (camp == null){
+        if (camp == null) {
             camp = cast ? cast.mCamp : CharCamp.Neut;
         }
         let skillConfig = ConfigManager.Ins.mSkillConfig;
@@ -41,6 +41,16 @@ class ManualSkillManager {
             skillInfo["defPerfAnim"] == "" ? "attack" : skillInfo["defPerfAnim"]
         )
         return skill;
+    }
+
+    public static getSkillInfo(skillId: number) {
+        let skillConfig = ConfigManager.Ins.mSkillConfig;
+        let skillInfo = skillConfig[skillId];
+        return skillInfo;
+    }
+
+    public static isCusSelectTarget(skillId: number): boolean{
+        return ManualSkillManager.getSkillInfo(skillId)['targetSelectId'] == 1;
     }
 
     public recycle(skill: ManualSkill): void {

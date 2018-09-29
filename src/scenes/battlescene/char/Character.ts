@@ -270,7 +270,7 @@ ${otherInfos}
 	 * point(x, y) is near this character or not
 	 */
 	public isNear(x: number, y: number): boolean{
-		return (Math.abs(this.x - x) <= 40) && (Math.abs(this.y - y) <= 80);
+		return (Math.abs(this.x - x) <= 50) && (this.y - y <= 150) && (this.y - y) > 0;
 	}
 
 	// only in normal buff
@@ -481,13 +481,14 @@ ${otherInfos}
 		egret.Tween.get(selectHead, { loop: true }).to(
 			{ y: startY + 20 }, 500
 		).to({ y: startY }, 500);
-		L2Filters.addOutGlowFilter(this);
+		L2Filters.addYellowGlow(this);
 		scene.mSelectedChar = this;
 	}
 
 	public unSelect(){
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		L2Filters.removeOutGlowFilter(this);
+		scene.mSelectedChar = null;
+		L2Filters.removeYellowGlow(this);
 		Util.safeRemoveFromParent(scene.mSelectHead);
 		Util.safeRemoveFromParent(scene.mSelectImg);
 	}
