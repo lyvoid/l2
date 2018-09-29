@@ -8,7 +8,6 @@ class BattleScene extends IScene {
 	public mFilterManager: L2Filters;
 	public mEnemies: Character[];
 	public mFriends: Character[];
-	public mSelectedChar: Character;
 	public mPlayerFireBoard: FireBoard;
 	public mCardInfoDeck: CardInfo[];
 	public mManualSkillManager: ManualSkillManager;
@@ -272,7 +271,6 @@ class BattleScene extends IScene {
 		this.mPlayerFireBoard = null;
 
 		this.mSelectImg = null;
-		this.mSelectedChar = null;
 
 		this._castQueue = null;
 

@@ -482,12 +482,10 @@ ${otherInfos}
 			{ y: startY + 20 }, 500
 		).to({ y: startY }, 500);
 		L2Filters.addYellowGlow(this);
-		scene.mSelectedChar = this;
 	}
 
 	public unSelect(){
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.mSelectedChar = null;
 		L2Filters.removeYellowGlow(this);
 		Util.safeRemoveFromParent(scene.mSelectHead);
 		Util.safeRemoveFromParent(scene.mSelectImg);

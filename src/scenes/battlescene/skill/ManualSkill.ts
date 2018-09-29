@@ -96,7 +96,7 @@ class ManualSkill {
 			return;
 		}
 		// if can't cast, return
-		if (!this.canCast()[0]) {
+		if (!this.canCast()) {
 			this.release();
 			return;
 		}
@@ -227,31 +227,13 @@ class ManualSkill {
 	}
 
 	// canCast
-	public canCast(): [boolean, string] {
-		let scene = SceneManager.Ins.curScene as BattleScene;;
-		let selectedChar = scene.mSelectedChar;
-		if (this._isSelectInBattle && !selectedChar.isInBattle) {
-			return [false, "选中目标已从游戏中排除"];
-		}
-		if (this._selectNeedBelong == 1 && selectedChar.mCamp == CharCamp.Enemy) {
-			return [false, "需要对我方单位释放"];
-		}
-		if (this._selectNeedBelong == 2 && selectedChar.mCamp == CharCamp.Player) {
-			return [false, "需要对敌方单位释放"]
-		}
-		if (this._selectNeedStat == 1 && !selectedChar.alive) {
-			return [false, "选中单位已死亡"];
-		}
-		if (this._selectNeedStat == 2 && selectedChar.alive) {
-			return [false, "选中单位未死亡"]
-		}
-
+	public canCast(): boolean {
 		if (this._caster) {
 			if (!this._caster.isInBattle) {
-				return [false, "释放者已被排除出游戏外"];
+				return false;
 			}
 		}
-		return [true, ""];
+		return true;
 	}
 
 	public release(): void {

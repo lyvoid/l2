@@ -133,16 +133,6 @@ class TargetSelect {
         if (priorType == TSPriorType.MaxHp) {
             return char.mAttr.maxHp;
         }
-        if (priorType == TSPriorType.Select) {
-            if (camp != CharCamp.Player) {
-                return 100;
-            }
-            let scene = SceneManager.Ins.curScene as BattleScene;
-            if (scene.mSelectedChar == char) {
-                return 0;
-            }
-            return 100;
-        }
         if (priorType == TSPriorType.Self) {
             if (char === caster) {
                 return 0;
