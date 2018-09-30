@@ -16,7 +16,8 @@ class BattleScene extends IScene {
 	public mWinnerCamp: CharCamp;
 	public mRound: number;
 	public mRsLoader: ResAsyncLoadManager = new ResAsyncLoadManager();
-
+	public mCharSugenceParticle: particle.ParticleSystem;
+	public mTargetSelectFingerPicContainer: egret.DisplayObjectContainer;
 	// ui
 	public mBattleUI: UIBattleScene;
 	public mBattleEndPopUpUI: BattleEndPopUp;
@@ -56,6 +57,26 @@ class BattleScene extends IScene {
 		let selectHead = new egret.Bitmap(RES.getRes("selectHead_png"));
 		selectHead.x = -selectHead.width / 2;
 		this.mSelectHead = selectHead;
+		// initial sugence particle
+		let lifeSurgenceParticletexture = RES.getRes("lifeSurgenceParticle_png");
+		let lifeSurgenceParticleconfig = RES.getRes("lifeSurgenceParticle_json");
+		let lifeSurgenceParticleSys = new particle.GravityParticleSystem(
+			lifeSurgenceParticletexture,
+			lifeSurgenceParticleconfig
+		);
+		this.mCharSugenceParticle = lifeSurgenceParticleSys;
+		this._gameFgLayer.addChild(lifeSurgenceParticleSys);
+		// targetSelect finger
+		let targetSelectFingerPic = new egret.Bitmap(RES.getRes("targetSelectFinger_png"));
+		targetSelectFingerPic.width = 100;
+		targetSelectFingerPic.height = 100;
+		targetSelectFingerPic.x = -50;
+		targetSelectFingerPic.y = -50;
+		let targetSelectFingerPicContainer = new egret.DisplayObjectContainer();
+		targetSelectFingerPicContainer.addChild(targetSelectFingerPic);
+		targetSelectFingerPicContainer.visible = false;
+		this.mTargetSelectFingerPicContainer = targetSelectFingerPicContainer;
+		this._gameFgLayer.addChild(targetSelectFingerPicContainer);
 		// instantiate filter
 		this.mFilterManager = new L2Filters();
 		// initialize game round

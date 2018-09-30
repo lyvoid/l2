@@ -228,9 +228,9 @@ class ManualSkill {
 	}
 
 	// canCast
-	public canCast(): boolean {
+	private canCast(): boolean {
 		if (this._caster) {
-			if (!this._caster.isInBattle) {
+			if (!this._caster.isInBattle || this.caster.isDiz) {
 				return false;
 			}
 		}

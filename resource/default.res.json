@@ -5,7 +5,7 @@
 			"name": "preload"
 		},
 		{
-			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,fireParticle_json,fireParticle_png,lifebar_jpg,lifebarbg_jpg,bufficontest_png,selectHead_png,no_caster_portrait_png,array_down_png",
+			"keys": "cardbg_png,selfSelectChar_png,enemySelectChar_png,infobg_png,lifebar_jpg,lifebarbg_jpg,bufficontest_png,selectHead_png,no_caster_portrait_png,array_down_png,fireParticle_png,lifeSurgenceParticle_png,lifeSurgenceParticle_json,fireParticle_json,targetSelectFinger_png",
 			"name": "battlecommon"
 		},
 		{
@@ -175,16 +175,6 @@
 			"type": "image",
 			"name": "infobg_png",
 			"scale9grid": "11,10,40,7"
-		},
-		{
-			"url": "battle/common/fireParticle.json",
-			"type": "json",
-			"name": "fireParticle_json"
-		},
-		{
-			"url": "battle/common/fireParticle.png",
-			"type": "image",
-			"name": "fireParticle_png"
 		},
 		{
 			"url": "battle/common/lifebar.jpg",
@@ -1226,6 +1216,31 @@
 			"url": "common/warn_icon.png",
 			"type": "image",
 			"name": "warn_icon_png"
+		},
+		{
+			"url": "battle/common/particle/fireParticle.png",
+			"type": "image",
+			"name": "fireParticle_png"
+		},
+		{
+			"url": "battle/common/particle/lifeSurgenceParticle.png",
+			"type": "image",
+			"name": "lifeSurgenceParticle_png"
+		},
+		{
+			"url": "battle/common/particle/lifeSurgenceParticle.json",
+			"type": "json",
+			"name": "lifeSurgenceParticle_json"
+		},
+		{
+			"url": "battle/common/particle/fireParticle.json",
+			"type": "json",
+			"name": "fireParticle_json"
+		},
+		{
+			"url": "battle/common/targetSelectFinger.png",
+			"type": "image",
+			"name": "targetSelectFinger_png"
 		}
 	]
 }

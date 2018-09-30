@@ -43,10 +43,6 @@ class Character extends egret.DisplayObjectContainer {
 		}
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let cardBoard = scene.mCardBoard;
-		// if is player's char, show card warning
-		if (this.mCamp == CharCamp.Player) {
-			cardBoard.setCardsWarnIconOfChar(this);
-		}
 		if (!inputAlive && this._alive) {
 			// if alive -> die
 			this._alive = false;
@@ -77,6 +73,10 @@ class Character extends egret.DisplayObjectContainer {
 			this.drawRsProgress();
 		}
 		this._alive = inputAlive;
+		// if is player's char, show card warning
+		if (this.mCamp == CharCamp.Player) {
+			cardBoard.setCardsWarnIconOfChar(this);
+		}
 	}
 
 	// is In battle
@@ -476,12 +476,26 @@ ${otherInfos}
 	}
 
 	public selectAsCaster(): void {
-		this.playDBAnim("attack", 0);
+		if (!this.alive) {
+			let scene = SceneManager.Ins.curScene as BattleScene;
+			let lifeSurgenceParticleSys = scene.mCharSugenceParticle;
+			lifeSurgenceParticleSys.x = this.x;
+			lifeSurgenceParticleSys.y = this.y - 20;
+			lifeSurgenceParticleSys.start();
+		} else {
+			this.playDBAnim("attack", 0);
+		}
 		L2Filters.addOutGlowFilter(this);
 	}
 
 	public unSelectAsCaster(): void {
-		this.playIdle();
+		if (!this.alive) {
+			let scene = SceneManager.Ins.curScene as BattleScene;
+			let lifeSurgenceParticleSys = scene.mCharSugenceParticle;
+			lifeSurgenceParticleSys.stop();
+		} else {
+			this.playIdle();
+		}
 		L2Filters.removeOutGlowFilter(this);;
 	}
 

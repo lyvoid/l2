@@ -290,6 +290,7 @@ class Card extends egret.DisplayObjectContainer {
 		let e: egret.TouchEvent = msg.messageContent;
 		let touchStageX = e.stageX;
 		let touchStageY = e.stageY;
+		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (!this._isMove) {
 			const minDis = 40;
 			let disToBegin = (touchStageX - this._touchBeginStageX
@@ -297,18 +298,39 @@ class Card extends egret.DisplayObjectContainer {
 			if (disToBegin > minDis) {
 				this._isMove = true;
 				this.hideInfo();
+				let caster = this.caster;
+				if (this._isCustomSelectTarget && (caster == null || caster.alive)) {
+					this.visible = false;
+					let targetSelectFingerPicCont = scene.mTargetSelectFingerPicContainer;
+					targetSelectFingerPicCont.visible = true;
+					targetSelectFingerPicCont.scaleX = 1;
+					targetSelectFingerPicCont.scaleY = 1;
+					targetSelectFingerPicCont.x = touchStageX;
+					targetSelectFingerPicCont.y = touchStageY;
+					egret.Tween.get(targetSelectFingerPicCont, { loop: true }).to({
+						scaleX: 1.8,
+						scaleY: 1.8,
+					}, 500).to({
+						scaleX: 1,
+						scaleY: 1,
+					}, 500);
+				}
 			}
 			return;
 		}
 
 		// if is move
-
+		if (this._isCustomSelectTarget) {
+			let targetSelectFingerPic = scene.mTargetSelectFingerPicContainer;
+			targetSelectFingerPic.x = touchStageX;
+			targetSelectFingerPic.y = touchStageY;
+		}
 		// move card position
 		let parent = this.parent;
 		let point = parent.globalToLocal(touchStageX, touchStageY);
 		this.x = point.x - this._touchBeginLocalX;
 		this.y = point.y - this._touchBeginLocalY;
-		let scene = SceneManager.Ins.curScene as BattleScene;
+
 
 		// select target
 		let caster = this._caster;
@@ -384,6 +406,9 @@ class Card extends egret.DisplayObjectContainer {
 			this
 		);
 		let scene = SceneManager.Ins.curScene as BattleScene;
+		this.visible = true;
+		egret.Tween.removeTweens(scene.mTargetSelectFingerPicContainer);
+		scene.mTargetSelectFingerPicContainer.visible = false;
 		this.castUnSelect();
 		if (this._selectedChar != null) {
 			this._selectedChar.unSelectAsTarget();
@@ -395,7 +420,7 @@ class Card extends egret.DisplayObjectContainer {
 			if ((touchStageY < castMinY || this._selectedChar != null) && this.canCast()) {
 				// if move and move scale large than threshold or select a cast char
 				// cast card
-				if (this.caster == null || this.caster.alive){
+				if (this.caster == null || this.caster.alive) {
 					// if cater is not die
 					this.setCurCd(this._maxCd);
 				}
