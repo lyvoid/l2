@@ -13,6 +13,7 @@ class Character extends egret.DisplayObjectContainer {
 	private _manualSkillsId: number[];
 	private _passiveSkillsId: number[];
 	public get manualSkillsId(): number[] { return this._manualSkillsId; }
+	public mAi: NormalAi;
 
 	// realtime
 	public mAttr: Attribute;
@@ -213,6 +214,7 @@ ${otherInfos}
 			}
 		}
 		this._isDiz = false;
+		this.playIdle();
 	}
 
 	public initial(
@@ -240,6 +242,11 @@ ${otherInfos}
 		this._col = col;
 		this._row = row;
 		this._charCode = charCode;
+
+		// set ai
+		if (this.mCamp == CharCamp.Enemy){
+			this.mAi = new NormalAi(this);
+		}
 
 		// menber initial
 		this._passiveSkills = [];
@@ -308,6 +315,7 @@ ${otherInfos}
 				buff.removeFromChar();
 			}
 		}
+		this.refreshDizstat();
 	}
 
 	private drawRsProgress(): void {
@@ -671,6 +679,7 @@ ${otherInfos}
 				Util.removeObjFromArray(this._passiveSkills, buff);
 				break;
 		}
+		this.refreshDizstat();
 	}
 
 	public static sortFnByRow(c1: Character, c2: Character): number {
@@ -706,6 +715,10 @@ ${otherInfos}
 		this._passiveSkills = null;
 		this._perfQueue = null;
 		this.removeChildren();
+		if (this.mAi){
+			this.mAi.release();
+			this.mAi = null;
+		}
 	}
 }
 

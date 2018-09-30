@@ -421,8 +421,7 @@ class Card extends egret.DisplayObjectContainer {
 		if (this._isMove) {
 			let e: egret.TouchEvent = msg.messageContent;
 			let touchStageY = e.stageY;
-			const castMinY = LayerManager.Ins.stageHeight * 2 / 3;
-			if ((touchStageY < castMinY || this._selectedChar != null) && this.canCast()) {
+			if ((this._touchBeginStageY - touchStageY > 100 || this._selectedChar != null) && this.canCast()) {
 				// if move and move scale large than threshold or select a cast char
 				// cast card
 				if (this.caster == null || this.caster.alive) {
