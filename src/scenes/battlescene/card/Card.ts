@@ -104,10 +104,10 @@ class Card extends egret.DisplayObjectContainer {
 		this.addChild(warnIcon);
 		// cd mask
 		let cdMask = new egret.Shape();
-        cdMask.graphics.beginFill(0x0, 0.8);
+		cdMask.graphics.beginFill(0x0, 0.8);
 		cdMask.y = 7;
-        cdMask.graphics.drawRect(0, 0, 80, 123);
-        cdMask.graphics.endFill();
+		cdMask.graphics.drawRect(0, 0, 80, 123);
+		cdMask.graphics.endFill();
 		let cdMaskmask = new egret.Shape();
 		this.addChild(cdMask);
 		this._cdMask = cdMask;
@@ -184,8 +184,8 @@ class Card extends egret.DisplayObjectContainer {
 		this.refreshCdMask();
 	}
 
-	public setCurCd(value: number){
-		this._cardInfo.curCd=value;
+	public setCurCd(value: number) {
+		this._cardInfo.curCd = value;
 		this.refreshCdMask();
 	}
 
@@ -311,8 +311,11 @@ class Card extends egret.DisplayObjectContainer {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 
 		// select target
-		let caster = this._caster
-		if (this._isCustomSelectTarget && (caster == null || caster.alive)) {
+		let caster = this._caster;
+		if (this._isCustomSelectTarget &&
+			(caster == null || caster.alive) &&
+			this._curCd == 0 &&
+			this.isFireSufficent()) {
 			// if this skill need to select a target
 			for (let char of scene.mEnemies.concat(scene.mFriends)) {
 				if (char.isNear(touchStageX, touchStageY)) {
@@ -392,7 +395,10 @@ class Card extends egret.DisplayObjectContainer {
 			if ((touchStageY < castMinY || this._selectedChar != null) && this.canCast()) {
 				// if move and move scale large than threshold or select a cast char
 				// cast card
-				this.setCurCd(this._maxCd);
+				if (this.caster == null || this.caster.alive){
+					// if cater is not die
+					this.setCurCd(this._maxCd);
+				}
 				this.cast();
 			} else {
 				// card not cast
@@ -405,6 +411,17 @@ class Card extends egret.DisplayObjectContainer {
 		}
 	}
 
+	private isFireSufficent(): boolean {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let skillInfo = ManualSkillManager.getSkillInfo(this._skillId);
+		let fireboard = scene.mPlayerFireBoard;
+		let fireNeed = skillInfo["fireNeed"];
+		if (fireNeed > fireboard.mFireNum) {
+			return false;
+		}
+		return true;
+	}
+
 	private canCast(): boolean {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (scene.mWinnerCamp != CharCamp.Neut) {
@@ -412,10 +429,7 @@ class Card extends egret.DisplayObjectContainer {
 			return false;
 		}
 
-		let skillInfo = ManualSkillManager.getSkillInfo(this._skillId);
-		let fireboard = scene.mPlayerFireBoard;
-		let fireNeed = skillInfo["fireNeed"];
-		if (fireNeed > fireboard.mFireNum) {
+		if (!this.isFireSufficent()) {
 			ToastInfoManager.newRedToast("能量不足");
 			scene.mBattleUI.fireSufficentAnim();
 			return false;

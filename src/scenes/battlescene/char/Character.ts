@@ -41,6 +41,12 @@ class Character extends egret.DisplayObjectContainer {
 		if (inputAlive == this._alive) {
 			return;
 		}
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		let cardBoard = scene.mCardBoard;
+		// if is player's char, show card warning
+		if (this.mCamp == CharCamp.Player) {
+			cardBoard.setCardsWarnIconOfChar(this);
+		}
 		if (!inputAlive && this._alive) {
 			// if alive -> die
 			this._alive = false;
@@ -52,20 +58,14 @@ class Character extends egret.DisplayObjectContainer {
 				}
 			}
 			// all card of this char cd to zero
-			let scene = SceneManager.Ins.curScene as BattleScene;
-			let cardBoard = scene.mCardBoard;
-			for(let cardInfo of scene.mCardInfoDeck){
-				if(cardInfo.caster == this){
+			for (let cardInfo of scene.mCardInfoDeck) {
+				if (cardInfo.caster == this) {
 					cardInfo.curCd = 0;
 				}
 			}
 			cardBoard.cdToZeroOfChar(this);
 			this.mAttr.shield = 0;
 			this.mAttr.hp = 0;
-			// if is player's char, show card warning
-			if (this.mCamp == CharCamp.Player) {
-				cardBoard.setCardsWarnIconOfChar(this);
-			}
 		}
 		if (!this._alive && inputAlive) {
 			// if die -> alive
