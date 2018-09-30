@@ -261,6 +261,7 @@ class Card extends egret.DisplayObjectContainer {
 	private _isMove: boolean = false;
 	private _selectedChar: Character = null;
 	private _swipChar: Character = null;
+	private _canCastJudgeBefore: boolean = false;
 	private onTouchBegin(e: egret.TouchEvent): void {
 		this.showInfo();
 		this.castSelect();
@@ -274,6 +275,7 @@ class Card extends egret.DisplayObjectContainer {
 		this._isMove = false;
 		this._selectedChar = null;
 		this._swipChar = null;
+		this._canCastJudgeBefore = false;
 		if ((SceneManager.Ins.curScene as BattleScene).state instanceof PlayerUseCardPhase) {
 			MessageManager.Ins.addEventListener(
 				MessageType.StageTouchMove,
@@ -298,12 +300,14 @@ class Card extends egret.DisplayObjectContainer {
 			let disToBegin = (touchStageX - this._touchBeginStageX
 			) ** 2 + (touchStageY - this._touchBeginStageY) ** 2;
 			if (disToBegin > minDis) {
+				if (this._canCastJudgeBefore ||
+					(this._canCastJudgeBefore = !this.canCast(false))) {
+					return;
+				}
 				this._isMove = true;
 				this.hideInfo();
 				let caster = this.caster;
-				if (this._isCustomSelectTarget &&
-					(caster == null || (caster.alive && !caster.isDiz))
-				) {
+				if (this._isCustomSelectTarget) {
 					this.visible = false;
 					let targetSelectFingerPicCont = scene.mTargetSelectFingerPicContainer;
 					targetSelectFingerPicCont.visible = true;
@@ -338,11 +342,7 @@ class Card extends egret.DisplayObjectContainer {
 
 		// select target
 		let caster = this._caster;
-		if (this._isCustomSelectTarget &&
-			(caster == null || (caster.alive && !caster.isDiz)) &&
-			this._curCd == 0 &&
-			this.isFireSufficent()
-		) {
+		if (this._isCustomSelectTarget) {
 			// if this skill need to select a target
 			for (let char of scene.mEnemies.concat(scene.mFriends)) {
 				if (char.isNear(touchStageX, touchStageY)) {
@@ -451,7 +451,7 @@ class Card extends egret.DisplayObjectContainer {
 		return true;
 	}
 
-	private canCast(): boolean {
+	private canCast(withTarget: boolean = true): boolean {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		if (scene.mWinnerCamp != CharCamp.Neut) {
 			ToastInfoManager.newRedToast("胜负已分");
@@ -480,7 +480,8 @@ class Card extends egret.DisplayObjectContainer {
 			}
 		}
 
-		if (this._isCustomSelectTarget &&
+		if (withTarget &&
+			this._isCustomSelectTarget &&
 			(caster == null || caster.alive) &&
 			this._selectedChar == null
 		) {
