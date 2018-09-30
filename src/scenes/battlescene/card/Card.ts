@@ -1,10 +1,20 @@
 class Card extends egret.DisplayObjectContainer {
 	private _skillId: number;
 	private _cardInfo: CardInfo;
+	private _cdMask: egret.Shape;
+	private _curCdText: egret.TextField;
 	public get cardInfo(): CardInfo { return this._cardInfo; }
 	private _caster: Character
 	public get caster(): Character { return this._caster; }
-	private _recycleTimes: number;
+	private get _recycleTimes(): number {
+		return this._cardInfo.recycleTimes;
+	};
+	private get _maxCd(): number {
+		return this._cardInfo.maxCd;
+	}
+	private get _curCd(): number {
+		return this._cardInfo.curCd;
+	}
 	public get description(): string {
 		let caster = this.caster;
 		let casterName = caster ? caster.charName : "不需要释放单位";
@@ -18,6 +28,7 @@ class Card extends egret.DisplayObjectContainer {
 
 <b>剩余使用:</b> <font color="#EE4000"><b>${recycleTimes}</b></font> 次
 <b>消耗能量:</b> <font color="#EE4000"><b>${skillInfo['fireNeed']}</b></font> 点
+<b>冷却时间:</b> <font color="#EE4000"><b>${this._maxCd}</b></font> 回合
 <b>作用效果:</b> ${affectDescpt}
 `;
 	}
@@ -91,6 +102,28 @@ class Card extends egret.DisplayObjectContainer {
 		warnIcon.visible = false;
 		this._warnIcon = warnIcon;
 		this.addChild(warnIcon);
+		// cd mask
+		let cdMask = new egret.Shape();
+        cdMask.graphics.beginFill(0x0, 0.8);
+		cdMask.y = 7;
+        cdMask.graphics.drawRect(0, 0, 80, 123);
+        cdMask.graphics.endFill();
+		let cdMaskmask = new egret.Shape();
+		this.addChild(cdMask);
+		this._cdMask = cdMask;
+		cdMaskmask.x = 40;
+		cdMaskmask.y = 65;
+		this._cdMask.mask = cdMaskmask;
+		this.addChild(cdMaskmask);
+		// cd text
+		let cdText = new egret.TextField();
+		cdText.textAlign = egret.HorizontalAlign.CENTER;
+		cdText.verticalAlign = egret.VerticalAlign.MIDDLE;
+		cdText.width = 80;
+		cdText.height = 130;
+		cdText.size = 16;
+		this._curCdText = cdText;
+		this.addChild(cdText);
 	}
 
 	private _warnIcon: egret.Bitmap;
@@ -101,7 +134,6 @@ class Card extends egret.DisplayObjectContainer {
 		let rsLoad = (SceneManager.Ins.curScene as BattleScene).mRsLoader;
 		// initial info
 		this._cardInfo = cardInfo;
-		this._recycleTimes = cardInfo.recycleTimes;
 		this._skillId = cardInfo.skillId;
 		let caster = cardInfo.caster;
 		this._caster = caster;
@@ -149,6 +181,37 @@ class Card extends egret.DisplayObjectContainer {
 			this.onTouchBegin,
 			this
 		);
+		this.refreshCdMask();
+	}
+
+	public setCurCd(value: number){
+		this._cardInfo.curCd=value;
+		this.refreshCdMask();
+	}
+
+	private refreshCdMask(): void {
+		if (this._curCd == 0) {
+			this._cdMask.visible = false;
+			this._curCdText.visible = false;
+			return;
+		}
+		this._cdMask.visible = true;
+		this._curCdText.visible = true;
+		this._curCdText.text = "冷却剩余:\n" + this._curCd + "回合";
+		let shape = this._cdMask.mask as egret.Shape;
+		shape.graphics.clear();
+		shape.graphics.beginFill(0x0000ff);
+		let x = 0;
+		let y = 0;
+		let r = 150;
+		let progress = (this._maxCd - this._curCd) / this._maxCd;
+		let startRadian = Math.PI * (progress * 2 - 0.5);
+		let endRadian = Math.PI * 1.5;
+		shape.graphics.moveTo(x, y);//绘制点移动(r, r)点
+		shape.graphics.lineTo(x, y - r);//画线到弧的起始点
+		shape.graphics.drawArc(x, y, r, startRadian, endRadian, false);//从起始点顺时针画弧到终点
+		shape.graphics.lineTo(x, y);//从终点画线到圆形。到此扇形的封闭区域形成
+		shape.graphics.endFill();
 	}
 
 	public setWarnIconVisible(): void {
@@ -329,6 +392,7 @@ class Card extends egret.DisplayObjectContainer {
 			if ((touchStageY < castMinY || this._selectedChar != null) && this.canCast()) {
 				// if move and move scale large than threshold or select a cast char
 				// cast card
+				this.setCurCd(this._maxCd);
 				this.cast();
 			} else {
 				// card not cast
@@ -357,8 +421,24 @@ class Card extends egret.DisplayObjectContainer {
 			return false;
 		}
 
+		let caster = this.caster;
+
+		if (caster) {
+			if (caster.isDiz) {
+				ToastInfoManager.newRedToast("释放单位眩晕中，无法释放");
+				return false;
+			}
+		}
+
+		if (caster && caster.alive) {
+			if (this._curCd != 0) {
+				ToastInfoManager.newRedToast("冷却中");
+				return false;
+			}
+		}
+
 		if (this._isCustomSelectTarget &&
-			(this._caster == null || this._caster.alive) &&
+			(caster == null || caster.alive) &&
 			this._selectedChar == null
 		) {
 			// if caster is null or caster is alive

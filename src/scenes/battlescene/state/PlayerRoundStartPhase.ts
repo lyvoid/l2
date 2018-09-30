@@ -12,6 +12,11 @@ class PlayerRoundStartPhase extends ISceneState {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		MessageManager.Ins.sendMessage(MessageType.PlayerRoundStart);
 
+		// cur cd --
+		for (let cardInfo of scene.mCardInfoDeck){
+			cardInfo.curCd = Math.max(cardInfo.curCd - 1, 0);
+		}
+
 		// 发牌
 		scene.mCardBoard.distCardNormal();
 		scene.mCardBoard.distCardNormal();

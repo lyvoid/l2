@@ -24,10 +24,6 @@ class Buff {
 	// state
 	private _isDiz: boolean;// 是否眩晕
 	public get isDiz(): boolean { return this._isDiz; }
-	private _isSlience: boolean;// 是否沉默
-	public get isSlience(): boolean { return this._isSlience; }
-	private _isUnarm: boolean; // 是否无法攻击
-	public get isUnarm(): boolean { return this._isUnarm; }
 	// affect
 	private _isAffect: boolean; // 是否具有结算效果
 	private _maxAffectTime: number; // 最大生效次数
@@ -57,8 +53,6 @@ class Buff {
 		attrsAdd: number[],
 		attrsMul: number[],
 		isDiz: boolean,
-		isSlience: boolean,
-		isUnarm: boolean,
 		isAffect: boolean,
 		maxAffectTime: number,
 		affectPhase: BuffAffectPhase,
@@ -81,8 +75,6 @@ class Buff {
 		this._attrsAdd = attrsAdd;
 		this._attrsMul = attrsMul;
 		this._isDiz = isDiz;
-		this._isSlience = isSlience;
-		this._isUnarm = isUnarm;
 		this._isAffect = isAffect;
 		this._maxAffectTime = maxAffectTime;
 		this._affectPhase = affectPhase;

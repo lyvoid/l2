@@ -9,6 +9,7 @@ class BattleScene extends IScene {
 	public mEnemies: Character[];
 	public mFriends: Character[];
 	public mPlayerFireBoard: FireBoard;
+	// 卡组中的卡牌，不包含已经在手牌中的信息
 	public mCardInfoDeck: CardInfo[];
 	public mManualSkillManager: ManualSkillManager;
 	public mDamageFloatManager: DamageFloatManager;
@@ -131,7 +132,9 @@ class BattleScene extends IScene {
 					this.mCardInfoDeck.push({
 						caster: char,
 						skillId: skillId,
-						recycleTimes: recycleTimes
+						recycleTimes: recycleTimes,
+						maxCd: skillConfig[skillId]["maxCd"],
+						curCd: 0
 					});
 				}
 			}
@@ -144,7 +147,9 @@ class BattleScene extends IScene {
 			recycleTimes = recycleTimes == 0 ? -1 : recycleTimes;
 			this.mCardInfoDeck.push({
 				skillId: skillId,
-				recycleTimes: recycleTimes
+				recycleTimes: recycleTimes,
+				maxCd: skillConfig[skillId]["maxCd"],
+				curCd: 0
 			});
 		}
 		this.mBattleUI.remainCardNum = this.mCardInfoDeck.length;

@@ -28,8 +28,6 @@ class BuffManager {
 			attrsAdd,
 			attrsMul,
 			buffInfo["isDiz"],
-			buffInfo["isSlience"],
-			buffInfo["isUnarm"],
 			buffInfo["isAffect"],
 			buffInfo["maxAffectTime"],
 			buffInfo["affectPhase"],

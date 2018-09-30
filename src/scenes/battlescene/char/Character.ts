@@ -4,6 +4,7 @@ class Character extends egret.DisplayObjectContainer {
 
 	// info
 	private _charName: string;
+	private _isDiz: boolean;
 	public get charName(): string { return this._charName; }
 	private _charCode: string;
 	public get charCode(): string { return this._charCode }
@@ -50,11 +51,20 @@ class Character extends egret.DisplayObjectContainer {
 					buff.removeFromChar();
 				}
 			}
+			// all card of this char cd to zero
+			let scene = SceneManager.Ins.curScene as BattleScene;
+			let cardBoard = scene.mCardBoard;
+			for(let cardInfo of scene.mCardInfoDeck){
+				if(cardInfo.caster == this){
+					cardInfo.curCd = 0;
+				}
+			}
+			cardBoard.cdToZeroOfChar(this);
 			this.mAttr.shield = 0;
 			this.mAttr.hp = 0;
 			// if is player's char, show card warning
 			if (this.mCamp == CharCamp.Player) {
-				(SceneManager.Ins.curScene as BattleScene).mCardBoard.setCardsWarnIconOfChar(this);
+				cardBoard.setCardsWarnIconOfChar(this);
 			}
 		}
 		if (!this._alive && inputAlive) {
@@ -121,7 +131,7 @@ ${this.mAttr.toString()}
 `;
 	}
 
-	public get buffDescription(): string {
+	private get stateDescription(): string {
 		let passiveSkillsDesc = "";
 		let buffsDesc = "";
 		let skillsDesc = "";
@@ -185,6 +195,24 @@ ${manualSkillInfos}
 <font color="#EE4000"><b>--------补充效果说明--------</b></font>
 ${otherInfos}
 `;
+	}
+
+	public get isDiz(): boolean {
+		return this._isDiz;
+	}
+
+	public refreshDizstat() {
+		for (let buff of this._normalBuffs) {
+			if (buff.isDiz) {
+				if (!this.isDiz) {
+					// if no diz to diz
+					this._isDiz = true;
+					this.playIdle();
+				}
+				return;
+			}
+		}
+		this._isDiz = false;
 	}
 
 	public initial(
@@ -269,7 +297,7 @@ ${otherInfos}
 	/**
 	 * point(x, y) is near this character or not
 	 */
-	public isNear(x: number, y: number): boolean{
+	public isNear(x: number, y: number): boolean {
 		return (Math.abs(this.x - x) <= 50) && (this.y - y <= 150) && (this.y - y) > 0;
 	}
 
@@ -388,6 +416,13 @@ ${otherInfos}
 		}
 	}
 
+	private playIdle(): void {
+		let times = this.alive ? 0 : 1; // if alive play by recycle ,else play 1 time 
+		let name = this.isDiz ? "dizzy" : "stand";
+		name = this.alive ? name : "death";
+		this.playDBAnim(name, times);
+	}
+
 	private onTouchTap(): void {
 		L2Filters.addOutGlowFilter(this._armatureDisplay);
 		let battleInfoPopUP = (SceneManager.Ins.curScene as BattleScene).mBattleInfoPopupUI;
@@ -396,7 +431,7 @@ ${otherInfos}
 		} else {
 			battleInfoPopUP.setOnRight();
 		}
-		battleInfoPopUP.setDescFlowText(this.description + this.buffDescription);
+		battleInfoPopUP.setDescFlowText(this.description + this.stateDescription);
 		LayerManager.Ins.popUpLayer.addChild(battleInfoPopUP);
 		MessageManager.Ins.addEventListener(
 			MessageType.BattleInfoPopUpClose,
@@ -443,19 +478,11 @@ ${otherInfos}
 	public selectAsCaster(): void {
 		this.playDBAnim("attack", 0);
 		L2Filters.addOutGlowFilter(this);
-		// egret.Tween.get(
-		// 	this,
-		// 	{ loop: true }
-		// ).to(
-		// 	{ alpha: 0 }, 300
-		// 	).to({ alpha: 1 }, 300, egret.Ease.circIn);
 	}
 
 	public unSelectAsCaster(): void {
-		this.playDBAnim("stand", 0);
-		L2Filters.removeOutGlowFilter(this);
-		// egret.Tween.removeTweens(this);
-		// this.alpha = 1;
+		this.playIdle();
+		L2Filters.removeOutGlowFilter(this);;
 	}
 
 	public selectAsTarget() {
@@ -472,7 +499,7 @@ ${otherInfos}
 		L2Filters.addYellowGlow(this);
 	}
 
-	public unSelectAsTarget(){
+	public unSelectAsTarget() {
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		L2Filters.removeYellowGlow(this);
 		Util.safeRemoveFromParent(scene.mSelectHead);
@@ -521,7 +548,7 @@ ${otherInfos}
 		let damageFloatManage = (SceneManager.Ins.curScene as BattleScene).mDamageFloatManager;
 		switch (nextP.pType) {
 			case PType.Die:
-				this.playDBAnim("dizzy", 1);
+				this.playIdle();
 				L2Filters.addGreyFilter(this._armatureDisplay);
 				this._isInPerf = false;
 				this.nextPerf();
@@ -535,7 +562,7 @@ ${otherInfos}
 				);
 				break;
 			case PType.Resurgence:
-				this._armatureDisplay.animation.play("stand", 0);
+				this.playIdle();
 				L2Filters.removeGreyFilter(this._armatureDisplay);
 				this._isInPerf = false;
 				this.nextPerf();
@@ -611,6 +638,7 @@ ${otherInfos}
 			case BuffExTy.NormalBuff:
 				this._normalBuffs.push(buff);
 				this.adjustBuffIconPos();
+				this.refreshDizstat();
 				break;
 			case BuffExTy.PassvieSkill:
 				this._passiveSkills.push(buff);

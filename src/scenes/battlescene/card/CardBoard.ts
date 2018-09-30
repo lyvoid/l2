@@ -7,8 +7,19 @@ class CardBoard extends egret.DisplayObjectContainer {
 		super();
 		this.y = LayerManager.Ins.stageHeight - 140;
 		this.width = LayerManager.Ins.stageWidth;
+		MessageManager.Ins.addEventListener(
+			MessageType.PlayerRoundStart,
+			this.onPlayerRoundStart,
+			this
+		);
 	}
-	
+
+	private onPlayerRoundStart(): void{
+		for(let card of this._handCards){
+			card.setCurCd(Math.max(card.cardInfo.curCd-1, 0));
+		}
+	}
+
 	public removeCardOfChar(char: Character): void{
 		let cardsForDelete: Card[] = [];
 		for (let card of this._handCards){
@@ -17,6 +28,14 @@ class CardBoard extends egret.DisplayObjectContainer {
 			}
 		}
 		this.removeCards(cardsForDelete);
+	}
+
+	public cdToZeroOfChar(char: Character): void{
+		for (let card of this._handCards){
+			if (card.caster == char){
+				card.setCurCd(0);
+			}
+		}
 	}
 
 	public setCardsWarnIconOfChar(char: Character): void{
@@ -160,6 +179,11 @@ class CardBoard extends egret.DisplayObjectContainer {
 	}
 
 	public release(): void {
+		MessageManager.Ins.removeEventListener(
+			MessageType.PlayerRoundStart,
+			this.onPlayerRoundStart,
+			this
+		);
 		for (let card of this._handCards){
 			card.release();
 			card.removeChildren();
@@ -169,7 +193,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		}
 		this._handCards = null;
 		this._cardPool = null;
-		this.removeChildren();
+		this.removeChildren();	
 	}
 
 }

@@ -11,17 +11,17 @@
 	<e:Button id="addFireButton" label="whosyourdaddy-addFire" top="0" height="50" anchorOffsetX="0" width="167" left="167"/>
 	<e:Button id="addCardButton" label="whosyourdaddy-addCard" top="0" height="50" anchorOffsetX="0" left="0" width="167"/>
 	<e:Button id="roundEndButton" label="回合结束" right="10" bottom="10" anchorOffsetY="0" height="100" visible="false"/>
-	<e:Label id="cardNumLabel" text="10/10" bottom="153" left="82" width="105" fontFamily="Georgia" anchorOffsetX="0"/>
-	<e:Label id="fireNumLabel" text="10/10" bottom="185" left="480" width="103" fontFamily="Georgia" anchorOffsetX="0"/>
-	<e:Label text="能量：" bottom="185" left="1" width="103" bold="true" anchorOffsetX="0" fontFamily="Arial" textColor="0xffffff"/>
-	<e:Label text="手牌：" bottom="153" left="0" width="96" anchorOffsetX="0" bold="true" borderColor="0xffffff" fontFamily="Arial" textColor="0xffffff"/>
+	<e:Label id="cardNumLabel" text="10/10" bottom="160" left="75" width="105" fontFamily="Georgia" anchorOffsetX="0" size="22"/>
+	<e:Label id="fireNumLabel" text="10/10" bottom="187" left="480" width="103" fontFamily="Georgia" anchorOffsetX="0" size="22"/>
+	<e:Label text="能量：" bottom="187" left="1" width="103" bold="true" anchorOffsetX="0" fontFamily="Arial" textColor="0xffffff" size="22"/>
+	<e:Label text="手牌：" bottom="158" left="0" width="96" anchorOffsetX="0" bold="true" borderColor="0xffffff" fontFamily="Arial" textColor="0xffffff" size="22"/>
 	<e:Label id="roundLabel" text="第 1 回合" top="10" textColor="0xff6700" size="40" horizontalCenter="0" bold="true" fontFamily="Arial"/>
-	<e:Label text="卡组剩余" bottom="120" right="46" anchorOffsetX="0" width="124" bold="true" fontFamily="Georgia"/>
-	<e:Label id="remainCardInfo" text="0" bottom="120" right="1" anchorOffsetX="0" width="46" bold="true" fontFamily="Georgia"/>
+	<e:Label text="卡组剩余：" bottom="120" right="16" anchorOffsetX="0" width="124" bold="true" fontFamily="Georgia" size="22"/>
+	<e:Label id="remainCardInfo" text="0" bottom="120" right="-8" anchorOffsetX="0" width="46" fontFamily="Georgia" size="22"/>
 	<e:Image width="30" height="30" source="help_icon_png" bottom="140" right="0"/>
 	<e:Rect id="cardRemainHelpRect" width="45" height="55" anchorOffsetX="0" anchorOffsetY="0" strokeAlpha="1" fillAlpha="0" touchEnabled="true" bottom="115" right="0"/>
-	<e:Image width="30" height="30" source="help_icon_png" bottom="200" left="547" rotation="0.34"/>
-	<e:Rect id="fireRemainHelpRect" width="45" height="52.33" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="0" touchEnabled="true" bottom="177" left="531"/>
+	<e:Image width="30" height="30" source="help_icon_png" bottom="198" left="534" rotation="0.34"/>
+	<e:Rect id="fireRemainHelpRect" width="45" height="52.33" anchorOffsetX="0" anchorOffsetY="0" fillAlpha="0" touchEnabled="true" bottom="177" left="520"/>
 
 
 </e:Skin>

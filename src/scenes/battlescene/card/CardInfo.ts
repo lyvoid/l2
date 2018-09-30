@@ -6,6 +6,6 @@ interface CardInfo {
 	 * 卡牌使用完的时候--如果发现时0就直接销毁
 	 */
 	recycleTimes: number,
-	maxCd?: number, // TODO: 待添加
-	curCd?: number // TODO: 待添加
+	maxCd: number,
+	curCd: number
 }
