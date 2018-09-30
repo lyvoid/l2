@@ -101,7 +101,7 @@ class UIBattleScene extends eui.Component {
 		this.roundEndButton.visible = false;
 		// 回合结束
 		let scene = SceneManager.Ins.curScene as BattleScene;
-		scene.setState(new PlayerRoundEndPhase());
+		scene.setState(new PlayerRoundEndPhase(), 0);
 	}
 
 	private onACBTTap(): void {

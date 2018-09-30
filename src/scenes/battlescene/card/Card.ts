@@ -274,7 +274,7 @@ class Card extends egret.DisplayObjectContainer {
 		this._isMove = false;
 		this._selectedChar = null;
 		this._swipChar = null;
-		if ((SceneManager.Ins.curScene as BattleScene).state instanceof PlayerRoundStartPhase) {
+		if ((SceneManager.Ins.curScene as BattleScene).state instanceof PlayerUseCardPhase) {
 			MessageManager.Ins.addEventListener(
 				MessageType.StageTouchMove,
 				this.onStageTouchMove,
