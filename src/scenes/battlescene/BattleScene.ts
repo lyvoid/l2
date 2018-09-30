@@ -325,6 +325,9 @@ class BattleScene extends IScene {
 		this.mManualSkillManager.release();
 		this.mManualSkillManager = null;
 
+		this.mTargetSelectFingerPicContainer = null;
+		this.mCharSugenceParticle = null;
+
 		this._gameBgLayer = null;
 		this._gameCardLayer = null;
 		this._gameCharLayer = null;

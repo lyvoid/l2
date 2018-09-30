@@ -107,7 +107,7 @@ class FormCardPopUpUI extends eui.Component {
 <font color="#FFFFE0"><b>--------基础信息--------</b></font>
 <font color="#FFFFE0"><b>释放消耗能量</b></font>：${skillInfo["fireNeed"]} 点
 <font color="#FFFFE0"><b>单场战斗可用次数</b></font>: ${skillInfo["recycleTimes"]} 次
-
+<font color="#FFFFE0"><b>冷却时长</b></font>: ${skillInfo["maxCd"]} 回合
 
 <font color="#FFFFE0"><b>--------效果描述--------</b></font>
 ${skillInfo["description"]}

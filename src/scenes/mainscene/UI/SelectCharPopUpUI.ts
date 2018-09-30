@@ -113,7 +113,7 @@ class SelectCharPopUpUI extends eui.Component {
 			let recycleTimes = skillinfo["recycleTimes"];
 			let recycleTimesStr = recycleTimes == 0 ? "无限" : recycleTimes;
 			manualSkillInfos += `<font color="#FFFFE0"><b>` +
-				`${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量, ${recycleTimesStr}次)</b></font>:${skillinfo["description"]}\n`;
+				`${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量, ${recycleTimesStr}次,${skillinfo["maxCd"]}冷却)</b></font>:${skillinfo["description"]}\n`;
 		}
 		for (let i of charInfo["passiveSkillsId"]) {
 			let buffInfo = buffInfos[i];

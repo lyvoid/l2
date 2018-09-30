@@ -10,7 +10,7 @@ class PlayerRoundEndPhase extends ISceneState {
 			}
 		}
 		// 回合结束阶段技能效果
-
+		
 		// 如果不在演出说明没有需要演出的技能，直接切下一个阶段
 		scene.setState(new EnemyRoundStartPhase());
 

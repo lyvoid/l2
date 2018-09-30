@@ -145,7 +145,7 @@ ${this.mAttr.toString()}
 			otherInfoOfBuff.addList(skillinfo["otherInfosOfBuffsId"]);
 			let recycleTimes = skillinfo["recycleTimes"];
 			let recycleTimesStr = recycleTimes == 0 ? "无限" : recycleTimes;
-			manualSkillInfos += `<b>${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量, ${recycleTimesStr}次):</b>${skillinfo["description"]}\n`;
+			manualSkillInfos += `<b>${skillinfo["skillName"]}(${skillinfo["fireNeed"]}能量, ${recycleTimesStr}次, ${skillinfo["maxCd"]}冷却回合):</b>${skillinfo["description"]}\n`;
 		}
 		for (let i of otherInfoOfBuff.data) {
 			let buffInfo = buffInfos[i];
@@ -482,7 +482,7 @@ ${otherInfos}
 			lifeSurgenceParticleSys.x = this.x;
 			lifeSurgenceParticleSys.y = this.y - 20;
 			lifeSurgenceParticleSys.start();
-		} else {
+		} else if (!this.isDiz) {
 			this.playDBAnim("attack", 0);
 		}
 		L2Filters.addOutGlowFilter(this);
@@ -550,9 +550,7 @@ ${otherInfos}
 		}
 
 		if (this._perfQueue.length == 0) {
-			if (this._isInBattle && this._alive) {
-				this._armatureDisplay.animation.play("stand", 0);
-			}
+			this.playIdle();
 			return;
 		}
 

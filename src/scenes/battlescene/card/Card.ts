@@ -274,11 +274,13 @@ class Card extends egret.DisplayObjectContainer {
 		this._isMove = false;
 		this._selectedChar = null;
 		this._swipChar = null;
-		MessageManager.Ins.addEventListener(
-			MessageType.StageTouchMove,
-			this.onStageTouchMove,
-			this
-		);
+		if ((SceneManager.Ins.curScene as BattleScene).state instanceof PlayerRoundStartPhase) {
+			MessageManager.Ins.addEventListener(
+				MessageType.StageTouchMove,
+				this.onStageTouchMove,
+				this
+			);
+		}
 		MessageManager.Ins.addEventListener(
 			MessageType.StageTouchEnd,
 			this.onStageTouchEnd,
@@ -299,7 +301,9 @@ class Card extends egret.DisplayObjectContainer {
 				this._isMove = true;
 				this.hideInfo();
 				let caster = this.caster;
-				if (this._isCustomSelectTarget && (caster == null || caster.alive)) {
+				if (this._isCustomSelectTarget &&
+					(caster == null || (caster.alive && !caster.isDiz))
+				) {
 					this.visible = false;
 					let targetSelectFingerPicCont = scene.mTargetSelectFingerPicContainer;
 					targetSelectFingerPicCont.visible = true;
@@ -335,9 +339,10 @@ class Card extends egret.DisplayObjectContainer {
 		// select target
 		let caster = this._caster;
 		if (this._isCustomSelectTarget &&
-			(caster == null || caster.alive) &&
+			(caster == null || (caster.alive && !caster.isDiz)) &&
 			this._curCd == 0 &&
-			this.isFireSufficent()) {
+			this.isFireSufficent()
+		) {
 			// if this skill need to select a target
 			for (let char of scene.mEnemies.concat(scene.mFriends)) {
 				if (char.isNear(touchStageX, touchStageY)) {
