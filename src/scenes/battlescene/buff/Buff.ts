@@ -12,6 +12,7 @@ class Buff {
 	private _isPositive: boolean; // 是否正面效果
 	public get isPositive(): boolean { return this._isPositive; }
 	private _maxLayer: number;  // 最大叠加层数
+	public get maxLayer():number{return this._maxLayer;}
 	private _layId: number; // 叠加id，相同的叠加id在一起计算maxLayer
 	private _isDeadRemove: boolean; // 是否对象死亡时移除
 	public get isDeadRemove(): boolean { return this._isDeadRemove; }

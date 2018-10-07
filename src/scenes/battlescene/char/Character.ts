@@ -175,9 +175,9 @@ ${this.mAttr.toString()}
 			}
 			buffAdded.push(buff.id);
 			let color = "#EE2C2C";
-			if (buff.isPositive) color = "#7FFF00";
+			// if (buff.isPositive) color = "#7FFF00";
 			buffsDesc = `${buffsDesc}<font color="${color}"><b>` +
-				`${buff.buffName}(${buffLayer[buff.id]}层):</b></font>${buff.description}\n`
+				`${buff.buffName}(${buffLayer[buff.id]}/${buff.maxLayer}层):</b></font>${buff.description}\n`
 		}
 
 
@@ -484,6 +484,9 @@ ${otherInfos}
 	}
 
 	public selectAsCaster(): void {
+		if (this._isInPerf){
+			return;
+		}
 		if (!this.alive) {
 			let scene = SceneManager.Ins.curScene as BattleScene;
 			let lifeSurgenceParticleSys = scene.mCharSugenceParticle;
@@ -497,6 +500,9 @@ ${otherInfos}
 	}
 
 	public unSelectAsCaster(): void {
+		if (this._isInPerf){
+			return;
+		}
 		if (!this.alive) {
 			let scene = SceneManager.Ins.curScene as BattleScene;
 			let lifeSurgenceParticleSys = scene.mCharSugenceParticle;
@@ -689,7 +695,7 @@ ${otherInfos}
 	}
 
 	public release(): void {
-		MessageManager.Ins.addEventListener(
+		MessageManager.Ins.removeEventListener(
 			MessageType.BattleInfoPopUpClose,
 			this.onBattleInfoPopUpClose,
 			this
@@ -697,6 +703,11 @@ ${otherInfos}
 		this._armatureDisplay.removeEventListener(
 			dragonBones.EventObject.COMPLETE,
 			this.onAnimEnd,
+			this
+		);
+		this.removeEventListener(
+			egret.TouchEvent.TOUCH_TAP,
+			this.onTouchTap,
 			this
 		);
 

@@ -10,6 +10,7 @@ class ManualSkill {
 	private _hurtIdToTarget: number;
 	private _hurtIdToSelf: number;
 	private _isCusSelect: boolean;
+	public get isCustomSelect():boolean{return this._isCusSelect;}
 	private _buffsIdToTarget: number[];
 	private _buffsIdToSelf: number[];
 	private _isNoUseDefaultPerf: boolean;
@@ -225,6 +226,39 @@ class ManualSkill {
 				param: { newP: newPos }
 			});
 		}
+	}
+
+	public getRandomCusTarget(): boolean{
+		let prepareTargets = [];
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		for (let t of scene.mFriends.concat(scene.mEnemies)){
+			if (t.isInBattle){
+				if (!t.alive && this._selectNeedStat == 1){
+					// if need alive but target is not alive
+					continue;
+				}
+				if (t.alive && this._selectNeedStat == 2){
+					// if need not alive but target is alive
+					continue;
+				}
+				if (t.mCamp != this._camp && this._selectNeedBelong == 1){
+					// if need self but not target not self
+					continue;
+				}
+				if (t.mCamp == this._camp && this._selectNeedBelong == 2){
+					// if need enemy but target is self
+					continue;
+				}
+				prepareTargets.push(t);
+			}
+		}
+		if (prepareTargets.length == 0){
+			return false;
+		}
+		let i = Math.ceil(Math.random() * prepareTargets.length);
+		i = Math.max(0, i-1);
+		this._preSetTargets = [prepareTargets[i]];
+		return true;
 	}
 
 	// canCast

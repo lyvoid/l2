@@ -75,7 +75,7 @@ class Attribute {
 		if (pysDamageReducePerc) this._attrsRaw[AttrName.PysDamageReducePerc] = pysDamageReducePerc;
 		if (magicDamageReduceAbs) this._attrsRaw[AttrName.MagicDamageReduceAbs] = magicDamageReduceAbs;
 		if (magicDamageReducePerc) this._attrsRaw[AttrName.MagicDamageReducePerc] = magicDamageReducePerc;
-		for(let index in this._attrsRaw){
+		for (let index in this._attrsRaw) {
 			this._attrs[index] = this._attrsRaw[index];
 		}
 	}
@@ -89,7 +89,10 @@ class Attribute {
 		let newValue = this._attrsRaw[attrName] + this._attrsAdd[attrName];
 		newValue = newValue > 0 ? newValue : 0;
 		newValue *= 1 + this._attrsMul[attrName];
-		newValue = newValue > 0 ? Math.ceil(newValue) : 0;
+		if ((attrName != AttrName.MagicDamageReducePerc) &&
+			(attrName != AttrName.PysDamageReducePerc)) {
+			newValue = newValue > 0 ? Math.ceil(newValue) : 0;
+		}
 		this._attrs[attrName] = newValue;
 
 		// if attr is maxshield or maxhp

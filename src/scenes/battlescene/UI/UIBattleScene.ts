@@ -135,7 +135,7 @@ class UIBattleScene extends eui.Component {
 		battleInfoPopupUI.setDescFlowText(
 `1.使用卡牌需要消耗能量;
 2.无法释放需求能量高于当前能量的卡牌;
-3.回合开始时能量将回复至当前回合数的点数;
+3.回合开始能量回复三点;
 4.能量最高能只积攒10点;
 `
 		);

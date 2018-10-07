@@ -68,6 +68,8 @@ class Card extends egret.DisplayObjectContainer {
 		skillNameTextField.size = 18;
 		skillNameTextField.width = 74;
 		skillNameTextField.height = 18;
+		skillNameTextField.textAlign = egret.HorizontalAlign.CENTER;
+		skillNameTextField.verticalAlign = egret.VerticalAlign.MIDDLE;
 		skillNameTextField.y = -12;
 		skillNameTextField.x = 3;
 		skillNameTextField.bold = true;
@@ -316,8 +318,8 @@ class Card extends egret.DisplayObjectContainer {
 					targetSelectFingerPicCont.x = touchStageX;
 					targetSelectFingerPicCont.y = touchStageY;
 					egret.Tween.get(targetSelectFingerPicCont, { loop: true }).to({
-						scaleX: 1.8,
-						scaleY: 1.8,
+						scaleX: 3,
+						scaleY: 3,
 					}, 500).to({
 						scaleX: 1,
 						scaleY: 1,
@@ -525,6 +527,20 @@ class Card extends egret.DisplayObjectContainer {
 			}
 		}
 
+	}
+
+	public removeOneTime(): void {
+		let scene = SceneManager.Ins.curScene as BattleScene;
+		// if recycleTimes > 0, recycleTimes --
+		if (this._cardInfo.recycleTimes > 0) {
+			this._cardInfo.recycleTimes--;
+		}
+		// if recycleTimes != 0, card back to deck, 
+		// else this card info will be delete with releasing
+		if (this._cardInfo.recycleTimes != 0) {
+			scene.mCardInfoDeck.push(this._cardInfo);
+			scene.mBattleUI.remainCardNum = scene.mCardInfoDeck.length;
+		}
 	}
 
 	public release(): void {

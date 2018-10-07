@@ -50,6 +50,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		for(let index in cards){
 			let card = cards[index]
 			Util.removeObjFromArray(this._handCards, card);
+			card.removeOneTime();
 			card.release();
 			if (parseInt(index) == cards.length-1){
 				// 如果是最后一张，对全体调整
@@ -96,6 +97,8 @@ class CardBoard extends egret.DisplayObjectContainer {
 				()=>{
 					card.touchEnabled = false;
 					this.removeCardFromBoard(card, CardBoard.maxCardNum);
+					card.removeOneTime();
+					card.release();
 					this._overFlowNum -= 1;
 				}
 			);
@@ -134,16 +137,7 @@ class CardBoard extends egret.DisplayObjectContainer {
 		// 逻辑上去除
 		let scene = SceneManager.Ins.curScene as BattleScene;
 		let cards: Card[] = this._handCards;
-		// if recycleTimes > 0, recycleTimes --
-		if(card.cardInfo.recycleTimes > 0){
-			card.cardInfo.recycleTimes--;
-		}
-		// if recycleTimes != 0, card back to deck, 
-		// else this card info will be delete with releasing
-		if (card.cardInfo.recycleTimes != 0){
-			scene.mCardInfoDeck.push(card.cardInfo);
-			scene.mBattleUI.remainCardNum = scene.mCardInfoDeck.length;
-		}
+		card.removeOneTime();
 		card.release();
 		let index = cards.indexOf(card);
 		cards.splice(index, 1);

@@ -41,7 +41,15 @@ class NormalAi {
 			curCoolDownTimes[i] = Math.max(0, curCoolDownTimes[i] - 1);
 		}
 		if (castSkillId != -1){
-			scene.addToCastQueue(skillManager.newSkill(castSkillId, this._caster));
+			let castSkill = skillManager.newSkill(castSkillId, this._caster);
+			if(castSkill.isCustomSelect){
+				if (!castSkill.getRandomCusTarget()){
+					// if can not find a proper custom target
+					castSkill.release();
+					return;
+				}
+			}
+			scene.addToCastQueue(castSkill);
 			let i = skillList.indexOf(castSkillId);
 			curCoolDownTimes[i] = maxCoolDownTimes[i];
 		}
