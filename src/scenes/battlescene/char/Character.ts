@@ -373,7 +373,7 @@ ${otherInfos}
 		if (!newShield) {
 			newShield = this.mAttr.shield;
 		}
-		let lifeBarNewLen = 80 * newShield / this.mAttr.maxHp;
+		let lifeBarNewLen = 80 * newShield / this.mAttr.maxShield;
 		return egret.Tween.get(this._shieldBar).to({
 			width: lifeBarNewLen,
 		}, 1000, egret.Ease.quintOut);
@@ -554,6 +554,7 @@ ${otherInfos}
 	}
 
 	private _isInPerf: boolean;
+	public get isInPerf():boolean{return this._isInPerf;}
 	public nextPerf(p: { pType: PType, param?: any } = null): void {
 		if (p) {
 			this._perfQueue.push(p);

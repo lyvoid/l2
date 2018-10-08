@@ -23,7 +23,7 @@ class UserData {
 		this.battleId = 1;
 		
 		// TODO: replace by get curUserTeam from service
-		this.userTeam = [1, 2, 3, 4, 5, 6];
+		this.userTeam = [1, 2, 3, 4, 5, 6];// -1 means no char here
 		this.userArmy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 		this.userCards = [2001, 2002, 500001];
 		this.userDeck = [];

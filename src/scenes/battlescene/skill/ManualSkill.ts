@@ -115,6 +115,22 @@ class ManualSkill {
 			}
 		}
 
+		// if target is a proper target ?
+		let targesTmp = []
+		for (let t of this._targets){
+			if (!t.isInBattle) continue;
+			if (t.alive && this._selectNeedStat==2) continue;
+			if (!t.alive && this._selectNeedStat==1) continue;
+			if (t.mCamp != this._camp && this._selectNeedBelong==1) continue;
+			if (t.mCamp == this._camp && this._selectNeedBelong==2) continue;
+			targesTmp.push(t);
+		}
+		if (targesTmp.length==0){
+			this.release();
+			return;
+		}
+		this._targets = targesTmp;
+
 		// ----- if all condition pass
 		// default performance
 		if (!this._isNoUseDefaultPerf) {

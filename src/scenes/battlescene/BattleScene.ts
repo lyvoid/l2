@@ -193,7 +193,7 @@ class BattleScene extends IScene {
 		let enemiesInfo = ConfigManager.Ins.mBattleEnemyConfig;
 		let enemiesId = battleInfo["enemy"];
 		for (let i of enemiesId) {
-			charCodes.add(charConfig[i]["charCode"]);
+			charCodes.add(charConfig[enemiesInfo[i]['charId']]["charCode"]);
 		}
 		for (let charactorName of charCodes.data) {
 			awaits.push(rsLoader.getResAsync(`${charactorName}_ske_json`));

@@ -390,6 +390,9 @@ class Card extends egret.DisplayObjectContainer {
 			ToastInfoManager.newRedToast("目标单位未死亡");
 			return false;
 		}
+		if (target.isInPerf){
+			return false;
+		}
 		return true;
 	}
 
